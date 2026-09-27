@@ -77,6 +77,19 @@ export interface PriceZone {
   cantons: string[];
 }
 
+/** Localité suisse (répertoire officiel des localités, swisstopo). */
+export interface Locality {
+  zip: string;
+  /** Chiffre complémentaire du NPA (plusieurs localités peuvent partager un NPA). */
+  suffix: string;
+  name: string;
+  municipality: string;
+  canton: string;
+  lat: number;
+  lon: number;
+  lang: string;
+}
+
 export interface Store {
   id: string;
   chainId: ChainId;

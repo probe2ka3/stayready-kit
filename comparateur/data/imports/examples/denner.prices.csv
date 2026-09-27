@@ -1,0 +1,6 @@
+chain_id;sku;name;brand;gtin;quantity;unit;organic;swiss_origin;labels;canonical_slug;match_kind;price_chf;observed_at;scope;source_kind;source_ref;audience;vat_included;url
+denner;EX-0001;Farine blanche 1 kg;;;1;kg;0;1;;farine-blanche-1kg;;1.60;2026-09-26;national;manual_survey;EXEMPLE — relevé fictif, ne reflète aucun prix réel;consumer;1;
+denner;EX-0002;Spaghetti 500 g;;;500;g;0;0;;spaghetti-500g;;1.20;2026-09-26;national;manual_survey;EXEMPLE — relevé fictif, ne reflète aucun prix réel;consumer;1;
+denner;EX-0003;Lait entier UHT 1 l;;;1;l;0;1;;lait-entier-uht-1l;;1.35;2026-09-26;national;manual_survey;EXEMPLE — relevé fictif, ne reflète aucun prix réel;consumer;1;
+denner;EX-0004;Riz long grain 500 g;;;500;g;0;0;;riz-long-1kg;similar;1.30;2026-09-26;national;manual_survey;EXEMPLE — relevé fictif, ne reflète aucun prix réel;consumer;1;
+denner;EX-0005;Papier toilette 3 plis 8 rouleaux;;;8;rouleaux;0;0;;;;4.20;2026-09-26;national;manual_survey;EXEMPLE — relevé fictif, ne reflète aucun prix réel;consumer;1;

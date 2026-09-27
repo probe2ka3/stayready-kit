@@ -1,0 +1,21 @@
+{
+  "name": "@cabas/worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tâches planifiées et outils d'import (CLI)",
+  "type": "module",
+  "scripts": {
+    "job": "tsx src/cli.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cabas/connectors": "workspace:*",
+    "@cabas/core": "workspace:*",
+    "@cabas/db": "workspace:*",
+    "@cabas/reference": "workspace:*",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

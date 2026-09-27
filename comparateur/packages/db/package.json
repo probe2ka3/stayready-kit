@@ -1,0 +1,27 @@
+{
+  "name": "@cabas/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Persistance PostgreSQL + PostGIS (schéma Drizzle, migrations, dépôts)",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@cabas/core": "workspace:*",
+    "drizzle-orm": "^0.45.3",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.11",
+    "typescript": "~5.9.3",
+    "@cabas/connectors": "workspace:*",
+    "@cabas/reference": "workspace:*"
+  }
+}

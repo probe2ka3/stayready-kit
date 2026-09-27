@@ -1,0 +1,22 @@
+{
+  "name": "@cabas/connectors",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Connecteurs de données : démonstration, import structuré, enseignes, OpenStreetMap, swisstopo",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cabas/core": "workspace:*",
+    "@cabas/reference": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

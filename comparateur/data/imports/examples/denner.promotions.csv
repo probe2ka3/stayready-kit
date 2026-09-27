@@ -1,0 +1,3 @@
+chain_id;sku;type;promo_price_chf;percent;buy_qty;pay_qty;min_qty;reference_price_chf;loyalty_program;while_stocks_last;end_is_presumed;label;published_at;valid_from;valid_to;scope;source_kind;source_ref
+denner;EX-0002;percent;;25;;;;1.20;;0;0;Action de la semaine;2026-09-23;2026-09-24;2026-09-30;national;manual_survey;EXEMPLE — prospectus fictif
+denner;EX-0003;multibuy;;;3;2;;1.35;;0;0;Action de la semaine;2026-09-23;2026-09-24;2026-09-30;national;manual_survey;EXEMPLE — prospectus fictif

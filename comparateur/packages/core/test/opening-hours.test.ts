@@ -57,11 +57,25 @@ describe('horaires OpenStreetMap', () => {
   });
 
   it('ne rejette pas un horaire non reconnu : état inconnu', () => {
-    const oh = parseOpeningHours('Jan-Mar Mo-Fr 08:00-18:00');
+    const oh = parseOpeningHours('week 39-50 Sa 08:00-17:30');
     expect(oh.ok).toBe(false);
     expect(openStatusDuring(oh, at('2026-09-28', '10:00'), 15)).toBe('unknown');
     expect(parseOpeningHours(null).ok).toBe(false);
     expect(parseOpeningHours('Mo-Fr 18:00+').ok).toBe(false);
+  });
+
+  it('gère les dates particulières et les fermetures temporaires', () => {
+    const special = parseOpeningHours('Mo-Sa 07:30-20:00; PH off; Dec 24 07:30-16:00; Dec 25-26 off');
+    expect(formatDaySchedule(special, '2026-12-24')).toBe('07:30–16:00');
+    expect(formatDaySchedule(special, '2026-12-26')).toBe('Fermé');
+    expect(formatDaySchedule(special, '2026-12-23')).toBe('07:30–20:00');
+    const seasonal = parseOpeningHours('Mo-Fr 08:00-12:00, 13:30-18:30; Sa 08:00-16:00; Jun-Aug Su 09:00-11:00');
+    expect(formatDaySchedule(seasonal, '2026-07-05')).toBe('09:00–11:00');
+    expect(formatDaySchedule(seasonal, '2026-09-27')).toBe('Fermé');
+    const works = parseOpeningHours('Mo-Su 06:00-22:00; 2026 Sep 03-2026 Nov 05 closed');
+    expect(openStatusOnDate(works, '2026-09-28')).toBe('closed');
+    expect(openStatusOnDate(works, '2026-11-06')).toBe('open');
+    expect(parseOpeningHours('Mo-Fr 07:30-19:00; Sa 07:30 - 18:00').ok).toBe(true);
   });
 
   it('ignore les commentaires entre guillemets', () => {

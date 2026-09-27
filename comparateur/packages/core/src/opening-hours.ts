@@ -18,6 +18,12 @@ export type OpenStatus = 'open' | 'closed' | 'unknown';
 interface Rule {
   /** jours ISO 1-7 ; vide + ph=false => tous les jours */
   days: Set<number>;
+  /** mois 1-12 (sélecteur « Jun-Aug ») ; null = tous les mois */
+  months: Set<number> | null;
+  /** date annuelle précise (« Dec 24 », « Dec 25-26 ») */
+  monthDay: { month: number; from: number; to: number } | null;
+  /** période datée (« 2026 Sep 03-2026 Nov 05 closed » : fermeture temporaire) */
+  dateRange?: { from: string; to: string } | null;
   ph: boolean;
   allDays: boolean;
   /** intervalles en minutes depuis minuit ; fin possiblement > 1440 (nuit) */
@@ -34,6 +40,17 @@ export interface ParsedOpeningHours {
 }
 
 const DAY_CODES: Record<string, number> = { Mo: 1, Tu: 2, We: 3, Th: 4, Fr: 5, Sa: 6, Su: 7 };
+const MONTHS: Record<string, number> = {
+  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+};
+const MONTH_TOKEN = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))?$/;
+const DAY_OF_MONTH = /^(\d{1,2})(-(\d{1,2}))?$/;
+const DATE_RANGE =
+  /^(\d{4}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{1,2})-(\d{4}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{1,2})(?:\s+|$)/;
+
+function isoOf(year: string, month: string, day: string): string {
+  return `${year}-${String(MONTHS[month]).padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
 const DAY_TOKEN = /^(Mo|Tu|We|Th|Fr|Sa|Su)(-(Mo|Tu|We|Th|Fr|Sa|Su))?$/;
 const TIME_RANGE = /^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/;
 
@@ -76,6 +93,10 @@ function isDaySelector(token: string): boolean {
   return token.split(',').every((p) => p === 'PH' || DAY_TOKEN.test(p));
 }
 
+function startsRule(token: string): boolean {
+  return (isDaySelector(token) || MONTH_TOKEN.test(token)) && !TIME_RANGE.test(token);
+}
+
 /** Découpe « Mo-Fr 08:00-12:00, Sa 09:00-12:00 » en règles additionnelles. */
 function splitAdditional(ruleText: string): string[] {
   const out: string[] = [];
@@ -83,7 +104,7 @@ function splitAdditional(ruleText: string): string[] {
   const parts = ruleText.split(/,\s+/);
   for (const part of parts) {
     const firstWord = part.trim().split(/\s+/)[0] ?? '';
-    if (current && isDaySelector(firstWord) && !TIME_RANGE.test(firstWord)) {
+    if (current && startsRule(firstWord)) {
       out.push(current);
       current = part;
     } else {
@@ -97,13 +118,28 @@ function splitAdditional(ruleText: string): string[] {
 export function parseOpeningHours(raw: string | null | undefined): ParsedOpeningHours {
   const fail = (r: string): ParsedOpeningHours => ({ ok: false, raw: r, rules: [], hasPhRule: false });
   if (!raw || !raw.trim()) return fail(raw ?? '');
-  const text = raw.replace(/"[^"]*"/g, '').replace(/\s+/g, ' ').trim();
+  const text = raw
+    .replace(/"[^"]*"/g, '')
+    .replace(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/g, '$1-$2')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (text === '24/7') {
     return {
       ok: true,
       raw,
       hasPhRule: false,
-      rules: [{ days: new Set(), ph: false, allDays: true, times: [[0, 1440]], mode: 'open', additional: false }],
+      rules: [
+        {
+          days: new Set(),
+          months: null,
+          monthDay: null,
+          ph: false,
+          allDays: true,
+          times: [[0, 1440]],
+          mode: 'open',
+          additional: false,
+        },
+      ],
     };
   }
   const rules: Rule[] = [];
@@ -114,9 +150,19 @@ export function parseOpeningHours(raw: string | null | undefined): ParsedOpening
   for (const normal of normalRules) {
     const pieces = splitAdditional(normal);
     for (let i = 0; i < pieces.length; i++) {
-      const tokens = (pieces[i] as string).trim().split(/\s+/).filter(Boolean);
+      let pieceText = (pieces[i] as string).trim();
+      let dateRange: Rule['dateRange'] = null;
+      const dr = DATE_RANGE.exec(pieceText);
+      if (dr) {
+        dateRange = { from: isoOf(dr[1]!, dr[2]!, dr[3]!), to: isoOf(dr[4]!, dr[5]!, dr[6]!) };
+        pieceText = pieceText.slice(dr[0].length);
+      }
+      const tokens = pieceText.split(/\s+/).filter(Boolean);
       const rule: Rule = {
         days: new Set(),
+        months: null,
+        monthDay: null,
+        dateRange,
         ph: false,
         allDays: false,
         times: null,
@@ -124,6 +170,27 @@ export function parseOpeningHours(raw: string | null | undefined): ParsedOpening
         additional: i > 0,
       };
       let idx = 0;
+      const monthMatch = tokens[idx] ? MONTH_TOKEN.exec(tokens[idx] as string) : null;
+      if (monthMatch) {
+        const m1 = MONTHS[monthMatch[1] as string] as number;
+        const dom = tokens[idx + 1] ? DAY_OF_MONTH.exec(tokens[idx + 1] as string) : null;
+        if (dom && !monthMatch[3]) {
+          const from = Number(dom[1]);
+          const to = dom[3] ? Number(dom[3]) : from;
+          if (from < 1 || to > 31 || to < from) return fail(raw);
+          rule.monthDay = { month: m1, from, to };
+          idx += 2;
+        } else {
+          const m2 = monthMatch[3] ? (MONTHS[monthMatch[3]] as number) : m1;
+          rule.months = new Set();
+          for (let m = m1, guard = 0; guard < 12; guard++) {
+            rule.months.add(m);
+            if (m === m2) break;
+            m = m === 12 ? 1 : m + 1;
+          }
+          idx += 1;
+        }
+      }
       if (tokens[idx] && isDaySelector(tokens[idx] as string) && !TIME_RANGE.test(tokens[idx] as string)) {
         if (!parseDaySelector(tokens[idx] as string, rule)) return fail(raw);
         idx++;
@@ -163,13 +230,28 @@ export type DaySchedule =
 /** Intervalles d'ouverture d'une date (minutes depuis minuit, fin éventuellement > 1440). */
 export function scheduleForDate(parsed: ParsedOpeningHours, date: string): DaySchedule {
   if (!parsed.ok) return { kind: 'unknown', reason: 'unparsed' };
-  const holiday = holidayInfo(date);
-  if (holiday.status === 'possible') return { kind: 'unknown', reason: 'possible_holiday' };
-  const isPh = holiday.status === 'certain';
   const weekday = weekdayOf(date);
+  const month = Number(date.slice(5, 7));
+  const dayOfMonth = Number(date.slice(8, 10));
+  const holiday = holidayInfo(date);
+  if (holiday.status === 'possible') {
+    // Jour férié cantonal possible : inconnu, sauf si l'horaire prévoit explicitement cette date.
+    const explicit = parsed.rules.some(
+      (r) =>
+        (r.monthDay && r.monthDay.month === month && dayOfMonth >= r.monthDay.from && dayOfMonth <= r.monthDay.to) ||
+        (r.dateRange && date >= r.dateRange.from && date <= r.dateRange.to),
+    );
+    if (!explicit) return { kind: 'unknown', reason: 'possible_holiday' };
+  }
+  const isPh = holiday.status === 'certain';
   let intervals: Array<[number, number]> = [];
   let unknown = false;
   for (const rule of parsed.rules) {
+    if (rule.dateRange && (date < rule.dateRange.from || date > rule.dateRange.to)) continue;
+    if (rule.months && !rule.months.has(month)) continue;
+    if (rule.monthDay && (rule.monthDay.month !== month || dayOfMonth < rule.monthDay.from || dayOfMonth > rule.monthDay.to)) {
+      continue;
+    }
     const matches = rule.allDays || rule.days.has(weekday) || (rule.ph && isPh);
     if (!matches) continue;
     if (!rule.additional) {
