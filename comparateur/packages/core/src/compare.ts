@@ -4,7 +4,7 @@
  */
 
 import { haversineKm } from './geo';
-import { formatDaySchedule, parseOpeningHours, scheduleForDate, type ParsedOpeningHours } from './opening-hours';
+import { formatDaySchedule, parseOpeningHours, PRESUMED_HOURS, scheduleForDate, type ParsedOpeningHours } from './opening-hours';
 import {
   optimize,
   HARD_MAX_STORES,
@@ -138,6 +138,12 @@ export interface MissingLineDto {
 export interface SavingsDto {
   referenceLabel: string;
   referenceKind: 'best_single_store' | 'user_reference_chain';
+  /** Le scénario est la référence elle-même (économie nulle par construction). */
+  isReference: boolean;
+  /** Articles trouvés par le scénario mais pas par la référence. */
+  extraCoveredLines: number;
+  /** Articles trouvés par la référence mais pas par le scénario. */
+  lostLines: number;
   comparableLines: number;
   purchaseSavingsCents: number;
   travelDeltaCents: number;
@@ -302,7 +308,11 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   const specific = storeSpecificIds(deps.index);
   const profiles: PriceProfile[] = [];
   const profileIdx = new Map<string, number>();
+  /** Horaires publiés (affichage). */
   const hoursCache = new Map<string, ParsedOpeningHours>();
+  /** Horaires utilisés pour le calcul (présumés si inconnus). */
+  const effectiveHours = new Map<string, ParsedOpeningHours>();
+  const presumed = new Set<string>();
   const storesByProfile = new Map<number, CandidateStore[]>();
   for (const store of deps.stores) {
     const profile = profileForStore(store, specific);
@@ -315,7 +325,13 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     const list = storesByProfile.get(idx) ?? [];
     list.push(store);
     storesByProfile.set(idx, list);
-    hoursCache.set(store.id, parseOpeningHours(store.openingHours));
+    const parsed = parseOpeningHours(store.openingHours);
+    hoursCache.set(store.id, parsed);
+    if (parsed.ok) effectiveHours.set(store.id, parsed);
+    else {
+      effectiveHours.set(store.id, PRESUMED_HOURS);
+      presumed.add(store.id);
+    }
   }
   if (deps.stores.length === 0) warnings.add('no_stores_in_radius');
 
@@ -325,7 +341,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   for (const [, list] of storesByProfile) {
     const open = list
       .filter((s) => {
-        const sch = scheduleForDate(hoursCache.get(s.id) as ParsedOpeningHours, scheduleDate);
+        const sch = scheduleForDate(effectiveHours.get(s.id) as ParsedOpeningHours, scheduleDate);
         return sch.kind === 'unknown' || sch.intervals.length > 0;
       })
       .sort((a, b) => a.crowKm - b.crowKm)
@@ -359,7 +375,8 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
 
   const optimizerStores: OptimizerStore[] = kept.map((s) => ({
     profileIndex: profileIdx.get(profileForStore(s, specific).key) as number,
-    hours: hoursCache.get(s.id) as ParsedOpeningHours,
+    hours: effectiveHours.get(s.id) as ParsedOpeningHours,
+    presumed: presumed.has(s.id),
   }));
 
   const result = optimize({
@@ -493,22 +510,34 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     return store ? `${deps.chains.get(store.chainId)?.name ?? store.chainId} (${store.name})` : '';
   })();
 
-  const savingsFor = (assignment: Array<number | null>, route: RoutePlan): SavingsDto | null => {
+  const savingsFor = (plan: Plan): SavingsDto | null => {
+    const { assignment, route } = plan;
     if (!reference || !reference.route) return null;
     let comparable = 0;
     let purchaseSavings = 0;
+    let extra = 0;
+    let lost = 0;
     lines.forEach((_, l) => {
       const a = assignment[l];
       const r = reference.assignment[l];
+      if (a != null && r == null) extra++;
+      if (a == null && r != null) lost++;
       if (a == null || r == null) return;
       comparable++;
       purchaseSavings += ((costs[l] as Array<number | null>)[r] as number) - ((costs[l] as Array<number | null>)[a] as number);
     });
     const travelDelta =
       route.travelCostCents + route.inStoreCostCents - (reference.route.travelCostCents + reference.route.inStoreCostCents);
+    const isReference =
+      plan.profiles.length === 1 &&
+      plan.profiles[0] === reference.profileIndex &&
+      plan.route.stops[0]?.storeIndex === reference.route.stops[0]?.storeIndex;
     return {
       referenceLabel,
       referenceKind,
+      isReference,
+      extraCoveredLines: extra,
+      lostLines: lost,
       comparableLines: comparable,
       purchaseSavingsCents: purchaseSavings,
       travelDeltaCents: travelDelta,
@@ -525,6 +554,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     for (const it of allItems) statusCounts[it.option.status] = (statusCounts[it.option.status] ?? 0) + 1;
     const scenarioWarnings: string[] = [];
     if (stops.some((s) => s.openStatus === 'unknown')) scenarioWarnings.push('opening_hours_unknown');
+    if (stops.some((s) => presumed.has(s.store.id))) scenarioWarnings.push('presumed_hours');
     if (plan.coveredLines < lines.length) scenarioWarnings.push('incomplete_basket');
     const stopPoints = stops.map((s) => ({ lat: s.store.lat, lon: s.store.lon }));
     return {
@@ -547,7 +577,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
         returnLeg: plan.route.returnLeg,
       },
       globalCents: plan.globalCents,
-      savings: savingsFor(plan.assignment, plan.route),
+      savings: savingsFor(plan),
       statusCounts,
       navigationUrl: googleMapsRoute(req.origin, stopPoints, req.travel.mode, req.travel.returnToOrigin),
       warnings: scenarioWarnings,

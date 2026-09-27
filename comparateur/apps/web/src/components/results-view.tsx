@@ -1,0 +1,425 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import type { CompareResultDto, OutlookDayDto, ScenarioDto, ScenarioKind } from '@cabas/core';
+import { format, getMessages, paths, plural, type Locale } from '@/i18n';
+import { duration, km, money, shortCalendarDate, shortDate, time } from '@/lib/format';
+import { useApp } from '@/lib/store';
+import { IconRoute } from './icons';
+import { OptionLine } from './price-bits';
+import { Button, Card, ChainBadge, cx, Notice, Pill } from './ui';
+
+const ORDER: ScenarioKind[] = ['single_store', 'cheapest_products', 'optimized_total'];
+
+export function ResultsView({ result, locale, onPickDate }: { result: CompareResultDto; locale: Locale; onPickDate?: (date: string) => void }) {
+  const m = getMessages(locale);
+  const scenarios = ORDER.map((k) => result.scenarios.find((s) => s.kind === k)).filter((s): s is ScenarioDto => Boolean(s));
+  const [selected, setSelected] = useState<ScenarioKind>(scenarios.some((s) => s.kind === 'optimized_total') ? 'optimized_total' : (scenarios[0]?.kind ?? 'single_store'));
+  const current = scenarios.find((s) => s.kind === selected) ?? scenarios[0];
+
+  const globalWarnings = result.meta.warnings.filter((w) => w !== 'demo_data' && m.results.warnings[w]);
+
+  return (
+    <div className="space-y-5">
+      {result.meta.dataMode !== 'live' && <Notice tone="demo">{m.results.demoNotice}</Notice>}
+      {globalWarnings.length > 0 && (
+        <div className="space-y-1.5">
+          {globalWarnings.map((w) => (
+            <Notice key={w} tone={w === 'no_open_store' || w === 'no_stores_in_radius' ? 'warn' : 'info'}>
+              {m.results.warnings[w]}
+            </Notice>
+          ))}
+        </div>
+      )}
+
+      {scenarios.length === 0 ? null : (
+        <>
+          <div role="tablist" aria-label="Scénarios" className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {scenarios.map((s) => (
+              <ScenarioTab key={s.kind} s={s} locale={locale} active={s.kind === current?.kind} onSelect={() => setSelected(s.kind)} />
+            ))}
+          </div>
+          {current && <ScenarioDetail s={current} locale={locale} />}
+        </>
+      )}
+
+      <Alternatives result={result} locale={locale} chosen={result.scenarios.find((x) => x.kind === 'optimized_total')?.storeCount ?? null} />
+      <Ranking result={result} locale={locale} />
+      {result.planning && <Planning result={result} locale={locale} />}
+      {result.outlook.length > 0 && <Outlook days={result.outlook} locale={locale} onPick={onPickDate} target={result.meta.targetDate} />}
+
+      <p className="text-xs text-muted">
+        {result.meta.travelEstimated ? `${m.results.estimated} ` : ''}
+        {format(m.results.computedIn, { ms: result.meta.stats.durationMs })} · {result.meta.storesConsidered} succursales ·{' '}
+        {result.meta.stats.subsetsEvaluated} combinaisons évaluées.
+      </p>
+    </div>
+  );
+}
+
+function ScenarioTab({ s, locale, active, onSelect }: { s: ScenarioDto; locale: Locale; active: boolean; onSelect: () => void }) {
+  const m = getMessages(locale);
+  const saving = s.savings && s.savings.globalSavingsCents > 0 ? s.savings.globalSavingsCents : 0;
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onSelect}
+      className={cx(
+        'rounded-2xl border p-3 text-left transition-colors',
+        active ? 'border-primary bg-primary-soft/60 ring-2 ring-primary/30' : 'border-border bg-surface hover:bg-surface-2',
+      )}
+    >
+      <span className="flex items-center justify-between gap-2">
+        <span className="font-semibold">{m.results.scenarios[s.kind]}</span>
+        {s.kind === 'optimized_total' && <Pill tone="primary">{m.results.recommended}</Pill>}
+      </span>
+      <span className="num mt-1 block text-2xl font-extrabold tracking-tight">{money(s.kind === 'optimized_total' ? s.globalCents : s.purchaseCents)}</span>
+      <span className="block text-sm text-muted">
+        {s.kind === 'optimized_total' ? m.results.global : m.results.products} · {plural(m.results.storeCount, s.storeCount)} · {km(s.travel.distanceKm)}
+      </span>
+      <span className="mt-1.5 flex flex-wrap gap-1">
+        {saving > 0 && <Pill tone="accent">−{money(saving)}</Pill>}
+        {s.coveredLines < s.totalLines && (
+          <Pill tone="warn">{plural(m.results.missingCount, s.totalLines - s.coveredLines)}</Pill>
+        )}
+      </span>
+    </button>
+  );
+}
+
+function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="rounded-xl bg-surface-2 p-2.5">
+      <p className="text-xs text-muted">{label}</p>
+      <p className="num text-lg font-bold">{value}</p>
+      {sub && <p className="text-xs text-muted">{sub}</p>}
+    </div>
+  );
+}
+
+function ScenarioDetail({ s, locale }: { s: ScenarioDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const router = useRouter();
+  const saveList = useApp((st) => st.saveList);
+  const savings = s.savings;
+  return (
+    <section aria-label={m.results.scenarios[s.kind]} className="space-y-4">
+      <p className="text-muted">{m.results.scenarioHelp[s.kind]}</p>
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Stat
+          label={m.results.products}
+          value={money(s.purchaseCents)}
+          sub={s.promoSavingsCents > 0 ? format(m.results.promoSaved, { amount: money(s.promoSavingsCents) }) : undefined}
+        />
+        <Stat
+          label={m.results.travel}
+          value={money(s.travel.travelCostCents + s.travel.inStoreCostCents)}
+          sub={`${km(s.travel.distanceKm)} · ${duration(s.travel.driveMin)}`}
+        />
+        <Stat label={m.results.duration} value={duration(s.travel.totalMin)} sub={`${duration(s.travel.inStoreMin)} ${m.results.inStore}`} />
+        <Stat label={m.results.global} value={money(s.globalCents)} sub={plural(m.results.storeCount, s.storeCount)} />
+      </div>
+
+      {savings && <SavingsCard savings={savings} locale={locale} />}
+
+      {s.warnings.includes('presumed_hours') ? (
+        <Notice tone="warn">{m.results.warnings.presumed_hours}</Notice>
+      ) : (
+        s.warnings.includes('opening_hours_unknown') && <Notice tone="warn">{m.results.warnings.opening_hours_unknown}</Notice>
+      )}
+
+      <Card className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="flex items-center gap-2 text-lg font-bold">
+            <IconRoute /> {m.results.route}
+          </h3>
+          <a
+            href={s.navigationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold hover:bg-surface-2"
+          >
+            {m.results.openRoute} ↗
+          </a>
+        </div>
+        <ol className="space-y-3">
+          {s.stops.map((stop) => (
+            <li key={stop.store.id} className="flex gap-3">
+              <span className="num grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-on-primary">{stop.order}</span>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold">
+                  {stop.store.chainName} <span className="font-normal text-muted">· {stop.store.name}</span>
+                </p>
+                {stop.store.address && <p className="text-sm text-muted">{stop.store.address}</p>}
+                <p className="flex flex-wrap items-center gap-1.5 text-sm text-muted">
+                  {km(stop.legDistanceKm)} · {duration(stop.legDurationMin)}
+                  {stop.arrivalTime && <> · {format(m.results.arrival, { time: time(stop.arrivalTime) })}</>}
+                  {stop.openStatus === 'open' && <Pill tone="primary">{m.results.openStatus.open}</Pill>}
+                  {stop.openStatus === 'unknown' && <Pill tone="warn">{m.results.openStatus.unknown}</Pill>}
+                  {stop.store.hoursOnDate && <span>· {stop.store.hoursOnDate}</span>}
+                </p>
+              </div>
+            </li>
+          ))}
+          {s.travel.returnLeg && (
+            <li className="flex gap-3 text-sm text-muted">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-border">⌂</span>
+              Retour · {km(s.travel.returnLeg.distanceKm)} · {duration(s.travel.returnLeg.durationMin)}
+            </li>
+          )}
+        </ol>
+      </Card>
+
+      {s.stops.map((stop) => (
+        <Card key={stop.store.id} className="print-break">
+          <div className="mb-2 flex items-center gap-3">
+            <ChainBadge badge={stop.store.chainBadge} name={stop.store.chainName} />
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold">
+                {stop.order}. {stop.store.chainName}
+              </h3>
+              <p className="truncate text-sm text-muted">{stop.store.name}</p>
+            </div>
+            <p className="num text-right font-bold">{money(stop.subtotalCents)}</p>
+          </div>
+          <ul className="divide-y divide-border">
+            {stop.items.map((it) => (
+              <li key={it.lineId} className="py-2.5">
+                <OptionLine productName={it.productName} qty={it.qty} option={it.option} locale={locale} />
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ))}
+
+      {s.missing.length > 0 && (
+        <Card>
+          <h3 className="mb-2 font-bold">{m.results.missingTitle}</h3>
+          <ul className="space-y-2 text-sm">
+            {s.missing.map((mi) => (
+              <li key={mi.lineId}>
+                <p className="font-medium">
+                  {mi.qty > 1 ? `${mi.qty} × ` : ''}
+                  {mi.productName}
+                </p>
+                <p className="text-muted">{mi.scope === 'everywhere' ? m.results.missingEverywhere : m.results.missingSelected}</p>
+                {mi.lastKnown && (
+                  <p className="text-muted">
+                    {format(m.results.lastKnown, { price: money(mi.lastKnown.priceCents), date: shortDate(mi.lastKnown.observedAt) })}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      <p className="text-xs text-muted">{m.status.availability}</p>
+
+      <Button
+        size="lg"
+        className="w-full"
+        onClick={() => {
+          saveList(s.kind);
+          router.push(paths.list(locale));
+        }}
+      >
+        {m.results.useList}
+      </Button>
+    </section>
+  );
+}
+
+/**
+ * Économie (ou surcoût) par rapport à la référence, présentée sans l'embellir :
+ * produits, trajet, bilan, et différences de couverture du panier.
+ */
+function SavingsCard({ savings, locale }: { savings: NonNullable<ScenarioDto['savings']>; locale: Locale }) {
+  const m = getMessages(locale);
+  if (savings.isReference) {
+    return (
+      <Card>
+        <p className="text-[15px]">
+          <span className="font-semibold">{m.results.noSavings} : </span>
+          {savings.referenceLabel}
+        </p>
+      </Card>
+    );
+  }
+  const g = savings.globalSavingsCents;
+  return (
+    <Card className="space-y-1.5">
+      <p className="text-[15px]">
+        <span className="font-semibold">{g > 0 ? m.results.savings : g < 0 ? m.results.surcharge : m.results.equivalent}</span>
+        {g !== 0 && (
+          <>
+            {' : '}
+            <span className={cx('num font-bold', g > 0 ? 'text-accent' : 'text-warn')}>{money(Math.abs(g))}</span>
+          </>
+        )}{' '}
+        {format(m.results.savingsVs, { ref: savings.referenceLabel })}, {plural(m.results.savingsOn, savings.comparableLines)}.
+      </p>
+      <p className="num text-sm text-muted">
+        {m.results.productsDelta} {savings.purchaseSavingsCents >= 0 ? '−' : '+'}
+        {money(Math.abs(savings.purchaseSavingsCents))} · {m.results.travelDelta} {savings.travelDeltaCents > 0 ? '+' : '−'}
+        {money(Math.abs(savings.travelDeltaCents))}
+      </p>
+      {savings.extraCoveredLines > 0 && (
+        <p className="text-sm">{plural(m.results.extraCovered, savings.extraCoveredLines, { ref: savings.referenceLabel })}</p>
+      )}
+      {savings.lostLines > 0 && (
+        <p className="text-sm text-warn">{plural(m.results.lostCovered, savings.lostLines, { ref: savings.referenceLabel })}</p>
+      )}
+      <details>
+        <summary className="text-sm font-medium text-primary">{m.results.formula}</summary>
+        <p className="mt-1 text-sm text-muted">{m.results.formulaText}</p>
+      </details>
+    </Card>
+  );
+}
+
+function Alternatives({ result, locale, chosen }: { result: CompareResultDto; locale: Locale; chosen: number | null }) {
+  const m = getMessages(locale);
+  const alts = result.alternativesByStoreCount.filter((a): a is NonNullable<typeof a> => a !== null);
+  if (alts.length < 2) return null;
+  const max = Math.max(...alts.map((a) => a.globalCents));
+  return (
+    <Card>
+      <h2 className="font-bold">{m.results.alternatives}</h2>
+      <p className="mb-3 text-sm text-muted">{m.results.alternativesHelp}</p>
+      <ul className="space-y-2">
+        {alts.map((a) => (
+          <li key={a.storeCount} className="grid grid-cols-[6.5rem_1fr_auto] items-center gap-2 text-sm">
+            <span>
+              {plural(m.results.storeCount, a.storeCount)}
+              {a.coveredLines < result.totalLines && (
+                <span className="block text-xs text-warn">{format(m.results.coverage, { covered: a.coveredLines, total: result.totalLines })}</span>
+              )}
+            </span>
+            <span className="h-3 rounded-full bg-surface-2">
+              <span
+                className={cx('block h-3 rounded-full', a.storeCount === chosen ? 'bg-primary' : 'bg-muted/40')}
+                style={{ width: `${Math.max(8, (a.globalCents / max) * 100)}%` }}
+              />
+            </span>
+            <span className="num text-right font-semibold">
+              {money(a.globalCents)}
+              {a.storeCount === chosen && <span className="block text-xs font-medium text-primary">{m.results.chosen}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function Ranking({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  if (result.singleStoreRanking.length === 0) return null;
+  return (
+    <Card>
+      <h2 className="mb-2 font-bold">{m.results.ranking}</h2>
+      <ul className="divide-y divide-border">
+        {result.singleStoreRanking.map((r) => (
+          <li key={r.chainId} className="flex items-center gap-3 py-2">
+            <ChainBadge badge={r.chainBadge} name={r.chainName} size="sm" />
+            <div className="min-w-0 flex-1">
+              <p className="font-medium">{r.chainName}</p>
+              <p className="text-xs text-muted">
+                {!r.reachable
+                  ? m.results.unreachable
+                  : r.isComplete
+                    ? `${r.store?.name ?? ''} · ${km(r.distanceKm ?? 0)}`
+                    : plural(m.results.rankingIncomplete, r.totalLines - r.coveredLines)}
+              </p>
+            </div>
+            <span className={cx('num font-semibold', !r.isComplete && 'text-muted')}>{money(r.purchaseCents)}</span>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function Planning({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const p = result.planning;
+  if (!p) return null;
+  const target = shortCalendarDate(p.targetDate);
+  return (
+    <Card className="space-y-3">
+      <h2 className="font-bold">{format(m.results.planningTitle, { date: target })}</h2>
+      <div className="grid grid-cols-3 gap-2">
+        <Stat label={m.results.planningToday} value={money(p.todayPurchaseCents)} />
+        <Stat label={format(m.results.planningTarget, { date: target })} value={money(p.targetPurchaseCents)} />
+        <Stat
+          label={m.results.planningDiff}
+          value={`${p.differenceCents > 0 ? '−' : p.differenceCents < 0 ? '+' : ''}${money(Math.abs(p.differenceCents))}`}
+          sub={p.differenceCents > 0 ? m.results.planningCheaperLater : p.differenceCents < 0 ? m.results.planningDearerLater : undefined}
+        />
+      </div>
+      {p.startingPromotions.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold">{m.results.planningStarting}</h3>
+          <ul className="mt-1 space-y-1 text-sm">
+            {p.startingPromotions.map((e) => (
+              <li key={`${e.lineId}-${e.chainId}-${e.validFrom}`}>
+                <Pill tone="accent">{e.mechanic}</Pill> {e.productName} · {e.chainName} · dès le {shortCalendarDate(e.validFrom)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {p.expiringPromotions.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold">{m.results.planningExpiring}</h3>
+          <ul className="mt-1 space-y-1 text-sm">
+            {p.expiringPromotions.map((e) => (
+              <li key={`${e.lineId}-${e.chainId}-${e.validTo}`}>
+                <Pill>{e.mechanic}</Pill> {e.productName} · {e.chainName} · jusqu’au {shortCalendarDate(e.validTo)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p className="text-sm text-muted">{m.results.planningNote}</p>
+    </Card>
+  );
+}
+
+function Outlook({ days, locale, onPick, target }: { days: OutlookDayDto[]; locale: Locale; onPick?: (d: string) => void; target: string }) {
+  const m = getMessages(locale);
+  const max = Math.max(...days.map((d) => d.purchaseCents));
+  const min = Math.min(...days.map((d) => d.purchaseCents));
+  const span = Math.max(1, max - min);
+  return (
+    <Card>
+      <h2 className="font-bold">{m.results.outlookTitle}</h2>
+      <p className="mb-3 text-sm text-muted">{m.results.outlookHelp}</p>
+      <ol className="scrollbar-none -mx-1 flex items-end gap-1.5 overflow-x-auto px-1 pb-1">
+        {days.map((d) => {
+          const h = 40 + ((d.purchaseCents - min) / span) * 60;
+          const best = d.purchaseCents === min;
+          const selected = d.date === target;
+          return (
+            <li key={d.date} className="flex min-w-[3.4rem] flex-1 flex-col items-center gap-1">
+              <span className="num text-[11px] font-semibold">{money(d.purchaseCents).replace('CHF', '').trim()}</span>
+              <button
+                type="button"
+                onClick={() => onPick?.(d.date)}
+                aria-label={`${shortCalendarDate(d.date)} : ${money(d.purchaseCents)}`}
+                className={cx('w-full rounded-t-lg transition-colors', best ? 'bg-primary' : 'bg-primary/30 hover:bg-primary/50', selected && 'ring-2 ring-accent')}
+                style={{ height: `${h}px` }}
+              />
+              <span className="text-center text-[11px] leading-tight text-muted">{shortCalendarDate(d.date)}</span>
+              {d.promoLines > 0 && <span className="text-[10px] font-semibold text-accent">{d.promoLines} promo</span>}
+            </li>
+          );
+        })}
+      </ol>
+    </Card>
+  );
+}

@@ -40,6 +40,11 @@ export type ScheduleConstraint =
 export interface OptimizerStore {
   profileIndex: number;
   hours: ParsedOpeningHours;
+  /**
+   * Horaires présumés (succursale sans horaires connus) : « ouvert » selon les
+   * horaires présumés est rapporté comme « non vérifié », « fermé » exclut la visite.
+   */
+  presumed?: boolean;
 }
 
 export interface OptimizerInput {
@@ -119,6 +124,13 @@ type Availability = (arrivalOffsetMin: number) => StopOpenStatus;
 
 function buildAvailability(store: OptimizerStore, schedule: ScheduleConstraint, shopMin: number): Availability {
   if (schedule.kind === 'none') return () => 'not_checked';
+  if (store.presumed) {
+    const inner = buildAvailability({ ...store, presumed: false }, schedule, shopMin);
+    return (offset) => {
+      const st = inner(offset);
+      return st === 'open' ? 'unknown' : st;
+    };
+  }
   if (schedule.kind === 'date') {
     const s = scheduleForDate(store.hours, schedule.date);
     const status: OpenStatus = s.kind === 'unknown' ? 'unknown' : s.intervals.length > 0 ? 'open' : 'closed';

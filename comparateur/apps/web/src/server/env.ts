@@ -1,0 +1,30 @@
+import 'server-only';
+import { existsSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+function findDataDir(): string {
+  if (process.env.DATA_DIR) return resolve(process.env.DATA_DIR);
+  for (const candidate of [join(process.cwd(), 'data'), join(process.cwd(), '..', '..', 'data')]) {
+    if (existsSync(join(candidate, 'stores'))) return candidate;
+  }
+  return join(process.cwd(), 'data');
+}
+
+/**
+ * Configuration serveur (variables d'environnement). Aucun secret n'est codé en dur :
+ * voir `.env.example` et docs/DEPLOIEMENT.md.
+ */
+export const serverEnv = {
+  dataBackend: (process.env.DATA_BACKEND ?? (process.env.DATABASE_URL ? 'postgres' : 'memory')) as 'postgres' | 'memory',
+  databaseUrl: process.env.DATABASE_URL,
+  databaseSsl: process.env.DATABASE_SSL === 'true',
+  dataDir: findDataDir(),
+  osrmUrl: process.env.OSRM_URL || null,
+  adminUsername: process.env.ADMIN_USERNAME ?? 'admin',
+  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH ?? '',
+  sessionSecret: process.env.SESSION_SECRET ?? '',
+  trustProxy: process.env.TRUST_PROXY === 'true',
+  siteUrl: (process.env.SITE_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
+  importDir: process.env.IMPORT_DIR ? resolve(process.env.IMPORT_DIR) : join(findDataDir(), 'imports', 'inbox'),
+  isProduction: process.env.NODE_ENV === 'production',
+};

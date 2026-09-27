@@ -341,3 +341,13 @@ export function formatDaySchedule(parsed: ParsedOpeningHours, date: string): str
   if (s.intervals.length === 1 && s.intervals[0]?.[0] === 0 && s.intervals[0]?.[1] === 1440) return '24 h/24';
   return s.intervals.map(([a, b]) => `${hhmm(a)}–${b === 1440 ? '24:00' : hhmm(b)}`).join(', ');
 }
+
+/**
+ * Horaires présumés (pratique usuelle des supermarchés suisses), appliqués aux
+ * succursales sans horaires connus. Hors de ces plages, la succursale est
+ * considérée comme fermée (on n'envoie personne vers un magasin probablement
+ * fermé) ; dans ces plages, son état reste « non vérifié ».
+ */
+export const PRESUMED_HOURS_TEXT = 'Mo-Fr 08:00-18:30; Sa 08:00-17:00; Su off; PH off';
+export const PRESUMED_HOURS: ParsedOpeningHours = parseOpeningHours(PRESUMED_HOURS_TEXT);
+

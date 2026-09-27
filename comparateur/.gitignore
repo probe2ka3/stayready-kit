@@ -10,3 +10,6 @@ data/imports/inbox/
 test-results/
 playwright-report/
 .DS_Store
+apps/web/next-env.d.ts
+apps/web/AGENTS.md
+apps/web/CLAUDE.md

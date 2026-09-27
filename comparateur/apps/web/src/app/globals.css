@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+
+/*
+ * Jetons de design (couleurs sémantiques). Les composants n'utilisent que ces
+ * jetons : le thème sombre s'obtient en redéfinissant les variables.
+ */
+:root {
+  --bg: #f5f6f2;
+  --surface: #ffffff;
+  --surface-2: #eef1ec;
+  --text: #15201a;
+  --muted: #56635b;
+  --border: #dce2da;
+  --primary: #1d7a4b;
+  --primary-strong: #145d38;
+  --primary-soft: #e2f2e8;
+  --on-primary: #ffffff;
+  --accent: #b93d0c;
+  --accent-soft: #fdece2;
+  --warn: #8a5a00;
+  --warn-soft: #fdf3d6;
+  --danger: #b42318;
+  --danger-soft: #fdeceb;
+  --info: #1e4fc2;
+  --info-soft: #e7eefd;
+  --demo: #6d35d6;
+  --demo-soft: #f0e9fd;
+  --focus: #1e4fc2;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1310;
+    --surface: #151c18;
+    --surface-2: #1c2520;
+    --text: #e6eee8;
+    --muted: #9eaca4;
+    --border: #2a3530;
+    --primary: #3cb577;
+    --primary-strong: #5fd396;
+    --primary-soft: #183526;
+    --on-primary: #04130a;
+    --accent: #ff8a4c;
+    --accent-soft: #3b2215;
+    --warn: #f3c34d;
+    --warn-soft: #362a0d;
+    --danger: #ff7b70;
+    --danger-soft: #3a1714;
+    --info: #86a8ff;
+    --info-soft: #172442;
+    --demo: #b69bff;
+    --demo-soft: #271a45;
+    --focus: #86a8ff;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-demo: var(--demo);
+  --color-demo-soft: var(--demo-soft);
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 4.5rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Barre de navigation inférieure : espace réservé en bas de page (mobile). */
+.pb-nav {
+  padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .pb-nav {
+    padding-bottom: 2rem;
+  }
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Impression / export PDF des listes de courses. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .print-break {
+    break-inside: avoid;
+  }
+  .pb-nav {
+    padding-bottom: 0;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}

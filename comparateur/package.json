@@ -21,9 +21,11 @@
     "db:migrate": "pnpm job migrate",
     "db:seed": "pnpm job seed",
     "data:refresh": "pnpm job daily",
-    "audit:deps": "pnpm audit --prod"
+    "audit:deps": "pnpm audit --prod",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^22.20.4",
     "typescript": "~5.9.3",
     "vitest": "^5.0.2"
