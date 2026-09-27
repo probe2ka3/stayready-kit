@@ -79,7 +79,7 @@ export function BasketView({ locale }: { locale: Locale }) {
   const m = getMessages(locale);
   const hydrated = useHydrated();
   const { basket, products, favorites, prefs, location } = useApp();
-  const { setQty, removeProduct, setLinePrefs, setPrefs, clearBasket } = useApp();
+  const { setQty, removeProduct, setLinePrefs, setPrefs, clearBasket, forgetEverything } = useApp();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string | null>(null);
   const [results, setResults] = useState<ProductDto[]>([]);
@@ -288,6 +288,18 @@ export function BasketView({ locale }: { locale: Locale }) {
             <Toggle checked={prefs.organicOnly} onChange={(v) => setPrefs({ organicOnly: v })} label={m.basket.organicOnly} />
             <Toggle checked={prefs.swissOnly} onChange={(v) => setPrefs({ swissOnly: v })} label={m.basket.swissOnly} />
           </Card>
+          <p className="mt-3 text-sm text-muted">
+            {m.basket.forgetHint}{' '}
+            <button
+              type="button"
+              className="font-medium text-danger underline underline-offset-2"
+              onClick={() => {
+                if (window.confirm(m.basket.forgetConfirm)) forgetEverything();
+              }}
+            >
+              {m.basket.forget}
+            </button>
+          </p>
         </section>
       )}
 

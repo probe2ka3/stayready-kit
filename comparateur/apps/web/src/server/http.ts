@@ -35,7 +35,8 @@ export function sameOrigin(req: Request): boolean {
   if (!origin) return req.method === 'GET' || req.method === 'HEAD';
   try {
     const o = new URL(origin);
-    const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+    // X-Forwarded-Host n'est pris en compte que derrière un proxy de confiance.
+    const host = (serverEnv.trustProxy ? req.headers.get('x-forwarded-host') : null) ?? req.headers.get('host');
     return o.host === host;
   } catch {
     return false;
