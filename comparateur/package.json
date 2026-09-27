@@ -1,0 +1,31 @@
+{
+  "name": "cabas-comparateur",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Comparateur de courses intelligent pour la Suisse (nom de travail : Cabas)",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @cabas/web dev",
+    "build": "pnpm --filter @cabas/web build",
+    "start": "pnpm --filter @cabas/web start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --project integration",
+    "typecheck": "pnpm -r --parallel typecheck",
+    "lint": "pnpm --filter @cabas/web lint",
+    "job": "pnpm --filter @cabas/worker job",
+    "db:migrate": "pnpm job migrate",
+    "db:seed": "pnpm job seed",
+    "data:refresh": "pnpm job daily",
+    "audit:deps": "pnpm audit --prod"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.4",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.2"
+  }
+}

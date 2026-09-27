@@ -1,0 +1,12 @@
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+data/imports/inbox/
+test-results/
+playwright-report/
+.DS_Store
