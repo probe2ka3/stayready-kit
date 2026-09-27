@@ -41,6 +41,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@cabas/core', '@cabas/reference', '@cabas/connectors', '@cabas/db'],
   serverExternalPackages: ['postgres'],
+  experimental: { serverActions: { bodySizeLimit: '6mb' } },
   async redirects() {
     return [{ source: '/', destination: '/fr', permanent: false }];
   },

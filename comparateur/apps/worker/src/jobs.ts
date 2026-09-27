@@ -15,8 +15,10 @@ import {
 } from '@cabas/connectors';
 import {
   applyBatch,
+  audit,
   chainDataStatus,
   finishRun,
+  purgeDemoData,
   replaceLocalities,
   runMigrations,
   runQualityChecks,
@@ -201,6 +203,16 @@ export async function jobStatus(ctx: JobContext) {
   }
 }
 
+/** Supprime les données de démonstration (avant l'ouverture avec des prix réels). */
+export async function jobPurgeDemo(ctx: JobContext) {
+  if (!ctx.flags.confirm) throw new Error('Ajouter --confirm pour supprimer les données de démonstration');
+  await withDb(ctx, async (db) => {
+    const n = await purgeDemoData(db);
+    await audit(db, String(ctx.flags.by ?? 'cli'), 'demo.purge', null, null, { products: n });
+    ctx.log.info('Données de démonstration supprimées', { products: n });
+  });
+}
+
 /** Initialisation complète d'une base : migrations, référentiel, géodonnées, démo, qualité. */
 export async function jobSeed(ctx: JobContext) {
   await jobMigrate(ctx);
@@ -234,6 +246,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },
   daily: { run: jobDaily, help: 'Tâche quotidienne (connecteurs + qualité)' },
   weekly: { run: jobWeekly, help: 'Tâche hebdomadaire (succursales OSM)' },
+  'purge-demo': { run: jobPurgeDemo, help: 'Supprime les données de démonstration (--confirm)' },
 };
 
 export function loggerFor(job: string): Logger {

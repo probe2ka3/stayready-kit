@@ -22,7 +22,8 @@
     "db:seed": "pnpm job seed",
     "data:refresh": "pnpm job daily",
     "audit:deps": "pnpm audit --prod",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:admin": "playwright test -c playwright.admin.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

@@ -335,3 +335,15 @@ export async function loadOfferIndex(
   }));
   return buildOfferIndex({ products, matches, prices, promotions: promos });
 }
+
+/**
+ * Supprime toutes les données de démonstration (articles fictifs et, en cascade,
+ * leurs prix, promotions et correspondances). À exécuter avant l'ouverture
+ * publique avec des prix réels.
+ */
+export async function purgeDemoData(handle: DbHandle): Promise<number> {
+  const rows = await handle.sql`DELETE FROM retailer_products WHERE is_demo RETURNING id`;
+  await handle.sql`DELETE FROM price_observations WHERE is_demo`;
+  await handle.sql`DELETE FROM promotions WHERE is_demo`;
+  return rows.length;
+}
