@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -36,6 +37,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Racine du monorepo : inclut les paquets de l'espace de travail dans la sortie autonome.
+  outputFileTracingRoot: fileURLToPath(new URL('../../', import.meta.url)),
   poweredByHeader: false,
   agentRules: false,
   reactStrictMode: true,

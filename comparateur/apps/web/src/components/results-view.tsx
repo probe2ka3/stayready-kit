@@ -283,7 +283,16 @@ function SavingsCard({ savings, locale }: { savings: NonNullable<ScenarioDto['sa
 
 function Alternatives({ result, locale, chosen }: { result: CompareResultDto; locale: Locale; chosen: number | null }) {
   const m = getMessages(locale);
-  const alts = result.alternativesByStoreCount.filter((a): a is NonNullable<typeof a> => a !== null);
+  // N'afficher un nombre de magasins que s'il réduit réellement le coût des produits
+  // (ou couvre davantage d'articles) par rapport aux options avec moins de magasins.
+  const alts: Array<NonNullable<CompareResultDto['alternativesByStoreCount'][number]>> = [];
+  for (const a of result.alternativesByStoreCount) {
+    if (!a) continue;
+    const prev = alts[alts.length - 1];
+    if (!prev || a.coveredLines > prev.coveredLines || (a.coveredLines === prev.coveredLines && a.purchaseCents < prev.purchaseCents)) {
+      alts.push(a);
+    }
+  }
   if (alts.length < 2) return null;
   const max = Math.max(...alts.map((a) => a.globalCents));
   return (

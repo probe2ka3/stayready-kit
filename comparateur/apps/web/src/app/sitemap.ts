@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 import { LOCALES, paths } from '@/i18n';
 import { siteUrl } from '@/lib/site';
 
+// Généré à la demande : utilise SITE_URL de l'environnement d'exécution.
+export const dynamic = 'force-dynamic';
+
 /**
  * Plan du site : uniquement des pages d'information stables. Aucune page n'est
  * générée à partir de prix (non vérifiés en mode démonstration).

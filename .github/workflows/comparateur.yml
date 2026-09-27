@@ -1,0 +1,68 @@
+name: Comparateur
+
+on:
+  push:
+    paths: ['comparateur/**', '.github/workflows/comparateur.yml']
+  pull_request:
+    paths: ['comparateur/**', '.github/workflows/comparateur.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comparateur-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: comparateur
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: cabas
+          POSTGRES_PASSWORD: cabas_ci
+          POSTGRES_DB: cabas_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U cabas -d cabas_test"
+          --health-interval 5s --health-timeout 5s --health-retries 30
+    env:
+      DATABASE_URL_TEST: postgres://cabas:cabas_ci@localhost:5432/cabas_test
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: comparateur/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: comparateur/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Types
+        run: pnpm typecheck
+      - name: Tests unitaires et d'intégration (PostgreSQL + PostGIS)
+        run: pnpm test
+      - name: Build de production
+        run: pnpm build
+      - name: Navigateur de test
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Tests de bout en bout (site public, mode mémoire)
+        run: pnpm test:e2e
+      - name: Tests de bout en bout (administration, PostgreSQL)
+        env:
+          PGPASSWORD: cabas_ci
+        run: |
+          psql -h localhost -U cabas -d cabas_test -c "CREATE DATABASE cabas_e2e"
+          DATABASE_URL=postgres://cabas:cabas_ci@localhost:5432/cabas_e2e pnpm job seed
+          export E2E_ADMIN_HASH=$(printf '%s' 'test-admin-password-123' | node apps/web/scripts/hash-password.mjs --stdin)
+          E2E_DATABASE_URL=postgres://cabas:cabas_ci@localhost:5432/cabas_e2e pnpm test:e2e:admin
+      - name: Audit des dépendances (production)
+        run: pnpm audit --prod --audit-level=high

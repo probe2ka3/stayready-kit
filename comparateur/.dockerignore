@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+.env
+.env.*
+!.env.example
+test-results
+playwright-report
+coverage
+data/imports/inbox
+docs
+e2e
+e2e-admin

@@ -1,0 +1,51 @@
+# Démarrage complet (base PostGIS + application) :
+#   cp .env.example .env   # puis renseigner les secrets
+#   docker compose up -d db
+#   docker compose run --rm worker seed
+#   docker compose up -d web
+# Tâches : docker compose run --rm worker daily | weekly | quality | import /app/data/imports/inbox/x.csv --connector migros
+services:
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cabas
+      POSTGRES_USER: cabas
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Définir POSTGRES_PASSWORD dans .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cabas -d cabas']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        SITE_URL: ${SITE_URL:-http://localhost:3000}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_BACKEND: postgres
+      DATABASE_URL: postgres://cabas:${POSTGRES_PASSWORD}@db:5432/cabas
+    ports:
+      - '127.0.0.1:3000:3000'
+    depends_on:
+      db: { condition: service_healthy }
+
+  worker:
+    build: { context: ., target: worker }
+    profiles: ['tools']
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://cabas:${POSTGRES_PASSWORD}@db:5432/cabas
+    volumes:
+      - ./data/imports/inbox:/app/data/imports/inbox
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
