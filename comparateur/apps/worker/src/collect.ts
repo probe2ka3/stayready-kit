@@ -32,8 +32,9 @@ import { readLocalitiesSnapshot, readStoresSnapshot, writeStoresSnapshot } from 
 export const DEFAULT_USER_AGENT = 'TesPrixBot/0.1 (comparateur de prix en préparation; collecte respectueuse de robots.txt)';
 
 async function connectorDeps(ctx: JobContext) {
-  const { stores } = await readStoresSnapshot(snapshotPath(ctx.env, 'stores'));
-  const { list } = await readLocalitiesSnapshot(snapshotPath(ctx.env, 'localities'));
+  // Instantanés absents (nouvelle installation, tests) : dépendances vides, sans échec.
+  const { stores } = await readStoresSnapshot(snapshotPath(ctx.env, 'stores')).catch(() => ({ stores: [] }));
+  const { list } = await readLocalitiesSnapshot(snapshotPath(ctx.env, 'localities')).catch(() => ({ list: [] }));
   const resolve = makeLocalityResolver(list);
   const resolveZone = (chainId: string, lat: number, lon: number, zip?: string | null) => {
     const loc = resolve(lat, lon, zip);
@@ -66,10 +67,12 @@ function snapshotMeta(c: PriceConnector) {
  * Avec une base : enregistrement idempotent + alertes. Toujours : instantané dans
  * `data/prices/live/` (utilisé par le mode mémoire).
  */
-export async function jobCollect(ctx: JobContext) {
+export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): Promise<Array<Record<string, unknown>>> {
   const only = typeof ctx.flags.only === 'string' ? new Set(ctx.flags.only.split(',')) : null;
   const deps = await connectorDeps(ctx);
-  const connectors = priceConnectors(deps).filter((c) => LIVE_CONNECTOR_IDS.includes(c.id) && (!only || only.has(c.id)));
+  const connectors = (override ?? priceConnectors(deps).filter((c) => LIVE_CONNECTOR_IDS.includes(c.id))).filter(
+    (c) => !only || only.has(c.id),
+  );
   const archiveDir = ctx.env.env.RAW_ARCHIVE_DIR ?? join(ctx.env.dataDir, 'raw');
   const fetcher = new PoliteFetcher({
     userAgent: ctx.env.env.HTTP_USER_AGENT || DEFAULT_USER_AGENT,
@@ -185,7 +188,8 @@ export async function jobCollect(ctx: JobContext) {
   }
   const purged = await purgeArchive(archiveDir, Number(ctx.env.env.RAW_ARCHIVE_DAYS ?? 30), ctx.now);
   ctx.log.info('Collecte terminée', { requests: fetcher.stats.requests, bytes: fetcher.stats.bytes, retries: fetcher.stats.retries, blocked: fetcher.stats.blocked, archivesPurged: purged });
-  console.table(summary);
+  if (!ctx.flags.quiet) console.table(summary);
+  return summary;
 }
 
 /** Rapport lisible de la dernière collecte (avertissements et rejets), hors dépôt git. */

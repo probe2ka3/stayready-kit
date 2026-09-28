@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Cabas — comparateur de courses',
-    short_name: 'Cabas',
+    name: 'TesPrix — comparateur de courses',
+    short_name: 'TesPrix',
     description: 'Comparez le coût de vos courses en Suisse, trajet compris.',
     start_url: '/fr',
     scope: '/',

@@ -14,3 +14,6 @@ export * from './text';
 export * from './matching';
 export * from './quality';
 export * from './detours';
+export * from './entitlements';
+export * from './sponsored';
+export * from './metrics';

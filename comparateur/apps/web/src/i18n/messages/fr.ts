@@ -1,8 +1,8 @@
 /** Dictionnaire français. Les autres langues doivent reprendre exactement les mêmes clés. */
 export const fr = {
   app: {
-    name: 'Cabas',
-    tagline: 'Comparateur de courses indépendant',
+    name: 'TesPrix',
+    tagline: 'Tes courses, au bon prix, au bon endroit',
     independent: 'Comparateur indépendant, sans affiliation avec les enseignes citées.',
   },
   nav: {
@@ -15,6 +15,7 @@ export const fr = {
     about: 'À propos',
     privacy: 'Confidentialité',
     imprint: 'Mentions légales',
+    terms: 'Conditions',
     main: 'Navigation principale',
     skip: 'Aller au contenu',
   },
@@ -102,6 +103,8 @@ export const fr = {
     brandRequired: 'Marque imposée',
   },
   compare: {
+    outsidePilot:
+      'Votre localité est hors de la zone pilote (Suisse romande) : les prix réels y sont moins nombreux, en dehors de ceux de Lidl, valables dans toute la Suisse.',
     title: 'Comparer',
     whenTitle: 'Quand faites-vous vos courses ?',
     now: 'Maintenant',
@@ -297,8 +300,9 @@ export const fr = {
     new: 'Nouveau',
   },
   footer: {
-    attribution: 'Localités : Source : Office fédéral de topographie swisstopo · Succursales : © les contributeurs d’OpenStreetMap (ODbL)',
-    workingName: '« Cabas » est un nom de travail.',
+    attribution:
+      'Localités : Source : Office fédéral de topographie swisstopo · Succursales : © les contributeurs d’OpenStreetMap (ODbL) · Prix communautaires : Open Prices / Open Food Facts (ODbL)',
+    workingName: '« TesPrix » est un nom provisoire, sous réserve de validation (marque et raison sociale).',
   },
 };
 

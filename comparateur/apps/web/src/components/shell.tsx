@@ -10,7 +10,16 @@ export function Header({ locale }: { locale: Locale }) {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4">
         <Link href={paths.home(locale)} className="flex items-center gap-2 font-semibold tracking-tight" aria-label={`${m.app.name}, accueil`}>
           <LogoMark />
-          <span className="text-lg">{m.app.name}</span>
+          <span className="text-lg">
+            {m.app.name.startsWith('Tes') ? (
+              <>
+                <span className="font-medium">Tes</span>
+                <span className="font-extrabold text-primary">{m.app.name.slice(3)}</span>
+              </>
+            ) : (
+              m.app.name
+            )}
+          </span>
           <span className="hidden text-xs font-normal text-muted sm:inline">· {m.app.tagline}</span>
         </Link>
         <DesktopNav locale={locale} />
@@ -27,6 +36,7 @@ export function Footer({ locale }: { locale: Locale }) {
     [paths.about(locale), m.nav.about],
     [paths.privacy(locale), m.nav.privacy],
     [paths.imprint(locale), m.nav.imprint],
+    [paths.terms(locale), m.nav.terms],
   ];
   return (
     <footer className="no-print mt-12 border-t border-border bg-surface">

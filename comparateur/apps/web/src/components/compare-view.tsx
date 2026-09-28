@@ -61,6 +61,15 @@ export function CompareView({ locale }: { locale: Locale }) {
   const abortRef = useRef<AbortController | null>(null);
   const autoRan = useRef(false);
   const today = zurichToday(new Date());
+  const [pilot, setPilot] = useState<string[] | null>(null);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    fetch('/api/v1/health', { signal: ctrl.signal })
+      .then((r) => r.json())
+      .then((j: { pilotCantons?: string[] }) => setPilot(j.pilotCantons ?? null))
+      .catch(() => {});
+    return () => ctrl.abort();
+  }, []);
 
   const run = useCallback(async () => {
     const s = useApp.getState();
@@ -108,6 +117,8 @@ export function CompareView({ locale }: { locale: Locale }) {
   }, [hydrated, location, basket.length, lastResult, run]);
 
   if (!hydrated) return <PageTitle>{m.compare.title}</PageTitle>;
+  const canton = location ? /\(([A-Z]{2})\)$/.exec(location.label)?.[1] : undefined;
+  const outsidePilot = Boolean(canton && pilot && !pilot.includes(canton));
 
   const planDate = when.mode === 'plan' ? when.date : addDays(today, 1);
   const count = basket.reduce((a, b) => a + b.qty, 0);
@@ -124,6 +135,7 @@ export function CompareView({ locale }: { locale: Locale }) {
           </Link>
         </Notice>
       )}
+      {outsidePilot && <Notice tone="info">{m.compare.outsidePilot}</Notice>}
       {basket.length === 0 && (
         <Notice tone="warn">
           {m.compare.needBasket}{' '}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getMessages, paths, type Locale } from '@/i18n';
+import { trackVisit } from '@/lib/metrics';
 import { useApp, useHydrated } from '@/lib/store';
 import { IconBasket, IconList, IconScale, IconStore } from './icons';
 
@@ -33,6 +34,8 @@ export function BottomNav({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const items = useNavItems(locale);
   const m = getMessages(locale);
+  // Page d'attente : pas de navigation vers l'application (fermée au public).
+  if (pathname?.endsWith('/bientot')) return null;
   return (
     <nav
       aria-label={m.nav.main}
@@ -64,6 +67,7 @@ export function DesktopNav({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const items = useNavItems(locale);
   const m = getMessages(locale);
+  if (pathname?.endsWith('/bientot')) return null;
   return (
     <nav aria-label={m.nav.main} className="hidden md:block">
       <ul className="flex items-center gap-1">
@@ -113,6 +117,14 @@ export function DemoBanner({ locale }: { locale: Locale }) {
       </p>
     </div>
   );
+}
+
+/** Compteur de visite anonyme (une fois par jour et par navigateur au plus). */
+export function VisitCounter() {
+  useEffect(() => {
+    trackVisit();
+  }, []);
+  return null;
 }
 
 /** Enregistre le service worker (mode hors ligne des listes) en production. */

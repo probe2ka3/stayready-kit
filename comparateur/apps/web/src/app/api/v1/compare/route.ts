@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { CompareError } from '@cabas/core';
+import { CompareError, linesBucket } from '@cabas/core';
 import { runComparison } from '@/server/compare-service';
 import { jsonError, limitOr429, readJson, sameOrigin } from '@/server/http';
 import { errorInfo, log } from '@/server/log';
+import { recordMetric } from '@/server/metrics';
 import { compareSchema, issues } from '@/server/validation';
 
 /**
@@ -31,6 +32,13 @@ export async function POST(req: Request) {
       stores: result.meta.storesConsidered,
       ms: Date.now() - started,
     });
+    // Compteurs anonymes (aucune donnée de la requête n'est conservée).
+    recordMetric('compare', parsed.data.when.mode);
+    recordMetric('compare_lines', linesBucket(parsed.data.lines.length));
+    recordMetric('compare_stores', String(result.scenarios.find((s) => s.kind === 'optimized_total')?.storeCount ?? 0));
+    recordMetric('compare_data', result.meta.dataMode);
+    if (result.scenarios.some((s) => s.detours.length > 0)) recordMetric('detour', 'shown');
+    if (result.waitSignal) recordMetric('wait_signal', 'shown');
     return NextResponse.json(result);
   } catch (e) {
     if (e instanceof CompareError) return jsonError(422, e.code, e.message);

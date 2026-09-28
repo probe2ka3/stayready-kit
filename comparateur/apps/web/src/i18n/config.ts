@@ -27,4 +27,6 @@ export const paths = {
   about: (l: Locale) => `/${l}/a-propos`,
   privacy: (l: Locale) => `/${l}/confidentialite`,
   imprint: (l: Locale) => `/${l}/mentions-legales`,
+  terms: (l: Locale) => `/${l}/conditions`,
+  waitlist: (l: Locale) => `/${l}/bientot`,
 };

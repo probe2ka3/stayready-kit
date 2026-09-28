@@ -7,8 +7,10 @@ const base = (title?: string) =>
 export const LogoMark = ({ className = 'h-7 w-7' }: P) => (
   <svg viewBox="0 0 32 32" className={className} {...base()}>
     <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--primary)" />
-    <path d="M9 13h14l-1.6 10.2a2 2 0 0 1-2 1.8h-6.8a2 2 0 0 1-2-1.8L9 13Z" fill="var(--on-primary)" />
-    <path d="M12.5 13c0-3 1.6-5 3.5-5s3.5 2 3.5 5" fill="none" stroke="var(--on-primary)" strokeWidth="2" strokeLinecap="round" />
+    {/* Étiquette de prix « validée » : le bon prix, vérifié et daté. */}
+    <path d="M7.5 16 13 9.5h11.5a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H13Z" fill="var(--on-primary)" stroke="var(--on-primary)" strokeWidth="1.5" strokeLinejoin="round" />
+    <circle cx="12.6" cy="16" r="1.7" fill="var(--primary)" />
+    <path d="m16.2 16.1 2.4 2.4 4.3-5" fill="none" stroke="var(--primary)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

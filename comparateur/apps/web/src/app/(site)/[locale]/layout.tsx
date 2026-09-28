@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import '../../globals.css';
 import { BottomNav, DemoBanner, Footer, Header } from '@/components/shell';
-import { ServiceWorker } from '@/components/shell-client';
+import { ServiceWorker, VisitCounter } from '@/components/shell-client';
 import { getMessages, isLocale, LOCALES, type Locale } from '@/i18n';
 import { siteUrl } from '@/lib/site';
 
@@ -57,6 +57,7 @@ export default async function SiteLayout({ children, params }: { children: React
         <Footer locale={locale} />
         <BottomNav locale={locale} />
         <ServiceWorker />
+        <VisitCounter />
       </body>
     </html>
   );

@@ -36,7 +36,7 @@ export function AboutFr() {
       <p>
         Le détail des calculs est publié sur la page <Link href={paths.method('fr')}>Méthode</Link>.
       </p>
-      <p className="text-sm text-muted">« Cabas » est un nom de travail, sous réserve d’une recherche d’antériorité de marque.</p>
+      <p className="text-sm text-muted">« TesPrix » est un nom provisoire, sous réserve d’une recherche d’antériorité de marque et de raison sociale (Swissreg, Zefix) et d’une validation juridique.</p>
     </Prose>
   );
 }
@@ -82,11 +82,24 @@ export function PrivacyFr() {
             <td>Limiter les abus (nombre de requêtes)</td>
             <td>En mémoire vive uniquement, quelques minutes.</td>
           </tr>
+          <tr>
+            <td>
+              Compteurs d’usage anonymes : nombre de visites et de comparaisons par jour, taille du panier par tranche, fonctions utilisées. La
+              date de votre dernière visite reste dans votre navigateur ; seule une tranche (« nouveau », « revenu sous 7 jours »…) est transmise.
+            </td>
+            <td>Mesurer l’utilité du service et son coût, sans vous identifier</td>
+            <td>Compteurs agrégés par jour, sans identifiant, adresse IP, position ni contenu de panier. Désactivés si votre navigateur envoie « Do Not Track » ou « Global Privacy Control ».</td>
+          </tr>
         </tbody>
       </table>
       <p>
-        Aucun cookie publicitaire, aucun outil de mesure d’audience et aucun traceur tiers ne sont utilisés. Seule l’administration utilise un cookie
-        de session strictement nécessaire.
+        Aucun cookie publicitaire et aucun traceur tiers ne sont utilisés. L’administration utilise un cookie de session strictement nécessaire ;
+        la prévisualisation avant l’ouverture publique utilise un cookie technique d’accès.
+      </p>
+      <h2>Liste d’attente</h2>
+      <p>
+        Les inscriptions ne sont pas encore ouvertes : aucune adresse électronique n’est collectée. Avant leur ouverture, cette politique précisera la
+        finalité (vous informer de l’ouverture), la conservation et la procédure de désinscription (confirmation par courriel).
       </p>
       <h2>Destinataires et transferts</h2>
       <ul>
@@ -106,7 +119,49 @@ export function PrivacyFr() {
         panier, favoris et listes. Vous pouvez saisir une plainte auprès du Préposé fédéral à la protection des données et à la transparence
         (PFPDT).
       </p>
-      <p className="text-sm text-muted">Version du 27 septembre 2026.</p>
+      <p className="text-sm text-muted">Version du 28 septembre 2026.</p>
+    </Prose>
+  );
+}
+
+export function TermsFr() {
+  return (
+    <Prose>
+      <h1>Conditions d’utilisation</h1>
+      <p className="lead">
+        <Todo>Projet de conditions à faire valider par un juriste avant l’ouverture publique.</Todo>
+      </p>
+      <h2>1. Service</h2>
+      <p>
+        TesPrix compare le coût d’un panier de courses entre enseignes suisses, trajet compris, à partir de prix datés et sourcés. Le service est
+        gratuit dans sa version de base. <Todo>Offre premium : conditions, prix, durée, résiliation et remboursement à définir avant toute
+        facturation (aucun paiement n’est actif).</Todo>
+      </p>
+      <h2>2. Exactitude des prix</h2>
+      <p>
+        Les prix proviennent des sources indiquées sur chaque ligne (site officiel de l’enseigne, relevés communautaires sous licence ouverte). Ils
+        peuvent changer sans préavis ; le prix applicable est celui affiché en magasin. Les promotions futures ne sont prises en compte que si
+        l’enseigne les a publiées ; un prix non annoncé n’est jamais présenté comme confirmé.
+      </p>
+      <h2>3. Indépendance et contenus commerciaux</h2>
+      <p>
+        Le classement des résultats dépend uniquement des prix, des trajets et de vos réglages. Aucun partenaire ne peut le modifier. Tout contenu
+        commercial est signalé comme tel (« Annonce », « Partenaire », « Lien affilié ») et affiché séparément des résultats.
+      </p>
+      <h2>4. Utilisation acceptable</h2>
+      <p>
+        Usage personnel et non commercial. La collecte automatisée des résultats et la réutilisation de la base de données sont interdites, sous
+        réserve des données publiées sous licence ouverte (voir « Sources »).
+      </p>
+      <h2>5. Responsabilité</h2>
+      <p>
+        <Todo>Clause de limitation de responsabilité à rédiger conformément au droit suisse (CO art. 100).</Todo>
+      </p>
+      <h2>6. Droit applicable et for</h2>
+      <p>
+        <Todo>Droit suisse ; for à définir (siège de l’exploitant), sous réserve des fors impératifs du consommateur.</Todo>
+      </p>
+      <p className="text-sm text-muted">Projet du 28 septembre 2026, non en vigueur.</p>
     </Prose>
   );
 }
@@ -133,6 +188,8 @@ export function ImprintFr() {
       <ul>
         <li>Localités : Source : Office fédéral de topographie swisstopo.</li>
         <li>Succursales : © les contributeurs d’OpenStreetMap, base de données sous licence ODbL.</li>
+        <li>Prix Lidl : pages publiques du site officiel de Lidl Suisse (lecture automatisée conforme à son fichier robots.txt).</li>
+        <li>Prix communautaires : Open Prices (Open Food Facts), base de données sous licence ODbL.</li>
       </ul>
     </Prose>
   );

@@ -414,3 +414,29 @@ export async function lastRunStats(handle: DbHandle, connectorId: string): Promi
     ORDER BY started_at DESC LIMIT 1`;
   return rows[0]?.stats ?? null;
 }
+
+/** Incrémente un compteur quotidien anonyme. */
+export async function incrementUsage(handle: DbHandle, day: string, metric: string, dimension: string, n = 1): Promise<void> {
+  await handle.sql`
+    INSERT INTO usage_daily (day, metric, dimension, count) VALUES (${day}, ${metric}, ${dimension}, ${n})
+    ON CONFLICT (day, metric, dimension) DO UPDATE SET count = usage_daily.count + ${n}`;
+}
+
+export async function listUsage(handle: DbHandle, fromDay: string): Promise<Array<{ day: string; metric: string; dimension: string; count: number }>> {
+  const rows = await handle.sql<Array<{ day: string | Date; metric: string; dimension: string; count: number }>>`
+    SELECT day, metric, dimension, count FROM usage_daily WHERE day >= ${fromDay} ORDER BY day`;
+  return rows.map((r) => ({
+    day: r.day instanceof Date ? r.day.toISOString().slice(0, 10) : String(r.day).slice(0, 10),
+    metric: r.metric,
+    dimension: r.dimension,
+    count: Number(r.count),
+  }));
+}
+
+/** Inscription à la liste d'attente (idempotente). Renvoie false si l'adresse existait déjà. */
+export async function addToWaitlist(handle: DbHandle, email: string, locale: string, canton: string | null, now: Date): Promise<boolean> {
+  const rows = await handle.sql`
+    INSERT INTO waitlist (email, locale, canton, consent_at) VALUES (${email.toLowerCase()}, ${locale}, ${canton}, ${now.toISOString()})
+    ON CONFLICT (email) DO NOTHING RETURNING email`;
+  return rows.length > 0;
+}

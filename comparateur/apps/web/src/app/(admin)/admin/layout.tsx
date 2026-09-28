@@ -6,12 +6,13 @@ import { logoutAction } from '@/server/admin-actions';
 import { getAdminSession } from '@/server/auth';
 
 export const metadata: Metadata = {
-  title: { default: 'Administration', template: '%s · Administration Cabas' },
+  title: { default: 'Administration', template: '%s · Administration TesPrix' },
   robots: { index: false, follow: false },
 };
 
 const NAV: Array<[string, string]> = [
   ['/admin', 'Tableau de bord'],
+  ['/admin/indicateurs', 'Indicateurs'],
   ['/admin/correspondances', 'Correspondances'],
   ['/admin/anomalies', 'Anomalies'],
   ['/admin/imports', 'Imports'],

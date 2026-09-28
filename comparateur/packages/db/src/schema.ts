@@ -321,6 +321,34 @@ export const anomalies = pgTable(
   ],
 );
 
+/**
+ * Indicateurs d'usage agrégés par jour (aucun identifiant, aucune donnée personnelle) :
+ * voir packages/core/src/metrics.ts.
+ */
+export const usageDaily = pgTable(
+  'usage_daily',
+  {
+    day: date('day', { mode: 'string' }).notNull(),
+    metric: text('metric').notNull(),
+    dimension: text('dimension').notNull(),
+    count: integer('count').notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.metric, t.dimension] })],
+);
+
+/**
+ * Liste d'attente (inscriptions volontaires). Désactivée par défaut (SIGNUP_ENABLED) :
+ * à n'ouvrir qu'avec la politique de confidentialité complétée et une confirmation par courriel.
+ */
+export const waitlist = pgTable('waitlist', {
+  email: text('email').primaryKey(),
+  locale: text('locale').notNull().default('fr'),
+  canton: text('canton'),
+  consentAt: ts('consent_at').notNull(),
+  confirmedAt: ts('confirmed_at'),
+  createdAt: ts('created_at').notNull().defaultNow(),
+});
+
 export const auditLog = pgTable('audit_log', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
   at: ts('at').notNull().defaultNow(),

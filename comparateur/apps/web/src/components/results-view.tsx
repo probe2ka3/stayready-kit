@@ -5,8 +5,10 @@ import { useState } from 'react';
 import type { CompareResultDto, OutlookDayDto, ScenarioDto, ScenarioKind } from '@cabas/core';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
 import { duration, km, money, shortCalendarDate, shortDate, time } from '@/lib/format';
+import { track } from '@/lib/metrics';
 import { useApp } from '@/lib/store';
 import { IconRoute } from './icons';
+import { PartnerSlot } from './partner-slot';
 import { OptionLine } from './price-bits';
 import { Button, Card, ChainBadge, cx, Notice, Pill } from './ui';
 
@@ -61,6 +63,8 @@ export function ResultsView({
       <Ranking result={result} locale={locale} />
       {result.planning && <Planning result={result} locale={locale} />}
       {result.outlook.length > 0 && <Outlook days={result.outlook} locale={locale} onPick={onPickDate} target={result.meta.targetDate} />}
+
+      <PartnerSlot slot="results_footer" />
 
       <p className="text-xs text-muted">
         {result.meta.travelEstimated ? `${m.results.estimated} ` : ''}
@@ -255,6 +259,7 @@ function ScenarioDetail({ s, locale, onRerun }: { s: ScenarioDto; locale: Locale
         size="lg"
         className="w-full"
         onClick={() => {
+          track('list', 'saved');
           saveList(s.kind);
           router.push(paths.list(locale));
         }}
@@ -359,6 +364,7 @@ function Detours({ s, locale, onRerun }: { s: ScenarioDto; locale: Locale; onRer
             <Button
               variant={o.worthwhile ? 'primary' : 'secondary'}
               onClick={() => {
+                track('detour', 'accepted');
                 acceptDetour(o.store.id);
                 onRerun?.();
               }}
@@ -368,6 +374,7 @@ function Detours({ s, locale, onRerun }: { s: ScenarioDto; locale: Locale; onRer
             <Button
               variant="ghost"
               onClick={() => {
+                track('detour', 'refused');
                 refuseDetour(o.store.id);
                 onRerun?.();
               }}
@@ -396,7 +403,13 @@ function WaitSignal({ signal, locale, onPick }: { signal: NonNullable<CompareRes
       </p>
       <p className="text-sm text-muted">{m.results.wait.note}</p>
       {onPick && (
-        <Button variant="secondary" onClick={() => onPick(signal.date)}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            track('wait_signal', 'used');
+            onPick(signal.date);
+          }}
+        >
           {m.results.wait.pick}
         </Button>
       )}

@@ -11,11 +11,18 @@ export const dynamic = 'force-dynamic';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
+  // Avant l'ouverture (PUBLIC_ACCESS=waitlist), seules les pages publiques sont listées.
+  const waitlist = process.env.PUBLIC_ACCESS === 'waitlist';
+  const app: Array<[(l: (typeof LOCALES)[number]) => string, number]> = waitlist
+    ? [[paths.waitlist, 1]]
+    : [
+        [paths.home, 1],
+        [paths.stores, 0.8],
+        [paths.basket, 0.8],
+        [paths.compare, 0.8],
+      ];
   const pages: Array<[(l: (typeof LOCALES)[number]) => string, number]> = [
-    [paths.home, 1],
-    [paths.stores, 0.8],
-    [paths.basket, 0.8],
-    [paths.compare, 0.8],
+    ...app,
     [paths.method, 0.6],
     [paths.sources, 0.5],
     [paths.about, 0.4],

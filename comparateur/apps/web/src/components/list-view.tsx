@@ -11,7 +11,7 @@ import { OptionLine } from './price-bits';
 import { Button, Card, ChainBadge, cx, Notice, PageTitle } from './ui';
 
 function listText(s: ScenarioDto, savedAt: string, demo: boolean): string {
-  const lines: string[] = [`Liste de courses — Cabas (calculée le ${dateTime(savedAt)}${demo ? ', prix fictifs de démonstration' : ''})`];
+  const lines: string[] = [`Liste de courses — TesPrix (calculée le ${dateTime(savedAt)}${demo ? ', prix fictifs de démonstration' : ''})`];
   for (const stop of s.stops) {
     lines.push('', `${stop.order}. ${stop.store.chainName} — ${stop.store.name}${stop.store.address ? `, ${stop.store.address}` : ''}`);
     for (const it of stop.items) {

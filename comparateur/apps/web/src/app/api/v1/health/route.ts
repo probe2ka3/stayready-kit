@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAppData } from '@/server/data';
+import { serverEnv } from '@/server/env';
 
 /** GET /api/v1/health — sonde de disponibilité (pour l'hébergeur / la supervision). */
 export async function GET() {
@@ -13,6 +14,8 @@ export async function GET() {
       // Données de démonstration servies (jamais mélangées aux prix réels).
       demo: mode === 'demo',
       prices: mode,
+      access: serverEnv.publicAccess,
+      pilotCantons: serverEnv.pilotCantons,
       time: new Date().toISOString(),
     });
   } catch {
