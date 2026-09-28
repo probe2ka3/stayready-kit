@@ -29,7 +29,7 @@ import {
   type DbHandle,
 } from '@cabas/db';
 import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
-import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessLidl, jobRezone } from './collect';
+import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessAldi, jobReprocessLidl, jobRezone } from './collect';
 import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
@@ -255,6 +255,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   'purge-source': { run: jobPurgeSource, help: 'Supprime toutes les données d’une source (--connector <id> --confirm)' },
   'import-live': { run: jobImportLive, help: 'Charge les instantanés de prix réels dans la base (amorçage)' },
   'reprocess-lidl': { run: jobReprocessLidl, help: 'Retraite la collecte Lidl depuis les pages archivées (--date AAAA-MM-JJ)' },
+  'reprocess-aldi': { run: jobReprocessAldi, help: 'Retraite la collecte Aldi depuis les réponses archivées (--date AAAA-MM-JJ)' },
   'match-candidates': { run: jobMatchCandidates, help: 'Feuille de revue des correspondances (--out fichier ; --min-score 0.5)' },
   'export-odbl': { run: jobExportOdbl, help: 'Exporte les données dérivées d’Open Prices sous ODbL (--out <dossier>)' },
   import: { run: jobImport, help: 'Importe des fichiers : import <fichiers…> --connector <id> [--dry-run]' },

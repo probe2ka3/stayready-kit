@@ -181,7 +181,7 @@ export function labelsFromName(text: string, ambiguous = false): string[] {
 }
 
 /** Origine suisse revendiquée dans la désignation (« Oeufs suisses », « … de la Suisse romande »). */
-const SWISS_NAME = /\b(suisses?|schweizer|de suisse|svizzer[ao])\b/i;
+export const SWISS_NAME = /\b(suisses?|schweizer|de suisse|svizzer[ao])\b/i;
 
 function zurichDateOf(epochSec: number | null | undefined): string | null {
   if (!epochSec || !Number.isFinite(epochSec)) return null;

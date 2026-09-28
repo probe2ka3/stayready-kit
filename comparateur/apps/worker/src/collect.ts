@@ -3,6 +3,10 @@ import { gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { checkCollection, type Anomaly, type CollectionStats } from '@cabas/core';
 import {
+  ALDI_API_ORIGIN,
+  ALDI_CONNECTOR_ID,
+  AldiApiConnector,
+  buildAldiBatch,
   buildLidlBatch,
   HttpBlockedError,
   LIVE_CONNECTOR_IDS,
@@ -17,6 +21,8 @@ import {
   readLiveSnapshots,
   readReviewedMatches,
   writeLiveSnapshot,
+  type AldiApiPage,
+  type AldiPages,
   type ConnectorBatch,
   type LidlPages,
   type LiveSnapshot,
@@ -50,7 +56,7 @@ function statsOf(connectorId: string, batch: ConnectorBatch): CollectionStats {
     products: batch.retailerProducts.length,
     prices: batch.prices.length,
     promotions: batch.promotions.length,
-    pages: Number(m.assortmentPages ?? 0) + Number(m.offerPages ?? 0) || undefined,
+    pages: Number(m.pages ?? 0) + Number(m.assortmentPages ?? 0) + Number(m.offerPages ?? 0) || undefined,
     pageFailures: Number(m.pageFailures ?? 0) || undefined,
   };
 }
@@ -310,6 +316,48 @@ export async function jobReprocessLidl(ctx: JobContext) {
   });
   await writeReport(ctx, 'lidl-web', batch, []);
   ctx.log.info('Lidl retraité depuis l’archive', batch.report.metrics ?? {});
+}
+
+/**
+ * Retraitement d'une collecte Aldi à partir des réponses archivées, sans nouvelle requête
+ * (`reprocess-aldi [--date AAAA-MM-JJ]`).
+ */
+export async function jobReprocessAldi(ctx: JobContext) {
+  const archiveDir = ctx.env.env.RAW_ARCHIVE_DIR ?? join(ctx.env.dataDir, 'raw');
+  const date = typeof ctx.flags.date === 'string' ? ctx.flags.date : ctx.now.toISOString().slice(0, 10);
+  const dir = join(archiveDir, new URL(ALDI_API_ORIGIN).host, date);
+  let index: string;
+  try {
+    index = await readFile(join(dir, 'index.jsonl'), 'utf8');
+  } catch {
+    throw new Error(`Aucune réponse Aldi archivée pour le ${date}`);
+  }
+  const latest = new Map<string, { file: string; fetchedAt: string }>();
+  for (const line of index.split('\n').filter(Boolean)) {
+    const e = JSON.parse(line) as { url: string; file: string; fetchedAt: string };
+    if (e.url.includes('/product-search')) latest.set(e.url, e);
+  }
+  const input: AldiPages = { pages: [] };
+  for (const [url, e] of latest) {
+    const json = JSON.parse(gunzipSync(await readFile(join(dir, e.file))).toString('utf8')) as AldiApiPage;
+    input.pages.push({ url, json, fetchedAt: new Date(e.fetchedAt) });
+  }
+  const fetchedAt = input.pages.reduce((a, p) => (p.fetchedAt > a ? p.fetchedAt : a), new Date(0));
+  const batch = buildAldiBatch(input, { now: fetchedAt, catalog: PRODUCTS, reviewedMatches: await readReviewedMatches(ctx.env.dataDir) });
+  const prev = (await readLiveSnapshots(ctx.env.dataDir)).find((s) => s.connectorId === ALDI_CONNECTOR_ID);
+  await writeLiveSnapshot(ctx.env.dataDir, {
+    connectorId: ALDI_CONNECTOR_ID,
+    label: new AldiApiConnector().label,
+    license: null,
+    attribution: null,
+    collectedAt: fetchedAt.toISOString(),
+    status: batch.report.rejected.length ? 'partial' : 'success',
+    message: `Retraité depuis l'archive du ${date}`,
+    metrics: { ...(batch.report.metrics ?? {}), products: batch.retailerProducts.length, prices: batch.prices.length, promotions: batch.promotions.length, rejected: batch.report.rejected.length, warnings: batch.report.warnings.length },
+    batch: mergeLiveBatch(prev?.batch ?? null, batch, fetchedAt),
+  });
+  await writeReport(ctx, ALDI_CONNECTOR_ID, batch, []);
+  ctx.log.info('Aldi retraité depuis l’archive', batch.report.metrics ?? {});
 }
 
 /** Charge les instantanés réels (`data/prices/live/`) dans la base : amorçage d'un déploiement. */

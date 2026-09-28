@@ -1,4 +1,5 @@
 import type { Store } from '@cabas/core';
+import { AldiApiConnector } from './aldi';
 import { chainConnectors } from './chains';
 import { DemoPriceConnector } from './demo';
 import { LidlWebConnector } from './lidl';
@@ -14,7 +15,8 @@ export interface ConnectorDeps {
 /**
  * Registre des connecteurs de prix :
  * - démonstration (données fictives, jamais mélangées aux données réelles) ;
- * - sources réelles en ligne : Lidl (site officiel), Open Prices (ODbL) ;
+ * - sources réelles en ligne : Lidl (site officiel), Aldi Suisse (API publique du site),
+ *   Open Prices (ODbL) ;
  * - un connecteur d'enseigne par entrée de `@cabas/reference` (CHAINS) pour les imports
  *   structurés et, lorsqu'un accord existe, un flux officiel.
  */
@@ -22,13 +24,14 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
   return [
     new DemoPriceConnector(),
     new LidlWebConnector(),
+    new AldiApiConnector(),
     new OpenPricesConnector(deps.stores ?? [], deps.resolveZone),
     ...chainConnectors(),
   ];
 }
 
 /** Connecteurs qui collectent des prix réels en ligne (tâche `collect`). */
-export const LIVE_CONNECTOR_IDS = ['lidl-web', 'open-prices'];
+export const LIVE_CONNECTOR_IDS = ['lidl-web', 'aldi-api', 'open-prices'];
 
 export function findConnector(id: string, deps: ConnectorDeps = {}): PriceConnector | undefined {
   return priceConnectors(deps).find((c) => c.id === id);

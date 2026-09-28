@@ -13,5 +13,6 @@ export * from './matching';
 export * from './http/robots';
 export * from './http/fetcher';
 export * from './lidl';
+export * from './aldi';
 export * from './open-prices';
 export * from './live-snapshot';

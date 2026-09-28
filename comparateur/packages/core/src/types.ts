@@ -217,8 +217,8 @@ export interface PriceObservation {
   sourceUrl?: string | null;
   /** Lieu réel du relevé lorsqu'il est généralisé à une zone ou au niveau national. */
   observedAtPlace?: string | null;
-  /** Justificatif : ticket, étiquette, page web. */
-  proof?: 'receipt' | 'price_tag' | 'web_page' | null;
+  /** Justificatif : ticket, étiquette, page web, réponse d'une API publique de l'enseigne. */
+  proof?: 'receipt' | 'price_tag' | 'web_page' | 'public_api' | null;
 }
 
 export type PromotionType =

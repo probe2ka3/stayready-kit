@@ -20,6 +20,15 @@ function num(s: string): number {
 }
 
 export function parsePackText(raw: string): ParsedPack | null {
+  try {
+    return parsePack(raw);
+  } catch {
+    // Contenance nulle ou unité inconnue (« 0 g ») : illisible plutôt qu'une erreur de collecte.
+    return null;
+  }
+}
+
+function parsePack(raw: string): ParsedPack | null {
   const text = raw
     .toLowerCase()
     .replace(/&nbsp;| /g, ' ')
