@@ -45,6 +45,7 @@ export async function runComparison(input: CompareInput, now = new Date()): Prom
     travel,
     minSavingPerExtraStoreCents: Math.round((input.minSavingPerExtraStoreChf ?? 2) * 100),
     referenceChainId: input.referenceChainId ?? null,
+    includeStores: (input.includeStores ?? []).filter((id) => !excluded.has(id)),
   };
   return compareBasket(req, {
     now,

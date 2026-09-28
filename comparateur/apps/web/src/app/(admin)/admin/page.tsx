@@ -16,7 +16,7 @@ export default async function AdminHome() {
   const data = getAppData();
   const pg = getPostgresData();
   const now = new Date();
-  const status = await data.chainStatus(now);
+  const [status, mode, collections] = await Promise.all([data.chainStatus(now), data.priceMode(now), data.collections()]);
   const connectors = await Promise.all(
     priceConnectors().map(async (c) => ({ id: c.id, label: c.label, ...(await c.status({ importDir: serverEnv.importDir, env: process.env })) })),
   );
@@ -24,6 +24,8 @@ export default async function AdminHome() {
     ? await Promise.all([listRuns(pg.handle, 8), listAnomalies(pg.handle, { limit: 500 }), listMatches(pg.handle, { status: 'suggested', limit: 500 })])
     : [[], [], []];
   const chainName = new Map(CHAINS.map((c) => [c.id, c.name]));
+  const collectionAlerts = anomalies.filter((a) => a.entityType === 'connector');
+  const STATE: Record<string, string> = { success: '✅ réussie', partial: '⚠️ partielle', failed: '❌ en échec', blocked: '⛔ accès refusé' };
 
   return (
     <div className="space-y-6">
@@ -50,6 +52,36 @@ export default async function AdminHome() {
       )}
 
       <section className="space-y-2">
+        <h2 className="text-lg font-bold">Collectes de prix réels</h2>
+        <p className="text-sm text-muted">
+          Données servies au public : <strong>{mode === 'live' ? 'prix réels uniquement' : 'démonstration uniquement'}</strong> (PRICE_DATA).
+        </p>
+        {collectionAlerts.length > 0 && (
+          <ul className="space-y-1 rounded-xl bg-danger-soft p-3 text-sm text-danger">
+            {collectionAlerts.map((a) => (
+              <li key={a.id}>
+                <strong>{a.entityId}</strong> — {a.message}
+              </li>
+            ))}
+          </ul>
+        )}
+        <Table head={['Source', 'Dernière collecte', 'État', 'Articles', 'Prix', 'Promotions', 'Licence', 'Message']}>
+          {collections.map((c) => (
+            <tr key={c.connectorId}>
+              <td className="px-3 py-2 font-medium">{c.label}</td>
+              <td className="px-3 py-2">{fmt(c.collectedAt)}</td>
+              <td className="px-3 py-2">{STATE[c.status] ?? c.status}</td>
+              <td className="px-3 py-2">{c.products}</td>
+              <td className="px-3 py-2">{c.prices}</td>
+              <td className="px-3 py-2">{c.promotions}</td>
+              <td className="px-3 py-2">{c.license ?? '—'}</td>
+              <td className="px-3 py-2 text-muted">{c.message ?? ''}</td>
+            </tr>
+          ))}
+        </Table>
+      </section>
+
+      <section className="space-y-2">
         <h2 className="text-lg font-bold">Données par enseigne</h2>
         <Table head={['Enseigne', 'Succursales', 'Articles', 'dont démo', 'Prix réels', 'Dernière vérification', 'Promos en cours', 'Promos annoncées']}>
           {status.map((s) => (
@@ -73,7 +105,9 @@ export default async function AdminHome() {
           {connectors.map((c) => (
             <tr key={c.id}>
               <td className="px-3 py-2 font-medium">{c.label}</td>
-              <td className="px-3 py-2">{c.state === 'ready' ? '✅ prêt' : c.state === 'awaiting_authorization' ? '⏳ en attente d’autorisation' : c.state}</td>
+              <td className="px-3 py-2">
+                {c.state === 'ready' ? '✅ prêt' : c.state === 'awaiting_authorization' ? '⏳ en attente d’autorisation' : c.state === 'blocked' ? '⛔ bloqué par la source' : c.state}
+              </td>
               <td className="px-3 py-2 text-muted">{c.message}</td>
             </tr>
           ))}

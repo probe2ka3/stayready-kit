@@ -58,6 +58,8 @@ interface State {
   /** Enseignes désélectionnées (par défaut, toutes les enseignes présentes sont incluses). */
   excludedChains: string[];
   excludedStores: string[];
+  /** Magasins ajoutés au parcours après une proposition de détour. */
+  includedStores: string[];
   basket: BasketItem[];
   products: Record<string, ProductInfo>;
   favorites: string[];
@@ -75,6 +77,12 @@ interface State {
   setRadius(r: 5 | 10 | 20 | 30): void;
   toggleChain(chainId: string): void;
   toggleStore(storeId: string): void;
+  /** Accepte un détour : le magasin est imposé dans le parcours. */
+  acceptDetour(storeId: string): void;
+  /** Refuse un détour : le magasin est écarté et le parcours recalculé sans lui. */
+  refuseDetour(storeId: string): void;
+  /** Retire un magasin ajouté manuellement. */
+  removeIncluded(storeId: string): void;
   addProduct(productId: string, info: ProductInfo): void;
   setQty(productId: string, qty: number): void;
   removeProduct(productId: string): void;
@@ -99,6 +107,7 @@ const initial = {
   radiusKm: 10 as const,
   excludedChains: [],
   excludedStores: [],
+  includedStores: [],
   basket: [],
   products: {},
   favorites: [],
@@ -120,7 +129,7 @@ export const useApp = create<State>()(
   persist(
     (set, get) => ({
       ...initial,
-      setLocation: (location) => set({ location, lastResult: null }),
+      setLocation: (location) => set({ location, includedStores: [], lastResult: null }),
       setRadius: (radiusKm) => set({ radiusKm, lastResult: null }),
       toggleChain: (chainId) =>
         set((s) => ({
@@ -136,6 +145,20 @@ export const useApp = create<State>()(
             : [...s.excludedStores, storeId],
           lastResult: null,
         })),
+      acceptDetour: (storeId) =>
+        set((s) => ({
+          includedStores: s.includedStores.includes(storeId) ? s.includedStores : [...s.includedStores, storeId].slice(-5),
+          excludedStores: s.excludedStores.filter((c) => c !== storeId),
+          lastResult: null,
+        })),
+      refuseDetour: (storeId) =>
+        set((s) => ({
+          excludedStores: s.excludedStores.includes(storeId) ? s.excludedStores : [...s.excludedStores, storeId],
+          includedStores: s.includedStores.filter((c) => c !== storeId),
+          lastResult: null,
+        })),
+      removeIncluded: (storeId) =>
+        set((s) => ({ includedStores: s.includedStores.filter((c) => c !== storeId), lastResult: null })),
       addProduct: (productId, info) =>
         set((s) => {
           const existing = s.basket.find((b) => b.productId === productId);

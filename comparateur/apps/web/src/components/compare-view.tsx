@@ -78,6 +78,7 @@ export function CompareView({ locale }: { locale: Locale }) {
           excludedChains: s.excludedChains,
           presentChains: CHAINS.map((c) => c.id),
           excludedStores: s.excludedStores,
+          includedStores: s.includedStores,
           basket: s.basket,
           prefs: s.prefs,
           when: s.when,
@@ -281,6 +282,7 @@ export function CompareView({ locale }: { locale: Locale }) {
               state.setWhen(date === today ? { mode: 'now' } : { mode: 'plan', date, time: when.mode === 'plan' ? when.time : null });
               void Promise.resolve().then(run);
             }}
+            onRerun={() => void Promise.resolve().then(run)}
           />
         ) : status !== 'running' && location && basket.length > 0 ? (
           <p className="text-muted">{m.results.empty}</p>

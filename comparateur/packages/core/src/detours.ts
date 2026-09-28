@@ -31,14 +31,16 @@ export interface DetourOption {
   /** Profils du plan de référence qui ne sont plus visités (remplacés). */
   droppedProfiles: number[];
   items: DetourItem[];
-  /** Économie sur les achats (plan de référence − nouveau plan), centimes. */
+  /** Économie sur les achats des articles présents dans les deux plans, centimes. */
   grossSavingsCents: number;
+  /** Prix des articles supplémentaires trouvés grâce au détour (absents du plan de référence). */
+  addedItemsCents: number;
   /** Surcoût des déplacements et du temps valorisé, centimes (peut être négatif). */
   extraTravelCostCents: number;
   extraDistanceKm: number;
   /** Minutes supplémentaires : trajet + temps en magasin. */
   extraMinutes: number;
-  /** Économie nette = gain sur les achats − surcoût de déplacement. */
+  /** Économie nette = gain sur les articles comparables − surcoût de déplacement. */
   netSavingsCents: number;
   /** Articles supplémentaires trouvés grâce à ce magasin. */
   extraCoveredLines: number;
@@ -114,9 +116,17 @@ export function analyzeDetours(input: OptimizerInput, base: Plan, settings: Deto
     });
     const stop = best.route.stops.find((s) => input.stores[s.storeIndex]?.profileIndex === q);
     const extraCovered = best.coveredLines - base.coveredLines;
-    const gross = base.purchaseCents - best.purchaseCents;
+    let gross = 0;
+    let added = 0;
+    best.assignment.forEach((p, l) => {
+      const now = p == null ? null : ((input.costs[l] as Array<number | null>)[p] ?? null);
+      const before = lineCost(input, base, l);
+      if (now == null) return;
+      if (before == null) added += now;
+      else gross += before - now;
+    });
     const extraTravel = best.route.travelCostCents + best.route.inStoreCostCents - baseTravel;
-    const net = base.globalCents - best.globalCents;
+    const net = gross - extraTravel;
     const reason: DetourOption['reason'] =
       extraCovered > 0 ? 'adds_items' : net <= 0 ? 'no_net_saving' : net < settings.minNetSavingCents ? 'below_threshold' : 'worthwhile';
     options.push({
@@ -126,6 +136,7 @@ export function analyzeDetours(input: OptimizerInput, base: Plan, settings: Deto
       droppedProfiles: base.profiles.filter((p) => !best.profiles.includes(p)),
       items: items.sort((a, b) => b.savingCents - a.savingCents),
       grossSavingsCents: gross,
+      addedItemsCents: added,
       extraTravelCostCents: extraTravel,
       extraDistanceKm: Math.round((best.route.distanceKm - base.route.distanceKm) * 10) / 10,
       extraMinutes: Math.round(best.route.driveMin + best.route.inStoreMin - baseMinutes),

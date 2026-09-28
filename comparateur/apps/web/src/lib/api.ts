@@ -82,6 +82,7 @@ export interface CompareParams {
   excludedChains: string[];
   presentChains: string[] | null;
   excludedStores: string[];
+  includedStores: string[];
   basket: BasketItem[];
   prefs: Prefs;
   when: When;
@@ -101,6 +102,7 @@ export function compare(p: CompareParams, signal?: AbortSignal) {
       radiusKm: p.radiusKm,
       chains,
       excludedStores: p.excludedStores.slice(0, 500),
+      includeStores: p.includedStores.slice(0, 5),
       lines: p.basket.map((b) => ({ id: b.id, productId: b.productId, qty: b.qty, prefs: b.prefs })),
       prefs: p.prefs,
       when: p.when.mode === 'now' ? { mode: 'now' } : { mode: 'plan', date: p.when.date, time: p.when.time || null },

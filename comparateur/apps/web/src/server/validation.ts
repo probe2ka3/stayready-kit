@@ -38,6 +38,8 @@ export const compareSchema = z.object({
   radiusKm: radiusSchema,
   chains: z.array(chainId).max(20).optional(),
   excludedStores: z.array(id).max(500).optional(),
+  /** Magasins ajoutés au parcours par l'utilisateur (détour accepté). */
+  includeStores: z.array(id).max(5).optional(),
   lines: z
     .array(
       z.object({

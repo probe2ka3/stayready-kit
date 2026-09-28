@@ -12,7 +12,18 @@ import { Button, Card, ChainBadge, cx, Notice, Pill } from './ui';
 
 const ORDER: ScenarioKind[] = ['single_store', 'cheapest_products', 'optimized_total'];
 
-export function ResultsView({ result, locale, onPickDate }: { result: CompareResultDto; locale: Locale; onPickDate?: (date: string) => void }) {
+export function ResultsView({
+  result,
+  locale,
+  onPickDate,
+  onRerun,
+}: {
+  result: CompareResultDto;
+  locale: Locale;
+  onPickDate?: (date: string) => void;
+  /** Relance la comparaison après l'acceptation ou le refus d'un détour. */
+  onRerun?: () => void;
+}) {
   const m = getMessages(locale);
   const scenarios = ORDER.map((k) => result.scenarios.find((s) => s.kind === k)).filter((s): s is ScenarioDto => Boolean(s));
   const [selected, setSelected] = useState<ScenarioKind>(scenarios.some((s) => s.kind === 'optimized_total') ? 'optimized_total' : (scenarios[0]?.kind ?? 'single_store'));
@@ -33,6 +44,8 @@ export function ResultsView({ result, locale, onPickDate }: { result: CompareRes
         </div>
       )}
 
+      {result.waitSignal && <WaitSignal signal={result.waitSignal} locale={locale} onPick={onPickDate} />}
+
       {scenarios.length === 0 ? null : (
         <>
           <div role="tablist" aria-label="Scénarios" className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -40,7 +53,7 @@ export function ResultsView({ result, locale, onPickDate }: { result: CompareRes
               <ScenarioTab key={s.kind} s={s} locale={locale} active={s.kind === current?.kind} onSelect={() => setSelected(s.kind)} />
             ))}
           </div>
-          {current && <ScenarioDetail s={current} locale={locale} />}
+          {current && <ScenarioDetail s={current} locale={locale} onRerun={onRerun} />}
         </>
       )}
 
@@ -100,10 +113,11 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
   );
 }
 
-function ScenarioDetail({ s, locale }: { s: ScenarioDto; locale: Locale }) {
+function ScenarioDetail({ s, locale, onRerun }: { s: ScenarioDto; locale: Locale; onRerun?: () => void }) {
   const m = getMessages(locale);
   const router = useRouter();
   const saveList = useApp((st) => st.saveList);
+  const removeIncluded = useApp((st) => st.removeIncluded);
   const savings = s.savings;
   return (
     <section aria-label={m.results.scenarios[s.kind]} className="space-y-4">
@@ -152,6 +166,22 @@ function ScenarioDetail({ s, locale }: { s: ScenarioDto; locale: Locale }) {
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">
                   {stop.store.chainName} <span className="font-normal text-muted">· {stop.store.name}</span>
+                  {s.includedStoreIds.includes(stop.store.id) && (
+                    <>
+                      {' '}
+                      <Pill tone="info">{m.results.detours.included}</Pill>{' '}
+                      <button
+                        type="button"
+                        className="text-sm font-normal text-danger underline underline-offset-2"
+                        onClick={() => {
+                          removeIncluded(stop.store.id);
+                          onRerun?.();
+                        }}
+                      >
+                        {m.results.detours.remove}
+                      </button>
+                    </>
+                  )}
                 </p>
                 {stop.store.address && <p className="text-sm text-muted">{stop.store.address}</p>}
                 <p className="flex flex-wrap items-center gap-1.5 text-sm text-muted">
@@ -195,6 +225,8 @@ function ScenarioDetail({ s, locale }: { s: ScenarioDto; locale: Locale }) {
         </Card>
       ))}
 
+      {s.detours.length > 0 && <Detours s={s} locale={locale} onRerun={onRerun} />}
+
       {s.missing.length > 0 && (
         <Card>
           <h3 className="mb-2 font-bold">{m.results.missingTitle}</h3>
@@ -230,6 +262,145 @@ function ScenarioDetail({ s, locale }: { s: ScenarioDto; locale: Locale }) {
         {m.results.useList}
       </Button>
     </section>
+  );
+}
+
+/**
+ * Propositions d'arrêts supplémentaires : économie brute, coût du trajet ajouté,
+ * économie nette et articles concernés. Accepter impose le magasin ; refuser l'écarte.
+ */
+function Detours({ s, locale, onRerun }: { s: ScenarioDto; locale: Locale; onRerun?: () => void }) {
+  const m = getMessages(locale);
+  const d = m.results.detours;
+  const { acceptDetour, refuseDetour, minSavingChf } = useApp();
+  return (
+    <section aria-labelledby={`detours-${s.kind}`} className="space-y-2">
+      <h3 id={`detours-${s.kind}`} className="text-lg font-bold">
+        {d.title}
+      </h3>
+      <p className="text-sm text-muted">{d.help}</p>
+      {s.detours.map((o) => (
+        <Card key={o.store.id} className={cx('space-y-3', o.worthwhile && 'border-accent')}>
+          <div className="flex items-center gap-3">
+            <ChainBadge badge={o.store.chainBadge} name={o.store.chainName} />
+            <div className="min-w-0 flex-1">
+              <p className="font-bold">{o.store.chainName}</p>
+              <p className="truncate text-sm text-muted">
+                {o.store.name}
+                {o.store.address ? ` · ${o.store.address}` : ''}
+              </p>
+            </div>
+          </div>
+          {o.grossSavingsCents > 0 && (
+            <p className="font-medium">
+              {format(d.message, {
+                amount: money(o.grossSavingsCents),
+                items: plural(d.itemsCount, o.items.filter((it) => it.savingCents > 0).length),
+                km: km(Math.max(0, o.extraDistanceKm)),
+              })}{' '}
+              {o.extraMinutes > 0 && format(d.messageTime, { time: duration(o.extraMinutes) })}
+            </p>
+          )}
+          {o.extraCoveredLines > 0 && (
+            <p className="font-medium">
+              {plural(d.addsItems, o.extraCoveredLines)} ({money(o.addedItemsCents)})
+            </p>
+          )}
+          <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+            <div>
+              <dt className="text-muted">{d.gross}</dt>
+              <dd className="num font-semibold">{money(o.grossSavingsCents)}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">{d.travel}</dt>
+              <dd className="num font-semibold">
+                {o.extraTravelCostCents >= 0 ? '+' : '−'}
+                {money(Math.abs(o.extraTravelCostCents))} · {km(Math.max(0, o.extraDistanceKm))}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted">{d.time}</dt>
+              <dd className="num font-semibold">{duration(Math.max(0, o.extraMinutes))}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">{d.net}</dt>
+              <dd className={cx('num font-bold', o.netSavingsCents > 0 ? 'text-primary-strong' : 'text-danger')}>
+                {o.netSavingsCents >= 0 ? '' : '−'}
+                {money(Math.abs(o.netSavingsCents))}
+              </dd>
+            </div>
+          </dl>
+          {o.droppedStores.length > 0 && (
+            <p className="text-sm text-muted">{format(d.replaces, { stores: o.droppedStores.map((x) => `${x.chainName} (${x.name})`).join(', ') })}</p>
+          )}
+          {o.reason === 'below_threshold' && (
+            <p className="text-sm text-muted">{format(d.belowThreshold, { amount: money(Math.round(minSavingChf * 100)) })}</p>
+          )}
+          <details>
+            <summary className="cursor-pointer text-sm font-semibold">{d.itemsTitle}</summary>
+            <ul className="mt-2 space-y-1 text-sm">
+              {o.items.map((it) => (
+                <li key={it.lineId} className="flex justify-between gap-3">
+                  <span>
+                    {it.qty > 1 ? `${it.qty} × ` : ''}
+                    {it.productName}
+                  </span>
+                  <span className="num text-right">
+                    {money(it.newCents)}{' '}
+                    <span className="text-muted">
+                      {it.baseCents != null ? format(d.insteadOf, { price: money(it.baseCents) }) : d.newItem}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </details>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={o.worthwhile ? 'primary' : 'secondary'}
+              onClick={() => {
+                acceptDetour(o.store.id);
+                onRerun?.();
+              }}
+            >
+              {d.accept}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                refuseDetour(o.store.id);
+                onRerun?.();
+              }}
+            >
+              {d.refuse}
+            </Button>
+          </div>
+        </Card>
+      ))}
+    </section>
+  );
+}
+
+/** Signal « attendre serait moins cher », fondé uniquement sur les promotions déjà annoncées. */
+function WaitSignal({ signal, locale, onPick }: { signal: NonNullable<CompareResultDto['waitSignal']>; locale: Locale; onPick?: (d: string) => void }) {
+  const m = getMessages(locale);
+  return (
+    <Card className="space-y-2 border-accent">
+      <h3 className="font-bold">{m.results.wait.title}</h3>
+      <p>
+        {format(m.results.wait.text, {
+          amount: money(signal.savingsCents),
+          date: shortCalendarDate(signal.date),
+          days: plural(m.results.wait.days, signal.daysLater),
+        })}
+      </p>
+      <p className="text-sm text-muted">{m.results.wait.note}</p>
+      {onPick && (
+        <Button variant="secondary" onClick={() => onPick(signal.date)}>
+          {m.results.wait.pick}
+        </Button>
+      )}
+    </Card>
   );
 }
 

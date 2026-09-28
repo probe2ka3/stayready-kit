@@ -3,6 +3,7 @@
  * déplacement → optimisation → résultat sérialisable (JSON) pour l'interface.
  */
 
+import { analyzeDetours } from './detours';
 import { haversineKm } from './geo';
 import { formatDaySchedule, parseOpeningHours, PRESUMED_HOURS, scheduleForDate, type ParsedOpeningHours } from './opening-hours';
 import {
@@ -68,6 +69,11 @@ export interface CompareRequest {
   minSavingPerExtraStoreCents: number;
   /** Enseigne habituelle servant de référence pour les économies (facultatif). */
   referenceChainId?: string | null;
+  /**
+   * Succursales ajoutées par l'utilisateur (détour accepté) : elles sont imposées dans le
+   * parcours optimisé, en plus du nombre maximal de magasins choisi.
+   */
+  includeStores?: string[];
 }
 
 export interface CandidateStore extends Store {
@@ -152,6 +158,37 @@ export interface SavingsDto {
 
 export type ScenarioKind = 'single_store' | 'cheapest_products' | 'optimized_total';
 
+/** Proposition d'arrêt supplémentaire (voir detours.ts). */
+export interface DetourDto {
+  store: StoreDto;
+  items: Array<{ lineId: string; productName: string; qty: number; baseCents: number | null; newCents: number; savingCents: number }>;
+  /** Magasins du parcours qui ne sont plus nécessaires avec ce détour. */
+  droppedStores: StoreDto[];
+  grossSavingsCents: number;
+  /** Prix des articles introuvables dans le parcours actuel et disponibles dans ce magasin. */
+  addedItemsCents: number;
+  extraTravelCostCents: number;
+  extraDistanceKm: number;
+  extraMinutes: number;
+  netSavingsCents: number;
+  extraCoveredLines: number;
+  worthwhile: boolean;
+  reason: 'worthwhile' | 'below_threshold' | 'no_net_saving' | 'adds_items';
+  /** Résultat si le détour est accepté. */
+  resulting: { storeCount: number; purchaseCents: number; globalCents: number };
+}
+
+/** « Attendre quelques jours pourrait coûter moins cher » (promotions déjà annoncées uniquement). */
+export interface WaitSignalDto {
+  fromDate: string;
+  date: string;
+  daysLater: number;
+  basePurchaseCents: number;
+  purchaseCents: number;
+  savingsCents: number;
+  promoLines: number;
+}
+
 export interface ScenarioDto {
   kind: ScenarioKind;
   storeCount: number;
@@ -176,6 +213,10 @@ export interface ScenarioDto {
   statusCounts: Record<string, number>;
   navigationUrl: string;
   warnings: string[];
+  /** Arrêts supplémentaires envisageables (magasin unique et parcours optimisé). */
+  detours: DetourDto[];
+  /** Succursales imposées par l'utilisateur présentes dans ce scénario. */
+  includedStoreIds: string[];
 }
 
 export interface SingleStoreRankingDto {
@@ -250,6 +291,7 @@ export interface CompareResultDto {
   alternativesByStoreCount: Array<{ storeCount: number; globalCents: number; purchaseCents: number; coveredLines: number } | null>;
   planning: PlanningDto | null;
   outlook: OutlookDayDto[];
+  waitSignal: WaitSignalDto | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -335,6 +377,17 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   }
   if (deps.stores.length === 0) warnings.add('no_stores_in_radius');
 
+  // Détours acceptés : la succursale choisie devient la seule candidate de son profil.
+  const included = new Set(req.includeStores ?? []);
+  const requiredProfileKeys = new Set<string>();
+  for (const [idx, list] of storesByProfile) {
+    const chosen = list.filter((st) => included.has(st.id));
+    if (chosen.length) {
+      storesByProfile.set(idx, chosen.slice(0, 1));
+      requiredProfileKeys.add((profiles[idx] as PriceProfile).key);
+    }
+  }
+
   // Élagage : succursales fermées toute la journée exclues, puis les N plus proches par profil.
   const scheduleDate = schedule.kind === 'departure' ? zurichParts(schedule.departure).date : targetDate;
   const kept: CandidateStore[] = [];
@@ -379,7 +432,10 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     presumed: presumed.has(s.id),
   }));
 
-  const result = optimize({
+  const requiredProfiles = profiles.flatMap((p, i) =>
+    requiredProfileKeys.has(p.key) && optimizerStores.some((st) => st.profileIndex === i) ? [i] : [],
+  );
+  const optimizerInput = {
     costs,
     tieRank,
     profileCount: profiles.length,
@@ -389,7 +445,20 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     schedule,
     maxStores: req.maxStores,
     minSavingPerExtraStoreCents: req.minSavingPerExtraStoreCents,
-  });
+  };
+  const result = optimize(optimizerInput);
+  // Détour accepté : parcours optimisé recalculé avec le magasin imposé (un arrêt de plus autorisé).
+  if (requiredProfiles.length) {
+    const forced = optimize({
+      ...optimizerInput,
+      maxStores: Math.min((req.maxStores ?? HARD_MAX_STORES) + requiredProfiles.length, HARD_MAX_STORES),
+      requiredProfiles,
+    });
+    result.optimized = forced.optimized;
+    result.optimizedByStoreCount = forced.optimizedByStoreCount;
+  } else if (included.size) {
+    warnings.add('included_store_unavailable');
+  }
   if (result.stats.profilesConsidered < profiles.length) warnings.add('profiles_capped');
   const maxStoresApplied = Math.min(req.maxStores ?? HARD_MAX_STORES, HARD_MAX_STORES);
   if (req.maxStores === null) warnings.add('max_stores_capped');
@@ -545,6 +614,40 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     };
   };
 
+  const detoursFor = (plan: Plan): DetourDto[] => {
+    const analysis = analyzeDetours(optimizerInput, plan, { minNetSavingCents: req.minSavingPerExtraStoreCents, limit: 6 });
+    return analysis.options
+      .filter((o) => o.reason !== 'no_net_saving' && o.storeIndex >= 0)
+      .slice(0, 3)
+      .map((o) => ({
+        store: storeDto(kept[o.storeIndex] as CandidateStore),
+        items: o.items.map((it) => {
+          const line = lines[it.line] as BasketLine;
+          return {
+            lineId: line.id,
+            productName: (deps.products.get(line.productId) as CanonicalProduct).name,
+            qty: line.qty,
+            baseCents: it.baseCents,
+            newCents: it.newCents,
+            savingCents: it.savingCents,
+          };
+        }),
+        droppedStores: plan.route.stops
+          .filter((st) => o.droppedProfiles.includes(optimizerStores[st.storeIndex]?.profileIndex as number))
+          .map((st) => storeDto(kept[st.storeIndex] as CandidateStore)),
+        grossSavingsCents: o.grossSavingsCents,
+        addedItemsCents: o.addedItemsCents,
+        extraTravelCostCents: o.extraTravelCostCents,
+        extraDistanceKm: o.extraDistanceKm,
+        extraMinutes: o.extraMinutes,
+        netSavingsCents: o.netSavingsCents,
+        extraCoveredLines: o.extraCoveredLines,
+        worthwhile: o.worthwhile,
+        reason: o.reason,
+        resulting: { storeCount: o.plan.profiles.length, purchaseCents: o.plan.purchaseCents, globalCents: o.plan.globalCents },
+      }));
+  };
+
   const scenarioFrom = (kind: ScenarioKind, plan: Plan | null): ScenarioDto | null => {
     if (!plan) return null;
     const stops = buildStops(plan.route, plan.assignment);
@@ -581,6 +684,9 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       statusCounts,
       navigationUrl: googleMapsRoute(req.origin, stopPoints, req.travel.mode, req.travel.returnToOrigin),
       warnings: scenarioWarnings,
+      // Le scénario « prix les plus bas » ignore les trajets : pas d'analyse de détour.
+      detours: kind === 'cheapest_products' ? [] : detoursFor(plan),
+      includedStoreIds: stops.map((st) => st.store.id).filter((id) => included.has(id)),
     };
   };
 
@@ -679,7 +785,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   const outlook: OutlookDayDto[] = [];
   if (focusPlan) {
     for (let d = 0; d < OUTLOOK_DAYS; d++) {
-      const date = addDays(today, d);
+      const date = addDays(targetDate, d);
       const dayCtx: PricingContext = { ...ctx, targetDate: date };
       let total = 0;
       let covered = 0;
@@ -700,6 +806,8 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       outlook.push({ date, purchaseCents: total, coveredLines: covered, promoLines });
     }
   }
+
+  const waitSignal = computeWaitSignal(outlook, targetDate);
 
   const anyDemo = scenarios.some((s) => s.stops.some((st) => st.items.some((i) => i.option.isDemo)));
   const anyLive = scenarios.some((s) => s.stops.some((st) => st.items.some((i) => !i.option.isDemo)));
@@ -740,7 +848,37 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     ),
     planning,
     outlook,
+    waitSignal,
   };
+}
+
+/**
+ * Signal « attendre serait moins cher » : dans les 6 jours suivant la date des courses,
+ * premier jour où les mêmes magasins coûtent nettement moins (≥ 1 CHF et ≥ 3 %) grâce à
+ * des promotions déjà annoncées, sans perdre d'article. Jamais fondé sur un prix supposé.
+ */
+export function computeWaitSignal(outlook: OutlookDayDto[], fromDate: string): WaitSignalDto | null {
+  const base = outlook.find((d) => d.date === fromDate);
+  if (!base || base.purchaseCents <= 0) return null;
+  let best: WaitSignalDto | null = null;
+  for (const d of outlook) {
+    const days = daysBetween(fromDate, d.date);
+    if (days <= 0 || days > 6 || d.coveredLines < base.coveredLines || d.promoLines === 0) continue;
+    const saving = base.purchaseCents - d.purchaseCents;
+    if (saving < 100 || saving < base.purchaseCents * 0.03) continue;
+    if (!best || saving > best.savingsCents) {
+      best = {
+        fromDate,
+        date: d.date,
+        daysLater: days,
+        basePurchaseCents: base.purchaseCents,
+        purchaseCents: d.purchaseCents,
+        savingsCents: saving,
+        promoLines: d.promoLines,
+      };
+    }
+  }
+  return best;
 }
 
 function promoEvents(
