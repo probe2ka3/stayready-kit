@@ -30,6 +30,7 @@ import {
 } from '@cabas/db';
 import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
 import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessAldi, jobReprocessLidl, jobRezone } from './collect';
+import { jobDataReport } from './data-report';
 import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
@@ -259,6 +260,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   'match-candidates': { run: jobMatchCandidates, help: 'Feuille de revue des correspondances (--out fichier ; --min-score 0.5)' },
   'export-odbl': { run: jobExportOdbl, help: 'Exporte les données dérivées d’Open Prices sous ODbL (--out <dossier>)' },
   import: { run: jobImport, help: 'Importe des fichiers : import <fichiers…> --connector <id> [--dry-run]' },
+  'data-report': { run: jobDataReport, help: 'Couverture, fraîcheur et qualité des données réelles (data/quality/)' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },

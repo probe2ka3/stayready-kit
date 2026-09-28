@@ -1,0 +1,153 @@
+{
+  "at": "2026-09-28T07:01:59.530Z",
+  "catalogSize": 200,
+  "comparable": {
+    "2": 47,
+    "3": 3,
+    "4": 0,
+    "5": 0
+  },
+  "freshness": {
+    "h24": 3182,
+    "h48": 0,
+    "d7": 1,
+    "older": 76,
+    "total": 3259
+  },
+  "chains": [
+    {
+      "chainId": "migros",
+      "references": 2,
+      "referencesFirstParty": 0,
+      "share": 0.01,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 1,
+      "older": 46,
+      "products": 109,
+      "pricedProducts": 47
+    },
+    {
+      "chainId": "coop",
+      "references": 2,
+      "referencesFirstParty": 0,
+      "share": 0.01,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 25,
+      "products": 85,
+      "pricedProducts": 25
+    },
+    {
+      "chainId": "denner",
+      "references": 0,
+      "referencesFirstParty": 0,
+      "share": 0,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 4,
+      "products": 12,
+      "pricedProducts": 4
+    },
+    {
+      "chainId": "aldi",
+      "references": 81,
+      "referencesFirstParty": 81,
+      "share": 0.405,
+      "fresh24h": 1801,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 0,
+      "products": 1897,
+      "pricedProducts": 1801
+    },
+    {
+      "chainId": "lidl",
+      "references": 96,
+      "referencesFirstParty": 96,
+      "share": 0.48,
+      "fresh24h": 1381,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 1,
+      "products": 1561,
+      "pricedProducts": 1382
+    },
+    {
+      "chainId": "ottos",
+      "references": 0,
+      "referencesFirstParty": 0,
+      "share": 0,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 0,
+      "products": 1,
+      "pricedProducts": 0
+    },
+    {
+      "chainId": "action",
+      "references": 0,
+      "referencesFirstParty": 0,
+      "share": 0,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 0,
+      "products": 0,
+      "pricedProducts": 0
+    },
+    {
+      "chainId": "aligro",
+      "references": 0,
+      "referencesFirstParty": 0,
+      "share": 0,
+      "fresh24h": 0,
+      "fresh48h": 0,
+      "fresh7d": 0,
+      "older": 0,
+      "products": 0,
+      "pricedProducts": 0
+    }
+  ],
+  "byPriority": null,
+  "records": {
+    "total": 3908,
+    "byTier": {
+      "first_party": 3667,
+      "community": 241
+    }
+  },
+  "quality": {
+    "suspicious_price": 0,
+    "abnormal_change": 0,
+    "inconsistent_quantity": 0,
+    "duplicate": 0,
+    "stale_data": 18,
+    "source_divergence": 0,
+    "promo_as_regular": 0,
+    "connector_broken": 0
+  },
+  "connectors": [
+    {
+      "connectorId": "aldi-api",
+      "status": "partial",
+      "collectedAt": "2026-09-28T06:39:09.789Z",
+      "message": "Retraité depuis l'archive du 2026-09-28"
+    },
+    {
+      "connectorId": "lidl-web",
+      "status": "partial",
+      "collectedAt": "2026-09-28T00:42:07.472Z",
+      "message": "Retraité depuis l'archive du 2026-09-28"
+    },
+    {
+      "connectorId": "open-prices",
+      "status": "success",
+      "collectedAt": "2026-09-28T00:35:58.573Z",
+      "message": null
+    }
+  ]
+}

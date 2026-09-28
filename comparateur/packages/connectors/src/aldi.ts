@@ -153,8 +153,10 @@ export function itemFacts(item: AldiApiItem): AldiItemFacts | null {
     comparisonBasis: comparisonAsBasis(price.comparisonDisplay),
     isAction: cats.some((c) => c.id === ALDI_ACTIONS_CATEGORY) || Boolean(item.onSaleDate),
     onSaleDate: item.onSaleDate && /^\d{4}-\d{2}-\d{2}$/.test(item.onSaleDate) ? item.onSaleDate : null,
-    organic: /\bbio\b/i.test(item.name) || cats.some((c) => /\(bio\)/i.test(c.name)) || /\bbio\b/i.test(badges),
-    swiss: SWISS_NAME.test(item.name) || /suisse garantie|swiss|schweiz/i.test(badges),
+    // Marque propre « BIO » (et « BIO NATURA ») : produits biologiques certifiés.
+    organic: /\bbio\b/i.test(item.name) || /^bio\b/i.test(brand ?? '') || cats.some((c) => /\(bio\)/i.test(c.name)) || /\bbio\b|organic/i.test(badges),
+    // Ligne « SAVEURS SUISSES » : produits suisses d'Aldi.
+    swiss: SWISS_NAME.test(item.name) || /^saveurs suisses$/i.test(brand ?? '') || /suisse garantie|swiss|schweiz/i.test(badges),
     categories: cats.map((c) => c.name),
   };
 }

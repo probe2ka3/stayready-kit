@@ -83,6 +83,16 @@ export function unitPrice(priceCents: number, q: Quantity): { basis: UnitPriceBa
   return { basis: 'piece', cents: Math.round(priceCents / q.amount) };
 }
 
+/**
+ * Prix normalisé pour les comparaisons internes (qualité, divergences) : centimes par kg, par litre
+ * ou par pièce, quelle que soit la taille du conditionnement (contrairement à `unitPrice`, qui passe
+ * aux 100 g pour l'affichage des petits formats).
+ */
+export function normalizedUnitCents(priceCents: number, q: Quantity): number | null {
+  if (!(q.amount > 0)) return null;
+  return Math.round((priceCents * (q.unit === 'g' || q.unit === 'ml' ? 1000 : 1)) / q.amount);
+}
+
 export const UNIT_BASIS_LABEL: Record<UnitPriceBasis, string> = {
   kg: 'kg',
   l: 'l',

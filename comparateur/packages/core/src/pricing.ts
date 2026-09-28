@@ -1,4 +1,6 @@
 import { roundTo5Rappen } from './money';
+import { confidenceOf, sourceInfo, TIER_RANK, type SourceTier } from './sources';
+import { normalizeText, significantTokens } from './text';
 import { ageInDays, dateInRange } from './time';
 import type {
   CanonicalProduct,
@@ -17,7 +19,7 @@ import type {
   SourceReliability,
   Store,
 } from './types';
-import { packsNeeded, unitPrice, type UnitPriceBasis } from './units';
+import { normalizedUnitCents, packsNeeded, unitPrice, type UnitPriceBasis } from './units';
 
 /* ------------------------------------------------------------------ */
 /* Entrées                                                            */
@@ -65,12 +67,20 @@ export interface OfferIndex {
   promotionsByProduct: Map<string, Promotion[]>;
 }
 
-export function buildOfferIndex(input: {
-  products: RetailerProduct[];
-  matches: ProductMatch[];
-  prices: PriceObservation[];
-  promotions: Promotion[];
-}): OfferIndex {
+export function buildOfferIndex(
+  input: {
+    products: RetailerProduct[];
+    matches: ProductMatch[];
+    prices: PriceObservation[];
+    promotions: Promotion[];
+  },
+  opts: { allowBenchmarkSources?: boolean } = {},
+): OfferIndex {
+  // Sources de comparaison (fournisseur tiers non licencié) : exclues des prix affichés par défaut.
+  if (!opts.allowBenchmarkSources) {
+    const keep = (s: DataSource) => !sourceInfo(s).benchmarkOnly;
+    input = { ...input, prices: input.prices.filter((o) => keep(o.source)), promotions: input.promotions.filter((p) => keep(p.source)) };
+  }
   const products = new Map(input.products.map((p) => [p.id, p]));
   const matchesByCanonical = new Map<string, ProductMatch[]>();
   for (const m of input.matches) {
@@ -152,7 +162,33 @@ export type StatusReason =
   | 'store_specific_price'
   | 'zone_price'
   | 'regular_price_unknown'
-  | 'crowd_sourced';
+  | 'crowd_sourced'
+  | 'third_party_source' // prix d'un fournisseur de données tiers (repli)
+  | 'fallback_source' // aucune source officielle utilisable : source de niveau inférieur
+  | 'source_divergence'; // une autre source indique un prix nettement différent
+
+/** Autre observation disponible pour la même enseigne (conservée, jamais fusionnée). */
+export interface SourceAlternative {
+  retailerProductId: string;
+  productName: string;
+  connectorId: string;
+  provider: string;
+  tier: SourceTier;
+  totalCents: number;
+  unitPriceCents: number;
+  observedAt: string;
+  sourceUrl: string | null;
+}
+
+/** Écart entre la source retenue et une autre source pour un article de même contenance. */
+export interface SourceDivergence {
+  /** Écart relatif du prix unitaire (0,2 = 20 %). */
+  relativeGap: number;
+  other: SourceAlternative;
+}
+
+/** Seuil d'écart de prix unitaire entre deux sources au-delà duquel la divergence est signalée. */
+export const DIVERGENCE_THRESHOLD = 0.15;
 
 export interface AppliedPromotion {
   id: string;
@@ -197,6 +233,14 @@ export interface LineOption {
   observedAtPlace: string | null;
   license: string | null;
   sourceUrl: string | null;
+  /** Niveau de la source retenue (officiel > fournisseur tiers > communautaire > inconnu). */
+  sourceTier: SourceTier;
+  sourceProvider: string;
+  /** Indice de confiance 0–1 (voir `confidenceOf`). */
+  confidence: number;
+  /** Autres sources disponibles pour cette enseigne (au plus 3), jamais fusionnées. */
+  alternatives: SourceAlternative[];
+  divergence: SourceDivergence | null;
 }
 
 export type UnavailableReason =
@@ -231,7 +275,10 @@ export function reliabilityOf(o: Pick<PriceObservation, 'reliability' | 'source'
   if (o.reliability) return o.reliability;
   switch (o.source.kind) {
     case 'open_data':
+    case 'receipt':
       return 'crowd';
+    case 'third_party':
+      return 'third_party';
     case 'manual_survey':
     case 'manual_import':
       return 'survey';
@@ -416,7 +463,7 @@ export function resolveLine(
   });
   if (eligible.length === 0) return { option: null, unavailable: { reason: 'filtered_by_preferences' } };
 
-  let best: LineOption | null = null;
+  const candidates: LineOption[] = [];
   let sawStale: { priceCents: number; observedAt: string } | null = null;
   let sawAnyPrice = false;
 
@@ -429,7 +476,9 @@ export function resolveLine(
 
     const ageDays = obs ? ageInDays(obs.observedAt, ctx.asOf) : 0;
     const stale = obs ? ageDays > staleAfterDays(obs, ctx.policy) : false;
-    const crowd = obs ? reliabilityOf(obs) === 'crowd' : false;
+    const obsReliability = obs ? reliabilityOf(obs) : null;
+    const crowd = obsReliability === 'crowd';
+    const thirdParty = obsReliability === 'third_party';
     if (obs) sawAnyPrice = true;
     if (stale && !ctx.prefs.includeStalePrices) {
       if (!sawStale || Date.parse(obs!.observedAt) > Date.parse(sawStale.observedAt)) {
@@ -467,7 +516,7 @@ export function resolveLine(
       status = 'stale';
     } else if (ctx.targetDate > ctx.today) {
       status = 'indicative';
-    } else if (ageDays > ctx.policy.verifiedMaxAgeDays || crowd) {
+    } else if (ageDays > ctx.policy.verifiedMaxAgeDays || crowd || thirdParty) {
       status = 'indicative';
     } else {
       status = 'verified';
@@ -483,8 +532,12 @@ export function resolveLine(
     else if (usableObs?.zoneId) reasons.push('zone_price');
     if (regularTotal == null) reasons.push('regular_price_unknown');
     if (usableObs && crowd) reasons.push('crowd_sourced');
+    if (usableObs && thirdParty) reasons.push('third_party_source');
 
     const effectivePackPrice = Math.round(total / packs);
+    const chosenSource = bestPromo && !usableObs ? bestPromo.promo.source : (usableObs as PriceObservation).source;
+    const info = sourceInfo(chosenSource);
+    const observedAt = bestPromo && !usableObs ? bestPromo.promo.verifiedAt : (usableObs as PriceObservation).observedAt;
     const option: LineOption = {
       profileKey: profile.key,
       chainId: profile.chainId,
@@ -501,21 +554,101 @@ export function resolveLine(
       promotion: bestPromo ? toApplied(bestPromo.promo) : null,
       status,
       statusReasons: reasons,
-      observedAt: bestPromo && !usableObs ? bestPromo.promo.verifiedAt : (usableObs as PriceObservation).observedAt,
-      source: bestPromo && !usableObs ? bestPromo.promo.source : (usableObs as PriceObservation).source,
+      observedAt,
+      source: chosenSource,
       isDemo,
       unitPrice: unitPrice(effectivePackPrice, product.quantity),
-      reliability: usableObs ? reliabilityOf(usableObs) : 'official',
+      reliability: usableObs ? reliabilityOf(usableObs) : reliabilityOf({ source: chosenSource }),
       observedAtPlace: usableObs?.observedAtPlace ?? null,
-      license: usableObs?.license ?? null,
+      license: usableObs?.license ?? info.license,
       sourceUrl: bestPromo && !usableObs ? (bestPromo.promo.sourceUrl ?? null) : (usableObs?.sourceUrl ?? null),
+      sourceTier: info.tier,
+      sourceProvider: info.provider,
+      confidence: confidenceOf({ observedAt, source: chosenSource }, ctx.asOf, ctx.policy, match.kind),
+      alternatives: [],
+      divergence: null,
     };
-    if (!best || isBetter(option, best)) best = option;
+    candidates.push(option);
   }
 
+  const best = chooseAmongSources(candidates);
   if (best) return { option: best, unavailable: null };
   if (sawStale) return { option: null, unavailable: { reason: 'stale_price_excluded', lastKnown: sawStale } };
   return { option: null, unavailable: { reason: sawAnyPrice ? 'stale_price_excluded' : 'no_price' } };
+}
+
+/**
+ * Choix entre les offres d'une même enseigne issues de sources différentes :
+ * 1. niveau de source le plus fiable disponible (officiel > tiers > communautaire > inconnu) ;
+ * 2. dans ce niveau, l'offre la moins chère (puis la plus fiable, puis la meilleure correspondance).
+ * Les autres sources sont conservées comme alternatives ; un écart de prix unitaire supérieur à
+ * `DIVERGENCE_THRESHOLD` pour une contenance équivalente est signalé (jamais tranché en silence).
+ */
+export function chooseAmongSources(candidates: LineOption[]): LineOption | null {
+  if (candidates.length === 0) return null;
+  const topTier = Math.min(...candidates.map((c) => TIER_RANK[c.sourceTier]));
+  let best: LineOption | null = null;
+  for (const c of candidates) {
+    if (TIER_RANK[c.sourceTier] !== topTier) continue;
+    if (!best || isBetter(c, best)) best = c;
+  }
+  const chosen = best as LineOption;
+  const others = new Map<string, LineOption>();
+  for (const c of candidates) {
+    if (c === chosen || c.source.connectorId === chosen.source.connectorId) continue;
+    const prev = others.get(c.source.connectorId);
+    if (!prev || isBetter(c, prev)) others.set(c.source.connectorId, c);
+  }
+  const alternatives: SourceAlternative[] = [...others.values()]
+    .sort((a, b) => TIER_RANK[a.sourceTier] - TIER_RANK[b.sourceTier] || a.totalCents - b.totalCents)
+    .slice(0, 3)
+    .map((c) => ({
+      retailerProductId: c.retailerProductId,
+      productName: c.productName,
+      connectorId: c.source.connectorId,
+      provider: c.sourceProvider,
+      tier: c.sourceTier,
+      totalCents: c.totalCents,
+      unitPriceCents: c.unitPrice.cents,
+      observedAt: c.observedAt,
+      sourceUrl: c.sourceUrl,
+    }));
+  let divergence: SourceDivergence | null = null;
+  for (const alt of alternatives) {
+    const other = others.get(alt.connectorId) as LineOption;
+    const a = normalizedUnitCents(Math.round(chosen.totalCents / chosen.packs), chosen.quantity);
+    const b = normalizedUnitCents(Math.round(other.totalCents / other.packs), other.quantity);
+    if (!sameArticle(chosen, other) || !a || !b) continue;
+    const gap = Math.abs(b - a) / a;
+    if (gap > DIVERGENCE_THRESHOLD && (!divergence || gap > divergence.relativeGap)) {
+      divergence = { relativeGap: Math.round(gap * 1000) / 1000, other: alt };
+    }
+  }
+  const reasons = [...chosen.statusReasons];
+  if (chosen.sourceTier !== 'first_party' && !chosen.isDemo) reasons.push('fallback_source');
+  if (divergence) reasons.push('source_divergence');
+  return { ...chosen, statusReasons: reasons, alternatives, divergence };
+}
+
+/**
+ * Probablement le même article vu par deux sources : même contenance (± 2 %), marques compatibles
+ * (identiques ou inconnues) et désignations proches (au moins la moitié des mots significatifs).
+ */
+export function sameArticle(
+  a: Pick<LineOption, 'quantity' | 'brand' | 'productName'>,
+  b: Pick<LineOption, 'quantity' | 'brand' | 'productName'>,
+): boolean {
+  if (a.quantity.unit !== b.quantity.unit) return false;
+  if (Math.abs(a.quantity.amount - b.quantity.amount) > a.quantity.amount * 0.02) return false;
+  const ba = normalizeText(a.brand ?? '');
+  const bb = normalizeText(b.brand ?? '');
+  if (ba && bb && ba !== bb) return false;
+  const ta = new Set(significantTokens(a.productName));
+  const tb = new Set(significantTokens(b.productName));
+  if (ta.size === 0 || tb.size === 0) return false;
+  let common = 0;
+  for (const t of ta) if (tb.has(t)) common++;
+  return common / Math.min(ta.size, tb.size) >= 0.5;
 }
 
 function isBetter(a: LineOption, b: LineOption): boolean {

@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { addDays, ageInDays, zurichToday } from '@cabas/core';
-import type { ReviewedMatch, ReviewedMatchesFile } from './matching';
+import { addDays, ageInDays, sourceInfo, zurichToday, type CanonicalProduct, type ConnectorHealth, type DataSet } from '@cabas/core';
+import { matchesFor, type ReviewedMatch, type ReviewedMatchesFile } from './matching';
 import type { ConnectorBatch } from './types';
 
 /**
@@ -84,4 +84,32 @@ export async function readReviewedMatches(dataDir: string): Promise<ReviewedMatc
   const path = reviewedMatchesPath(dataDir);
   if (!existsSync(path)) return [];
   return (JSON.parse(await readFile(path, 'utf8')) as ReviewedMatchesFile).matches;
+}
+
+/**
+ * Jeu de données réel complet (instantanés + correspondances validées), pour le moteur de
+ * données : couverture, qualité, observations enrichies. Les sources de comparaison
+ * (`benchmarkOnly`) sont incluses uniquement sur demande.
+ */
+export async function readLiveDataSet(
+  dataDir: string,
+  catalog: CanonicalProduct[],
+  opts: { includeBenchmark?: boolean } = {},
+): Promise<{ data: DataSet; health: ConnectorHealth[]; snapshots: LiveSnapshot[] }> {
+  const snapshots = (await readLiveSnapshots(dataDir)).filter(
+    (s) => opts.includeBenchmark || !sourceInfo({ connectorId: s.connectorId, kind: 'retailer_site' }).benchmarkOnly,
+  );
+  const reviewed = await readReviewedMatches(dataDir);
+  const products = snapshots.flatMap((s) => s.batch.retailerProducts);
+  const { matches } = matchesFor(products, catalog, reviewed);
+  return {
+    data: {
+      products,
+      matches: matches.filter((m) => m.status === 'validated'),
+      prices: snapshots.flatMap((s) => s.batch.prices),
+      promotions: snapshots.flatMap((s) => s.batch.promotions),
+    },
+    health: snapshots.map((s) => ({ connectorId: s.connectorId, status: s.status, collectedAt: s.collectedAt, message: s.message })),
+    snapshots,
+  };
 }

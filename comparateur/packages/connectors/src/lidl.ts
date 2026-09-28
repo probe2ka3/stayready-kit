@@ -53,6 +53,70 @@ export function discoverAssortmentCategories(sitemapXml: string): string[] {
   });
 }
 
+/**
+ * Fiches produits (FR) du plan du site : `/fr/catalog/product/view/id/N`. Publiées par Lidl dans
+ * son sitemap et non visées par `Disallow: /catalog/` (qui ne concerne que la racine).
+ */
+export function discoverProductPages(sitemapXml: string): string[] {
+  const urls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => decodeEntities(m[1] as string).trim());
+  return urls
+    .filter((u) => /^https:\/\/sortiment\.lidl\.ch\/fr\/catalog\/product\/view\/id\/\d+\/?$/.test(u))
+    .sort((a, b) => productIdOf(a) - productIdOf(b));
+}
+
+function productIdOf(url: string): number {
+  return Number(/\/id\/(\d+)/.exec(url)?.[1] ?? 0);
+}
+
+/**
+ * Tranche du jour d'une rotation sur l'ensemble des fiches : chaque fiche est relue tous les
+ * `ceil(n / perRun)` jours, sans état à conserver entre deux collectes.
+ */
+export function rotationSlice<T>(items: T[], perRun: number, now: Date): { slice: T[]; chunk: number; chunks: number } {
+  if (items.length === 0 || perRun <= 0) return { slice: [], chunk: 0, chunks: 0 };
+  const chunks = Math.ceil(items.length / perRun);
+  const day = Math.floor(Date.parse(`${zurichToday(now)}T00:00:00Z`) / 86_400_000);
+  const chunk = day % chunks;
+  return { slice: items.slice(chunk * perRun, (chunk + 1) * perRun), chunk, chunks };
+}
+
+/** Articles hors périmètre repérables à la désignation (tabac : absent des catégories collectées). */
+const EXCLUDED_PRODUCT = /(cigarett|zigarett|cigare|tabac|tabak|snus|brunette|marlboro|parisienne|chesterfield|winston|camel\b|burrus|mary long|lucky strike|pall mall|l&m\b|gauloises|davidoff)/i;
+
+/** Fiche produit de l'assortiment : même composant de prix que les pages catégories. */
+export function parseProductPage(html: string, pageUrl: string): LidlAssortmentItem | null {
+  const og = /<meta property="og:url"\s+content="([^"]+)"/.exec(html)?.[1];
+  const slug = og ? /\/s\/([a-z0-9-]+)\/?$/.exec(og)?.[1] : undefined;
+  const article = slug ? /-(\d{4,})$/.exec(slug)?.[1] : undefined;
+  const title = /<h1 class="page-title">([\s\S]*?)<\/h1>/.exec(html)?.[1];
+  const start = html.indexOf('class="price-box');
+  if (!article || !title || start < 0) return null;
+  const end = html.indexOf('towishlist-wrapper', start);
+  const box = html.slice(start, end > start ? end : start + 6000);
+  const price = /itemprop="price" content="(\d+(?:\.\d+)?)"/.exec(box);
+  if (!price) return null;
+  const name = textOf(title);
+  if (EXCLUDED_PRODUCT.test(name)) return null;
+  const footer = /<span class="pricefield__footer">([\s\S]*?)<\/span>/.exec(box);
+  let lidlPlusPriceCents: number | null = null;
+  const lp = box.indexOf('pricefield__badge--lidl-plus');
+  if (lp >= 0) {
+    const strong = /<strong class="pricefield__price"[^>]*>([\s\S]*?)<\/strong>/.exec(box.slice(lp));
+    lidlPlusPriceCents = strong ? displayedCents(strong[1] as string) : null;
+  }
+  const main = html.slice(html.indexOf('product-info-main'), start);
+  return {
+    articleNo: article,
+    name,
+    priceCents: Math.round(Number(price[1]) * 100),
+    lidlPlusPriceCents,
+    packText: footer ? textOf(footer[1] as string) : '',
+    isAction: /pricefield--discount/.test(box) || /pricefield__header">\s*Aktion/.test(box),
+    swiss: /badges\/(Schweizer_Kreuz|suisse_garantie)/i.test(main) || SWISS_NAME.test(name),
+    url: og ?? pageUrl,
+  };
+}
+
 /** Pages d'actions liées depuis la page d'accueil (`/c/fr-CH/<thème>/a<id>`). */
 export function discoverOfferPages(homeHtml: string): string[] {
   const set = new Set<string>();
@@ -271,6 +335,8 @@ export function parseOfferPage(html: string, pageUrl: string): { offers: LidlOff
 export interface LidlPages {
   assortment: Array<{ url: string; html: string; fetchedAt: Date }>;
   offers: Array<{ url: string; html: string; fetchedAt: Date }>;
+  /** Fiches produits (rotation quotidienne sur le plan du site). */
+  products?: Array<{ url: string; html: string; fetchedAt: Date }>;
 }
 
 /** Transforme les pages lues en lot (pur, testable hors ligne). */
@@ -284,9 +350,17 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
   let itemsSeen = 0;
   let packUnreadable = 0;
   let unitPriceMismatch = 0;
+  let productPagesRead = 0;
 
-  for (const page of pages.assortment) {
-    const { items } = parseAssortmentPage(page.html);
+  const assortmentSources = [
+    ...pages.assortment.map((page) => ({ page, items: parseAssortmentPage(page.html).items })),
+    ...(pages.products ?? []).map((page) => {
+      const it = parseProductPage(page.html, page.url);
+      if (it) productPagesRead++;
+      return { page, items: it ? [it] : [] };
+    }),
+  ];
+  for (const { page, items } of assortmentSources) {
     itemsSeen += items.length;
     for (const it of items) {
       const pack = parsePackText(it.packText);
@@ -480,6 +554,8 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
   report.accepted = { products: retailerProducts.length, prices: prices.size, promotions: promotions.size, matches: matches.length };
   report.metrics = {
     assortmentPages: pages.assortment.length,
+    productPages: pages.products?.length ?? 0,
+    productPagesRead,
     offerPages: pages.offers.length,
     assortmentItems: itemsSeen,
     offers: offersSeen,
@@ -531,6 +607,21 @@ export class LidlWebConnector implements PriceConnector {
       }
     }
 
+    // Fiches produits : tranche du jour (défaut 460 fiches, soit tout l'assortiment en 7 jours).
+    const perRun = Number(ctx.env?.LIDL_PRODUCT_PAGES_PER_RUN ?? '460');
+    const rotation = rotationSlice(discoverProductPages(sitemap.body), Number.isFinite(perRun) ? perRun : 0, ctx.now);
+    pages.products = [];
+    for (const url of rotation.slice) {
+      if (ctx.signal?.aborted) break;
+      try {
+        const r = await fetcher.get(url);
+        pages.products.push({ url, html: r.body, fetchedAt: r.fetchedAt });
+      } catch (e) {
+        if (e instanceof HttpBlockedError && e.reason !== 'robots') throw e;
+        failures.push(`${url} : ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+
     try {
       const home = await fetcher.get(`${LIDL_WWW_ORIGIN}/fr-CH/`);
       for (const url of discoverOfferPages(home.body)) {
@@ -550,7 +641,12 @@ export class LidlWebConnector implements PriceConnector {
 
     const batch = buildLidlBatch(pages, ctx);
     for (const f of failures) batch.report.warnings.push({ message: f });
-    batch.report.metrics = { ...batch.report.metrics, categoriesListed: categories.length, pageFailures: failures.length };
+    batch.report.metrics = {
+      ...batch.report.metrics,
+      categoriesListed: categories.length,
+      productRotation: rotation.chunks ? `${rotation.chunk + 1}/${rotation.chunks}` : 'off',
+      pageFailures: failures.length,
+    };
     ctx.log.info('Lidl : collecte terminée', batch.report.metrics);
     return batch;
   }

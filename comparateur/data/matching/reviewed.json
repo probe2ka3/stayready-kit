@@ -1,5 +1,5 @@
 {
- "description": "Correspondances revues manuellement entre articles réels (Lidl, Open Prices) et références du catalogue TesPrix. canonicalSlug null = refus explicite. Seules ces décisions (et les codes-barres identiques) sont utilisées par le comparateur.",
+ "description": "Correspondances revues manuellement entre articles réels (Lidl, Aldi Suisse, Open Prices) et références du catalogue TesPrix. canonicalSlug null = refus explicite. Seules ces décisions (et les codes-barres identiques) sont utilisées par le comparateur.",
  "matches": [
   {
    "retailerProductId": "lidl:0080220",
@@ -1049,6 +1049,844 @@
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-09-28",
    "note": "Contenance déclarée (55 g) incohérente pour une boîte d’œufs"
+  },
+  {
+   "retailerProductId": "aldi:632130001",
+   "canonicalSlug": "spaghetti-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Spaghetti bio blé dur (bio acceptable pour la référence de base)"
+  },
+  {
+   "retailerProductId": "aldi:638975001",
+   "canonicalSlug": "spaghetti-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Spaghetti au bronze"
+  },
+  {
+   "retailerProductId": "aldi:632130001",
+   "canonicalSlug": "spaghetti-bio-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:182172",
+   "canonicalSlug": "penne-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Paquet de 1 kg"
+  },
+  {
+   "retailerProductId": "aldi:638935002",
+   "canonicalSlug": "fusilli-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288191003",
+   "canonicalSlug": "fusilli-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Spirales (torsades)"
+  },
+  {
+   "retailerProductId": "aldi:288191004",
+   "canonicalSlug": "cornettes-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:180302",
+   "canonicalSlug": "nouilles-oeufs-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Tagliatelle aux œufs, pâtes sèches"
+  },
+  {
+   "retailerProductId": "aldi:734792",
+   "canonicalSlug": "riz-long-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Paquet de 500 g"
+  },
+  {
+   "retailerProductId": "aldi:653829002",
+   "canonicalSlug": "riz-long-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:489055",
+   "canonicalSlug": "riz-basmati-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, paquet de 500 g"
+  },
+  {
+   "retailerProductId": "aldi:553740001",
+   "canonicalSlug": "flocons-avoine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:553740002",
+   "canonicalSlug": "flocons-avoine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:635148",
+   "canonicalSlug": "flocons-avoine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:527234",
+   "canonicalSlug": "corn-flakes-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:194190005",
+   "canonicalSlug": "lentilles-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Lentilles de montagne (vertes), bio"
+  },
+  {
+   "retailerProductId": "aldi:113630001",
+   "canonicalSlug": "quinoa-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 450 g"
+  },
+  {
+   "retailerProductId": "aldi:187113",
+   "canonicalSlug": "sucre-glace-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Paquet de 250 g"
+  },
+  {
+   "retailerProductId": "aldi:287918",
+   "canonicalSlug": "amidon-mais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Maïzena"
+  },
+  {
+   "retailerProductId": "aldi:502106",
+   "canonicalSlug": "huile-colza-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288096",
+   "canonicalSlug": "huile-colza-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Colza suisse"
+  },
+  {
+   "retailerProductId": "aldi:172733",
+   "canonicalSlug": "huile-olive-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 75 cl"
+  },
+  {
+   "retailerProductId": "aldi:181902",
+   "canonicalSlug": "huile-olive-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 75 cl"
+  },
+  {
+   "retailerProductId": "aldi:341593",
+   "canonicalSlug": "huile-olive-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 50 cl"
+  },
+  {
+   "retailerProductId": "aldi:341593",
+   "canonicalSlug": "huile-olive-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:172733",
+   "canonicalSlug": "huile-olive-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 75 cl"
+  },
+  {
+   "retailerProductId": "aldi:181902",
+   "canonicalSlug": "huile-olive-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 75 cl"
+  },
+  {
+   "retailerProductId": "aldi:288445001",
+   "canonicalSlug": "mayonnaise-265g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288215001",
+   "canonicalSlug": "mayonnaise-265g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Thomy"
+  },
+  {
+   "retailerProductId": "aldi:616562",
+   "canonicalSlug": "mayonnaise-265g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:657163002",
+   "canonicalSlug": "moutarde-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:558965001",
+   "canonicalSlug": "ketchup-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Flacon de 1 kg"
+  },
+  {
+   "retailerProductId": "aldi:171732001",
+   "canonicalSlug": "ketchup-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 530 g"
+  },
+  {
+   "retailerProductId": "aldi:623222003",
+   "canonicalSlug": "bouillon-legumes-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Pot de 126 g"
+  },
+  {
+   "retailerProductId": "aldi:650283001",
+   "canonicalSlug": "sauce-soja-250ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:194341",
+   "canonicalSlug": "poivre-noir-50g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288575",
+   "canonicalSlug": "assaisonnement-90g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Aromat"
+  },
+  {
+   "retailerProductId": "aldi:492669",
+   "canonicalSlug": "lait-sans-lactose-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Lait à boire 2,5 %, sans lactose, suisse"
+  },
+  {
+   "retailerProductId": "aldi:290288",
+   "canonicalSlug": "boisson-avoine-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Oatly barista"
+  },
+  {
+   "retailerProductId": "aldi:288168",
+   "canonicalSlug": "beurre-cuisine-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288415",
+   "canonicalSlug": "beurre-choix-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Beurre (de choix) suisse, 250 g"
+  },
+  {
+   "retailerProductId": "aldi:288229",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Pot de 500 g, sans lactose, suisse"
+  },
+  {
+   "retailerProductId": "aldi:544617",
+   "canonicalSlug": "sere-maigre-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "250 g, sans lactose, suisse"
+  },
+  {
+   "retailerProductId": "aldi:290039",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "aldi:288637",
+   "canonicalSlug": "emmentaler-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:454824",
+   "canonicalSlug": "emmentaler-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288551",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:178450001",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "125 g"
+  },
+  {
+   "retailerProductId": "aldi:318593",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:553217",
+   "canonicalSlug": "fromage-rape-120g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 200 g"
+  },
+  {
+   "retailerProductId": "aldi:665695",
+   "canonicalSlug": "fromage-rape-120g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Emmental râpé, 250 g"
+  },
+  {
+   "retailerProductId": "aldi:288177",
+   "canonicalSlug": "fromage-rape-120g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Sachet de 400 g"
+  },
+  {
+   "retailerProductId": "aldi:480085",
+   "canonicalSlug": "pain-mi-blanc-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:485333",
+   "canonicalSlug": "pain-toast-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:319510",
+   "canonicalSlug": "pain-toast-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "750 g"
+  },
+  {
+   "retailerProductId": "aldi:288218",
+   "canonicalSlug": "tresse-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "460 g"
+  },
+  {
+   "retailerProductId": "aldi:671441",
+   "canonicalSlug": "baguette-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288375",
+   "canonicalSlug": "poulet-poitrine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "300 g, suisse"
+  },
+  {
+   "retailerProductId": "aldi:776627",
+   "canonicalSlug": "poulet-poitrine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "600 g, suisse"
+  },
+  {
+   "retailerProductId": "aldi:288541",
+   "canonicalSlug": "boeuf-hache-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:778633",
+   "canonicalSlug": "boeuf-hache-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "650 g"
+  },
+  {
+   "retailerProductId": "aldi:288540",
+   "canonicalSlug": "porc-cotelettes-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288469",
+   "canonicalSlug": "cervelas-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:288008",
+   "canonicalSlug": "cervelas-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "500 g"
+  },
+  {
+   "retailerProductId": "aldi:288006",
+   "canonicalSlug": "jambon-cuit-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Jambon de derrière"
+  },
+  {
+   "retailerProductId": "aldi:475322",
+   "canonicalSlug": "jambon-cuit-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Jambon de derrière, 200 g"
+  },
+  {
+   "retailerProductId": "aldi:107223",
+   "canonicalSlug": "saumon-fume-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "aldi:455111001",
+   "canonicalSlug": "tomates-concassees-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:108628",
+   "canonicalSlug": "tomates-concassees-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:599922",
+   "canonicalSlug": "concentre-tomates-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Triple concentré"
+  },
+  {
+   "retailerProductId": "aldi:110433",
+   "canonicalSlug": "concentre-tomates-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:275083001",
+   "canonicalSlug": "sauce-tomate-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Barilla basilic"
+  },
+  {
+   "retailerProductId": "aldi:287779002",
+   "canonicalSlug": "sauce-tomate-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 350 g"
+  },
+  {
+   "retailerProductId": "aldi:284292002",
+   "canonicalSlug": "sauce-tomate-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "500 g"
+  },
+  {
+   "retailerProductId": "aldi:625269",
+   "canonicalSlug": "pois-chiches-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "265 g (poids égoutté probable)"
+  },
+  {
+   "retailerProductId": "aldi:622583",
+   "canonicalSlug": "haricots-rouges-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "255 g (poids égoutté probable)"
+  },
+  {
+   "retailerProductId": "aldi:683022",
+   "canonicalSlug": "mais-340g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "285 g"
+  },
+  {
+   "retailerProductId": "aldi:682273",
+   "canonicalSlug": "mais-340g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 285 g"
+  },
+  {
+   "retailerProductId": "aldi:487506",
+   "canonicalSlug": "thon-huile-240g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "140 g"
+  },
+  {
+   "retailerProductId": "aldi:639820002",
+   "canonicalSlug": "thon-huile-240g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "168 g"
+  },
+  {
+   "retailerProductId": "aldi:191455001",
+   "canonicalSlug": "lait-coco-400ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:649414",
+   "canonicalSlug": "confiture-fraises-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "450 g"
+  },
+  {
+   "retailerProductId": "aldi:649385",
+   "canonicalSlug": "confiture-fraises-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "450 g"
+  },
+  {
+   "retailerProductId": "aldi:622605002",
+   "canonicalSlug": "confiture-fraises-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "335 g, 75 % de fruits"
+  },
+  {
+   "retailerProductId": "aldi:622641001",
+   "canonicalSlug": "confiture-fraises-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 340 g"
+  },
+  {
+   "retailerProductId": "aldi:155962002",
+   "canonicalSlug": "miel-fleurs-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:625658001",
+   "canonicalSlug": "miel-fleurs-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, miel liquide"
+  },
+  {
+   "retailerProductId": "aldi:650130",
+   "canonicalSlug": "pate-tartiner-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:155064",
+   "canonicalSlug": "pate-tartiner-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Nutella 450 g"
+  },
+  {
+   "retailerProductId": "aldi:304077004",
+   "canonicalSlug": "chocolat-lait-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "125 g"
+  },
+  {
+   "retailerProductId": "aldi:304070002",
+   "canonicalSlug": "chocolat-noir-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "125 g, 70 %"
+  },
+  {
+   "retailerProductId": "aldi:567058",
+   "canonicalSlug": "cafe-grains-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "500 g"
+  },
+  {
+   "retailerProductId": "aldi:272314",
+   "canonicalSlug": "cafe-moulu-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:450902",
+   "canonicalSlug": "cafe-moulu-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:550241",
+   "canonicalSlug": "capsules-cafe-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "20 capsules compatibles"
+  },
+  {
+   "retailerProductId": "aldi:550236",
+   "canonicalSlug": "capsules-cafe-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "20 capsules compatibles"
+  },
+  {
+   "retailerProductId": "aldi:476159002",
+   "canonicalSlug": "the-noir-25",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "50 sachets"
+  },
+  {
+   "retailerProductId": "aldi:476159001",
+   "canonicalSlug": "the-noir-25",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Earl grey, 40 sachets"
+  },
+  {
+   "retailerProductId": "aldi:597546002",
+   "canonicalSlug": "infusion-menthe-20",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:497871",
+   "canonicalSlug": "cacao-poudre-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "800 g"
+  },
+  {
+   "retailerProductId": "aldi:290478",
+   "canonicalSlug": "chips-nature-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "280 g"
+  },
+  {
+   "retailerProductId": "aldi:155755003",
+   "canonicalSlug": "chips-nature-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "130 g"
+  },
+  {
+   "retailerProductId": "aldi:288543",
+   "canonicalSlug": "eau-plate-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 1,5 l (6 bouteilles)"
+  },
+  {
+   "retailerProductId": "aldi:581120",
+   "canonicalSlug": "eau-plate-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 1,5 l, suisse"
+  },
+  {
+   "retailerProductId": "aldi:287995",
+   "canonicalSlug": "eau-gazeuse-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 1,5 l (classique = gazeuse)"
+  },
+  {
+   "retailerProductId": "aldi:581159",
+   "canonicalSlug": "eau-gazeuse-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bouteille de 1,5 l, suisse"
+  },
+  {
+   "retailerProductId": "aldi:481476",
+   "canonicalSlug": "jus-pomme-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "1,5 l"
+  },
+  {
+   "retailerProductId": "aldi:730880",
+   "canonicalSlug": "the-froid-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "1 l"
+  },
+  {
+   "retailerProductId": "aldi:153919",
+   "canonicalSlug": "the-froid-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:290609002",
+   "canonicalSlug": "sirop-framboise-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Bio, 50 cl"
+  },
+  {
+   "retailerProductId": "aldi:501888",
+   "canonicalSlug": "epinards-surg-600g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "750 g"
+  },
+  {
+   "retailerProductId": "aldi:294497003",
+   "canonicalSlug": "petits-pois-surg-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "900 g"
+  },
+  {
+   "retailerProductId": "aldi:288244",
+   "canonicalSlug": "frites-four-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "1,4 kg"
+  },
+  {
+   "retailerProductId": "aldi:191626",
+   "canonicalSlug": "pizza-margherita-350g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Emballage de 900 g"
+  },
+  {
+   "retailerProductId": "aldi:479002",
+   "canonicalSlug": "savon-recharge-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28"
+  },
+  {
+   "retailerProductId": "aldi:563932001",
+   "canonicalSlug": "gel-douche-250ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "1 l"
+  },
+  {
+   "retailerProductId": "aldi:575564",
+   "canonicalSlug": "shampoing-250ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "500 ml"
+  },
+  {
+   "retailerProductId": "aldi:703956",
+   "canonicalSlug": "shampoing-250ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "300 ml"
+  },
+  {
+   "retailerProductId": "aldi:704072",
+   "canonicalSlug": "apres-shampoing-200ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "300 ml"
+  },
+  {
+   "retailerProductId": "aldi:671760",
+   "canonicalSlug": "dentifrice-75ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Lot de 3 tubes (300 ml)"
+  },
+  {
+   "retailerProductId": "aldi:659497",
+   "canonicalSlug": "deodorant-50ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "100 ml"
+  },
+  {
+   "retailerProductId": "aldi:585448002",
+   "canonicalSlug": "deodorant-50ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "Lot de 2 (100 ml)"
+  },
+  {
+   "retailerProductId": "aldi:561741",
+   "canonicalSlug": "croquettes-chat-2kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "800 g"
+  },
+  {
+   "retailerProductId": "aldi:155444",
+   "canonicalSlug": "litiere-chat-10l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-28",
+   "note": "20 l"
   }
  ]
 }

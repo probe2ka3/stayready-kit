@@ -6,6 +6,7 @@ import {
   chainForLocation,
   discoverAssortmentCategories,
   discoverOfferPages,
+  discoverProductPages,
   HttpBlockedError,
   isAllowed,
   matchesFor,
@@ -13,6 +14,8 @@ import {
   parseAssortmentPage,
   parseOfferPage,
   parsePackText,
+  parseProductPage,
+  rotationSlice,
   parseRegions,
   parseRobots,
   PoliteFetcher,
@@ -273,6 +276,48 @@ describe('connecteur Lidl', () => {
     ]);
     expect(bacon[0]).toMatchObject({ endIsPresumed: true, validTo: '2026-10-07' });
     expect(a.retailerProducts.find((p) => p.id === 'lidl:offer-100')?.quantity).toEqual({ amount: 1000, unit: 'g' });
+  });
+
+  const productPage = (id: number, slug: string, name: string, price: string, footer: string, extra = '') => `<html><head>
+    <meta property="og:url" content="https://sortiment.lidl.ch/fr/catalog/product/view/id/${id}/s/${slug}/" /></head><body>
+    <nav><a href="https://www.lidl.ch/c/fr-CH/lidl-plus/s1">Lidl Plus</a> pricefield__badge--lidl-plus</nav>
+    <div class="product-info-main"><h1 class="page-title"><span class="base">${name}</span></h1>
+    <div class="price-box price-final_price"><span class="pricefield ${extra}"><span class="pricefield__wrapper"><span class="pricefield__body">
+    <strong class="pricefield__price" itemprop="price" content="${price}">x</strong></span></span>
+    <span class="pricefield__footer">${footer}</span></span></div><div class="towishlist-wrapper"></div></div></body></html>`;
+
+  it('lit les fiches produits du plan du site (nav ignorée, tabac exclu)', () => {
+    const xml = `<urlset><url><loc>https://sortiment.lidl.ch/fr/catalog/product/view/id/20</loc></url>
+      <url><loc>https://sortiment.lidl.ch/fr/catalog/product/view/id/3</loc></url>
+      <url><loc>https://sortiment.lidl.ch/de/catalog/product/view/id/3</loc></url>
+      <url><loc>https://sortiment.lidl.ch/fr/milchprodukte-eier</loc></url></urlset>`;
+    expect(discoverProductPages(xml)).toEqual([
+      'https://sortiment.lidl.ch/fr/catalog/product/view/id/3',
+      'https://sortiment.lidl.ch/fr/catalog/product/view/id/20',
+    ]);
+    const penne = parseProductPage(productPage(3, 'penne-rigate-0004321', 'Penne rigate', '0.95', 'les 500 g | 100 g = 0,19 CHF'), 'u');
+    expect(penne).toMatchObject({ articleNo: '0004321', name: 'Penne rigate', priceCents: 95, lidlPlusPriceCents: null, isAction: false });
+    expect(parseProductPage(productPage(4, 'brunette-soft-0001198', 'Brunette D.ble Filtre Soft', '9.39', 'les 20 pièces'), 'u')).toBeNull();
+    expect(parseProductPage('<html>maintenance</html>', 'u')).toBeNull();
+
+    const batch = buildLidlBatch(
+      { assortment: [], offers: [], products: [{ url: 'https://sortiment.lidl.ch/fr/catalog/product/view/id/3', html: productPage(3, 'penne-rigate-0004321', 'Penne rigate', '0.95', 'les 500 g | 100 g = 0,19 CHF'), fetchedAt: now }] },
+      { now },
+    );
+    expect(batch.prices[0]).toMatchObject({ retailerProductId: 'lidl:0004321', priceCents: 95 });
+    expect(batch.report.metrics?.productPagesRead).toBe(1);
+  });
+
+  it('rotation des fiches : chaque fiche relue une fois par cycle, sans état', () => {
+    const urls = Array.from({ length: 10 }, (_, i) => `u${i}`);
+    const seen = new Set<string>();
+    for (let d = 0; d < 4; d++) {
+      const r = rotationSlice(urls, 3, new Date(Date.UTC(2026, 8, 28 + d, 8)));
+      expect(r.chunks).toBe(4);
+      r.slice.forEach((u) => seen.add(u));
+    }
+    expect(seen.size).toBe(10);
+    expect(rotationSlice(urls, 0, now).slice).toEqual([]);
   });
 });
 

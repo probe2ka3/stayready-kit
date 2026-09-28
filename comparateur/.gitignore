@@ -19,3 +19,4 @@ data/raw/
 data/prices/reports/
 data/exports/
 data/matching/candidates.json
+data/quality/report.json

@@ -277,7 +277,7 @@ export async function jobExportOdbl(ctx: JobContext) {
 export async function jobReprocessLidl(ctx: JobContext) {
   const archiveDir = ctx.env.env.RAW_ARCHIVE_DIR ?? join(ctx.env.dataDir, 'raw');
   const date = typeof ctx.flags.date === 'string' ? ctx.flags.date : ctx.now.toISOString().slice(0, 10);
-  const pages: LidlPages = { assortment: [], offers: [] };
+  const pages: LidlPages = { assortment: [], offers: [], products: [] };
   for (const host of ['sortiment.lidl.ch', 'www.lidl.ch']) {
     const dir = join(archiveDir, host, date);
     let index: string;
@@ -294,12 +294,13 @@ export async function jobReprocessLidl(ctx: JobContext) {
     for (const [url, e] of latest) {
       const html = gunzipSync(await readFile(join(dir, e.file))).toString('utf8');
       const entry = { url, html, fetchedAt: new Date(e.fetchedAt) };
-      if (host === 'sortiment.lidl.ch' && !/\.(xml|txt)$/.test(url)) pages.assortment.push(entry);
+      if (host === 'sortiment.lidl.ch' && /\/catalog\/product\/view\//.test(url)) pages.products?.push(entry);
+      else if (host === 'sortiment.lidl.ch' && !/\.(xml|txt)$/.test(url)) pages.assortment.push(entry);
       if (host === 'www.lidl.ch' && /\/a\d+$/.test(url)) pages.offers.push(entry);
     }
   }
   if (pages.assortment.length + pages.offers.length === 0) throw new Error(`Aucune page archivée pour le ${date}`);
-  const fetchedAt = [...pages.assortment, ...pages.offers].reduce((a, p) => (p.fetchedAt > a ? p.fetchedAt : a), new Date(0));
+  const fetchedAt = [...pages.assortment, ...pages.offers, ...(pages.products ?? [])].reduce((a, p) => (p.fetchedAt > a ? p.fetchedAt : a), new Date(0));
   const batch = buildLidlBatch(pages, { now: fetchedAt, catalog: PRODUCTS, reviewedMatches: await readReviewedMatches(ctx.env.dataDir) });
   const prev = (await readLiveSnapshots(ctx.env.dataDir)).find((s) => s.connectorId === 'lidl-web');
   await writeLiveSnapshot(ctx.env.dataDir, {

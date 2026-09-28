@@ -32,6 +32,8 @@ export type SourceKind =
   | 'manual_import' // import structuré (CSV/JSON) d'une source documentée
   | 'retailer_site' // pages publiques officielles de l'enseigne, collecte automatisée conforme (robots.txt)
   | 'open_data' // données ouvertes (OpenStreetMap, swisstopo, Open Prices)
+  | 'third_party' // fournisseur de données tiers (agrégateur, licence) : jamais confondu avec l'enseigne
+  | 'receipt' // ticket de caisse transmis par un utilisateur (anonymisé)
   | 'demo'; // données fictives de démonstration
 
 export interface DataSource {
@@ -189,9 +191,10 @@ export type SalesChannel = 'store' | 'online';
  * Fiabilité de la source :
  * - official : publié par l'enseigne (site officiel, flux, accord) ;
  * - survey   : relevé documenté par l'exploitant (import structuré) ;
- * - crowd    : relevé communautaire avec justificatif (Open Prices) — toujours « indicatif ».
+ * - crowd    : relevé communautaire avec justificatif (Open Prices, tickets) — toujours « indicatif » ;
+ * - third_party : fournisseur de données tiers (agrégateur) — toujours « indicatif ».
  */
-export type SourceReliability = 'official' | 'survey' | 'crowd';
+export type SourceReliability = 'official' | 'survey' | 'crowd' | 'third_party';
 
 export interface PriceObservation {
   id: string;
