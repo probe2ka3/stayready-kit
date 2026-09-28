@@ -12,3 +12,7 @@ data/imports/inbox
 docs
 e2e
 e2e-admin
+data/raw
+data/exports
+data/prices/reports
+data/matching/candidates.json

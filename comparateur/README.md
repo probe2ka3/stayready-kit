@@ -1,6 +1,7 @@
-# Cabas — comparateur de courses intelligent pour la Suisse
+# TesPrix — comparateur de courses intelligent pour la Suisse
 
-> « Cabas » est un **nom de travail** (recherche d'antériorité de marque à faire).
+> « TesPrix » est un **nom provisoire** (recherche d'antériorité et validation juridique à faire, voir
+> [docs/IDENTITE.md](docs/IDENTITE.md)). Les paquets techniques gardent le préfixe `@cabas/*`.
 
 Plateforme web qui compare le coût d'un panier de courses entre les enseignes
 présentes autour de l'utilisateur (Migros, Coop, Denner, Aldi Suisse, Lidl Suisse,
@@ -14,11 +15,19 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
   annoncées uniquement, distinction publication / validité, fuseau Europe/Zurich).
 - Aucun compte : panier, favoris et listes restent dans le navigateur.
 - Chaque prix affiche sa source, sa date de vérification et son statut de fiabilité.
+- **Détours chiffrés** (économie brute, trajet ajouté, économie nette, seuil personnel, accepter/refuser) et
+  signal **« attendre serait moins cher »** fondé sur les actions déjà annoncées.
 
-**État actuel : mode démonstration.** Aucune enseigne ne publie d'API de prix et aucun accord n'est
-conclu : les **prix sont fictifs** et identifiés comme tels partout. Les **succursales
-(2 955, OpenStreetMap)**, les **localités (4 073, swisstopo)** et les **calendriers promotionnels**
-sont réels. Voir [docs/STATUT.md](docs/STATUT.md).
+**État actuel (phase 2) : prix réels partiels, service non ouvert au public.**
+
+- **Lidl** : prix officiels collectés chaque jour sur son site (1 148 prix, 517 actions dont 244 futures),
+  98 références du catalogue couvertes.
+- **Migros, Coop, Denner, Aldi, OTTO'S** : relevés communautaires Open Prices (ODbL), peu nombreux, toujours
+  signalés « indicatifs ». Leurs sites refusent l'accès automatisé ou l'interdisent : un accord est nécessaire.
+- Le mode démonstration (prix fictifs) reste disponible et **n'est jamais mélangé** aux prix réels
+  (`PRICE_DATA`).
+
+Voir [docs/STATUT.md](docs/STATUT.md) et [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md).
 
 ## Démarrage rapide
 
@@ -27,7 +36,8 @@ Prérequis : Node.js 22, pnpm 10 (`corepack enable`).
 ```bash
 cd comparateur
 pnpm install
-pnpm dev                      # http://localhost:3000 — mode « mémoire », sans base de données
+pnpm dev                      # http://localhost:3000 — mode « mémoire », prix réels des instantanés data/prices/live
+PRICE_DATA=demo pnpm dev      # données fictives de démonstration
 ```
 
 ### Avec PostgreSQL + PostGIS (mode complet, administration incluse)
@@ -68,6 +78,7 @@ comparateur/
 | `pnpm test:e2e:admin` | Tests navigateur de l'administration (PostgreSQL requis) |
 | `pnpm typecheck` | Vérification des types de tous les paquets |
 | `pnpm job <tâche>` | `migrate`, `seed`, `reference`, `localities [--download]`, `stores [--download]`, `connectors`, `import <fichiers> --connector <id> [--dry-run]`, `quality`, `daily`, `weekly`, `status`, `purge-demo --confirm` |
+| `pnpm job collect` | Collecte des prix réels (Lidl, Open Prices) ; voir aussi `reprocess-lidl`, `import-live`, `match-candidates`, `export-odbl`, `purge-source`, `rezone` |
 
 ## Documentation
 
@@ -82,8 +93,17 @@ comparateur/
 | [docs/API.md](docs/API.md) | API publique `/api/v1` |
 | [docs/SECURITE.md](docs/SECURITE.md) | Mesures de sécurité et de confidentialité |
 | [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) | Installation, variables d'environnement, tâches planifiées, maintenance |
+| [docs/audit/03-sources-prix.md](docs/audit/03-sources-prix.md) | Sources de prix réels : constats, décisions, blocages, charte de collecte |
+| [docs/MARCHE.md](docs/MARCHE.md) | Concurrence, freemium, prix du premium, affiliation vérifiée, données B2B |
+| [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLAN.md) | Plan d'affaires : coûts, revenus, scénarios et seuils (hypothèses avec formules) |
+| [docs/IDENTITE.md](docs/IDENTITE.md) | Nom, domaines, marques proches, identité visuelle |
+| [docs/LANCEMENT.md](docs/LANCEMENT.md) | Zone pilote, verrou de lancement, liste de contrôle d'ouverture |
+| [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md) | Compte rendu de la phase 2 |
 
 ## Licences des données
 
 - Localités : Source : Office fédéral de topographie swisstopo (OGD).
 - Succursales : © les contributeurs d'OpenStreetMap, ODbL 1.0 (voir `data/stores/LICENSE.md`).
+- Prix communautaires : Open Prices (Open Food Facts), ODbL 1.0 ; données dérivées exportables (`export-odbl`).
+- Prix Lidl : faits (désignation, format, prix, dates) lus sur les pages publiques de Lidl Suisse ; aucune
+  photo ni aucun texte descriptif repris.

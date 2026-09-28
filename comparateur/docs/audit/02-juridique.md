@@ -146,7 +146,7 @@ Principes (art. 6), protection dès la conception et par défaut (art. 7), sécu
   produits est un usage référentiel généralement admis s'il n'induit pas en erreur
   sur une affiliation ⚖️. → Noms en texte, mention « comparateur indépendant, sans
   affiliation », aucun logo, aucune reprise de charte graphique.
-- **Nom du service** : « Cabas » est un **nom de travail**. Une recherche d'antériorité
+- **Nom du service** : « TesPrix » (auparavant « Cabas ») est un **nom provisoire** ; analyse préliminaire dans `docs/IDENTITE.md`. Une recherche d'antériorité
   (Swissreg / IPI) et de disponibilité du nom de domaine est requise avant lancement ⚖️.
 
 ## 7. Conditions d'utilisation des sites des enseignes
@@ -161,6 +161,11 @@ Principes (art. 6), protection dès la conception et par défaut (art. 7), sécu
   sont interprétés comme une **absence d'autorisation** de collecte automatisée.
 - Art. 143bis CP (accès indu à un système informatique « spécialement protégé ») :
   tout contournement d'une protection est exclu.
+- **Phase 2 (28.09.2026)**, détail dans `03-sources-prix.md` : Denner renvoie aux mentions
+  légales Migros, qui interdisent l'utilisation commerciale sans autorisation écrite → pas de
+  collecte. Lidl : aucune clause d'interdiction trouvée, robots.txt permissif pour les pages
+  catégories et actions → **collecte limitée aux faits, conforme à robots.txt**, sous réserve
+  d'un avis juridique (LCD art. 5 let. c) avant l'ouverture publique. Open Prices : ODbL.
 
 ## 8. Recommandations et démarches avant exploitation commerciale
 

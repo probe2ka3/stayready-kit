@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { checkCollection, type Anomaly, type CollectionStats } from '@cabas/core';
@@ -22,7 +22,7 @@ import {
   type LiveSnapshot,
   type PriceConnector,
 } from '@cabas/connectors';
-import { applyBatch, finishRun, lastRunStats, recordAnomalies, startRun, type DbHandle } from '@cabas/db';
+import { applyBatch, audit, finishRun, lastRunStats, purgeSource, recordAnomalies, startRun, type DbHandle } from '@cabas/db';
 import { PRODUCTS, zoneForStore } from '@cabas/reference';
 import { requireDb, snapshotPath } from './context';
 import type { JobContext } from './jobs';
@@ -329,4 +329,22 @@ export async function jobImportLive(ctx: JobContext) {
   } finally {
     await db.close();
   }
+}
+
+/** Retire toutes les données d'une source : `purge-source --connector <id> --confirm`. */
+export async function jobPurgeSource(ctx: JobContext) {
+  const id = String(ctx.flags.connector ?? '');
+  if (!id || !ctx.flags.confirm) throw new Error('Usage : purge-source --connector <id> --confirm');
+  await rm(join(ctx.env.dataDir, 'prices', 'live', `${id}.json`), { force: true });
+  if (ctx.env.databaseUrl) {
+    const db = requireDb(ctx.env);
+    try {
+      const res = await purgeSource(db, id);
+      await audit(db, String(ctx.flags.by ?? 'cli'), 'source.purge', 'connector', id, res);
+      ctx.log.info('Source supprimée de la base', { connector: id, ...res });
+    } finally {
+      await db.close();
+    }
+  }
+  ctx.log.info('Instantané supprimé', { connector: id });
 }

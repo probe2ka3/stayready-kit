@@ -79,3 +79,35 @@ Source autorisée / relevé / fichier ──► Connecteur d'enseigne ──► 
 - **Autre fournisseur d'itinéraires** : implémenter `TravelMatrixProvider`.
 - **Montée en charge** : limitation de débit et caches sont en mémoire du processus ; au-delà d'une
   instance, les remplacer par un stockage partagé (Redis) derrière les mêmes interfaces.
+
+## Phase 2 — nouveaux modules
+
+| Module | Rôle |
+|---|---|
+| `connectors/src/http/robots.ts`, `http/fetcher.ts` | Client de collecte « poli » : robots.txt (RFC 9309), délais, reprises, blocage définitif, archive |
+| `connectors/src/lidl.ts` | Lidl : assortiment (`sortiment.lidl.ch`) et actions datées (`www.lidl.ch`), fonctions d'analyse pures testées hors ligne |
+| `connectors/src/open-prices.ts` | Open Prices (ODbL) : lieux suisses, prix par code-barres, portée par politique tarifaire |
+| `connectors/src/pack.ts`, `html.ts` | Lecture des conditionnements et contrôle du prix de base publié |
+| `connectors/src/matching.ts`, `data/matching/reviewed.json` | Correspondances revues (validation ou refus explicites) |
+| `connectors/src/live-snapshot.ts`, `data/prices/live/` | Instantanés des prix réels (mode mémoire, amorçage d'une base) |
+| `worker/src/collect.ts` | Tâches `collect`, `reprocess-lidl`, `import-live`, `export-odbl`, `purge-source`, `rezone` |
+| `core/src/detours.ts` | Analyse des détours (réoptimisation conjointe) |
+| `core/src/metrics.ts`, `web/src/server/metrics.ts` | Indicateurs d'usage anonymes |
+| `core/src/entitlements.ts`, `web/src/server/billing.ts` | Offres gratuite/premium, paiement abstrait désactivé |
+| `core/src/sponsored.ts`, `web/src/components/partner-slot.tsx` | Contenus commerciaux signalés, hors classement |
+| `web/src/proxy.ts` | Verrou de lancement (liste d'attente, prévisualisation) et accès administration |
+
+Flux des prix réels :
+
+```
+sites / API ──PoliteFetcher──▶ connecteur (analyse pure) ──▶ lot idempotent
+      │                                                         │
+      └──▶ archive des pages (30 j)            ┌────────────────┴────────────────┐
+                                               ▼                                 ▼
+                                  base PostgreSQL (applyBatch)     instantané data/prices/live
+                                               │                                 │
+                                               └──── loadOfferIndex(mode) ◀──────┘ (mode mémoire)
+                                                         │  live = réel uniquement, demo = fictif uniquement
+                                                         ▼
+                                                 compareBasket → détours, signal d'attente
+```

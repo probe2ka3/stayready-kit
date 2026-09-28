@@ -25,7 +25,39 @@ en UTC.
 
 ## Types de source (par ordre de préférence)
 
-`official_api` · `agreement` · `manual_survey` · `manual_import` · `open_data` · `demo`.
+`official_api` · `agreement` · `retailer_site` (pages publiques officielles, collecte conforme à robots.txt) ·
+`manual_survey` · `manual_import` · `open_data` (dont Open Prices) · `demo`.
+
+## Champs d'un prix réel (migration 0001)
+
+| Champ | Contenu |
+|---|---|
+| `retailer_product_id` | Article de l'enseigne (`lidl:<n° d'article>`, `<enseigne>:gtin-<code>` pour Open Prices) |
+| `price_cents` | Prix TTC en centimes |
+| quantité, unité (article) | Conditionnement normalisé (g, ml, pièces) ; le prix unitaire est calculé |
+| `observed_at` | Instant de la collecte ou du relevé |
+| `zone_id`, `store_id` | Portée : nationale, zone tarifaire, succursale |
+| `price_type` | `regular` (les prix d'action sans dates sont des promotions du jour) |
+| `channel` | `store` (magasin) ou `online` |
+| `reliability` | `official`, `survey`, `crowd` |
+| `license` | `ODbL-1.0` pour Open Prices, vide pour les données propres |
+| `source_url`, `source_ref` | Page ou relevé d'origine |
+| `observed_at_place` | Lieu réel d'un relevé communautaire généralisé |
+| `proof` | `web_page`, `receipt`, `price_tag` |
+
+Promotions : `published_at`, `valid_from`, `valid_to` distincts, `end_is_presumed`, `while_stocks_last`,
+`loyalty_program`, `zone_id` (actions régionales), `region_note` (texte de l'enseigne), `source_url`.
+
+Idempotence : identifiants déterministes (source, article, portée, jour) ; relancer une collecte ne crée
+aucun doublon ; `LEAST(published_at)` conserve la première date de publication constatée.
+
+## Correspondances revues (`data/matching/reviewed.json`)
+
+Décisions de l'équipe données (relecteur, date, motif) : validation vers une référence du catalogue, ou refus
+explicite (`canonicalSlug: null`). Règles appliquées : même type de produit ; bio seulement vers une référence
+bio ; origine suisse exigée par la référence présente sur l'article ; variété ou format différents admis
+seulement comme « conditionnement différent » ; données incohérentes de la source refusées (ex. prix d'un pack
+associé à une bouteille). Outil d'aide : `pnpm job match-candidates`.
 
 ## Format d'import
 

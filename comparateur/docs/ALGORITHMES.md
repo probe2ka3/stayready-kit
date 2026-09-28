@@ -17,8 +17,10 @@ Pour chaque ligne du panier (référence normalisée × quantité) et chaque **p
    (`valid_from ≤ date ≤ valid_to`, dates Europe/Zurich incluses), dans la portée du profil, carte ou
    application possédée si requise. Types : prix, % (arrondi aux 5 centimes), « X pour Y », prix ou %
    dès N pièces. Non cumulables : la moins chère s'applique, seulement si elle est inférieure au prix normal.
-6. **Statut** : démo · promotion confirmée · indicatif (date future, ou vérifié il y a 8-30 jours) ·
-   périmé (> 30 jours, exclu par défaut) · vérifié.
+6. **Statut** : démo · promotion confirmée · périmé (> 30 jours, > 90 jours pour un relevé communautaire ;
+   exclu par défaut, et « périmé » même pour une date future) · indicatif (date future, vérifié il y a
+   8-30 jours, ou **relevé communautaire**, jamais « vérifié ») · vérifié (source officielle ≤ 7 jours).
+   La fiabilité (`official`, `survey`, `crowd`) est portée par chaque observation.
 7. **Choix** : l'option la moins chère ; à égalité, la plus fiable puis la correspondance la plus stricte.
 
 ## 2. Profils de prix
@@ -83,6 +85,37 @@ d'accès fixe (3 / 1 / 0 / 8 min). Avec `OSRM_URL`, la matrice routière réelle
   des promotions ; les promotions qui commencent et celles qui auront expiré sont listées.
 - L'aperçu sur 10 jours utilise uniquement les promotions déjà publiées.
 
+## 5 bis. « Attendre serait moins cher » (`compare.ts`, `computeWaitSignal`)
+
+L'aperçu calcule, pour chaque jour de la date choisie à +9 jours, le coût des mêmes magasins avec les seules
+promotions **déjà publiées**. Le signal s'affiche pour le jour le plus avantageux dans les 6 jours suivants si :
+économie ≥ CHF 1 **et** ≥ 3 %, au moins une ligne en promotion ce jour-là, aucune ligne perdue. Les prix normaux
+futurs restent les derniers prix connus (« indicatifs ») : aucun prix n'est supposé.
+
+## 6 bis. Détours (`detours.ts`)
+
+Pour un plan de référence P (magasin unique ou parcours optimisé) et chaque profil q absent de P qui est moins
+cher sur au moins une ligne (ou fournit une ligne manquante) :
+
+1. **Réoptimisation conjointe** : `optimize` restreint aux profils `P ∪ {q}`, q imposé, au plus |P| + 1
+   magasins, seuil nul. Toutes les affectations et tous les ordres de visite sont considérés : ajouter q peut
+   rendre un magasin de P inutile (il est alors signalé comme « rendu inutile »), et la succursale de q retenue
+   est celle qui s'insère le mieux dans l'itinéraire (Held-Karp).
+2. **Mesures**, sur le meilleur plan P' (même couverture au moins) :
+   - économie sur les produits = Σ (coût dans P − coût dans P') sur les lignes présentes dans les deux ;
+   - articles ajoutés = lignes absentes de P et trouvées grâce à q (montant séparé, jamais compté comme perte) ;
+   - surcoût de trajet = (trajet + temps valorisé)(P') − (…)(P) ; km et minutes supplémentaires ;
+   - **économie nette = économie sur les produits − surcoût de trajet**.
+3. **Décision** : « proposé » si l'économie nette ≥ seuil de l'utilisateur (« économie minimale par magasin
+   supplémentaire ») ; sinon « sous le seuil » (affiché pour information) ; « apporte des articles » si q couvre
+   des lignes introuvables ailleurs ; les détours sans économie nette ne sont pas affichés.
+4. **Accepter** : la succursale devient la seule candidate de son profil et le profil est imposé
+   (`requiredProfiles`), avec un magasin de plus autorisé. **Refuser** : la succursale est exclue et le calcul
+   refait sans elle.
+
+Complexité : au plus (profils) × (sous-ensembles de |P| + 1 profils) évaluations, avec le cache d'itinéraires ;
+moins de 20 ms sur les paniers réels testés.
+
 ## 6. Économies
 
 `économie = Σ coût(référence) − Σ coût(scénario)` sur les lignes présentes dans les deux, moins
@@ -97,3 +130,6 @@ habituelle indiquée par l'utilisateur, sinon meilleur magasin unique. Un surco�
 - Au-delà de 5 magasins ou 16 profils, la recherche est plafonnée (signalé à l'utilisateur).
 - Le choix des 5 succursales candidates par profil est une heuristique (les plus proches du départ).
 - Zones tarifaires Migros rattachées par canton (approximation des limites communales réelles).
+- Régions Lidl déduites de la langue de la localité (swisstopo), à défaut du canton.
+- Un prix communautaire relevé dans une succursale est généralisé à sa zone (Migros) ou au pays (autres
+  enseignes) : toujours « indicatif », avec le lieu du relevé.

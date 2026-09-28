@@ -380,3 +380,13 @@ export async function purgeDemoData(handle: DbHandle): Promise<number> {
   await handle.sql`DELETE FROM promotions WHERE is_demo`;
   return rows.length;
 }
+
+/** Supprime toutes les données d'une source (demande d'une enseigne, retrait de licence). */
+export async function purgeSource(handle: DbHandle, connectorId: string): Promise<{ products: number }> {
+  return handle.db.transaction(async (tx) => {
+    await tx.execute(dsql`DELETE FROM price_observations WHERE source_connector = ${connectorId}`);
+    await tx.execute(dsql`DELETE FROM promotions WHERE source_connector = ${connectorId}`);
+    const res = await tx.execute(dsql`DELETE FROM retailer_products WHERE connector_id = ${connectorId}`);
+    return { products: Number((res as unknown as { count?: number }).count ?? 0) };
+  });
+}

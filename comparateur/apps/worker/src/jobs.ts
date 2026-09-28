@@ -29,7 +29,7 @@ import {
   type DbHandle,
 } from '@cabas/db';
 import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
-import { jobCollect, jobExportOdbl, jobImportLive, jobReprocessLidl, jobRezone } from './collect';
+import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessLidl, jobRezone } from './collect';
 import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
@@ -252,6 +252,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   connectors: { run: jobConnectors, help: 'Exécute les connecteurs prêts (--only a,b ; --no-demo)' },
   collect: { run: async (ctx) => void (await jobCollect(ctx)), help: 'Collecte les prix réels en ligne (--only lidl-web,open-prices ; --no-archive ; --no-snapshot)' },
   rezone: { run: jobRezone, help: 'Recalcule les zones tarifaires des succursales (instantané OSM)' },
+  'purge-source': { run: jobPurgeSource, help: 'Supprime toutes les données d’une source (--connector <id> --confirm)' },
   'import-live': { run: jobImportLive, help: 'Charge les instantanés de prix réels dans la base (amorçage)' },
   'reprocess-lidl': { run: jobReprocessLidl, help: 'Retraite la collecte Lidl depuis les pages archivées (--date AAAA-MM-JJ)' },
   'match-candidates': { run: jobMatchCandidates, help: 'Feuille de revue des correspondances (--out fichier ; --min-score 0.5)' },

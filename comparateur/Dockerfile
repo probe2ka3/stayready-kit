@@ -35,6 +35,10 @@ COPY --from=build --chown=app:app /app/apps/web/.next/static ./apps/web/.next/st
 COPY --from=build --chown=app:app /app/apps/web/public ./apps/web/public
 COPY --from=build --chown=app:app /app/data/geo ./data/geo
 COPY --from=build --chown=app:app /app/data/stores ./data/stores
+# Prix réels (instantanés), correspondances revues, emplacements commerciaux (vide)
+COPY --from=build --chown=app:app /app/data/prices/live ./data/prices/live
+COPY --from=build --chown=app:app /app/data/matching/reviewed.json ./data/matching/reviewed.json
+COPY --from=build --chown=app:app /app/data/commercial ./data/commercial
 USER app
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://127.0.0.1:3000/api/v1/health >/dev/null || exit 1

@@ -26,6 +26,18 @@
 | `OVERPASS_URL` | `https://overpass.osm.ch/api/interpreter` | Import hebdomadaire des succursales |
 | `HTTP_USER_AGENT` | — | Agent identifiable (avec contact) pour Overpass |
 | `DEMO_DATA` | `true` | `false` : le connecteur de démonstration n'est plus exécuté |
+| `PRICE_DATA` | `auto` | `live` : prix réels uniquement ; `demo` : données fictives uniquement ; `auto` : réel dès qu'un prix réel existe |
+| `HTTP_USER_AGENT` | `TesPrixBot/0.1 (…)` | Agent de collecte identifiable, **avec contact de l'exploitant en production** (jamais un agent de navigateur) |
+| `CRAWL_MIN_DELAY_MS` | `3000` | Délai minimal entre deux requêtes vers un même site (le `Crawl-delay` de robots.txt s'il est plus long) |
+| `RAW_ARCHIVE_DIR` / `RAW_ARCHIVE_DAYS` | `<DATA_DIR>/raw` / `30` | Archive des pages lues (preuve du prix affiché), purge automatique |
+| `LIDL_WEB` / `OPEN_PRICES` | actifs | `off` pour désactiver une source immédiatement |
+| `OPEN_PRICES_MAX_AGE_DAYS` | `400` | Ancienneté maximale des relevés importés |
+| `PUBLIC_ACCESS` | `open` | `waitlist` : seules la page d'attente et les pages d'information sont publiques |
+| `PREVIEW_TOKEN` | — | ≥ 16 caractères : accès de prévisualisation `?acces=<jeton>` en mode `waitlist` |
+| `SIGNUP_ENABLED` | `false` | Ouvre la liste d'attente (PostgreSQL requis) |
+| `PILOT_CANTONS` | `GE,VD,NE,FR,VS,JU` | Zone pilote (message hors zone) |
+| `BILLING_PROVIDER` | `none` | Paiement : seul `none` (désactivé) existe |
+| `COST_*_CHF_MONTH`, `COST_DOMAIN_CHF_YEAR` | 0 | Coûts déclarés, affichés dans les indicateurs d'administration |
 | `DATABASE_URL_TEST` | `postgres://cabas:cabas_dev_only@localhost:5432/cabas_test` | Tests d'intégration |
 
 ## Option A — Docker Compose (serveur unique)
@@ -57,8 +69,9 @@ administration en lecture seule.
 
 | Fréquence | Commande | Rôle |
 |---|---|---|
-| Quotidienne (ex. 05:15) | `pnpm job daily` | Connecteurs prêts (imports déposés, flux autorisés, démo) puis contrôles qualité |
-| Mercredi et jeudi 06:30 | `pnpm job connectors` | Prise en compte rapide des nouvelles actions (publications du mercredi/jeudi) |
+| Quotidienne (ex. 05:15) | `pnpm job daily` | **Collecte des prix réels** (Lidl, Open Prices), imports déposés, contrôles qualité |
+| Lundi et jeudi 07:10 | `pnpm job collect --only lidl-web` | Nouvelles actions Lidl (vagues du lundi et du jeudi) |
+| Mercredi et jeudi 06:30 | `pnpm job connectors` | Imports structurés déposés pour les nouvelles actions |
 | Hebdomadaire (lundi 04:10) | `pnpm job weekly` | Rafraîchissement des succursales OpenStreetMap |
 | Trimestrielle | `pnpm job localities --download` | Rafraîchissement des localités swisstopo |
 
@@ -66,6 +79,7 @@ Exemple `crontab` (fuseau du serveur réglé sur Europe/Zurich) :
 
 ```cron
 15 5 * * *   cd /srv/cabas/comparateur && pnpm job daily   >> /var/log/cabas/daily.log 2>&1
+10 7 * * 1,4 cd /srv/cabas/comparateur && pnpm job collect --only lidl-web >> /var/log/cabas/collect.log 2>&1
 30 6 * * 3,4 cd /srv/cabas/comparateur && pnpm job connectors >> /var/log/cabas/connectors.log 2>&1
 10 4 * * 1   cd /srv/cabas/comparateur && pnpm job weekly  >> /var/log/cabas/weekly.log 2>&1
 ```
@@ -86,6 +100,24 @@ docker run -d -p 5000:5000 -v "$PWD:/data" ghcr.io/project-osrm/osrm-backend osr
 
 Puis `OSRM_URL=http://osrm:5000`. Le serveur de démonstration public d'OSRM ne doit pas être utilisé en
 production (conditions d'utilisation). En cas d'indisponibilité, l'estimation prend le relais.
+
+## Collecte des prix réels
+
+| Tâche | Rôle |
+|---|---|
+| `pnpm job collect [--only lidl-web,open-prices]` | Collecte en ligne ; chaque source est isolée (une panne n'arrête pas les autres) ; alertes `connector_blocked`, `connector_failed`, `coverage_drop`, `parse_drift` |
+| `pnpm job reprocess-lidl --date AAAA-MM-JJ` | Retraite une collecte depuis l'archive, sans nouvelle requête (après correction de l'analyseur) |
+| `pnpm job import-live` | Charge les instantanés `data/prices/live/*.json` dans la base (amorçage) |
+| `pnpm job match-candidates` | Feuille de revue des correspondances (`data/matching/candidates.json`) |
+| `pnpm job export-odbl` | Exporte les données dérivées d'Open Prices sous ODbL (`data/exports/`) |
+| `pnpm job rezone` | Recalcule les zones tarifaires des succursales (régions Lidl) |
+| `pnpm job purge-source --connector <id> --confirm` | Retire toutes les données d'une source |
+
+Les correspondances validées se trouvent dans `data/matching/reviewed.json` (versionné) : une revue prend
+effet à la collecte suivante (base) ou immédiatement (mode mémoire).
+
+Règles de collecte : `docs/audit/03-sources-prix.md` §7. En cas de demande d'une enseigne : `LIDL_WEB=off`
+puis `pnpm job purge-source --connector lidl-web --confirm` (base et instantané ; action journalisée).
 
 ## Mises à jour du schéma
 
@@ -112,7 +144,8 @@ Si Playwright ne peut pas télécharger ses navigateurs, indiquer un Chromium ex
 
 ## Mise en production avec des prix réels — liste de contrôle
 
-- [ ] Source de prix autorisée ou relevés documentés en place (voir `docs/audit`).
+- [ ] Liste complète : `docs/LANCEMENT.md`.
+- [ ] Sources de prix validées (voir `docs/audit/03-sources-prix.md`), `PRICE_DATA=live`.
 - [ ] `DEMO_DATA=false`, puis `pnpm job purge-demo --confirm`.
 - [ ] Mentions légales et politique de confidentialité complétées (exploitant, hébergeur, transferts).
 - [ ] Validation juridique des points listés dans `docs/STATUT.md`.

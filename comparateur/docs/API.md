@@ -11,6 +11,12 @@ requête n'est conservée. Erreurs : `{ "error": { "code", "message", "issues"? 
 | GET | `/api/v1/catalog` | — |
 | POST | `/api/v1/compare` | 30 / min, même origine |
 | GET | `/api/v1/health` | — |
+| POST | `/api/v1/metrics` | 120 / min, même origine, compteur anonyme `{ metric, dimension }` (liste fermée) |
+| GET | `/api/v1/placements?slot=results_footer` | — (emplacements commerciaux signalés ; vide) |
+| POST | `/api/v1/waitlist` | fermé (`503 signup_closed`) tant que `SIGNUP_ENABLED` n'est pas activé |
+
+En mode `PUBLIC_ACCESS=waitlist`, seules `health` et `waitlist` répondent sans jeton de prévisualisation
+(`403 not_open` sinon). `health` renvoie aussi `prices` (`live`/`demo`), `access` et `pilotCantons`.
 
 ## GET /api/v1/stores
 
@@ -35,9 +41,23 @@ actuelle), `attribution`.
   "maxStores": 2,
   "travel": { "mode": "car", "costPerKmChf": 0.35, "valueOfTimeChfPerHour": 0, "valueInStoreTime": false, "minutesPerStore": 15, "returnToOrigin": true },
   "minSavingPerExtraStoreChf": 2,
-  "referenceChainId": null
+  "referenceChainId": null,
+  "includeStores": ["osm:node/427655235"]
 }
 ```
+
+`includeStores` (≤ 5) : succursales ajoutées par l'utilisateur après une proposition de détour ; elles sont
+imposées dans le parcours optimisé (un magasin de plus autorisé). Refuser un détour = ajouter la succursale à
+`excludedStores`.
+
+Nouveautés de la réponse (phase 2) :
+
+- chaque option de prix porte `reliability`, `observedAtPlace`, `license`, `sourceUrl` ;
+- chaque scénario porte `detours[]` (`store`, `items[]` avec `baseCents`/`newCents`/`savingCents`,
+  `grossSavingsCents`, `addedItemsCents`, `extraTravelCostCents`, `extraDistanceKm`, `extraMinutes`,
+  `netSavingsCents`, `droppedStores`, `worthwhile`, `reason`, `resulting`) et `includedStoreIds` ;
+- `waitSignal` : `{ fromDate, date, daysLater, basePurchaseCents, purchaseCents, savingsCents, promoLines }`
+  ou `null`.
 
 - `when` : `{ "mode": "now" }` ou `{ "mode": "plan", "date": "AAAA-MM-JJ", "time": "HH:MM" | null }`
   (jusqu'à 60 jours). Sans heure, les magasins fermés toute la journée sont exclus.
