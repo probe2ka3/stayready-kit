@@ -120,8 +120,12 @@ describe.skipIf(!available)('base PostgreSQL + PostGIS', () => {
       qty: 1,
     }));
     const stores = await findStoresNear(h, BULLE, 10);
-    const index = await loadOfferIndex(h, lines.map((l) => l.productId), [...new Set(stores.map((s) => s.chainId))], NOW);
+    const index = await loadOfferIndex(h, lines.map((l) => l.productId), [...new Set(stores.map((s) => s.chainId))], NOW, 'demo');
     expect(index.products.size).toBeGreaterThan(10);
+    expect([...index.products.values()].every((p) => p.isDemo)).toBe(true);
+    // Mode réel : aucune donnée de démonstration n'est chargée.
+    const live = await loadOfferIndex(h, lines.map((l) => l.productId), [...new Set(stores.map((s) => s.chainId))], NOW, 'live');
+    expect([...live.products.values()].some((p) => p.isDemo)).toBe(false);
     const result = await compareBasket(
       {
         origin: BULLE,

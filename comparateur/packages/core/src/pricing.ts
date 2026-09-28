@@ -14,6 +14,7 @@ import type {
   PromotionType,
   Quantity,
   RetailerProduct,
+  SourceReliability,
   Store,
 } from './types';
 import { packsNeeded, unitPrice, type UnitPriceBasis } from './units';
@@ -150,7 +151,8 @@ export type StatusReason =
   | 'pack_size_differs'
   | 'store_specific_price'
   | 'zone_price'
-  | 'regular_price_unknown';
+  | 'regular_price_unknown'
+  | 'crowd_sourced';
 
 export interface AppliedPromotion {
   id: string;
@@ -190,6 +192,11 @@ export interface LineOption {
   source: DataSource;
   isDemo: boolean;
   unitPrice: { basis: UnitPriceBasis; cents: number };
+  reliability: SourceReliability;
+  /** Lieu réel du relevé communautaire (succursale), si généralisé. */
+  observedAtPlace: string | null;
+  license: string | null;
+  sourceUrl: string | null;
 }
 
 export type UnavailableReason =
@@ -219,6 +226,25 @@ const STATUS_RANK: Record<PriceStatus, number> = {
 };
 const MATCH_RANK: Record<MatchKind, number> = { gtin: 0, equivalent: 1, similar: 2 };
 
+/** Fiabilité d'une observation (explicite, sinon déduite du type de source). */
+export function reliabilityOf(o: Pick<PriceObservation, 'reliability' | 'source'>): SourceReliability {
+  if (o.reliability) return o.reliability;
+  switch (o.source.kind) {
+    case 'open_data':
+      return 'crowd';
+    case 'manual_survey':
+    case 'manual_import':
+      return 'survey';
+    default:
+      return 'official';
+  }
+}
+
+/** Âge (jours) au-delà duquel une observation est périmée. */
+export function staleAfterDays(o: Pick<PriceObservation, 'reliability' | 'source'>, policy: FreshnessPolicy): number {
+  return reliabilityOf(o) === 'crowd' ? policy.crowdStaleAfterDays : policy.staleAfterDays;
+}
+
 function scopeMatches(o: { zoneId: string | null; storeId: string | null }, profile: PriceProfile): boolean {
   return (o.storeId === null || o.storeId === profile.storeId) && (o.zoneId === null || o.zoneId === profile.zoneId);
 }
@@ -244,7 +270,7 @@ export function pickObservation(
   for (const o of list) {
     const t = Date.parse(o.observedAt);
     if (!(t <= asOfMs) || !scopeMatches(o, profile)) continue;
-    const fresh = ageInDays(o.observedAt, ctx.asOf) <= ctx.policy.staleAfterDays ? 1 : 0;
+    const fresh = ageInDays(o.observedAt, ctx.asOf) <= staleAfterDays(o, ctx.policy) ? 1 : 0;
     const key: [number, number, number] = [fresh, scopeRank(o), t];
     if (!bestKey || compareKeys(key, bestKey) > 0) {
       best = o;
@@ -402,7 +428,8 @@ export function resolveLine(
     if (!obs && !hasStandalonePromo) continue;
 
     const ageDays = obs ? ageInDays(obs.observedAt, ctx.asOf) : 0;
-    const stale = obs ? ageDays > ctx.policy.staleAfterDays : false;
+    const stale = obs ? ageDays > staleAfterDays(obs, ctx.policy) : false;
+    const crowd = obs ? reliabilityOf(obs) === 'crowd' : false;
     if (obs) sawAnyPrice = true;
     if (stale && !ctx.prefs.includeStalePrices) {
       if (!sawStale || Date.parse(obs!.observedAt) > Date.parse(sawStale.observedAt)) {
@@ -435,11 +462,12 @@ export function resolveLine(
       reasons.push('demo_data');
     } else if (bestPromo) {
       status = 'promo_confirmed';
+    } else if (stale) {
+      // Un prix périmé reste « périmé », même pour une date future.
+      status = 'stale';
     } else if (ctx.targetDate > ctx.today) {
       status = 'indicative';
-    } else if (stale) {
-      status = 'stale';
-    } else if (ageDays > ctx.policy.verifiedMaxAgeDays) {
+    } else if (ageDays > ctx.policy.verifiedMaxAgeDays || crowd) {
       status = 'indicative';
     } else {
       status = 'verified';
@@ -454,6 +482,7 @@ export function resolveLine(
     if (usableObs?.storeId) reasons.push('store_specific_price');
     else if (usableObs?.zoneId) reasons.push('zone_price');
     if (regularTotal == null) reasons.push('regular_price_unknown');
+    if (usableObs && crowd) reasons.push('crowd_sourced');
 
     const effectivePackPrice = Math.round(total / packs);
     const option: LineOption = {
@@ -476,6 +505,10 @@ export function resolveLine(
       source: bestPromo && !usableObs ? bestPromo.promo.source : (usableObs as PriceObservation).source,
       isDemo,
       unitPrice: unitPrice(effectivePackPrice, product.quantity),
+      reliability: usableObs ? reliabilityOf(usableObs) : 'official',
+      observedAtPlace: usableObs?.observedAtPlace ?? null,
+      license: usableObs?.license ?? null,
+      sourceUrl: bestPromo && !usableObs ? (bestPromo.promo.sourceUrl ?? null) : (usableObs?.sourceUrl ?? null),
     };
     if (!best || isBetter(option, best)) best = option;
   }

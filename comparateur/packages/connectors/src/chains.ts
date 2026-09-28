@@ -17,8 +17,9 @@ import {
  * Ordre de priorité des sources (docs/audit/01-enseignes.md §5) :
  *  1. flux officiel autorisé  → `officialFeed` (à brancher lorsqu'un accord existe) ;
  *  2. import structuré        → fichiers déposés dans `<IMPORT_DIR>/<enseigne>/`.
- * Sans l'un ou l'autre, le connecteur est « en attente d'autorisation » et ne fait rien :
- * il n'existe volontairement aucune collecte automatisée des sites des enseignes.
+ * Sans l'un ou l'autre, le connecteur est « en attente d'autorisation » et ne fait rien.
+ * Les collectes automatisées en ligne sont des connecteurs distincts, limités aux sources
+ * conformes (voir `lidl.ts`, `open-prices.ts` et docs/audit/03-sources-prix.md).
  */
 export interface OfficialFeed {
   /** Indique si le flux est configuré (clé, URL…). */

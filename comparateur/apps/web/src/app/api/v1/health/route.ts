@@ -6,12 +6,13 @@ export async function GET() {
   try {
     const data = getAppData();
     await data.chains();
-    const realPrices = await data.hasRealPrices(new Date());
+    const mode = await data.priceMode(new Date());
     return NextResponse.json({
       status: 'ok',
       backend: data.mode,
-      // Mode démonstration tant qu'aucun prix réel n'est disponible.
-      demo: !realPrices,
+      // Données de démonstration servies (jamais mélangées aux prix réels).
+      demo: mode === 'demo',
+      prices: mode,
       time: new Date().toISOString(),
     });
   } catch {

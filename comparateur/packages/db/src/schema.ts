@@ -213,9 +213,24 @@ export const priceObservations = pgTable(
     importRunId: integer('import_run_id'),
     isDemo: boolean('is_demo').notNull().default(false),
     status: text('status').notNull().default('valid'),
+    /** regular | promo */
+    priceType: text('price_type').notNull().default('regular'),
+    /** store | online */
+    channel: text('channel').notNull().default('store'),
+    /** official | survey | crowd ; null = déduite du type de source */
+    reliability: text('reliability'),
+    /** Licence des données (ex. ODbL-1.0) ; null = données propres ou sous accord */
+    license: text('license'),
+    sourceUrl: text('source_url'),
+    observedAtPlace: text('observed_at_place'),
+    /** receipt | price_tag | web_page */
+    proof: text('proof'),
     createdAt: ts('created_at').notNull().defaultNow(),
   },
-  (t) => [index('price_obs_product_time_idx').on(t.retailerProductId, t.observedAt)],
+  (t) => [
+    index('price_obs_product_time_idx').on(t.retailerProductId, t.observedAt),
+    index('price_obs_connector_time_idx').on(t.sourceConnector, t.observedAt),
+  ],
 );
 
 export const promotions = pgTable(
@@ -241,6 +256,8 @@ export const promotions = pgTable(
     whileStocksLast: boolean('while_stocks_last').notNull().default(false),
     endIsPresumed: boolean('end_is_presumed').notNull().default(false),
     label: text('label'),
+    regionNote: text('region_note'),
+    sourceUrl: text('source_url'),
     publishedAt: ts('published_at').notNull(),
     validFrom: date('valid_from', { mode: 'string' }).notNull(),
     validTo: date('valid_to', { mode: 'string' }).notNull(),

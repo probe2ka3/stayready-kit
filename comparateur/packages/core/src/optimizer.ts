@@ -62,6 +62,10 @@ export interface OptimizerInput {
   maxStores: number | null;
   /** Économie minimale exigée pour chaque magasin supplémentaire (centimes). */
   minSavingPerExtraStoreCents: number;
+  /** Profils imposés dans chaque plan multi-magasins (magasin accepté par l'utilisateur). */
+  requiredProfiles?: number[];
+  /** Restreint les profils utilisables (analyse de détour). */
+  allowedProfiles?: number[];
 }
 
 export type StopOpenStatus = OpenStatus | 'not_checked';
@@ -403,8 +407,12 @@ export function optimize(input: OptimizerInput): OptimizerResult {
     return r;
   };
 
-  // Profils ayant au moins une succursale candidate.
-  const present = Array.from({ length: P }, (_, p) => p).filter((p) => (storesByProfile[p]?.length ?? 0) > 0);
+  // Profils ayant au moins une succursale candidate (et autorisés).
+  const allowed = input.allowedProfiles ? new Set(input.allowedProfiles) : null;
+  const required = new Set(input.requiredProfiles ?? []);
+  const present = Array.from({ length: P }, (_, p) => p).filter(
+    (p) => (storesByProfile[p]?.length ?? 0) > 0 && (!allowed || allowed.has(p)),
+  );
 
   // 1. Magasin unique : évaluation de chaque profil.
   const singleStore: SingleStorePlan[] = present.map((p) => {
@@ -427,10 +435,10 @@ export function optimize(input: OptimizerInput): OptimizerResult {
   // Réduction à MAX_PROFILES profils (les plus complets puis les moins chers).
   let profilesConsidered = present;
   if (present.length > MAX_PROFILES) {
-    profilesConsidered = [...singleStore]
+    const ranked = [...singleStore]
       .sort((a, b) => b.coveredLines - a.coveredLines || a.purchaseCents - b.purchaseCents)
-      .slice(0, MAX_PROFILES)
       .map((s) => s.profileIndex);
+    profilesConsidered = [...new Set([...ranked.filter((p) => required.has(p)), ...ranked])].slice(0, MAX_PROFILES);
   }
 
   const K = Math.min(input.maxStores ?? HARD_MAX_STORES, HARD_MAX_STORES, profilesConsidered.length);
@@ -463,6 +471,7 @@ export function optimize(input: OptimizerInput): OptimizerResult {
   for (let k = 1; k <= K; k++) {
     for (const combo of combinations(profilesConsidered.length, k)) {
       const profiles = combo.map((i) => profilesConsidered[i] as number);
+      if (required.size && ![...required].every((r) => profiles.includes(r))) continue;
       const ev = evaluateSubset(profiles, input);
       subsetsEvaluated++;
       if (!ev.redundant) (bySize[k] as SubsetEval[]).push(ev);

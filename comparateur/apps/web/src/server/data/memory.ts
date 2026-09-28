@@ -1,5 +1,5 @@
 import 'server-only';
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   boundingBox,
@@ -13,23 +13,54 @@ import {
   type OfferIndex,
   type Store,
 } from '@cabas/core';
-import { generateDemoData } from '@cabas/connectors';
+import {
+  generateDemoData,
+  liveSnapshotDir,
+  matchesFor,
+  readLiveSnapshots,
+  readReviewedMatches,
+  reviewedMatchesPath,
+  type LiveSnapshot,
+} from '@cabas/connectors';
 import { CATEGORIES, CHAINS, PRODUCTS } from '@cabas/reference';
-import type { AppData, ChainStatus, LocalityHit } from './types';
+import { serverEnv } from '../env';
+import type { AppData, ChainStatus, CollectionInfo, LocalityHit, PriceMode } from './types';
+
+interface LiveState {
+  key: string;
+  index: OfferIndex;
+  stats: Map<string, ChainStatus>;
+  snapshots: LiveSnapshot[];
+}
+
+function mtimeKey(paths: string[]): string {
+  return paths
+    .map((p) => {
+      try {
+        return `${p}:${statSync(p).mtimeMs}`;
+      } catch {
+        return `${p}:-`;
+      }
+    })
+    .join('|');
+}
 
 /**
  * Mode « mémoire » : aucune base de données requise. Utilise les instantanés
- * versionnés (localités swisstopo, succursales OSM) et les données de
- * démonstration générées à la volée (renouvelées chaque heure).
- * Destiné au développement, aux démonstrations et aux tests de bout en bout.
+ * versionnés (localités swisstopo, succursales OSM) et, selon PRICE_DATA :
+ * - live : les prix réels du dernier instantané de collecte (`data/prices/live/`) ;
+ * - demo : des données de démonstration générées à la volée (renouvelées chaque heure).
+ * Les deux ne sont jamais mélangés.
  */
 export class MemoryAppData implements AppData {
   readonly mode = 'memory' as const;
   private localities: Array<Locality & { search: string }> = [];
   private stores: Store[] = [];
   private demo: { key: string; index: OfferIndex; stats: Map<string, ChainStatus> } | null = null;
+  private live: LiveState | null = null;
+  private liveCheckedAt = 0;
 
-  constructor(dataDir: string) {
+  constructor(private readonly dataDir: string) {
     const loc = JSON.parse(readFileSync(join(dataDir, 'geo', 'localities.json'), 'utf8')) as {
       rows: Array<[string, string, string, string, string, number, number, string]>;
     };
@@ -104,20 +135,8 @@ export class MemoryAppData implements AppData {
       prices: batch.prices,
       promotions: batch.promotions,
     });
-    const stats = new Map<string, ChainStatus>();
+    const stats = this.emptyStats();
     const today = zurichToday(now);
-    for (const c of CHAINS) {
-      stats.set(c.id, {
-        chainId: c.id,
-        stores: this.stores.filter((s) => s.chainId === c.id).length,
-        products: 0,
-        demoProducts: 0,
-        realPrices: 0,
-        lastObservation: null,
-        activePromotions: 0,
-        upcomingPromotions: 0,
-      });
-    }
     for (const p of batch.retailerProducts) {
       const s = stats.get(p.chainId);
       if (s) {
@@ -139,17 +158,109 @@ export class MemoryAppData implements AppData {
     return this.demo;
   }
 
+  /** Prix réels : relus lorsque les instantanés changent (contrôle au plus toutes les 30 s). */
+  private async liveData(now: Date): Promise<LiveState | null> {
+    if (this.live && Date.now() - this.liveCheckedAt < 30_000) return this.live;
+    this.liveCheckedAt = Date.now();
+    const dir = liveSnapshotDir(this.dataDir);
+    const files = readdirSafe(dir).map((f) => join(dir, f));
+    const key = `${mtimeKey([...files, reviewedMatchesPath(this.dataDir)])}|${zurichToday(now)}`;
+    if (this.live?.key === key) return this.live;
+    const snapshots = await readLiveSnapshots(this.dataDir);
+    if (snapshots.length === 0) {
+      this.live = null;
+      return null;
+    }
+    const reviewed = await readReviewedMatches(this.dataDir);
+    const products = snapshots.flatMap((s) => s.batch.retailerProducts);
+    const prices = snapshots.flatMap((s) => s.batch.prices);
+    const promotions = snapshots.flatMap((s) => s.batch.promotions);
+    // Correspondances recalculées à chaque lecture : une revue prend effet sans nouvelle collecte.
+    const { matches } = matchesFor(products, PRODUCTS, reviewed);
+    const index = buildOfferIndex({ products, matches, prices, promotions });
+    const stats = this.emptyStats();
+    const today = zurichToday(now);
+    for (const p of products) {
+      const s = stats.get(p.chainId);
+      if (s) s.products++;
+    }
+    for (const o of prices) {
+      const s = stats.get(index.products.get(o.retailerProductId)?.chainId ?? products.find((p) => p.id === o.retailerProductId)?.chainId ?? '');
+      if (!s) continue;
+      s.realPrices++;
+      if (!s.lastObservation || o.observedAt > s.lastObservation) s.lastObservation = o.observedAt;
+    }
+    for (const p of promotions) {
+      const s = stats.get(p.chainId);
+      if (!s) continue;
+      if (p.validFrom <= today && p.validTo >= today) s.activePromotions++;
+      else if (p.validFrom > today) s.upcomingPromotions++;
+    }
+    this.live = { key, index, stats, snapshots };
+    return this.live;
+  }
+
+  private emptyStats(): Map<string, ChainStatus> {
+    const stats = new Map<string, ChainStatus>();
+    for (const c of CHAINS) {
+      stats.set(c.id, {
+        chainId: c.id,
+        stores: this.stores.filter((s) => s.chainId === c.id).length,
+        products: 0,
+        demoProducts: 0,
+        realPrices: 0,
+        lastObservation: null,
+        activePromotions: 0,
+        upcomingPromotions: 0,
+      });
+    }
+    return stats;
+  }
+
+  async priceMode(now: Date): Promise<PriceMode> {
+    if (serverEnv.priceData !== 'auto') return serverEnv.priceData;
+    return (await this.liveData(now)) ? 'live' : 'demo';
+  }
+
   async offers(canonicalIds: string[], chainIds: string[], now: Date): Promise<OfferIndex> {
     void canonicalIds;
     void chainIds;
+    if ((await this.priceMode(now)) === 'live') {
+      const live = await this.liveData(now);
+      return live?.index ?? buildOfferIndex({ products: [], matches: [], prices: [], promotions: [] });
+    }
     return this.demoData(now).index;
   }
 
   async chainStatus(now: Date): Promise<ChainStatus[]> {
+    if ((await this.priceMode(now)) === 'live') {
+      return [...((await this.liveData(now))?.stats ?? this.emptyStats()).values()];
+    }
     return [...this.demoData(now).stats.values()];
   }
 
-  async hasRealPrices(): Promise<boolean> {
-    return false;
+  async hasRealPrices(now: Date): Promise<boolean> {
+    const live = await this.liveData(now);
+    return Boolean(live && live.snapshots.some((s) => s.batch.prices.length > 0 || s.batch.promotions.length > 0));
   }
+
+  async collections(): Promise<CollectionInfo[]> {
+    const live = await this.liveData(new Date());
+    return (live?.snapshots ?? []).map((s) => ({
+      connectorId: s.connectorId,
+      label: s.label,
+      collectedAt: s.collectedAt,
+      status: s.status,
+      message: s.message,
+      products: s.batch.retailerProducts.length,
+      prices: s.batch.prices.length,
+      promotions: s.batch.promotions.length,
+      license: s.license,
+      attribution: s.attribution,
+    }));
+  }
+}
+
+function readdirSafe(dir: string): string[] {
+  return existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.json')) : [];
 }

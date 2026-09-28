@@ -1,0 +1,87 @@
+import { existsSync } from 'node:fs';
+import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { addDays, ageInDays, zurichToday } from '@cabas/core';
+import type { ReviewedMatch, ReviewedMatchesFile } from './matching';
+import type { ConnectorBatch } from './types';
+
+/**
+ * Instantané des prix réels collectés (un fichier par connecteur dans
+ * `data/prices/live/`). Sert au mode « mémoire » (sans base de données) et de trace
+ * lisible de la dernière collecte. Ne contient jamais de données de démonstration.
+ */
+export interface LiveSnapshot {
+  connectorId: string;
+  label: string;
+  license: string | null;
+  attribution: string | null;
+  collectedAt: string;
+  status: 'success' | 'partial' | 'failed' | 'blocked';
+  message: string | null;
+  metrics: Record<string, number | string | boolean>;
+  batch: Pick<ConnectorBatch, 'retailerProducts' | 'prices' | 'promotions'>;
+}
+
+export function liveSnapshotDir(dataDir: string): string {
+  return join(dataDir, 'prices', 'live');
+}
+
+export async function readLiveSnapshots(dataDir: string): Promise<LiveSnapshot[]> {
+  const dir = liveSnapshotDir(dataDir);
+  if (!existsSync(dir)) return [];
+  const files = (await readdir(dir)).filter((f) => f.endsWith('.json')).sort();
+  const out: LiveSnapshot[] = [];
+  for (const f of files) {
+    const snap = JSON.parse(await readFile(join(dir, f), 'utf8')) as LiveSnapshot;
+    // Garde-fou : aucune donnée de démonstration dans un instantané réel.
+    snap.batch.retailerProducts = snap.batch.retailerProducts.filter((p) => !p.isDemo);
+    snap.batch.prices = snap.batch.prices.filter((p) => !p.isDemo);
+    snap.batch.promotions = snap.batch.promotions.filter((p) => !p.isDemo);
+    out.push(snap);
+  }
+  return out;
+}
+
+/**
+ * Fusionne une nouvelle collecte avec l'instantané précédent : les prix non relus
+ * sont conservés tant qu'ils ont moins de `keepDays` jours (ils vieillissent et
+ * deviennent « indicatifs » puis « périmés »), les promotions tant qu'elles sont valables.
+ */
+export function mergeLiveBatch(
+  previous: LiveSnapshot['batch'] | null,
+  next: LiveSnapshot['batch'],
+  now: Date,
+  keepDays = 90,
+): LiveSnapshot['batch'] {
+  if (!previous) return next;
+  const today = zurichToday(now);
+  const prices = new Map(previous.prices.filter((p) => ageInDays(p.observedAt, now) <= keepDays).map((p) => [p.id, p]));
+  for (const p of next.prices) prices.set(p.id, p);
+  const promotions = new Map(previous.promotions.filter((p) => p.validTo >= addDays(today, -1)).map((p) => [p.id, p]));
+  for (const p of next.promotions) promotions.set(p.id, p);
+  const used = new Set([...prices.values()].map((p) => p.retailerProductId));
+  for (const p of promotions.values()) used.add(p.retailerProductId);
+  const products = new Map(previous.retailerProducts.filter((p) => used.has(p.id)).map((p) => [p.id, p]));
+  for (const p of next.retailerProducts) products.set(p.id, p);
+  return { retailerProducts: [...products.values()], prices: [...prices.values()], promotions: [...promotions.values()] };
+}
+
+export async function writeLiveSnapshot(dataDir: string, snap: LiveSnapshot): Promise<string> {
+  const dir = liveSnapshotDir(dataDir);
+  await mkdir(dir, { recursive: true });
+  const path = join(dir, `${snap.connectorId}.json`);
+  const tmp = `${path}.tmp`;
+  await writeFile(tmp, `${JSON.stringify(snap)}\n`);
+  await rename(tmp, path);
+  return path;
+}
+
+export function reviewedMatchesPath(dataDir: string): string {
+  return join(dataDir, 'matching', 'reviewed.json');
+}
+
+export async function readReviewedMatches(dataDir: string): Promise<ReviewedMatch[]> {
+  const path = reviewedMatchesPath(dataDir);
+  if (!existsSync(path)) return [];
+  return (JSON.parse(await readFile(path, 'utf8')) as ReviewedMatchesFile).matches;
+}

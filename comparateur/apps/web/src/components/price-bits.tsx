@@ -74,6 +74,33 @@ export function OptionLine({
         <StatusBadge option={option} locale={locale} />
         {!compact && reasons.length > 0 && <span className="text-xs text-muted">{reasons.join(' · ')}</span>}
       </div>
+      {!compact && !option.isDemo && <SourceLine option={option} locale={locale} />}
     </div>
+  );
+}
+
+/** Provenance d'un prix réel : source, date, lieu du relevé et licence. */
+export function SourceLine({ option, locale }: { option: LineOption; locale: Locale }) {
+  const m = getMessages(locale);
+  const date = shortDate(option.observedAt);
+  const text =
+    option.reliability === 'crowd'
+      ? format(m.status.sourceCrowd, { date, place: option.observedAtPlace ?? '—' })
+      : option.reliability === 'survey'
+        ? format(m.status.sourceSurvey, { date })
+        : format(m.status.sourceOfficial, { date });
+  return (
+    <p className="mt-1 text-xs text-muted">
+      {text}
+      {option.reliability === 'crowd' && ` · ${m.status.sourceCrowdLicense}`}
+      {option.sourceUrl && (
+        <>
+          {' · '}
+          <a href={option.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="underline underline-offset-2">
+            {m.status.sourceLink}
+          </a>
+        </>
+      )}
+    </p>
   );
 }

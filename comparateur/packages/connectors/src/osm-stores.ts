@@ -72,9 +72,16 @@ function accessNotes(tags: Record<string, string>): string | null {
   return notes.length ? notes.join(' · ') : null;
 }
 
+/** Canton seul (chaîne) ou localité complète (canton + langue, pour les régions Lidl). */
+export type PlaceResolver = (
+  lat: number,
+  lon: number,
+  zip?: string | null,
+) => string | { canton: string | null; lang?: string | null } | null;
+
 export function osmElementsToStores(
   elements: OsmElement[],
-  resolveCanton: (lat: number, lon: number, zip?: string | null) => string | null,
+  resolvePlace: PlaceResolver,
   verifiedAt: string,
 ): { stores: Store[]; report: ImportReport } {
   const report = emptyReport();
@@ -91,7 +98,9 @@ export function osmElementsToStores(
       continue;
     }
     const zip = tags['addr:postcode'] ?? null;
-    const canton = resolveCanton(lat, lon, zip);
+    const place = resolvePlace(lat, lon, zip);
+    const canton = typeof place === 'string' ? place : (place?.canton ?? null);
+    const lang = typeof place === 'string' ? null : (place?.lang ?? null);
     const street = [tags['addr:street'] ?? tags['addr:place'], tags['addr:housenumber']].filter(Boolean).join(' ') || null;
     stores.push({
       id: `osm:${el.type}/${el.id}`,
@@ -106,7 +115,7 @@ export function osmElementsToStores(
       lon: Math.round(lon * 1e6) / 1e6,
       openingHours: tags.opening_hours ?? null,
       accessNotes: accessNotes(tags),
-      zoneId: zoneForStore(cls.chainId, canton),
+      zoneId: zoneForStore(cls.chainId, canton, lang),
       source: { connectorId: 'osm', kind: 'open_data', ref: `https://www.openstreetmap.org/${el.type}/${el.id}` },
       verifiedAt,
     });
@@ -120,7 +129,7 @@ export class OsmStoreConnector implements StoreConnector {
   readonly label = 'Succursales OpenStreetMap (ODbL)';
 
   constructor(
-    private readonly resolveCanton: (lat: number, lon: number, zip?: string | null) => string | null,
+    private readonly resolvePlace: PlaceResolver,
     private readonly overpassUrl = DEFAULT_OVERPASS_URL,
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
@@ -137,7 +146,7 @@ export class OsmStoreConnector implements StoreConnector {
     });
     if (!res.ok) throw new Error(`Overpass : HTTP ${res.status}`);
     const json = (await res.json()) as { elements?: OsmElement[] };
-    const result = osmElementsToStores(json.elements ?? [], this.resolveCanton, ctx.now.toISOString());
+    const result = osmElementsToStores(json.elements ?? [], this.resolvePlace, ctx.now.toISOString());
     ctx.log.info('Succursales OpenStreetMap récupérées', { stores: result.stores.length });
     return result;
   }

@@ -26,7 +26,20 @@ describe('données de référence', () => {
     expect(zoneForStore('migros', 'FR')).toBe('migros-nf');
     expect(zoneForStore('migros', 'ZH')).toBe('migros-zurich');
     expect(zoneForStore('coop', 'ZH')).toBeNull();
-    const cantons = PRICE_ZONES.flatMap((z) => z.cantons);
-    expect(new Set(cantons).size).toBe(26);
+    for (const chain of ['migros', 'lidl']) {
+      const cantons = PRICE_ZONES.filter((z) => z.chainId === chain).flatMap((z) => z.cantons);
+      expect(cantons.length, chain).toBe(26);
+      expect(new Set(cantons).size, chain).toBe(26);
+    }
+  });
+
+  it('attribue les régions Lidl selon la langue de la localité', () => {
+    expect(zoneForStore('lidl', 'TI')).toBe('lidl-ticino');
+    expect(zoneForStore('lidl', 'FR')).toBe('lidl-romandie');
+    // Morat (FR) est germanophone : la langue prime sur le canton.
+    expect(zoneForStore('lidl', 'FR', 'de')).toBe('lidl-deutschschweiz');
+    expect(zoneForStore('lidl', 'BE', 'fr')).toBe('lidl-romandie');
+    // La langue n'affecte pas les enseignes à zones cantonales.
+    expect(zoneForStore('migros', 'FR', 'de')).toBe('migros-nf');
   });
 });

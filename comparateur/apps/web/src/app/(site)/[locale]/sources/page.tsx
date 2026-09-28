@@ -20,6 +20,6 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
   if (locale !== 'fr') notFound();
   const data = getAppData();
   const now = new Date();
-  const [status, realPrices] = await Promise.all([data.chainStatus(now), data.hasRealPrices(now)]);
-  return <SourcesFr status={status} backend={data.mode} realPrices={realPrices} />;
+  const [status, mode, collections] = await Promise.all([data.chainStatus(now), data.priceMode(now), data.collections()]);
+  return <SourcesFr status={status} backend={data.mode} mode={mode} collections={collections} />;
 }

@@ -23,6 +23,23 @@ export interface ChainStatus {
   upcomingPromotions: number;
 }
 
+/** Prix réels uniquement (« live ») ou données fictives uniquement (« demo ») : jamais de mélange. */
+export type PriceMode = 'live' | 'demo';
+
+/** État de la dernière collecte d'une source de prix réels. */
+export interface CollectionInfo {
+  connectorId: string;
+  label: string;
+  collectedAt: string | null;
+  status: string;
+  message: string | null;
+  products: number;
+  prices: number;
+  promotions: number;
+  license: string | null;
+  attribution: string | null;
+}
+
 /** Accès aux données en lecture pour l'application publique. */
 export interface AppData {
   readonly mode: 'postgres' | 'memory';
@@ -35,4 +52,8 @@ export interface AppData {
   chainStatus(now: Date): Promise<ChainStatus[]>;
   /** Vrai si au moins un prix réel (non démo) est disponible. */
   hasRealPrices(now: Date): Promise<boolean>;
+  /** Mode de données servi (PRICE_DATA=live|demo, sinon « live » dès qu'un prix réel existe). */
+  priceMode(now: Date): Promise<PriceMode>;
+  /** Dernières collectes des sources réelles. */
+  collections(): Promise<CollectionInfo[]>;
 }

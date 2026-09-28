@@ -405,3 +405,12 @@ export async function chainDataStatus(handle: DbHandle, now: Date): Promise<Chai
     realPrices: Number(r.real_prices),
   }));
 }
+
+/** Statistiques de la dernière collecte réussie (ou partielle) d'un connecteur. */
+export async function lastRunStats(handle: DbHandle, connectorId: string): Promise<Record<string, unknown> | null> {
+  const rows = await handle.sql<Array<{ stats: Record<string, unknown> }>>`
+    SELECT stats FROM import_runs
+    WHERE connector_id = ${connectorId} AND status IN ('success', 'partial')
+    ORDER BY started_at DESC LIMIT 1`;
+  return rows[0]?.stats ?? null;
+}

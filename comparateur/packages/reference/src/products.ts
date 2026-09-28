@@ -143,7 +143,7 @@ export const PRODUCTS: ProductSeed[] = [
   p('lait-entier-past-1l', 'Lait entier pasteurisé', 'produits-laitiers', 1, 'l', 1.7, { swiss: true, kw: 'lait frais' }),
   p('lait-bio-1l', 'Lait entier bio', 'produits-laitiers', 1, 'l', 1.95, { organic: true, swiss: true, kw: 'lait' }),
   p('lait-sans-lactose-1l', 'Lait sans lactose', 'produits-laitiers', 1, 'l', 2.2, { swiss: true, labels: ['lactose-free'], kw: 'lait' }),
-  p('boisson-avoine-1l', 'Boisson à l’avoine', 'produits-laitiers', 1, 'l', 2.5, { labels: ['vegan'], kw: 'lait vegetal, avoine' }),
+  p('boisson-avoine-1l', 'Boisson à l’avoine', 'produits-laitiers', 1, 'l', 2.5, { kw: 'lait vegetal, avoine, vegan' }),
   p('beurre-cuisine-250g', 'Beurre de cuisine', 'produits-laitiers', 250, 'g', 3.5, { swiss: true, kw: 'beurre' }),
   p('beurre-choix-200g', 'Beurre de choix', 'produits-laitiers', 200, 'g', 3.6, { swiss: true, kw: 'beurre de table' }),
   p('creme-entiere-250ml', 'Crème entière', 'produits-laitiers', 250, 'ml', 2.4, { swiss: true, kw: 'creme' }),
@@ -181,7 +181,7 @@ export const PRODUCTS: ProductSeed[] = [
   p('cervelas-200g', 'Cervelas (2 pièces)', 'viande-poisson', 200, 'g', 2.6, { swissTypical: true, kw: 'saucisse' }),
   p('jambon-cuit-150g', 'Jambon cuit en tranches', 'viande-poisson', 150, 'g', 3.9, { swissTypical: true, kw: 'charcuterie' }),
   p('saumon-fume-100g', 'Saumon fumé', 'viande-poisson', 100, 'g', 4.9, { kw: 'poisson' }),
-  p('tofu-250g', 'Tofu nature', 'viande-poisson', 250, 'g', 2.8, { labels: ['vegan'], kw: 'vegetarien' }),
+  p('tofu-250g', 'Tofu nature bio', 'viande-poisson', 250, 'g', 2.8, { organic: true, kw: 'vegetarien, vegan' }),
 
   // --- Conserves ------------------------------------------------------------------------
   p('tomates-pelees-400g', 'Tomates pelées', 'conserves', 400, 'g', 1.1, { kw: 'tomate' }),

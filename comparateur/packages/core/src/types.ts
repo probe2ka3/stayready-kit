@@ -30,7 +30,8 @@ export type SourceKind =
   | 'agreement' // accès fourni dans le cadre d'un accord avec l'enseigne
   | 'manual_survey' // relevé manuel (magasin ou page publique) par une personne
   | 'manual_import' // import structuré (CSV/JSON) d'une source documentée
-  | 'open_data' // données ouvertes (OpenStreetMap, swisstopo)
+  | 'retailer_site' // pages publiques officielles de l'enseigne, collecte automatisée conforme (robots.txt)
+  | 'open_data' // données ouvertes (OpenStreetMap, swisstopo, Open Prices)
   | 'demo'; // données fictives de démonstration
 
 export interface DataSource {
@@ -75,6 +76,11 @@ export interface PriceZone {
   chainId: ChainId;
   name: string;
   cantons: string[];
+  /**
+   * Langues de la localité (swisstopo : de, fr, it, rm) : prioritaires sur le canton
+   * lorsqu'elles sont connues (ex. actions Lidl « Suisse romande » dans un canton bilingue).
+   */
+  languages?: string[];
 }
 
 /** Localité suisse (répertoire officiel des localités, swisstopo). */
@@ -171,6 +177,22 @@ export interface ProductMatch {
   confidence: number;
 }
 
+/** Type de prix relevé. */
+export type PriceType =
+  | 'regular' // prix de vente habituel
+  | 'promo'; // prix affiché pendant une action (sans dates connues)
+
+/** Canal de vente auquel le prix s'applique. */
+export type SalesChannel = 'store' | 'online';
+
+/**
+ * Fiabilité de la source :
+ * - official : publié par l'enseigne (site officiel, flux, accord) ;
+ * - survey   : relevé documenté par l'exploitant (import structuré) ;
+ * - crowd    : relevé communautaire avec justificatif (Open Prices) — toujours « indicatif ».
+ */
+export type SourceReliability = 'official' | 'survey' | 'crowd';
+
 export interface PriceObservation {
   id: string;
   retailerProductId: string;
@@ -179,10 +201,24 @@ export interface PriceObservation {
   /** Renseigné uniquement pour un prix propre à une succursale. */
   storeId: string | null;
   priceCents: number;
-  /** Date de dernière vérification (instant ISO). */
+  /** Instant du relevé (collecte ou photo du justificatif), ISO UTC. */
   observedAt: string;
   source: DataSource;
   isDemo: boolean;
+  /** Défaut : 'regular'. */
+  priceType?: PriceType;
+  /** Défaut : 'store'. */
+  channel?: SalesChannel;
+  /** Défaut : déduite du type de source ('official' pour retailer_site / official_api / agreement). */
+  reliability?: SourceReliability;
+  /** Licence des données (ex. 'ODbL-1.0') ; null = données propres ou sous accord. */
+  license?: string | null;
+  /** Page ou ressource où le prix a été lu. */
+  sourceUrl?: string | null;
+  /** Lieu réel du relevé lorsqu'il est généralisé à une zone ou au niveau national. */
+  observedAtPlace?: string | null;
+  /** Justificatif : ticket, étiquette, page web. */
+  proof?: 'receipt' | 'price_tag' | 'web_page' | null;
 }
 
 export type PromotionType =
@@ -212,6 +248,10 @@ export interface Promotion {
   /** Vrai si la date de fin n'est pas publiée par l'enseigne (ex. « solange Vorrat »). */
   endIsPresumed?: boolean;
   label?: string | null;
+  /** Restriction géographique annoncée par l'enseigne (texte d'origine, ex. « uniquement au Tessin »). */
+  regionNote?: string | null;
+  /** Page où l'action est publiée. */
+  sourceUrl?: string | null;
   /** Instant de publication par l'enseigne (≠ date de début). */
   publishedAt: string;
   /** Premier jour de validité (Europe/Zurich, inclus). */
@@ -236,9 +276,15 @@ export interface FreshnessPolicy {
   verifiedMaxAgeDays: number;
   /** Au-delà de N jours, un prix est « périmé ». Entre les deux : « indicatif ». */
   staleAfterDays: number;
+  /**
+   * Relevés communautaires (jamais « vérifiés ») : périmés au-delà de N jours. Plus long que
+   * `staleAfterDays` car ces relevés sont rares ; leur date est toujours affichée.
+   */
+  crowdStaleAfterDays: number;
 }
 
 export const DEFAULT_FRESHNESS: FreshnessPolicy = {
   verifiedMaxAgeDays: 7,
   staleAfterDays: 30,
+  crowdStaleAfterDays: 90,
 };

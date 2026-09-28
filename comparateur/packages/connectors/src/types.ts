@@ -1,4 +1,5 @@
 import type {
+  CanonicalProduct,
   PriceObservation,
   ProductMatch,
   Promotion,
@@ -6,6 +7,9 @@ import type {
   SourceKind,
   Store,
 } from '@cabas/core';
+
+import type { PoliteFetcher } from './http/fetcher';
+import type { ReviewedMatch } from './matching';
 
 export interface ImportIssue {
   file?: string;
@@ -18,6 +22,8 @@ export interface ImportReport {
   accepted: { products: number; prices: number; promotions: number; matches: number };
   rejected: ImportIssue[];
   warnings: ImportIssue[];
+  /** Mesures propres à la collecte (pages lues, articles par catégorie, blocages…). */
+  metrics?: Record<string, number | string | boolean>;
 }
 
 /** Résultat d'une exécution de connecteur de prix. */
@@ -33,6 +39,7 @@ export interface ConnectorBatch {
 
 export type ConnectorState =
   | 'ready' // exécutable
+  | 'blocked' // la source refuse l'accès automatisé (403, défi anti-robot, robots.txt)
   | 'awaiting_authorization' // aucune source autorisée n'est configurée
   | 'not_configured' // configuration manquante (fichier, clé…)
   | 'disabled';
@@ -57,6 +64,12 @@ export interface ConnectorContext {
   importDir?: string;
   env?: Record<string, string | undefined>;
   signal?: AbortSignal;
+  /** Client HTTP poli partagé (robots.txt, délais, archive) pour les connecteurs en ligne. */
+  fetcher?: PoliteFetcher;
+  /** Catalogue normalisé (défaut : référentiel versionné). */
+  catalog?: CanonicalProduct[];
+  /** Correspondances revues par l'équipe données. */
+  reviewedMatches?: ReviewedMatch[];
 }
 
 /** Connecteur de prix et promotions. Chaque enseigne dispose du sien. */

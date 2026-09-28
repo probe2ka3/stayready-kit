@@ -11,7 +11,8 @@ import {
   searchLocalities,
   type DbHandle,
 } from '@cabas/db';
-import type { AppData, ChainStatus, LocalityHit } from './types';
+import { serverEnv } from '../env';
+import type { AppData, ChainStatus, CollectionInfo, LocalityHit, PriceMode } from './types';
 
 const TTL_MS = 5 * 60_000;
 
@@ -60,8 +61,29 @@ export class PostgresAppData implements AppData {
   storesNear(center: LatLon, radiusKm: number, chainIds?: string[] | null): Promise<CandidateStore[]> {
     return findStoresNear(this.handle, center, radiusKm, chainIds);
   }
-  offers(canonicalIds: string[], chainIds: string[], now: Date): Promise<OfferIndex> {
-    return loadOfferIndex(this.handle, canonicalIds, chainIds, now);
+  async offers(canonicalIds: string[], chainIds: string[], now: Date): Promise<OfferIndex> {
+    return loadOfferIndex(this.handle, canonicalIds, chainIds, now, await this.priceMode());
+  }
+  async priceMode(): Promise<PriceMode> {
+    if (serverEnv.priceData !== 'auto') return serverEnv.priceData;
+    return (await this.realPricesCache.get()) ? 'live' : 'demo';
+  }
+  async collections(): Promise<CollectionInfo[]> {
+    const rows = await this.handle.sql<Array<{ connector_id: string; finished_at: Date | null; status: string; message: string | null; stats: Record<string, unknown> }>>`
+      SELECT DISTINCT ON (connector_id) connector_id, finished_at, status, message, stats
+      FROM import_runs WHERE kind = 'collect' ORDER BY connector_id, started_at DESC`;
+    return rows.map((r) => ({
+      connectorId: r.connector_id,
+      label: r.connector_id,
+      collectedAt: r.finished_at ? new Date(r.finished_at).toISOString() : null,
+      status: r.stats?.blocked ? 'blocked' : r.status,
+      message: r.message,
+      products: Number(r.stats?.products ?? 0),
+      prices: Number(r.stats?.prices ?? 0),
+      promotions: Number(r.stats?.promotions ?? 0),
+      license: r.connector_id === 'open-prices' ? 'ODbL-1.0' : null,
+      attribution: null,
+    }));
   }
   chainStatus(now: Date): Promise<ChainStatus[]> {
     return chainDataStatus(this.handle, now);

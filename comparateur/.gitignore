@@ -13,3 +13,9 @@ playwright-report/
 apps/web/next-env.d.ts
 apps/web/AGENTS.md
 apps/web/CLAUDE.md
+
+# Collecte : pages brutes archivées et rapports détaillés (non versionnés)
+data/raw/
+data/prices/reports/
+data/exports/
+data/matching/candidates.json

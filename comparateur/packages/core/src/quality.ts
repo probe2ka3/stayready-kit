@@ -1,4 +1,5 @@
 import { ageInDays, daysBetween, weekdayOf } from './time';
+import { staleAfterDays } from './pricing';
 import type { Chain, FreshnessPolicy, PriceObservation, Promotion } from './types';
 
 /**
@@ -18,12 +19,16 @@ export type AnomalyKind =
   | 'stale_price'
   | 'future_observation'
   | 'unit_price_outlier'
-  | 'missing_source';
+  | 'missing_source'
+  | 'connector_failed'
+  | 'connector_blocked'
+  | 'coverage_drop'
+  | 'parse_drift';
 
 export interface Anomaly {
   kind: AnomalyKind;
   severity: AnomalySeverity;
-  entityType: 'price' | 'promotion' | 'retailer_product';
+  entityType: 'price' | 'promotion' | 'retailer_product' | 'connector';
   entityId: string;
   message: string;
   details?: Record<string, unknown>;
@@ -56,13 +61,14 @@ export function checkObservation(o: PriceObservation, now: Date, policy: Freshne
       details: { observedAt: o.observedAt },
     });
   }
-  if (ageInDays(o.observedAt, now) > policy.staleAfterDays) {
+  const limit = staleAfterDays(o, policy);
+  if (ageInDays(o.observedAt, now) > limit) {
     out.push({
       kind: 'stale_price',
       severity: 'info',
       entityType: 'price',
       entityId: o.id,
-      message: `Prix non vérifié depuis plus de ${policy.staleAfterDays} jours`,
+      message: `Prix non vérifié depuis plus de ${limit} jours`,
       details: { observedAt: o.observedAt },
     });
   }
@@ -165,4 +171,56 @@ export function checkUnitPriceOutlier(
     };
   }
   return null;
+}
+
+/** Volumes d'une collecte, comparés à la précédente exécution réussie. */
+export interface CollectionStats {
+  connectorId: string;
+  products: number;
+  prices: number;
+  promotions: number;
+  /** Pages lues avec succès et pages en échec (connecteurs en ligne). */
+  pages?: number;
+  pageFailures?: number;
+}
+
+/**
+ * Contrôles d'une collecte : aucune donnée extraite (structure de page modifiée),
+ * chute du volume par rapport à la collecte précédente, trop de pages en échec.
+ */
+export function checkCollection(current: CollectionStats, previous: CollectionStats | null): Anomaly[] {
+  const out: Anomaly[] = [];
+  const base = { entityType: 'connector' as const, entityId: current.connectorId };
+  if (current.products === 0) {
+    out.push({
+      ...base,
+      kind: 'parse_drift',
+      severity: 'error',
+      message: 'Aucun article extrait : la structure des pages a peut-être changé',
+      details: { ...current },
+    });
+  }
+  if (previous && previous.prices + previous.promotions >= 20) {
+    const before = previous.prices + previous.promotions;
+    const now = current.prices + current.promotions;
+    if (now < before * 0.7) {
+      out.push({
+        ...base,
+        kind: 'coverage_drop',
+        severity: 'warning',
+        message: `Volume en baisse : ${now} prix et promotions contre ${before} lors de la collecte précédente`,
+        details: { previous, current },
+      });
+    }
+  }
+  if (current.pages && current.pageFailures && current.pageFailures / (current.pages + current.pageFailures) > 0.2) {
+    out.push({
+      ...base,
+      kind: 'coverage_drop',
+      severity: 'warning',
+      message: `${current.pageFailures} pages en échec sur ${current.pages + current.pageFailures}`,
+      details: { ...current },
+    });
+  }
+  return out;
 }

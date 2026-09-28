@@ -27,4 +27,6 @@ export const serverEnv = {
   siteUrl: (process.env.SITE_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
   importDir: process.env.IMPORT_DIR ? resolve(process.env.IMPORT_DIR) : join(findDataDir(), 'imports', 'inbox'),
   isProduction: process.env.NODE_ENV === 'production',
+  /** live | demo | auto (défaut : live dès qu'un prix réel est disponible, sinon démonstration). */
+  priceData: (['live', 'demo'].includes(process.env.PRICE_DATA ?? '') ? process.env.PRICE_DATA : 'auto') as 'live' | 'demo' | 'auto',
 };

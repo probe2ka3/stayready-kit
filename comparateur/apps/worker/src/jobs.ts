@@ -4,7 +4,8 @@ import {
   ChainConnector,
   ConnectorNotReadyError,
   downloadSwisstopoLocalities,
-  makeCantonResolver,
+  LIVE_CONNECTOR_IDS,
+  makeLocalityResolver,
   mergeBatches,
   OsmStoreConnector,
   parseImportFile,
@@ -28,6 +29,8 @@ import {
   type DbHandle,
 } from '@cabas/db';
 import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
+import { jobCollect, jobExportOdbl, jobImportLive, jobReprocessLidl, jobRezone } from './collect';
+import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
 
@@ -84,7 +87,7 @@ export async function jobStores(ctx: JobContext) {
   const path = snapshotPath(ctx.env, 'stores');
   if (ctx.flags.download) {
     const { list } = await readLocalitiesSnapshot(snapshotPath(ctx.env, 'localities'));
-    const connector = new OsmStoreConnector(makeCantonResolver(list), ctx.env.overpassUrl);
+    const connector = new OsmStoreConnector(makeLocalityResolver(list), ctx.env.overpassUrl);
     const { stores, report } = await connector.fetchStores({ now: ctx.now, log: ctx.log, env: ctx.env.env });
     if (stores.length < 500) throw new Error(`Seulement ${stores.length} succursales reçues : instantané non remplacé`);
     await writeStoresSnapshot(path, stores, ctx.now);
@@ -139,8 +142,12 @@ async function runConnector(ctx: JobContext, db: DbHandle, connector: PriceConne
 /** Exécute les connecteurs prêts (`--only a,b` pour restreindre, `--no-demo` pour exclure la démo). */
 export async function jobConnectors(ctx: JobContext) {
   const only = typeof ctx.flags.only === 'string' ? new Set(ctx.flags.only.split(',')) : null;
+  // Les collectes en ligne (Lidl, Open Prices) passent par la tâche `collect`.
   const connectors = priceConnectors().filter(
-    (c) => (!only || only.has(c.id)) && !(c.id === 'demo' && (ctx.flags['no-demo'] || process.env.DEMO_DATA === 'false')),
+    (c) =>
+      !LIVE_CONNECTOR_IDS.includes(c.id) &&
+      (!only || only.has(c.id)) &&
+      !(c.id === 'demo' && (ctx.flags['no-demo'] || process.env.DEMO_DATA === 'false')),
   );
   await withDb(ctx, async (db) => {
     for (const c of connectors) await runConnector(ctx, db, c);
@@ -223,10 +230,13 @@ export async function jobSeed(ctx: JobContext) {
   await jobQuality(ctx);
 }
 
-/** Tâche quotidienne : connecteurs puis contrôles de qualité. */
+/** Tâche quotidienne : collecte des prix réels, connecteurs d'import, contrôles de qualité. */
 export async function jobDaily(ctx: JobContext) {
-  await jobConnectors(ctx);
-  await jobQuality(ctx);
+  await jobCollect(ctx);
+  if (ctx.env.databaseUrl) {
+    await jobConnectors(ctx);
+    await jobQuality(ctx);
+  }
 }
 
 /** Tâche hebdomadaire : rafraîchissement des succursales OpenStreetMap. */
@@ -240,11 +250,17 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   localities: { run: jobLocalities, help: 'Charge les localités swisstopo (--download pour rafraîchir)' },
   stores: { run: jobStores, help: 'Charge les succursales OSM (--download pour rafraîchir)' },
   connectors: { run: jobConnectors, help: 'Exécute les connecteurs prêts (--only a,b ; --no-demo)' },
+  collect: { run: jobCollect, help: 'Collecte les prix réels en ligne (--only lidl-web,open-prices ; --no-archive ; --no-snapshot)' },
+  rezone: { run: jobRezone, help: 'Recalcule les zones tarifaires des succursales (instantané OSM)' },
+  'import-live': { run: jobImportLive, help: 'Charge les instantanés de prix réels dans la base (amorçage)' },
+  'reprocess-lidl': { run: jobReprocessLidl, help: 'Retraite la collecte Lidl depuis les pages archivées (--date AAAA-MM-JJ)' },
+  'match-candidates': { run: jobMatchCandidates, help: 'Feuille de revue des correspondances (--out fichier ; --min-score 0.5)' },
+  'export-odbl': { run: jobExportOdbl, help: 'Exporte les données dérivées d’Open Prices sous ODbL (--out <dossier>)' },
   import: { run: jobImport, help: 'Importe des fichiers : import <fichiers…> --connector <id> [--dry-run]' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },
-  daily: { run: jobDaily, help: 'Tâche quotidienne (connecteurs + qualité)' },
+  daily: { run: jobDaily, help: 'Tâche quotidienne (collecte réelle + connecteurs + qualité)' },
   weekly: { run: jobWeekly, help: 'Tâche hebdomadaire (succursales OSM)' },
   'purge-demo': { run: jobPurgeDemo, help: 'Supprime les données de démonstration (--confirm)' },
 };

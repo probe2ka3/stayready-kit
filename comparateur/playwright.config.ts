@@ -28,6 +28,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}/api/v1/health`,
     reuseExistingServer: true,
     timeout: 120_000,
-    env: { DATA_BACKEND: 'memory' },
+    // Données de démonstration : parcours déterministe, indépendant des collectes réelles.
+    env: { DATA_BACKEND: 'memory', PRICE_DATA: 'demo' },
   },
 });

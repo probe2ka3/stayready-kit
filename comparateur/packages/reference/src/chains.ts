@@ -152,9 +152,32 @@ export const PRICE_ZONES: PriceZone[] = [
   { id: 'migros-vaud', chainId: 'migros', name: 'Migros Vaud', cantons: ['VD'] },
   { id: 'migros-valais', chainId: 'migros', name: 'Migros Valais', cantons: ['VS'] },
   { id: 'migros-zurich', chainId: 'migros', name: 'Migros Zurich', cantons: ['ZH', 'GL'] },
+  /*
+   * Lidl : prix nationaux, mais certaines actions sont limitées à une région linguistique
+   * (« valable uniquement au Tessin », « … en Suisse romande »). La langue de la localité
+   * (swisstopo) prime sur le canton, approximatif pour FR, VS et BE.
+   */
+  {
+    id: 'lidl-deutschschweiz',
+    chainId: 'lidl',
+    name: 'Lidl Suisse alémanique',
+    cantons: ['ZH', 'BE', 'LU', 'UR', 'SZ', 'OW', 'NW', 'GL', 'ZG', 'SO', 'BS', 'BL', 'SH', 'AR', 'AI', 'SG', 'GR', 'AG', 'TG'],
+    languages: ['de', 'rm'],
+  },
+  { id: 'lidl-romandie', chainId: 'lidl', name: 'Lidl Suisse romande', cantons: ['GE', 'VD', 'NE', 'JU', 'FR', 'VS'], languages: ['fr'] },
+  { id: 'lidl-ticino', chainId: 'lidl', name: 'Lidl Tessin', cantons: ['TI'], languages: ['it'] },
 ];
 
-export function zoneForStore(chainId: string, canton: string | null | undefined): string | null {
+/**
+ * Zone tarifaire d'une succursale : d'après la langue de la localité si la zone la
+ * définit, sinon d'après le canton.
+ */
+export function zoneForStore(chainId: string, canton: string | null | undefined, lang?: string | null): string | null {
+  const zones = PRICE_ZONES.filter((z) => z.chainId === chainId);
+  if (lang) {
+    const byLang = zones.find((z) => z.languages?.includes(lang));
+    if (byLang) return byLang.id;
+  }
   if (!canton) return null;
-  return PRICE_ZONES.find((z) => z.chainId === chainId && z.cantons.includes(canton))?.id ?? null;
+  return zones.find((z) => z.cantons.includes(canton))?.id ?? null;
 }

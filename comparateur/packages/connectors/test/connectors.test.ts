@@ -204,7 +204,14 @@ describe('succursales OpenStreetMap', () => {
     );
     expect(stores).toHaveLength(2);
     expect(stores[0]).toMatchObject({ id: 'osm:node/1', chainId: 'migros', zoneId: 'migros-nf', canton: 'FR', zip: '1630' });
-    expect(stores[1]).toMatchObject({ id: 'osm:way/2', chainId: 'lidl', zoneId: null, name: 'Lidl Suisse' });
+    expect(stores[1]).toMatchObject({ id: 'osm:way/2', chainId: 'lidl', zoneId: 'lidl-romandie', name: 'Lidl Suisse' });
+    // Avec la langue de la localité : Morat (FR) germanophone → région alémanique pour Lidl.
+    const withLang = osmElementsToStores(
+      [{ type: 'way', id: 2, center: { lat: 46.93, lon: 7.12 }, tags: { brand: 'Lidl', shop: 'supermarket' } }],
+      () => ({ canton: 'FR', lang: 'de' }),
+      NOW.toISOString(),
+    );
+    expect(withLang.stores[0]?.zoneId).toBe('lidl-deutschschweiz');
   });
 });
 

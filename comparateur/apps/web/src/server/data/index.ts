@@ -27,4 +27,4 @@ export function getPostgresData(): PostgresAppData | null {
   return data.mode === 'postgres' ? (data as PostgresAppData) : null;
 }
 
-export type { AppData, ChainStatus, LocalityHit } from './types';
+export type { AppData, ChainStatus, CollectionInfo, LocalityHit, PriceMode } from './types';

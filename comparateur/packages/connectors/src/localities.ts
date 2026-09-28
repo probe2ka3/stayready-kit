@@ -91,6 +91,37 @@ export async function downloadSwisstopoLocalities(fetchImpl: typeof fetch = fetc
 }
 
 /** Canton d'un point : localité du même NPA si connue, sinon la plus proche. */
+/** Localité la plus proche (NPA prioritaire), pour le canton et la langue. */
+export function makeLocalityResolver(localities: Locality[]) {
+  const byZip = new Map<string, Locality[]>();
+  for (const l of localities) {
+    const list = byZip.get(l.zip) ?? [];
+    list.push(l);
+    byZip.set(l.zip, list);
+  }
+  const nearest = (candidates: Locality[], lat: number, lon: number) => {
+    let best: Locality | null = null;
+    let bestD = Number.POSITIVE_INFINITY;
+    for (const l of candidates) {
+      const d = haversineKm({ lat, lon }, l);
+      if (d < bestD) {
+        bestD = d;
+        best = l;
+      }
+    }
+    return { best, bestD };
+  };
+  return (lat: number, lon: number, zip?: string | null): Locality | null => {
+    const byZ = zip ? byZip.get(zip) : undefined;
+    if (byZ) {
+      const r = nearest(byZ, lat, lon);
+      // Un NPA mal saisi très éloigné : on se rabat sur la localité la plus proche.
+      if (r.bestD <= 25) return r.best;
+    }
+    return nearest(localities, lat, lon).best;
+  };
+}
+
 export function makeCantonResolver(localities: Locality[]) {
   const byZip = new Map<string, Locality[]>();
   for (const l of localities) {

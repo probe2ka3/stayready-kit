@@ -13,3 +13,4 @@ export * from './navigation';
 export * from './text';
 export * from './matching';
 export * from './quality';
+export * from './detours';

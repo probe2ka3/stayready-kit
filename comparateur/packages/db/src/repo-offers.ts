@@ -142,6 +142,13 @@ export async function applyBatch(handle: DbHandle, batch: BatchInput, importRunI
             sourceRef: p.source.ref ?? null,
             importRunId,
             isDemo: p.isDemo,
+            priceType: p.priceType ?? 'regular',
+            channel: p.channel ?? 'store',
+            reliability: p.reliability ?? null,
+            license: p.license ?? null,
+            sourceUrl: p.sourceUrl ?? null,
+            observedAtPlace: p.observedAtPlace ?? null,
+            proof: p.proof ?? null,
           })),
         )
         .onConflictDoUpdate({
@@ -153,6 +160,13 @@ export async function applyBatch(handle: DbHandle, batch: BatchInput, importRunI
             sourceRef: dsql`excluded.source_ref`,
             importRunId: dsql`excluded.import_run_id`,
             isDemo: dsql`excluded.is_demo`,
+            priceType: dsql`excluded.price_type`,
+            channel: dsql`excluded.channel`,
+            reliability: dsql`excluded.reliability`,
+            license: dsql`excluded.license`,
+            sourceUrl: dsql`excluded.source_url`,
+            observedAtPlace: dsql`excluded.observed_at_place`,
+            proof: dsql`excluded.proof`,
             status: dsql`'valid'`,
           },
         });
@@ -184,6 +198,8 @@ export async function applyBatch(handle: DbHandle, batch: BatchInput, importRunI
             whileStocksLast: p.whileStocksLast,
             endIsPresumed: Boolean(p.endIsPresumed),
             label: p.label ?? null,
+            regionNote: p.regionNote ?? null,
+            sourceUrl: p.sourceUrl ?? null,
             publishedAt: p.publishedAt,
             validFrom: p.validFrom,
             validTo: p.validTo,
@@ -209,7 +225,9 @@ export async function applyBatch(handle: DbHandle, batch: BatchInput, importRunI
             whileStocksLast: dsql`excluded.while_stocks_last`,
             endIsPresumed: dsql`excluded.end_is_presumed`,
             label: dsql`excluded.label`,
-            publishedAt: dsql`excluded.published_at`,
+            regionNote: dsql`excluded.region_note`,
+            sourceUrl: dsql`excluded.source_url`,
+            publishedAt: dsql`LEAST(promotions.published_at, excluded.published_at)`,
             validFrom: dsql`excluded.valid_from`,
             validTo: dsql`excluded.valid_to`,
             sourceKind: dsql`excluded.source_kind`,
@@ -242,6 +260,8 @@ export async function loadOfferIndex(
   canonicalIds: string[],
   chainIds: string[],
   now: Date,
+  /** « live » : données réelles uniquement ; « demo » : données fictives uniquement. */
+  mode: 'live' | 'demo' = 'live',
 ): Promise<OfferIndex> {
   if (canonicalIds.length === 0 || chainIds.length === 0) {
     return buildOfferIndex({ products: [], matches: [], prices: [], promotions: [] });
@@ -253,7 +273,8 @@ export async function loadOfferIndex(
   const matchRows = await s<Array<{ canonical_id: string; retailer_product_id: string; kind: string; confidence: number }>>`
     SELECT m.canonical_id, m.retailer_product_id, m.kind, m.confidence
     FROM product_matches m JOIN retailer_products rp ON rp.id = m.retailer_product_id
-    WHERE m.status = 'validated' AND rp.active AND m.canonical_id = ANY(${canonicalIds}) AND rp.chain_id = ANY(${chainIds})`;
+    WHERE m.status = 'validated' AND rp.active AND rp.is_demo = ${mode === 'demo'}
+      AND m.canonical_id = ANY(${canonicalIds}) AND rp.chain_id = ANY(${chainIds})`;
   const rpIds = [...new Set(matchRows.map((m) => m.retailer_product_id))];
   if (rpIds.length === 0) return buildOfferIndex({ products: [], matches: [], prices: [], promotions: [] });
 
@@ -264,13 +285,16 @@ export async function loadOfferIndex(
     s<Array<Record<string, unknown>>>`
       SELECT DISTINCT ON (retailer_product_id, zone_id, store_id)
              id, retailer_product_id, zone_id, store_id, price_cents, observed_at,
-             source_connector, source_kind, source_ref, is_demo
+             source_connector, source_kind, source_ref, is_demo, price_type, channel,
+             reliability, license, source_url, observed_at_place, proof
       FROM price_observations
       WHERE retailer_product_id = ANY(${rpIds}) AND status = 'valid' AND observed_at <= ${nowIso}
+        AND is_demo = ${mode === 'demo'} AND price_type = 'regular'
       ORDER BY retailer_product_id, zone_id, store_id, observed_at DESC`,
     s<Array<Record<string, unknown>>>`
       SELECT * FROM promotions
       WHERE retailer_product_id = ANY(${rpIds})
+        AND is_demo = ${mode === 'demo'}
         AND status NOT IN ('withdrawn', 'rejected')
         AND published_at <= ${nowIso}
         AND valid_to >= ${addDays(today, -1)}
@@ -300,6 +324,13 @@ export async function loadOfferIndex(
     observedAt: iso(r.observed_at),
     source: { connectorId: r.source_connector as string, kind: r.source_kind as SourceKind, ref: (r.source_ref as string) ?? null },
     isDemo: Boolean(r.is_demo),
+    priceType: (r.price_type as PriceObservation['priceType']) ?? 'regular',
+    channel: (r.channel as PriceObservation['channel']) ?? 'store',
+    reliability: (r.reliability as PriceObservation['reliability']) ?? undefined,
+    license: (r.license as string) ?? null,
+    sourceUrl: (r.source_url as string) ?? null,
+    observedAtPlace: (r.observed_at_place as string) ?? null,
+    proof: (r.proof as PriceObservation['proof']) ?? null,
   }));
   const dateStr = (v: unknown) => (v instanceof Date ? v.toISOString().slice(0, 10) : String(v).slice(0, 10));
   const promos: Promotion[] = promoRows.map((r) => ({
@@ -319,6 +350,8 @@ export async function loadOfferIndex(
     whileStocksLast: Boolean(r.while_stocks_last),
     endIsPresumed: Boolean(r.end_is_presumed),
     label: (r.label as string) ?? null,
+    regionNote: (r.region_note as string) ?? null,
+    sourceUrl: (r.source_url as string) ?? null,
     publishedAt: iso(r.published_at),
     validFrom: dateStr(r.valid_from),
     validTo: dateStr(r.valid_to),
