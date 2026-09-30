@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { formatDaySchedule, openStatusDuring, parseOpeningHours, zurichToday } from '@cabas/core';
+import { formatDaySchedule, openStatusDuring, parseOpeningHours, restrictedConnectorIds, SOURCE_REGISTRY, zurichToday } from '@cabas/core';
 import { getAppData } from '@/server/data';
+import { serverEnv } from '@/server/env';
 import { jsonError, limitOr429 } from '@/server/http';
 import { errorInfo, log } from '@/server/log';
 import { issues, storesQuery } from '@/server/validation';
@@ -31,10 +32,15 @@ export async function GET(req: Request) {
       data.priceMode(now),
     ]);
     const statusByChain = new Map(status.map((st) => [st.chainId, st]));
+    // Enseignes dont la source officielle est exclue (conditions restrictives, pas d'autorisation).
+    const restrictedChains = new Set(
+      serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources).flatMap((id) => SOURCE_REGISTRY[id]?.chainIds ?? []) : [],
+    );
     // Présence d'un magasin ≠ disponibilité de prix : chaque enseigne indique ses données de prix.
     const priceData = (chainId: string) => {
       const st = statusByChain.get(chainId);
       if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0 };
+      if (restrictedChains.has(chainId)) return { kind: 'restricted' as const, lastObservation: null, prices: 0 };
       if (st && st.officialPrices > 0) return { kind: 'official' as const, lastObservation: st.lastOfficialObservation, prices: st.officialPrices };
       if (st && st.realPrices > 0) return { kind: 'community' as const, lastObservation: st.lastObservation, prices: st.realPrices };
       return { kind: 'none' as const, lastObservation: null, prices: 0 };

@@ -68,12 +68,13 @@ export const fr = {
     none: 'Aucun magasin des enseignes suivies dans ce rayon. Essayez un rayon plus grand.',
     continue: 'Continuer vers le panier',
     osm: 'Succursales : © contributeurs OpenStreetMap',
-    priceLabel: { official: 'Prix officiels', community: 'Prix partiels', none: 'Sans prix', demo: 'Prix fictifs' } as Record<string, string>,
+    priceLabel: { official: 'Prix officiels', community: 'Prix partiels', none: 'Sans prix', demo: 'Prix fictifs', restricted: 'Prix non affichés' } as Record<string, string>,
     priceText: {
       official: 'Prix publiés par l’enseigne, relevés le {date} ; identiques dans toutes ses succursales de la région.',
       community: 'Quelques relevés communautaires (Open Prices), souvent anciens : rarement comparable.',
       none: 'Aucun prix disponible : succursales affichées, mais non comparées.',
       demo: 'Mode démonstration : prix fictifs.',
+      restricted: 'Prix non affichés : les conditions de l’enseigne réservent ses données à un usage privé ; autorisation en attente.',
     } as Record<string, string>,
     availabilityTitle: 'Ce que nous savons de chaque magasin',
     availabilityText:

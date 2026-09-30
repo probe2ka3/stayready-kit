@@ -1,0 +1,289 @@
+{
+  "at": "2026-09-30T19:40:16.957Z",
+  "attribution": "Source : FoodAlly (foodally.ch)",
+  "method": "Une requête search_products par essentiel (termes allemands), 5 enseignes. Meilleur prix normalisé plausible (même dimension, contenance 1/6 à 5 fois la référence, mots de la requête dans la désignation, exigences de la référence) contre meilleur prix officiel TesPrix des correspondances revues.",
+  "queries": 38,
+  "results": 959,
+  "stoppedBy": null,
+  "remainingDay": 62,
+  "requests": 39,
+  "byChain": [
+    {
+      "chainId": "migros",
+      "essentials": 38,
+      "foodallyCovered": 26,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "coop",
+      "essentials": 38,
+      "foodallyCovered": 26,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "lidl",
+      "essentials": 38,
+      "foodallyCovered": 24,
+      "tesprixCovered": 28,
+      "both": 23,
+      "medianGap": 0,
+      "within5pct": 11,
+      "beyond20pct": 11
+    },
+    {
+      "chainId": "aldi",
+      "essentials": 38,
+      "foodallyCovered": 23,
+      "tesprixCovered": 13,
+      "both": 10,
+      "medianGap": 0,
+      "within5pct": 5,
+      "beyond20pct": 5
+    },
+    {
+      "chainId": "denner",
+      "essentials": 38,
+      "foodallyCovered": 11,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    }
+  ],
+  "largestGaps": [
+    {
+      "slug": "savon-liquide-300ml",
+      "chainId": "lidl",
+      "gap": 2.9,
+      "foodally": {
+        "name": "Nature Flüssigseife Malve",
+        "quantity": "300 ml",
+        "priceCents": 199,
+        "url": "https://foodally.ch/product/9166224-Lidl-Nature-Fluessigseife-Malve"
+      },
+      "tesprix": {
+        "name": "Savon liquide pour les mains",
+        "priceCents": 85
+      }
+    },
+    {
+      "slug": "cornichons-190g",
+      "chainId": "lidl",
+      "gap": 0.882,
+      "foodally": {
+        "name": "Chirat Essiggurken",
+        "quantity": "430 g",
+        "priceCents": 335,
+        "url": "https://foodally.ch/product/5292739-Lidl-Chirat-Essiggurken"
+      },
+      "tesprix": {
+        "name": "Cornichons",
+        "priceCents": 149
+      }
+    },
+    {
+      "slug": "cornettes-500g",
+      "chainId": "aldi",
+      "gap": -0.845,
+      "foodally": {
+        "name": "CUCINA Pasta Hörnli",
+        "quantity": "1000 g",
+        "priceCents": 99,
+        "url": "https://foodally.ch/product/3663721-Aldi-CUCINA-Pasta-Hoernli"
+      },
+      "tesprix": {
+        "name": "Pâtes, cornettes",
+        "priceCents": 319
+      }
+    },
+    {
+      "slug": "concentre-tomates-200g",
+      "chainId": "lidl",
+      "gap": -0.813,
+      "foodally": {
+        "name": "Passierte Tomaten",
+        "quantity": "500 g",
+        "priceCents": 65,
+        "url": "https://foodally.ch/product/8804295-Lidl-Passierte-Tomaten"
+      },
+      "tesprix": {
+        "name": "Concentré de tomates bio",
+        "priceCents": 139
+      }
+    },
+    {
+      "slug": "capsules-lessive-30",
+      "chainId": "lidl",
+      "gap": -0.782,
+      "foodally": {
+        "name": "X-TRA Waschmittel Caps Color",
+        "quantity": "80 piece",
+        "priceCents": 1395,
+        "url": "https://foodally.ch/product/13101708-Lidl-X-TRA-Waschmittel-Caps-Color"
+      },
+      "tesprix": {
+        "name": "Ariel Pods Color",
+        "priceCents": 2349
+      }
+    },
+    {
+      "slug": "concentre-tomates-200g",
+      "chainId": "aldi",
+      "gap": -0.749,
+      "foodally": {
+        "name": "LE GUSTO Tomaten Ketchup",
+        "quantity": "1000 g",
+        "priceCents": 99,
+        "url": "https://foodally.ch/product/3680006-Aldi-LE-GUSTO-Tomaten-Ketchup"
+      },
+      "tesprix": {
+        "name": "Triple concentré de tomate",
+        "priceCents": 79
+      }
+    },
+    {
+      "slug": "nettoyant-vitres-500ml",
+      "chainId": "lidl",
+      "gap": -0.611,
+      "foodally": {
+        "name": "Glasreiniger",
+        "quantity": "1000 ml",
+        "priceCents": 129,
+        "url": "https://foodally.ch/product/5300906-Lidl-Glasreiniger"
+      },
+      "tesprix": {
+        "name": "Frosch Nettoyant vitres",
+        "priceCents": 249
+      }
+    },
+    {
+      "slug": "pain-complet-500g",
+      "chainId": "lidl",
+      "gap": -0.559,
+      "foodally": {
+        "name": "Bio Drelli Dinkel Vollkorn",
+        "quantity": "500 g",
+        "priceCents": 169,
+        "url": "https://foodally.ch/product/9161246-Lidl-Bio-Drelli-Dinkel-Vollkorn"
+      },
+      "tesprix": {
+        "name": "pain complet",
+        "priceCents": 299
+      }
+    },
+    {
+      "slug": "capsules-cafe-10",
+      "chainId": "lidl",
+      "gap": -0.55,
+      "foodally": {
+        "name": "Kaffeekapseln Forte Lungo",
+        "quantity": "44 piece",
+        "priceCents": 388,
+        "url": "https://foodally.ch/product/5293379-Lidl-Kaffeekapseln-Forte-Lungo"
+      },
+      "tesprix": {
+        "name": "Alu-capsules café CLASSICO ESPRESSO",
+        "priceCents": 395
+      }
+    },
+    {
+      "slug": "deodorant-50ml",
+      "chainId": "aldi",
+      "gap": 0.534,
+      "foodally": {
+        "name": "NIVEA Deo Roll-on, Dry Comfort",
+        "quantity": "50 ml",
+        "priceCents": 375,
+        "url": "https://foodally.ch/product/1877782-Aldi-NIVEA-Deo-Roll-on-Dry-Comfort"
+      },
+      "tesprix": {
+        "name": "Déodorant à bille Cotton Duo, Cotton Dry",
+        "priceCents": 489
+      }
+    },
+    {
+      "slug": "salami-100g",
+      "chainId": "lidl",
+      "gap": -0.519,
+      "foodally": {
+        "name": "Salami tipo Milano",
+        "quantity": "200 g",
+        "priceCents": 249,
+        "url": "https://foodally.ch/product/5293080-Lidl-Salami-tipo-Milano"
+      },
+      "tesprix": {
+        "name": "Salami de boeuf",
+        "priceCents": 259
+      }
+    },
+    {
+      "slug": "boisson-avoine-1l",
+      "chainId": "aldi",
+      "gap": -0.484,
+      "foodally": {
+        "name": "MY VAY BIO Haferdrink Natur",
+        "quantity": "1000 ml",
+        "priceCents": 175,
+        "url": "https://foodally.ch/product/3434468-Aldi-MY-VAY-BIO-Haferdrink-Natur"
+      },
+      "tesprix": {
+        "name": "Boisson à l'avoine barista",
+        "priceCents": 339
+      }
+    },
+    {
+      "slug": "epinards-frais-250g",
+      "chainId": "lidl",
+      "gap": -0.428,
+      "foodally": {
+        "name": "Schweizer Blattspinat",
+        "quantity": "750 g",
+        "priceCents": 299,
+        "url": "https://foodally.ch/product/5292872-Lidl-Schweizer-Blattspinat"
+      },
+      "tesprix": {
+        "name": "Épinard suisse",
+        "priceCents": 349
+      }
+    },
+    {
+      "slug": "saucisses-veau-260g",
+      "chainId": "lidl",
+      "gap": -0.404,
+      "foodally": {
+        "name": "Grillbratwurst / Kalbsbratwurst",
+        "quantity": "400 g",
+        "priceCents": 329,
+        "url": "https://foodally.ch/product/5292390-Lidl-Grillbratwurst-Kalbsbratwurst"
+      },
+      "tesprix": {
+        "name": "Saucisse à rôtir de St.Gall",
+        "priceCents": 359
+      }
+    },
+    {
+      "slug": "capsules-cafe-10",
+      "chainId": "aldi",
+      "gap": -0.4,
+      "foodally": {
+        "name": "BARISSIMO Kaffeekapseln Lungo Fortemente",
+        "quantity": "44 piece",
+        "priceCents": 549,
+        "url": "https://foodally.ch/product/4639962-Aldi-BARISSIMO-Kaffeekapseln-Lungo-Fortemente"
+      },
+      "tesprix": {
+        "name": "Capsules de café Lungo Perfetto",
+        "priceCents": 395
+      }
+    }
+  ]
+}

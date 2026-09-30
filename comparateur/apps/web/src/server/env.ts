@@ -40,4 +40,14 @@ export const serverEnv = {
    * défaut : un fournisseur tiers ne sert qu'à la comparaison tant qu'aucune licence n'est souscrite.
    */
   licensedFallback: process.env.PRICE_FALLBACK_SOURCES === 'foodally',
+  /**
+   * Sources dont les conditions restreignent l'usage (ex. Aldi : « fins privées uniquement ») :
+   * exclues de l'affichage en production, sauf autorisation enregistrée dans AUTHORIZED_SOURCES
+   * (identifiants de connecteur séparés par des virgules). RESTRICTED_SOURCES=exclude|include force
+   * le comportement (défaut : exclude en production, include pour l'aperçu local privé).
+   */
+  authorizedSources: (process.env.AUTHORIZED_SOURCES ?? '').split(',').map((x) => x.trim()).filter(Boolean),
+  restrictSources:
+    process.env.RESTRICTED_SOURCES === 'exclude' ||
+    (process.env.RESTRICTED_SOURCES !== 'include' && process.env.NODE_ENV === 'production'),
 };

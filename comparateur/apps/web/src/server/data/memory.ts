@@ -7,6 +7,7 @@ import {
   haversineKm,
   normalizeText,
   reliabilityOf,
+  restrictedConnectorIds,
   zurichToday,
   type CandidateStore,
   type LatLon,
@@ -178,7 +179,13 @@ export class MemoryAppData implements AppData {
     const promotions = snapshots.flatMap((s) => s.batch.promotions);
     // Correspondances recalculées à chaque lecture : une revue prend effet sans nouvelle collecte.
     const { matches } = matchesFor(products, PRODUCTS, reviewed);
-    const index = buildOfferIndex({ products, matches, prices, promotions }, { allowBenchmarkSources: serverEnv.licensedFallback });
+    const index = buildOfferIndex(
+      { products, matches, prices, promotions },
+      {
+        allowBenchmarkSources: serverEnv.licensedFallback,
+        excludeConnectors: serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : [],
+      },
+    );
     const stats = this.emptyStats();
     const today = zurichToday(now);
     for (const p of products) {

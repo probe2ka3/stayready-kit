@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   DEFAULT_FRESHNESS,
@@ -23,6 +23,9 @@ import { PRODUCTS } from '@cabas/reference';
 import { DEFAULT_USER_AGENT } from './collect';
 import type { JobContext } from './jobs';
 
+/** Quota anonyme publié par FoodAlly (requêtes par jour). */
+const FOODALLY_DAILY_CAP = 100;
+
 interface PairResult {
   slug: string;
   chainId: ChainId;
@@ -43,6 +46,8 @@ export async function jobBenchmarkFoodAlly(ctx: JobContext) {
   const dir = join(ctx.env.dataDir, 'benchmark');
   const rawDir = join(dir, 'raw');
   await mkdir(rawDir, { recursive: true });
+  /** --name=échantillon : fichiers distincts (`foodally-summary-<nom>.json`). */
+  const suffix = typeof ctx.flags.name === 'string' ? `-${ctx.flags.name.replace(/[^a-z0-9-]/gi, '')}` : '';
   let queries: FoodAllyQuery[];
   let meta: Record<string, unknown> = {};
   if (typeof ctx.flags.from === 'string') {
@@ -55,13 +60,28 @@ export async function jobBenchmarkFoodAlly(ctx: JobContext) {
       archiveDir: null,
       log: ctx.log,
     });
-    const run = await runFoodAllyQueries(fetcher, essentialQueries(), {
-      maxQueries: Number(ctx.flags.max ?? ctx.env.env.FOODALLY_MAX_QUERIES ?? 50),
+    // --queries=fichier : autre liste de besoins (ex. échantillon hors essentiels), même quota.
+    const items =
+      typeof ctx.flags.queries === 'string'
+        ? (JSON.parse(await readFile(ctx.flags.queries, 'utf8')) as { queries: Array<{ slug: string; query: string }> }).queries
+        : essentialQueries();
+    // Plafond local de 100 requêtes par jour (quota anonyme publié), quelles que soient les valeurs
+    // renvoyées par les en-têtes : le compteur du fournisseur peut dépendre de l'adresse de sortie.
+    const today = zurichToday(ctx.now);
+    let usedToday = 0;
+    for (const f of await readdir(rawDir)) {
+      if (!f.startsWith(`foodally-${today}`) || !f.endsWith('.json')) continue;
+      usedToday += ((JSON.parse(await readFile(join(rawDir, f), 'utf8')) as { queries?: unknown[] }).queries ?? []).length;
+    }
+    const localBudget = FOODALLY_DAILY_CAP - Number(ctx.env.env.FOODALLY_DAILY_RESERVE ?? 10) - usedToday;
+    if (localBudget <= 0) throw new Error(`Plafond quotidien local atteint : ${usedToday} requêtes FoodAlly déjà faites le ${today}`);
+    const run = await runFoodAllyQueries(fetcher, items, {
+      maxQueries: Math.min(localBudget, Number(ctx.flags.max ?? ctx.env.env.FOODALLY_MAX_QUERIES ?? 50)),
       dailyReserve: Number(ctx.env.env.FOODALLY_DAILY_RESERVE ?? 10),
     });
     queries = run.queries;
     meta = { stoppedBy: run.stoppedBy, remainingDay: run.remainingDay, requests: fetcher.stats.requests };
-    await writeFile(join(rawDir, `foodally-${zurichToday(ctx.now)}.json`), `${JSON.stringify({ at: ctx.now.toISOString(), attribution: FOODALLY_ATTRIBUTION, queries })}\n`);
+    await writeFile(join(rawDir, `foodally-${zurichToday(ctx.now)}${suffix}.json`), `${JSON.stringify({ at: ctx.now.toISOString(), attribution: FOODALLY_ATTRIBUTION, queries })}\n`);
   }
 
   const fa = buildFoodAllyBatch(queries);
@@ -133,7 +153,7 @@ export async function jobBenchmarkFoodAlly(ctx: JobContext) {
       .slice(0, 15)
       .map((p) => ({ slug: p.slug, chainId: p.chainId, gap: p.gap, foodally: p.foodally && { name: p.foodally.name, quantity: p.foodally.quantity, priceCents: p.foodally.priceCents, url: p.foodally.url }, tesprix: p.ours && { name: p.ours.name, priceCents: p.ours.priceCents } })),
   };
-  await writeFile(join(dir, 'foodally-summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
+  await writeFile(join(dir, `foodally-summary${suffix}.json`), `${JSON.stringify(summary, null, 2)}\n`);
   if (!ctx.flags.quiet) console.table(byChain);
   ctx.log.info('Comparaison FoodAlly écrite', { queries: queries.length, ...meta });
 }

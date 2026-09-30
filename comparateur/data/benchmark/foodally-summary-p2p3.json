@@ -1,0 +1,229 @@
+{
+  "at": "2026-09-30T19:38:03.133Z",
+  "attribution": "Source : FoodAlly (foodally.ch)",
+  "method": "Une requête search_products par essentiel (termes allemands), 5 enseignes. Meilleur prix normalisé plausible (même dimension, contenance 1/6 à 5 fois la référence, mots de la requête dans la désignation, exigences de la référence) contre meilleur prix officiel TesPrix des correspondances revues.",
+  "queries": 38,
+  "results": 1013,
+  "stoppedBy": null,
+  "remainingDay": 62,
+  "requests": 39,
+  "byChain": [
+    {
+      "chainId": "migros",
+      "essentials": 38,
+      "foodallyCovered": 26,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "coop",
+      "essentials": 38,
+      "foodallyCovered": 27,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "lidl",
+      "essentials": 38,
+      "foodallyCovered": 26,
+      "tesprixCovered": 33,
+      "both": 25,
+      "medianGap": 0,
+      "within5pct": 12,
+      "beyond20pct": 6
+    },
+    {
+      "chainId": "aldi",
+      "essentials": 38,
+      "foodallyCovered": 19,
+      "tesprixCovered": 14,
+      "both": 9,
+      "medianGap": 0,
+      "within5pct": 4,
+      "beyond20pct": 5
+    },
+    {
+      "chainId": "denner",
+      "essentials": 38,
+      "foodallyCovered": 11,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    }
+  ],
+  "largestGaps": [
+    {
+      "slug": "petits-beurre-200g",
+      "chainId": "lidl",
+      "gap": 4.474,
+      "foodally": {
+        "name": "Ovomaltine Crunchy Biscuit / Petit beurre",
+        "quantity": "145 g",
+        "priceCents": 435,
+        "url": "https://foodally.ch/product/9165270-Lidl-Ovomaltine-Crunchy-Biscuit-Petit-beurre"
+      },
+      "tesprix": {
+        "name": "Petit beurre",
+        "priceCents": 219
+      }
+    },
+    {
+      "slug": "apres-shampoing-200ml",
+      "chainId": "aldi",
+      "gap": 4.209,
+      "foodally": {
+        "name": "L'ORÉAL Elseve Spülung, Dream Long",
+        "quantity": "200 ml",
+        "priceCents": 399,
+        "url": "https://foodally.ch/product/6300726-Aldi-L-OR-AL-Elseve-Spuelung-Dream-Long"
+      },
+      "tesprix": {
+        "name": "Après-shampooing professionnel",
+        "priceCents": 115
+      }
+    },
+    {
+      "slug": "disques-demaquillants-80",
+      "chainId": "lidl",
+      "gap": 1,
+      "foodally": {
+        "name": "Wattepads gross oval",
+        "quantity": "100 piece",
+        "priceCents": 229,
+        "url": "https://foodally.ch/product/9166208-Lidl-Wattepads-gross-oval"
+      },
+      "tesprix": {
+        "name": "Ouates démaquillantes",
+        "priceCents": 169
+      }
+    },
+    {
+      "slug": "bouillon-legumes-250g",
+      "chainId": "lidl",
+      "gap": -0.892,
+      "foodally": {
+        "name": "Bio Gemüse",
+        "quantity": "750 g",
+        "priceCents": 369,
+        "url": "https://foodally.ch/product/9163623-Lidl-Bio-Gemuese"
+      },
+      "tesprix": {
+        "name": "Knorr Bouillon de légumes",
+        "priceCents": 495
+      }
+    },
+    {
+      "slug": "baguette-250g",
+      "chainId": "aldi",
+      "gap": 0.626,
+      "foodally": {
+        "name": "GOOD CHOICE Kräuter Baguette",
+        "quantity": "175 g",
+        "priceCents": 99,
+        "url": "https://foodally.ch/product/1065404-Aldi-GOOD-CHOICE-Kraeuter-Baguette"
+      },
+      "tesprix": {
+        "name": "Baguette",
+        "priceCents": 87
+      }
+    },
+    {
+      "slug": "saumon-frais-250g",
+      "chainId": "lidl",
+      "gap": 0.614,
+      "foodally": {
+        "name": "ASC Ganzes Lachsfilet",
+        "quantity": "100 g",
+        "priceCents": 193,
+        "url": "https://foodally.ch/product/5292478-Lidl-ASC-Ganzes-Lachsfilet"
+      },
+      "tesprix": {
+        "name": "Filet de saumon sauvage",
+        "priceCents": 299
+      }
+    },
+    {
+      "slug": "saumon-frais-250g",
+      "chainId": "aldi",
+      "gap": -0.482,
+      "foodally": {
+        "name": "GOURMET Frische Lachsfiletseite mit Haut",
+        "quantity": "750 g",
+        "priceCents": 1448,
+        "url": "https://foodally.ch/product/5153755-Aldi-GOURMET-Frische-Lachsfiletseite-mit-Haut"
+      },
+      "tesprix": {
+        "name": "Filet de saumon frais avec peau",
+        "priceCents": 745
+      }
+    },
+    {
+      "slug": "poireaux-500g",
+      "chainId": "lidl",
+      "gap": 0.332,
+      "foodally": {
+        "name": "Schweizer Bio Lauch",
+        "quantity": "500 g",
+        "priceCents": 299,
+        "url": "https://foodally.ch/product/12522085-Lidl-Schweizer-Bio-Lauch"
+      },
+      "tesprix": {
+        "name": "Poireau suisse",
+        "priceCents": 449
+      }
+    },
+    {
+      "slug": "nutella-450g",
+      "chainId": "lidl",
+      "gap": -0.267,
+      "foodally": {
+        "name": "Ferrero Nutella",
+        "quantity": "750 g",
+        "priceCents": 549,
+        "url": "https://foodally.ch/product/9161664-Lidl-Ferrero-Nutella"
+      },
+      "tesprix": {
+        "name": "Ferrero Nutella",
+        "priceCents": 449
+      }
+    },
+    {
+      "slug": "bouillon-legumes-250g",
+      "chainId": "aldi",
+      "gap": -0.239,
+      "foodally": {
+        "name": "CUCINA Sugo Gemüse",
+        "quantity": "475 g",
+        "priceCents": 215,
+        "url": "https://foodally.ch/product/805504-Aldi-CUCINA-Sugo-Gemuese"
+      },
+      "tesprix": {
+        "name": "Bouillon en pot, légumes",
+        "priceCents": 75
+      }
+    },
+    {
+      "slug": "lentilles-500g",
+      "chainId": "aldi",
+      "gap": -0.212,
+      "foodally": {
+        "name": "KING'S CROWN Linsen",
+        "quantity": "400 g",
+        "priceCents": 119,
+        "url": "https://foodally.ch/product/5154715-Aldi-KING-S-CROWN-Linsen"
+      },
+      "tesprix": {
+        "name": "Légumineuses, lentille de montagne",
+        "priceCents": 189
+      }
+    }
+  ]
+}

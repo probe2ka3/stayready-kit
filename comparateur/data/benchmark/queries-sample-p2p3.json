@@ -1,0 +1,157 @@
+{
+ "description": "Échantillon systématique (1 sur 5, ordre du catalogue) des 190 besoins hors essentiels, termes allemands, pour mesurer la couverture FoodAlly dans le quota anonyme (phase 4).",
+ "queries": [
+  {
+   "slug": "pommes-bio-1kg",
+   "query": "Bio Äpfel"
+  },
+  {
+   "slug": "mandarines-1kg",
+   "query": "Mandarinen"
+  },
+  {
+   "slug": "carottes-bio-1kg",
+   "query": "Bio Karotten"
+  },
+  {
+   "slug": "mesclun-150g",
+   "query": "Salatmischung"
+  },
+  {
+   "slug": "poireaux-500g",
+   "query": "Lauch"
+  },
+  {
+   "slug": "pdt-bio-2kg",
+   "query": "Bio Kartoffeln"
+  },
+  {
+   "slug": "riz-risotto-1kg",
+   "query": "Risotto Reis"
+  },
+  {
+   "slug": "lentilles-500g",
+   "query": "Linsen"
+  },
+  {
+   "slug": "sucre-glace-500g",
+   "query": "Puderzucker"
+  },
+  {
+   "slug": "huile-olive-500ml",
+   "query": "Olivenöl extra vergine"
+  },
+  {
+   "slug": "bouillon-legumes-250g",
+   "query": "Gemüsebouillon"
+  },
+  {
+   "slug": "lait-bio-1l",
+   "query": "Bio Vollmilch"
+  },
+  {
+   "slug": "fromage-rape-120g",
+   "query": "Reibkäse"
+  },
+  {
+   "slug": "oeufs-bio-6",
+   "query": "Bio Eier"
+  },
+  {
+   "slug": "baguette-250g",
+   "query": "Baguette"
+  },
+  {
+   "slug": "tofu-250g",
+   "query": "Tofu"
+  },
+  {
+   "slug": "haricots-rouges-400g",
+   "query": "Kidney Bohnen"
+  },
+  {
+   "slug": "nutella-450g",
+   "query": "Nutella"
+  },
+  {
+   "slug": "petits-beurre-200g",
+   "query": "Petit Beurre"
+  },
+  {
+   "slug": "cola-1500ml",
+   "query": "Cola"
+  },
+  {
+   "slug": "legumes-surg-1kg",
+   "query": "Gemüsemischung"
+  },
+  {
+   "slug": "tablettes-lave-vaisselle-40",
+   "query": "Geschirrspültabs"
+  },
+  {
+   "slug": "nettoyant-wc-750ml",
+   "query": "WC Reiniger"
+  },
+  {
+   "slug": "lavettes-microfibre-3",
+   "query": "Mikrofasertücher"
+  },
+  {
+   "slug": "sacs-congelation-30",
+   "query": "Gefrierbeutel"
+  },
+  {
+   "slug": "apres-shampoing-200ml",
+   "query": "Spülung"
+  },
+  {
+   "slug": "disques-demaquillants-80",
+   "query": "Wattepads"
+  },
+  {
+   "slug": "creme-mains-100ml",
+   "query": "Handcreme"
+  },
+  {
+   "slug": "serviettes-table-50",
+   "query": "Servietten"
+  },
+  {
+   "slug": "bougies-chauffe-plat-50",
+   "query": "Teelichter"
+  },
+  {
+   "slug": "courge-butternut-1",
+   "query": "Butternut"
+  },
+  {
+   "slug": "tortellini-250g",
+   "query": "Tortellini"
+  },
+  {
+   "slug": "vinaigre-pomme-500ml",
+   "query": "Apfelessig"
+  },
+  {
+   "slug": "creme-acidulee-180g",
+   "query": "Saucenhalbrahm"
+  },
+  {
+   "slug": "tortillas-320g",
+   "query": "Tortillas"
+  },
+  {
+   "slug": "saumon-frais-250g",
+   "query": "Lachsfilet"
+  },
+  {
+   "slug": "raisins-secs-500g",
+   "query": "Sultaninen"
+  },
+  {
+   "slug": "poisson-pane-450g",
+   "query": "Fischstäbchen"
+  }
+ ]
+}

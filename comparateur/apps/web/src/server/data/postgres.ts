@@ -1,5 +1,5 @@
 import 'server-only';
-import type { CandidateStore, CanonicalProduct, Category, Chain, LatLon, OfferIndex } from '@cabas/core';
+import { restrictedConnectorIds, type CandidateStore, type CanonicalProduct, type Category, type Chain, type LatLon, type OfferIndex } from '@cabas/core';
 import {
   chainDataStatus,
   createDb,
@@ -62,7 +62,10 @@ export class PostgresAppData implements AppData {
     return findStoresNear(this.handle, center, radiusKm, chainIds);
   }
   async offers(canonicalIds: string[], chainIds: string[], now: Date): Promise<OfferIndex> {
-    return loadOfferIndex(this.handle, canonicalIds, chainIds, now, await this.priceMode());
+    return loadOfferIndex(this.handle, canonicalIds, chainIds, now, await this.priceMode(), {
+      allowBenchmarkSources: serverEnv.licensedFallback,
+      excludeConnectors: serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : [],
+    });
   }
   async priceMode(): Promise<PriceMode> {
     if (serverEnv.priceData !== 'auto') return serverEnv.priceData;

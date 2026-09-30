@@ -262,6 +262,8 @@ export async function loadOfferIndex(
   now: Date,
   /** « live » : données réelles uniquement ; « demo » : données fictives uniquement. */
   mode: 'live' | 'demo' = 'live',
+  /** Sources exclues (conditions restrictives sans autorisation) et sources de comparaison admises. */
+  opts: { excludeConnectors?: string[]; allowBenchmarkSources?: boolean } = {},
 ): Promise<OfferIndex> {
   if (canonicalIds.length === 0 || chainIds.length === 0) {
     return buildOfferIndex({ products: [], matches: [], prices: [], promotions: [] });
@@ -366,7 +368,7 @@ export async function loadOfferIndex(
     status: 'validated',
     confidence: Number(m.confidence),
   }));
-  return buildOfferIndex({ products, matches, prices, promotions: promos });
+  return buildOfferIndex({ products, matches, prices, promotions: promos }, opts);
 }
 
 /**

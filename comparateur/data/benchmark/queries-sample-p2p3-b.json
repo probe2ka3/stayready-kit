@@ -1,0 +1,157 @@
+{
+ "description": "Second échantillon systématique (1 sur 5, décalé de 2) des 190 besoins hors essentiels, termes allemands (phase 4).",
+ "queries": [
+  {
+   "slug": "bananes-bio-1kg",
+   "query": "Bio Bananen"
+  },
+  {
+   "slug": "kiwis-6",
+   "query": "Kiwi"
+  },
+  {
+   "slug": "tomates-cerises-250g",
+   "query": "Cherrytomaten"
+  },
+  {
+   "slug": "courgettes-500g",
+   "query": "Zucchetti"
+  },
+  {
+   "slug": "epinards-frais-250g",
+   "query": "Blattspinat"
+  },
+  {
+   "slug": "cornettes-500g",
+   "query": "Hörnli"
+  },
+  {
+   "slug": "corn-flakes-500g",
+   "query": "Cornflakes"
+  },
+  {
+   "slug": "farine-mi-blanche-1kg",
+   "query": "Halbweissmehl"
+  },
+  {
+   "slug": "levure-seche-3",
+   "query": "Trockenhefe"
+  },
+  {
+   "slug": "vinaigre-balsamique-500ml",
+   "query": "Aceto Balsamico"
+  },
+  {
+   "slug": "poivre-noir-50g",
+   "query": "Pfeffer schwarz gemahlen"
+  },
+  {
+   "slug": "boisson-avoine-1l",
+   "query": "Haferdrink"
+  },
+  {
+   "slug": "mascarpone-250g",
+   "query": "Mascarpone"
+  },
+  {
+   "slug": "pain-complet-500g",
+   "query": "Vollkornbrot"
+  },
+  {
+   "slug": "saucisses-veau-260g",
+   "query": "Kalbsbratwurst"
+  },
+  {
+   "slug": "concentre-tomates-200g",
+   "query": "Tomatenpüree"
+  },
+  {
+   "slug": "raviolis-870g",
+   "query": "Ravioli Tomatensauce"
+  },
+  {
+   "slug": "capsules-cafe-10",
+   "query": "Kaffeekapseln"
+  },
+  {
+   "slug": "eau-gazeuse-6x1500ml",
+   "query": "Mineralwasser mit Kohlensäure"
+  },
+  {
+   "slug": "sirop-framboise-1l",
+   "query": "Himbeersirup"
+  },
+  {
+   "slug": "pizza-margherita-350g",
+   "query": "Pizza Margherita"
+  },
+  {
+   "slug": "capsules-lessive-30",
+   "query": "Waschmittel Caps"
+  },
+  {
+   "slug": "nettoyant-vitres-500ml",
+   "query": "Glasreiniger"
+  },
+  {
+   "slug": "papier-alu-30m",
+   "query": "Alufolie"
+  },
+  {
+   "slug": "savon-liquide-300ml",
+   "query": "Flüssigseife"
+  },
+  {
+   "slug": "deodorant-50ml",
+   "query": "Deo Roll-on"
+  },
+  {
+   "slug": "tampons-32",
+   "query": "Tampons normal"
+  },
+  {
+   "slug": "papier-toilette-recycle-10",
+   "query": "Toilettenpapier Recycling"
+  },
+  {
+   "slug": "piles-aa-8",
+   "query": "Batterien AA"
+  },
+  {
+   "slug": "filtres-cafe-80",
+   "query": "Kaffeefilter"
+  },
+  {
+   "slug": "pates-completes-500g",
+   "query": "Vollkorn Teigwaren"
+  },
+  {
+   "slug": "boulgour-500g",
+   "query": "Bulgur"
+  },
+  {
+   "slug": "cornichons-190g",
+   "query": "Essiggurken"
+  },
+  {
+   "slug": "feta-200g",
+   "query": "Feta"
+  },
+  {
+   "slug": "salami-100g",
+   "query": "Salami"
+  },
+  {
+   "slug": "cacahuetes-200g",
+   "query": "Erdnüsse gesalzen"
+  },
+  {
+   "slug": "the-vert-20",
+   "query": "Grüntee"
+  },
+  {
+   "slug": "bain-bouche-500ml",
+   "query": "Mundspülung"
+  }
+ ]
+}

@@ -35,6 +35,19 @@ export type CollectionMethod =
   | 'file_import'
   | 'demo';
 
+/**
+ * Droit de réutilisation constaté (docs/DROITS_DONNEES.md) — une source techniquement accessible
+ * n'est pas pour autant réutilisable publiquement :
+ * - open_license : licence ouverte (ODbL, OGD), conditions de la licence à respecter ;
+ * - own_data : données produites par TesPrix ou ses utilisateurs ;
+ * - no_restriction_found : aucune clause restrictive trouvée ; avis juridique requis avant exploitation ;
+ * - requires_authorization : conditions de l'enseigne restreignant l'usage (fins privées, usage
+ *   commercial interdit) : **exclue de tout affichage en production** sans autorisation enregistrée
+ *   (`AUTHORIZED_SOURCES`) ;
+ * - licence_required : fournisseur tiers, affichage public seulement sous licence souscrite.
+ */
+export type PublicUse = 'open_license' | 'own_data' | 'no_restriction_found' | 'requires_authorization' | 'licence_required';
+
 export interface SourceInfo {
   connectorId: string;
   provider: string;
@@ -44,6 +57,11 @@ export interface SourceInfo {
   attribution: string | null;
   /** Source de comparaison uniquement : jamais utilisée pour un prix affiché sans activation explicite. */
   benchmarkOnly?: boolean;
+  publicUse: PublicUse;
+  /** Conditions constatées, en clair (référence : docs/DROITS_DONNEES.md). */
+  termsNote: string;
+  /** Enseignes couvertes par la source (sources officielles). */
+  chainIds?: string[];
 }
 
 /** Sources connues. Un connecteur absent est qualifié d'après le type de source. */
@@ -55,6 +73,9 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'public_web_page',
     license: null,
     attribution: null,
+    chainIds: ['lidl'],
+    publicUse: 'no_restriction_found',
+    termsNote: 'Pages publiques ; robots.txt respecté ; mentions légales sans conditions d’utilisation du site (seules celles de Lidl Plus) ; LCD art. 5 let. c à faire valider.',
   },
   'aldi-api': {
     connectorId: 'aldi-api',
@@ -63,6 +84,9 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'public_api',
     license: null,
     attribution: null,
+    chainIds: ['aldi'],
+    publicUse: 'requires_authorization',
+    termsNote: 'Conditions d’utilisation d’Aldi Suisse : services « à des fins privées uniquement », usage des données à des fins commerciales interdit ; autorisation écrite ou avis juridique favorable requis.',
   },
   'open-prices': {
     connectorId: 'open-prices',
@@ -71,6 +95,8 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'community_receipt',
     license: 'ODbL-1.0',
     attribution: 'Open Prices (Open Food Facts), licence ODbL',
+    publicUse: 'open_license',
+    termsNote: 'ODbL 1.0 : attribution et partage à l’identique des bases dérivées (export prévu).',
   },
   foodally: {
     connectorId: 'foodally',
@@ -80,6 +106,8 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     license: 'FoodAlly — accès public par requête, attribution obligatoire',
     attribution: 'Source : FoodAlly (foodally.ch)',
     benchmarkOnly: true,
+    publicUse: 'licence_required',
+    termsNote: 'Accès gratuit limité (usage « hobby ») ; collecte en masse interdite sans licence ; attribution avec lien ; usage dans une application : offre Pro ou Business.',
   },
   receipts: {
     connectorId: 'receipts',
@@ -88,13 +116,22 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'receipt_scan',
     license: null,
     attribution: null,
+    publicUse: 'own_data',
+    termsNote: 'Tickets transmis volontairement, données personnelles retirées sur l’appareil.',
   },
 };
 
 export function sourceInfo(source: Pick<DataSource, 'connectorId' | 'kind'>): SourceInfo {
   const known = SOURCE_REGISTRY[source.connectorId];
   if (known) return known;
-  const base = { connectorId: source.connectorId, provider: source.connectorId, license: null, attribution: null };
+  const base = {
+    connectorId: source.connectorId,
+    provider: source.connectorId,
+    license: null,
+    attribution: null,
+    publicUse: (source.kind === 'agreement' ? 'own_data' : 'no_restriction_found') as PublicUse,
+    termsNote: 'Source non répertoriée : conditions à vérifier.',
+  };
   switch (source.kind) {
     case 'retailer_site':
       return { ...base, tier: 'first_party', collectionMethod: 'public_web_page' };
@@ -147,4 +184,14 @@ export function confidenceOf(
   const freshness = age <= 1 ? 1 : age <= limit ? 1 - (0.5 * (age - 1)) / Math.max(1, limit - 1) : 0.25;
   const match = matchKind ? MATCH_CONFIDENCE[matchKind] : 1;
   return Math.round(TIER_CONFIDENCE[tier] * freshness * match * 100) / 100;
+}
+
+/**
+ * Sources à exclure de l'affichage : conditions restreignant l'usage (`requires_authorization`) sans
+ * autorisation enregistrée. Appliqué en production ; en local, l'aperçu privé les conserve.
+ */
+export function restrictedConnectorIds(authorized: string[]): string[] {
+  return Object.values(SOURCE_REGISTRY)
+    .filter((s) => s.publicUse === 'requires_authorization' && !authorized.includes(s.connectorId))
+    .map((s) => s.connectorId);
 }

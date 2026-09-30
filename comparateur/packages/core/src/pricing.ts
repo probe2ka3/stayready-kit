@@ -74,12 +74,22 @@ export function buildOfferIndex(
     prices: PriceObservation[];
     promotions: Promotion[];
   },
-  opts: { allowBenchmarkSources?: boolean } = {},
+  opts: { allowBenchmarkSources?: boolean; excludeConnectors?: string[] } = {},
 ): OfferIndex {
   // Sources de comparaison (fournisseur tiers non licencié) : exclues des prix affichés par défaut.
   if (!opts.allowBenchmarkSources) {
     const keep = (s: DataSource) => !sourceInfo(s).benchmarkOnly;
     input = { ...input, prices: input.prices.filter((o) => keep(o.source)), promotions: input.promotions.filter((p) => keep(p.source)) };
+  }
+  // Sources dont les conditions restreignent l'usage, sans autorisation : entièrement retirées.
+  if (opts.excludeConnectors?.length) {
+    const out = new Set(opts.excludeConnectors);
+    input = {
+      products: input.products.filter((p) => !out.has(p.connectorId)),
+      matches: input.matches,
+      prices: input.prices.filter((o) => !out.has(o.source.connectorId)),
+      promotions: input.promotions.filter((p) => !out.has(p.source.connectorId)),
+    };
   }
   const products = new Map(input.products.map((p) => [p.id, p]));
   const matchesByCanonical = new Map<string, ProductMatch[]>();

@@ -366,3 +366,31 @@ describe('solutions comparées : enseigne seule et combinaison', () => {
     expect(r.meta.priceDates.find((d) => d.chainId === 'a')?.newest).toBe('2026-09-28T05:00:00Z');
   });
 });
+
+describe('droits de réutilisation des sources', () => {
+  it('Aldi (conditions : fins privées uniquement) est exclu sans autorisation enregistrée', async () => {
+    const { restrictedConnectorIds, SOURCE_REGISTRY } = await import('../src');
+    expect(SOURCE_REGISTRY['aldi-api']?.publicUse).toBe('requires_authorization');
+    expect(SOURCE_REGISTRY['lidl-web']?.publicUse).toBe('no_restriction_found');
+    expect(SOURCE_REGISTRY['open-prices']?.publicUse).toBe('open_license');
+    expect(SOURCE_REGISTRY.foodally?.publicUse).toBe('licence_required');
+    expect(restrictedConnectorIds([])).toEqual(['aldi-api']);
+    expect(restrictedConnectorIds(['aldi-api'])).toEqual([]);
+  });
+
+  it('une source exclue disparaît entièrement de l’index (articles, prix, actions)', () => {
+    const c = canonical('pates', 500);
+    const aldiSource = { connectorId: 'aldi-api', kind: 'retailer_site' as const };
+    const idx = buildOfferIndex(
+      {
+        products: [product('aldi:1', 'aldi', 500, 'g', { connectorId: 'aldi-api' })],
+        matches: [match('pates', 'aldi:1')],
+        prices: [price('aldi:1', 119, '2026-09-27T06:00:00Z', { source: aldiSource })],
+        promotions: [promo('aldi:1', 'aldi', { promoPriceCents: 99, source: aldiSource })],
+      },
+      { excludeConnectors: ['aldi-api'] },
+    );
+    expect(idx.products.size).toBe(0);
+    expect(resolveLine(line('pates'), c, profile('aldi'), idx, ctx()).unavailable?.reason).toBe('no_match');
+  });
+});
