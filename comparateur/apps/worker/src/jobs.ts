@@ -31,6 +31,7 @@ import {
 import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
 import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessAldi, jobReprocessLidl, jobRezone } from './collect';
 import { jobDataReport } from './data-report';
+import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
@@ -261,6 +262,8 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   'export-odbl': { run: jobExportOdbl, help: 'Exporte les données dérivées d’Open Prices sous ODbL (--out <dossier>)' },
   import: { run: jobImport, help: 'Importe des fichiers : import <fichiers…> --connector <id> [--dry-run]' },
   'data-report': { run: jobDataReport, help: 'Couverture, fraîcheur et qualité des données réelles (data/quality/)' },
+  'validation-calibrate': { run: jobValidationCalibrate, help: 'Calibre le jeu de validation des 50 essentiels (data/validation/essentials.json)' },
+  validate: { run: jobValidate, help: 'Contrôle de non-régression de la collecte sur le jeu de validation (--strict)' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },
