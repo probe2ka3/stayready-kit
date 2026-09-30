@@ -3,6 +3,7 @@
 Calculé avec `pnpm job demo-baskets --now=2026-09-30T19:00:00.000Z` sur les instantanés versionnés
 (aldi-api du 2026-09-30, lidl-web du 2026-09-30, open-prices du 2026-09-30).
 Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.
+Évaluation interne : toutes les sources collectées, y compris Aldi (exclu en production sans autorisation écrite, docs/DROITS_DONNEES.md).
 
 ## Lausanne — panier de référence (phase 3), 14 articles
 

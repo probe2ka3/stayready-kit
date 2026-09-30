@@ -90,6 +90,44 @@ Hypothèse prudente : **0** dans les scénarios (aucun partenaire contacté).
 | **Total hors temps de l'exploitant** | **188** | **518** | **1 314** | |
 | Temps de l'exploitant (non rémunéré) | | 3 200 | | `40 h × 80` |
 
+### 5 bis. Détail des 518 CHF et budget minimal (phase 4)
+
+Répartition du scénario central (hypothèses, CHF par mois ; prix d'hébergement non revérifiés en
+phase 4). « Nécessaire » = indispensable pour ouvrir le comparateur grand public.
+
+| Poste | Central | Nature | Nécessaire au comparateur ? |
+|---|---|---|---|
+| Serveur d'application (VPS, Suisse ou UE) | 30 | Technique | Oui |
+| PostgreSQL + PostGIS | 20 | Technique | Oui, mais 0 si sur le même serveur |
+| Itinéraires OSRM auto-hébergés | 15 | Technique | Non : estimation à vol d'oiseau affichée comme telle |
+| Sauvegardes, stockage des archives | 8 | Technique | Oui |
+| Courriel transactionnel | 10 | Technique | Non tant que les inscriptions sont fermées |
+| Supervision | 5 | Technique | Utile (offre gratuite possible) |
+| Domaine `.ch` | 2 | Technique | Oui |
+| **Sous-total technique** | **90** | | dont nécessaire ≈ 40–60 |
+| Collecte first-party (Lidl, Aldi) | 0 | Données | Oui (même serveur) |
+| **Licence FoodAlly Pro** (« dès 49 ») | **49** | Données tierces | **Option** : couverture Migros/Coop/Denner ; **incluse dans les 518** |
+| Avis juridique amorti sur 24 mois (`5 500 / 24`) | 229 | Juridique | Oui avant l'ouverture (ponctuel : 3 000 – 8 000) |
+| Comptabilité, assurance RC, facturation B2B | 150 | Administration | Assurance RC oui (≈ 20–30) ; comptabilité et facturation B2B = options B2B |
+| **Total central** | **518** | | |
+| Valorisation du temps de l'exploitant (`40 h × 80`) | 3 200 | Non décaissé | — |
+
+Regroupement :
+
+| Catégorie | Montant mensuel (hypothèses) |
+|---|---|
+| Nécessaire au comparateur grand public | ≈ 60 (technique) + 229 (avis juridique amorti) + 25 (assurance) ≈ **315** |
+| Options liées aux données | FoodAlly Pro 49 (incluse dans 518) — **Business 499 si l'affichage public l'exige** (question § 5.3 de `docs/DROITS_DONNEES.md`), soit + 450 |
+| Options B2B | ≈ 125 (comptabilité, facturation, contrats) |
+| Valorisation du temps | 3 200 (non décaissé) |
+
+**Budget minimal réaliste** pour ouvrir un pilote grand public (sans B2B, sans FoodAlly) :
+≈ **50 CHF/mois décaissés** (un serveur avec base et sauvegardes ≈ 25–35, domaine 2, assurance RC
+≈ 20) **+ un avis juridique ponctuel de 3 000 à 8 000 CHF** (≈ 125 à 333 CHF/mois sur 24 mois), soit
+≈ **175 à 385 CHF/mois** amortis. Avec FoodAlly : **+ 49** (Pro) ou **+ 499** (Business) selon les
+droits d'affichage confirmés par le fournisseur — la licence est **supplémentaire** par rapport à ce
+budget minimal, mais **déjà comptée** (Pro) dans les 518 CHF du scénario central.
+
 ## 6. Revenus (hypothèses)
 
 Formule : `R = Σ nᵢ × pᵢ × (1 − f)`, `f` = frais d'encaissement (3 %, facture ou prestataire).

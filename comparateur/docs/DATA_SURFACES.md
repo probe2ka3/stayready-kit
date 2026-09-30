@@ -110,6 +110,12 @@ Pages `/c/fr-CH/<thème>/a<id>` liées depuis l'accueil ; attribut `data-grid-da
 (Food / Non-food), `renderedTs` (publication). `robots.txt` : `/c/` autorisé ; recherche interdite
 (non utilisée). Fréquence : vagues du lundi et du jeudi.
 
+> Phase 4 : `robots.txt` de `sortiment.lidl.ch` contient `Disallow: /catalog/` ; les fiches lues
+> sont `/fr/catalog/product/view/id/N`, hors de ce préfixe selon RFC 9309 et listées au plan du site
+> de Lidl. Ambiguïté documentée et décision laissée à l'exploitant : `docs/DROITS_DONNEES.md` § 3.
+> Aldi : conditions « fins privées uniquement » → exclu de l'affichage en production sans
+> autorisation (§ 4 du même document).
+
 ## 5. Migros ⛔ 📄
 
 | Surface | Résultat |

@@ -52,12 +52,17 @@ export async function jobDemoBaskets(ctx: JobContext) {
   const snapshots = await readLiveSnapshots(dataDir);
   const products = snapshots.flatMap((s) => s.batch.retailerProducts);
   const { matches } = matchesFor(products, PRODUCTS, await readReviewedMatches(dataDir));
-  const index = buildOfferIndex({
-    products,
-    matches,
-    prices: snapshots.flatMap((s) => s.batch.prices),
-    promotions: snapshots.flatMap((s) => s.batch.promotions),
-  });
+  // --exclude=aldi-api : même calcul qu'en production sans autorisation de la source.
+  const exclude = typeof ctx.flags.exclude === 'string' ? ctx.flags.exclude.split(',').filter(Boolean) : [];
+  const index = buildOfferIndex(
+    {
+      products,
+      matches,
+      prices: snapshots.flatMap((s) => s.batch.prices),
+      promotions: snapshots.flatMap((s) => s.batch.promotions),
+    },
+    { excludeConnectors: exclude },
+  );
   const allStores = (JSON.parse(await readFile(join(dataDir, 'stores', 'osm-stores.json'), 'utf8')) as { stores: Store[] }).stores;
   const productMap = new Map(PRODUCTS.map((p) => [p.id, p]));
   const chainMap = new Map(CHAINS.map((c) => [c.id, c]));
@@ -69,6 +74,9 @@ export async function jobDemoBaskets(ctx: JobContext) {
     `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}\` sur les instantanés versionnés`,
     `(${snapshots.map((s) => `${s.connectorId} du ${s.collectedAt?.slice(0, 10) ?? '?'}`).join(', ')}).`,
     'Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.',
+    exclude.length
+      ? `**Sources exclues : ${exclude.join(', ')}** — ce que verrait le public en production sans autorisation (docs/DROITS_DONNEES.md).`
+      : 'Évaluation interne : toutes les sources collectées, y compris Aldi (exclu en production sans autorisation écrite, docs/DROITS_DONNEES.md).',
     '',
   ];
   const json: Array<{ id: string; result: CompareResultDto }> = [];
@@ -149,7 +157,8 @@ export async function jobDemoBaskets(ctx: JobContext) {
 
   const outDir = typeof ctx.flags.out === 'string' ? ctx.flags.out : join(dataDir, 'demo');
   await mkdir(outDir, { recursive: true });
-  await writeFile(join(outDir, 'resultats.md'), `${out.join('\n')}\n`);
+  const name = exclude.length ? `resultats-sans-${exclude.join('-')}` : 'resultats';
+  await writeFile(join(outDir, `${name}.md`), `${out.join('\n')}\n`);
   if (ctx.flags.json) await writeFile(join(outDir, 'resultats.json'), `${JSON.stringify(json, null, 1)}\n`);
   if (!ctx.flags.quiet) console.log(out.join('\n'));
 }

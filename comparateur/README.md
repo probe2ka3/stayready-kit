@@ -18,21 +18,22 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
 - **Détours chiffrés** (économie brute, trajet ajouté, économie nette, seuil personnel, accepter/refuser) et
   signal **« attendre serait moins cher »** fondé sur les actions déjà annoncées.
 
-**État actuel (phase 3) : prix réels officiels pour Lidl et Aldi, gratuit pour les consommateurs, service
-non ouvert au public.**
+**État actuel (phase 4) : comparateur grand public validé sur prix réels, non ouvert au public.**
 
-- **Lidl** : prix officiels collectés chaque jour sur son site (3 012 articles avec prix, 531 actions dont 244
-  futures), 194 références du catalogue couvertes.
-- **Aldi Suisse** : prix officiels lus sur l'API publique de son site (1 484 articles avec prix, 712 actions),
-  106 références couvertes.
-- **Migros, Coop, Denner, OTTO'S** : relevés communautaires Open Prices (ODbL), peu nombreux, toujours
-  signalés « indicatifs ». Leurs sites refusent l'accès automatisé ou l'interdisent : un accord est nécessaire.
-- Moteur multi-sources (officiel > sous licence > communautaire), divergences signalées, tableau de qualité
-  des données, API professionnelle (fermée par défaut).
-- Le mode démonstration (prix fictifs) reste disponible et **n'est jamais mélangé** aux prix réels
-  (`PRICE_DATA`).
+- **Lidl** : prix officiels collectés chaque jour (3 012 articles avec prix, 531 actions), 200 références
+  du catalogue couvertes.
+- **Aldi Suisse** : prix officiels lus sur l'API publique de son site (1 484 articles, 712 actions),
+  105 références ; ses conditions réservent les données à un **usage privé** : Aldi est **exclu de
+  l'affichage en production** tant qu'aucune autorisation n'est enregistrée
+  ([docs/DROITS_DONNEES.md](docs/DROITS_DONNEES.md)).
+- **Migros, Coop, Denner** : relevés communautaires Open Prices rares, toujours « indicatifs ».
+- Comparaison **enseigne seule / combinaison** avec montant payé par paquets, trajet aller-retour estimé
+  (annoncé comme tel), économie après déplacement, couverture explicite, actions conditionnelles et
+  régionales, courses à une date future.
+- Mode démonstration (prix fictifs) séparé des prix réels (`PRICE_DATA`) ; paniers d'exemple réels sur
+  `/fr/exemples`.
 
-Voir [docs/STATUT.md](docs/STATUT.md) et [docs/RAPPORT_PHASE3.md](docs/RAPPORT_PHASE3.md).
+Voir [docs/STATUT.md](docs/STATUT.md) et [docs/RAPPORT_PHASE4.md](docs/RAPPORT_PHASE4.md).
 
 ## Démarrage rapide
 
@@ -42,6 +43,8 @@ Prérequis : Node.js 22, pnpm 10 (`corepack enable`).
 cd comparateur
 pnpm install
 pnpm dev                      # http://localhost:3000 — mode « mémoire », prix réels des instantanés data/prices/live
+                              # http://localhost:3000/fr/exemples : paniers réels de Lausanne, Bulle et Genève en un clic
+RESTRICTED_SOURCES=exclude pnpm dev   # ce que verrait le public en production (Aldi exclu sans autorisation)
 PRICE_DATA=demo pnpm dev      # données fictives de démonstration
 ```
 
@@ -85,7 +88,9 @@ comparateur/
 | `pnpm job <tâche>` | `migrate`, `seed`, `reference`, `localities [--download]`, `stores [--download]`, `connectors`, `import <fichiers> --connector <id> [--dry-run]`, `quality`, `daily`, `weekly`, `status`, `purge-demo --confirm` |
 | `pnpm job collect` | Collecte des prix réels (Lidl, Aldi, Open Prices) ; voir aussi `reprocess-lidl`, `reprocess-aldi`, `import-live`, `match-candidates`, `export-odbl`, `purge-source`, `rezone` |
 | `pnpm job data-report` / `validate` | Couverture, fraîcheur et alertes de qualité ; contrôle du jeu de validation des essentiels |
-| `pnpm job benchmark-foodally` | Comparaison ponctuelle avec FoodAlly (quota gratuit, aucune donnée intégrée) |
+| `pnpm job benchmark-foodally` | Comparaison ponctuelle avec FoodAlly (plafond de 100 requêtes par jour, aucune donnée intégrée) |
+| `pnpm job demo-baskets --now=…` / `match-audit` | Paniers de Lausanne, Bulle et Genève rejoués sur les prix réels ; correspondances manquantes à revoir |
+| `pnpm test:e2e:demo` | Parcours des paniers d'exemple sur les prix réels, captures (`E2E_SCREENSHOTS=…`) |
 
 ## Documentation
 
@@ -102,6 +107,7 @@ comparateur/
 | [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) | Installation, variables d'environnement, tâches planifiées, maintenance |
 | [docs/audit/03-sources-prix.md](docs/audit/03-sources-prix.md) | Sources de prix réels : constats, décisions, blocages, charte de collecte |
 | [docs/DATA_SURFACES.md](docs/DATA_SURFACES.md) | Surfaces de données first-party des enseignes (Migros, Coop, Aldi, Lidl, Denner) : champs, accès, limites |
+| [docs/DROITS_DONNEES.md](docs/DROITS_DONNEES.md) | Droits de réutilisation par source (Lidl, Aldi, Denner, Open Prices, FoodAlly…), évaluation FoodAlly, questions au fournisseur et pour l'avis juridique |
 | [docs/DATA_ENGINE.md](docs/DATA_ENGINE.md) | Moteur multi-sources : hiérarchie, confiance, divergences, qualité, couverture, validation |
 | [docs/TICKETS.md](docs/TICKETS.md) | « Scanner mon ticket » : modèle, flux, confidentialité |
 | [docs/MARCHE.md](docs/MARCHE.md) | Concurrence, affiliation vérifiée, données B2B (sections premium remplacées par le modèle v2) |
@@ -111,6 +117,7 @@ comparateur/
 | [docs/LANCEMENT.md](docs/LANCEMENT.md) | Zone pilote, verrou de lancement, liste de contrôle d'ouverture |
 | [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md) | Compte rendu de la phase 2 |
 | [docs/RAPPORT_PHASE3.md](docs/RAPPORT_PHASE3.md) | Compte rendu de la phase 3 : données, couverture, technique, modèle économique |
+| [docs/RAPPORT_PHASE4.md](docs/RAPPORT_PHASE4.md) | Compte rendu de la phase 4 : comparateur grand public, paniers et trajets, droits, budget minimal |
 
 ## Licences des données
 

@@ -32,8 +32,10 @@
 | `RAW_ARCHIVE_DIR` / `RAW_ARCHIVE_DAYS` | `<DATA_DIR>/raw` / `30` | Archive des pages lues (preuve du prix affiché), purge automatique |
 | `LIDL_WEB` / `ALDI_API` / `OPEN_PRICES` | actifs | `off` pour désactiver une source immédiatement |
 | `LIDL_PRODUCT_PAGES_PER_RUN` | `460` | Fiches produits Lidl relues par jour (tout l'assortiment en 7 jours) |
-| `FOODALLY` / `FOODALLY_MAX_QUERIES` / `FOODALLY_DAILY_RESERVE` | `off` / `50` / `10` | Fournisseur tiers, **comparaison uniquement** (quota anonyme 100/jour) |
+| `FOODALLY` / `FOODALLY_MAX_QUERIES` / `FOODALLY_DAILY_RESERVE` | `off` / `50` / `10` | Fournisseur tiers, **comparaison uniquement** (plafond local de 100 requêtes par jour, en-têtes ignorés au-delà) |
 | `PRICE_FALLBACK_SOURCES` | vide | `foodally` : repli sur le fournisseur tiers pour les prix affichés — **seulement avec licence** et correspondances revues |
+| `AUTHORIZED_SOURCES` | vide | Sources à autorisation requise dont l'autorisation écrite est obtenue (ex. `aldi-api`) ; voir `docs/DROITS_DONNEES.md` |
+| `RESTRICTED_SOURCES` | `exclude` en production, `include` sinon | `exclude` : sources à autorisation requise retirées de l'affichage (Aldi « fins privées uniquement ») ; `include` : aperçu local privé |
 | `B2B_API_KEY_HASHES` | vide | Empreintes SHA-256 des clés de l'API professionnelle ; vide = API fermée |
 | `RECEIPTS_ENABLED` | `false` | Envoi des tickets de caisse (après validation de la politique de confidentialité) |
 | `OPEN_PRICES_MAX_AGE_DAYS` | `400` | Ancienneté maximale des relevés importés |
@@ -76,7 +78,9 @@ administration en lecture seule.
 |---|---|---|
 | Quotidienne (ex. 05:15) | `pnpm job daily` | **Collecte des prix réels** (Lidl en rotation, Aldi, Open Prices), imports déposés, contrôles qualité, rapport de couverture (`data/quality/`), validation des essentiels |
 | Lundi et jeudi 07:10 | `pnpm job collect --only lidl-web,aldi-api` | Nouvelles actions Lidl et Aldi (vagues du lundi et du jeudi) |
-| Hebdomadaire (facultatif) | `FOODALLY=on pnpm job benchmark-foodally` | Comparaison avec FoodAlly sur les 50 essentiels (50 requêtes) |
+| Hebdomadaire (facultatif) | `FOODALLY=on pnpm job benchmark-foodally` | Comparaison avec FoodAlly sur les 50 essentiels (50 requêtes ; `--queries=fichier --name=nom` pour un autre échantillon) |
+| Après chaque revue | `pnpm job match-audit` | Articles non revus nettement moins chers que la correspondance retenue (`data/matching/audit.md`) |
+| À la demande | `pnpm job demo-baskets --now=AAAA-MM-JJTHH:MM:SSZ [--exclude=aldi-api]` | Paniers de Lausanne, Bulle et Genève rejoués sur les prix réels (`data/demo/resultats.md`, ou sans la source exclue) |
 | Mercredi et jeudi 06:30 | `pnpm job connectors` | Imports structurés déposés pour les nouvelles actions |
 | Hebdomadaire (lundi 04:10) | `pnpm job weekly` | Rafraîchissement des succursales OpenStreetMap |
 | Trimestrielle | `pnpm job localities --download` | Rafraîchissement des localités swisstopo |
@@ -146,7 +150,8 @@ demande d'une enseigne : `LIDL_WEB=off` (ou `ALDI_API=off`) puis
 pnpm typecheck
 pnpm test                         # unitaires + intégration (DATABASE_URL_TEST)
 pnpm test:e2e                     # navigateur, site public (démarre le serveur)
-E2E_DATABASE_URL=… E2E_ADMIN_HASH=… pnpm test:e2e:admin
+E2E_DATABASE_URL=… E2E_ADMIN_HASH=… pnpm test:e2e:admin   # base fraîchement initialisée (pnpm job seed)
+E2E_SCREENSHOTS=docs/captures/phase4 pnpm test:e2e:demo   # paniers d'exemple sur prix réels + captures
 ```
 
 Si Playwright ne peut pas télécharger ses navigateurs, indiquer un Chromium existant avec
@@ -156,6 +161,8 @@ Si Playwright ne peut pas télécharger ses navigateurs, indiquer un Chromium ex
 
 - [ ] Liste complète : `docs/LANCEMENT.md`.
 - [ ] Sources de prix validées (voir `docs/audit/03-sources-prix.md`), `PRICE_DATA=live`.
+- [ ] Droits de réutilisation : `docs/DROITS_DONNEES.md` ; `AUTHORIZED_SOURCES` seulement avec une
+      autorisation écrite (Aldi exclu par défaut en production).
 - [ ] `DEMO_DATA=false`, puis `pnpm job purge-demo --confirm`.
 - [ ] Mentions légales et politique de confidentialité complétées (exploitant, hébergeur, transferts).
 - [ ] Validation juridique des points listés dans `docs/STATUT.md`.

@@ -24,6 +24,26 @@ Code : `packages/core/src/sources.ts`, `pricing.ts` (`chooseAmongSources`), `dat
    ± 2 %, marques compatibles, désignations proches) diffère de plus de **15 %** en prix normalisé,
    l'écart est affiché et le prix porte le motif `source_divergence`. Rien n'est fusionné.
 
+### 2 bis. Règles ajoutées en phase 4 (comparateur grand public)
+
+- **Promotions conditionnelles** : « -X % sur le N-ième paquet » (`nth_percent`) appliqué seulement
+  si le panier compte N paquets ; prix « dès », « jusqu'à -46 % » ou contenance variable
+  (`conditional`) jamais appliqués ; « dès N pièces » et lots (`min_qty_*`, `multibuy`) seulement si
+  la quantité est atteinte ; carte (Lidl Plus…) seulement si l'utilisateur la déclare.
+- **Fin non publiée** : une action vue en vigueur mais sans date de fin n'est « confirmée » que
+  jusqu'au dernier jour où elle a été vue (ou jusqu'à son premier jour annoncé) ; au-delà, le prix est
+  « indicatif » (motif `promo_not_confirmed_on_date`).
+- **Types de produit** : un article « sans lactose » n'est jamais l'équivalent de la référence
+  ordinaire ; seule une référence « sans lactose » l'accepte.
+- **Montant payé** : nombre de paquets × prix du paquet (quantité demandée et achetée affichées) ; le
+  prix au kilo ou au litre sert uniquement à comparer. Article au poids variable signalé.
+- **Sources à autorisation requise** (Aldi : « fins privées uniquement ») : exclues de l'index en
+  production sans `AUTHORIZED_SOURCES` (voir `docs/DROITS_DONNEES.md`).
+- **Solutions comparées** : enseigne seule et combinaison ; économies calculées uniquement par
+  rapport au meilleur magasin unique **complet** ; un panier incomplet n'affiche jamais d'économie.
+- **Correspondances manquantes** : `pnpm job match-audit` liste les articles non revus nettement moins
+  chers que la correspondance retenue (19 ajoutées en phase 4, dont l'eau plate Lidl).
+
 ## 3. Observation enrichie (`PriceRecord`, API : snake_case)
 
 `product_id`, `retailer`, `store_id`, `region`, `geographic_scope`, `price`, `regular_price`,
@@ -57,6 +77,19 @@ Une référence est **couverte** par une enseigne si une correspondance revue sa
 (bio, origine suisse, AOP, marque, dimension) et dispose d'un prix utilisable (normal non périmé ou
 action en cours). Indicateurs : couverture par enseigne (dont source officielle), références
 comparables dans ≥ 2, 3, 4, 5 enseignes, fraîcheur < 24 h, < 48 h, < 7 j, couverture par priorité.
+
+### Fraîcheur réelle et panne de collecte
+
+- La date affichée est l'instant où la page ou la réponse de l'enseigne a été lue (`observedAt`) ;
+  elle n'est jamais réécrite lors des fusions de collectes (un identifiant par article et par jour).
+  Les fiches Lidl en rotation sont relues tous les 7 jours, les pages catégories et actions chaque jour.
+- Le prix « au lieu de » publié avec une action devient le prix normal observé ce jour-là.
+- Si la collecte échoue : les anciens relevés restent affichés avec leur date ; « vérifié » jusqu'à
+  7 jours, « indicatif » ensuite, **exclus au-delà de 30 jours** (90 jours pour les relevés
+  communautaires) ; les actions expirent à leur date de fin ; une action à fin non publiée n'est plus
+  confirmée après le dernier jour vu. Alertes : `connector_broken` après 48 h sans collecte
+  (`/admin/qualite`, tâche `data-report`), avertissement `prices_not_refreshed` dans la comparaison
+  quand le relevé le plus récent d'une enseigne a plus de 48 h.
 
 ## 6. Jeu de validation
 

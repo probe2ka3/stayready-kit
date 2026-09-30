@@ -31,10 +31,17 @@ Hors zone pilote, un message l'indique sans bloquer l'utilisateur.
 
 **Données**
 
-- [ ] Au moins un accord (Migros, Coop ou Denner), une licence de repli (FoodAlly) ou décision assumée d'ouvrir
-      avec Lidl + Aldi (98 références comparables au 30.09.2026)
+- [ ] **Autorisation écrite d'Aldi Suisse** (conditions : « fins privées uniquement ») ou avis juridique
+      favorable, puis `AUTHORIZED_SOURCES=aldi-api` ; sans elle, Aldi est exclu en production et le
+      comparateur ne compare que Lidl (+ relevés communautaires) — `docs/DROITS_DONNEES.md`
+- [ ] Réponse de Lidl sur les fiches `/fr/catalog/…` (`robots.txt` : `Disallow: /catalog/`), sinon
+      `LIDL_PRODUCT_PAGES_PER_RUN=0` (Lidl ≈ 99 références au lieu de 200)
+- [ ] Au moins un accord (Migros, Coop ou Denner), une licence de repli (FoodAlly, droits d'affichage
+      public confirmés) ou décision assumée d'ouvrir avec Lidl + Aldi (100 références comparables au 30.09.2026)
 - [ ] Collecte quotidienne active (`pnpm job daily`), alertes surveillées (`/admin/qualite`)
-- [x] Correspondances revues pour le panier type du pilote (Lidl 194, Aldi 106 références)
+- [x] Correspondances revues pour le panier type du pilote (Lidl 200, Aldi 105 références ;
+      `pnpm job match-audit` après chaque collecte importante)
+- [x] Paniers de démonstration reproductibles (`pnpm job demo-baskets`, `/fr/exemples`)
 - [ ] `pnpm job validate --strict` sans écart pendant 7 jours consécutifs
 - [ ] `PRICE_DATA=live`, `DEMO_DATA=false`, `pnpm job purge-demo --confirm`
 
@@ -49,7 +56,7 @@ Hors zone pilote, un message l'indique sans bloquer l'utilisateur.
 
 - [ ] Hébergement en Suisse ou dans l'UE, TLS, sauvegardes quotidiennes testées
 - [ ] `ADMIN_PASSWORD_HASH`, `SESSION_SECRET` forts ; `/admin` restreint au niveau du proxy
-- [ ] Tests : `pnpm typecheck && pnpm test && pnpm test:e2e && pnpm test:e2e:admin`
+- [ ] Tests : `pnpm typecheck && pnpm test && pnpm test:e2e && pnpm test:e2e:admin` (+ `pnpm test:e2e:demo` sur prix réels)
 - [ ] Contrôle mobile réel (Android et iOS) du parcours complet
 
 **Ouverture**
@@ -68,4 +75,5 @@ Hors zone pilote, un message l'indique sans bloquer l'utilisateur.
 | Liste d'attente | `SIGNUP_ENABLED=false` | Confidentialité complétée, double confirmation |
 | Emplacements partenaires | `data/commercial/placements.json` vide | Partenariat réel, signalé |
 | Collecte Lidl | `LIDL_WEB` (actif par défaut) | Mettre `off` immédiatement si Lidl le demande |
-| Collecte Aldi | `ALDI_API` (actif par défaut) | Mettre `off` immédiatement si Aldi le demande |
+| Collecte Aldi | `ALDI_API` (actif par défaut, évaluation interne) | Mettre `off` immédiatement si Aldi le demande |
+| Affichage des prix Aldi en production | `AUTHORIZED_SOURCES` vide | Autorisation écrite d'Aldi Suisse ou avis juridique favorable |

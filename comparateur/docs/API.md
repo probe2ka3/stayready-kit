@@ -24,6 +24,12 @@ En mode `PUBLIC_ACCESS=waitlist`, seules `health` et `waitlist` répondent sans 
 `absentChains` (non visitables), `stores` (≤ 400, triées par distance, horaires du jour, ouverture
 actuelle), `attribution`.
 
+Phase 4 : la présence d'un magasin est distinguée des données de prix. Chaque enseigne porte
+`priceData: { kind, lastObservation, prices }` avec `kind` ∈ `official` (prix publiés par l'enseigne),
+`community` (relevés Open Prices), `none`, `demo`, `restricted` (source exclue en production faute
+d'autorisation, voir `docs/DROITS_DONNEES.md`). Chaque succursale porte `stock: "unknown"` : aucune
+source ne publie la disponibilité par magasin.
+
 ## POST /api/v1/compare
 
 ```json
@@ -79,6 +85,25 @@ Réponse (`CompareResultDto`, `packages/core/src/compare.ts`) :
 Chaque option d'article comprend : article de l'enseigne, paquets, prix normal, prix payé, prix unitaire,
 promotion (mécanique, validité, publication, carte requise, fin présumée), **statut** et **motifs**,
 **date de vérification**, **source**, `isDemo`.
+
+Nouveautés de la réponse (phase 4) :
+
+- `solutions[]` : chaque enseigne seule (meilleure succursale, `kind: "single_chain"`) et la
+  combinaison (`kind: "combination"`, `retained` faux si elle n'est pas retenue par le parcours
+  optimisé) : `stores[]`, `coveredLines`, `coverageRate`, `complete`, `purchaseCents`, `distanceKm`,
+  `driveMin`, `totalMin`, `travelCostCents`, `globalCents`, `promoLines`, `indicativeLines`,
+  `isReference` (meilleur magasin unique **complet**, trajet compris), `grossSavingsCents` et
+  `netSavingsCents` (null si `notComparable` : `incomplete` ou `no_complete_reference`) ;
+- `unavailableEverywhere[]` : articles introuvables dans tout le périmètre ;
+- `meta.travelMethod` : `{ provider, estimated, mode, detourFactor, speedKmh, overheadMin, costPerKmChf,
+  returnToOrigin }` — `estimated: true` = vol d'oiseau × facteur de détour, jamais un itinéraire routier ;
+- `meta.priceDates[]` : dates du plus ancien et du plus récent relevé utilisés, par enseigne ;
+  avertissement `prices_not_refreshed` si le relevé le plus récent d'une enseigne a plus de 48 h ;
+- option d'article : `requestedQuantity` et `purchasedQuantity` (montant payé = paquets × prix du
+  paquet) ; promotion : `conditions[]` (carte, quantité, lot, région), `announced` (commence après
+  aujourd'hui), `zoneId`, `regionNote`, `verifiedAt` ; nouveaux types `nth_percent` (« -50 % sur le
+  2e paquet ») et `conditional` (prix « dès » ou variable, jamais appliqué) ; nouveaux motifs
+  `promo_not_confirmed_on_date` et `variable_weight`.
 
 ## API professionnelle `/api/b2b/v1` (phase 3, fermée par défaut)
 
