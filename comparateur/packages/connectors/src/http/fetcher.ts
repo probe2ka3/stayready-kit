@@ -27,7 +27,7 @@ export interface FetcherOptions {
   log?: Logger;
 }
 
-export type BlockReason = 'robots' | 'forbidden' | 'challenge';
+export type BlockReason = 'robots' | 'forbidden' | 'challenge' | 'quota';
 
 /** Accès refusé : ne jamais réessayer autrement (pas de changement d'agent, pas de contournement). */
 export class HttpBlockedError extends Error {
@@ -39,7 +39,9 @@ export class HttpBlockedError extends Error {
     super(
       reason === 'robots'
         ? `Interdit par robots.txt : ${url}`
-        : reason === 'challenge'
+        : reason === 'quota'
+          ? `Quota d'accès gratuit atteint (HTTP 402) : ${url}`
+          : reason === 'challenge'
           ? `Protection anti-robot détectée : ${url}`
           : `Accès refusé (HTTP ${status}) : ${url}`,
     );
@@ -64,6 +66,8 @@ export interface FetchResult {
   fetchedAt: Date;
   sha256: string;
   archivedAs: string | null;
+  /** En-têtes utiles (limites de débit annoncées par la source). */
+  headers?: Record<string, string>;
 }
 
 export interface FetcherStats {
@@ -141,12 +145,25 @@ export class PoliteFetcher {
 
   /** GET d'une page autorisée, avec délai, reprises et archivage. */
   async get(url: string, accept = 'text/html,application/xhtml+xml'): Promise<FetchResult> {
+    const delay = await this.admit(url);
+    return this.request(url, accept, this.opts.maxRetries + 1, delay);
+  }
+
+  /**
+   * POST vers un point d'accès public explicitement prévu pour les machines (ex. serveur MCP
+   * autorisé par robots.txt) : mêmes règles que `get` (robots.txt, délai, reprises, arrêt).
+   */
+  async post(url: string, body: string, contentType = 'application/json', accept = 'application/json'): Promise<FetchResult> {
+    const delay = await this.admit(url);
+    return this.request(url, accept, this.opts.maxRetries + 1, delay, { method: 'POST', body, contentType });
+  }
+
+  private async admit(url: string): Promise<number> {
     const u = new URL(url);
     if (u.host in this.stats.blocked) throw new HttpBlockedError(url, this.stats.blocked[u.host] as BlockReason);
     const policy = await this.robots(u.origin);
     if (!isAllowed(policy, `${u.pathname}${u.search}`)) throw new HttpBlockedError(url, 'robots');
-    const delay = Math.max(this.opts.minDelayMs, (policy.crawlDelaySec ?? 0) * 1000);
-    return this.request(url, accept, this.opts.maxRetries + 1, delay);
+    return Math.max(this.opts.minDelayMs, (policy.crawlDelaySec ?? 0) * 1000);
   }
 
   private async waitTurn(host: string, delayMs: number) {
@@ -157,7 +174,13 @@ export class PoliteFetcher {
     if (wait > 0) await this.opts.sleep(wait);
   }
 
-  private async request(url: string, accept: string, attempts: number, delayMs = this.opts.minDelayMs): Promise<FetchResult> {
+  private async request(
+    url: string,
+    accept: string,
+    attempts: number,
+    delayMs = this.opts.minDelayMs,
+    send: { method: 'POST'; body: string; contentType: string } | null = null,
+  ): Promise<FetchResult> {
     const host = new URL(url).host;
     let lastError: unknown = null;
     for (let attempt = 0; attempt < attempts; attempt++) {
@@ -167,7 +190,14 @@ export class PoliteFetcher {
       let res: Response;
       try {
         res = await this.opts.fetchImpl(url, {
-          headers: { 'user-agent': this.opts.userAgent, accept, 'accept-language': 'fr-CH,fr;q=0.9,de-CH;q=0.5' },
+          method: send?.method ?? 'GET',
+          headers: {
+            'user-agent': this.opts.userAgent,
+            accept,
+            'accept-language': 'fr-CH,fr;q=0.9,de-CH;q=0.5',
+            ...(send ? { 'content-type': send.contentType } : {}),
+          },
+          body: send?.body,
           redirect: 'follow',
           signal: AbortSignal.timeout(this.opts.timeoutMs),
         });
@@ -182,6 +212,11 @@ export class PoliteFetcher {
       if (res.status === 401 || res.status === 403 || res.status === 451) {
         this.stats.blocked[host] = 'forbidden';
         throw new HttpBlockedError(url, 'forbidden', res.status);
+      }
+      if (res.status === 402) {
+        // Quota gratuit épuisé : arrêt, jamais de contournement (nouvelle identité, autre adresse…).
+        this.stats.blocked[host] = 'quota';
+        throw new HttpBlockedError(url, 'quota', res.status);
       }
       if (CHALLENGE_MARKERS.some((m) => body.includes(m))) {
         this.stats.blocked[host] = 'challenge';
@@ -203,7 +238,11 @@ export class PoliteFetcher {
       const sha256 = createHash('sha256').update(body).digest('hex');
       const contentType = res.headers.get('content-type') ?? '';
       const archivedAs = await this.archive(url, res.status, contentType, body, fetchedAt, sha256);
-      return { url, status: res.status, contentType, body, fetchedAt, sha256, archivedAs };
+      const headers: Record<string, string> = {};
+      res.headers.forEach((v, k) => {
+        if (/^x-ratelimit|^retry-after/i.test(k)) headers[k.toLowerCase()] = v;
+      });
+      return { url, status: res.status, contentType, body, fetchedAt, sha256, archivedAs, headers };
     }
     this.stats.errors++;
     if (lastError instanceof HttpFetchError) throw lastError;

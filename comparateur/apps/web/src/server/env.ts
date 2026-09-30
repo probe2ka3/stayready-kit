@@ -35,4 +35,9 @@ export const serverEnv = {
   pilotCantons: (process.env.PILOT_CANTONS ?? 'GE,VD,NE,FR,VS,JU').split(',').map((c) => c.trim().toUpperCase()).filter(Boolean),
   /** live | demo | auto (défaut : live dès qu'un prix réel est disponible, sinon démonstration). */
   priceData: (['live', 'demo'].includes(process.env.PRICE_DATA ?? '') ? process.env.PRICE_DATA : 'auto') as 'live' | 'demo' | 'auto',
+  /**
+   * Sources de repli sous licence autorisées pour les prix affichés (ex. « foodally »). Vide par
+   * défaut : un fournisseur tiers ne sert qu'à la comparaison tant qu'aucune licence n'est souscrite.
+   */
+  licensedFallback: process.env.PRICE_FALLBACK_SOURCES === 'foodally',
 };

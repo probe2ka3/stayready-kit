@@ -8,6 +8,9 @@ import {
   AldiApiConnector,
   buildAldiBatch,
   buildLidlBatch,
+  FOODALLY_ATTRIBUTION,
+  FOODALLY_CONNECTOR_ID,
+  FOODALLY_LICENSE,
   HttpBlockedError,
   LIVE_CONNECTOR_IDS,
   makeLocalityResolver,
@@ -62,9 +65,9 @@ function statsOf(connectorId: string, batch: ConnectorBatch): CollectionStats {
 }
 
 function snapshotMeta(c: PriceConnector) {
-  return c.id === 'open-prices'
-    ? { license: OPEN_PRICES_LICENSE, attribution: OPEN_PRICES_ATTRIBUTION }
-    : { license: null, attribution: null };
+  if (c.id === 'open-prices') return { license: OPEN_PRICES_LICENSE, attribution: OPEN_PRICES_ATTRIBUTION };
+  if (c.id === FOODALLY_CONNECTOR_ID) return { license: FOODALLY_LICENSE, attribution: FOODALLY_ATTRIBUTION };
+  return { license: null, attribution: null };
 }
 
 /**

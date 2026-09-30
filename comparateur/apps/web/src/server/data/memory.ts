@@ -177,7 +177,7 @@ export class MemoryAppData implements AppData {
     const promotions = snapshots.flatMap((s) => s.batch.promotions);
     // Correspondances recalculées à chaque lecture : une revue prend effet sans nouvelle collecte.
     const { matches } = matchesFor(products, PRODUCTS, reviewed);
-    const index = buildOfferIndex({ products, matches, prices, promotions });
+    const index = buildOfferIndex({ products, matches, prices, promotions }, { allowBenchmarkSources: serverEnv.licensedFallback });
     const stats = this.emptyStats();
     const today = zurichToday(now);
     for (const p of products) {

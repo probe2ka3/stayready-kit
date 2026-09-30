@@ -1,0 +1,244 @@
+{
+  "at": "2026-09-30T16:34:09.136Z",
+  "attribution": "Source : FoodAlly (foodally.ch)",
+  "method": "Une requête search_products par essentiel (termes allemands), 5 enseignes. Meilleur prix normalisé plausible (même dimension, contenance 1/6 à 5 fois la référence, mots de la requête dans la désignation, exigences de la référence) contre meilleur prix officiel TesPrix des correspondances revues.",
+  "queries": 50,
+  "results": 1532,
+  "stoppedBy": null,
+  "remainingDay": 50,
+  "requests": 51,
+  "byChain": [
+    {
+      "chainId": "migros",
+      "essentials": 50,
+      "foodallyCovered": 30,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "coop",
+      "essentials": 50,
+      "foodallyCovered": 37,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    },
+    {
+      "chainId": "lidl",
+      "essentials": 50,
+      "foodallyCovered": 27,
+      "tesprixCovered": 45,
+      "both": 26,
+      "medianGap": 0,
+      "within5pct": 19,
+      "beyond20pct": 5
+    },
+    {
+      "chainId": "aldi",
+      "essentials": 50,
+      "foodallyCovered": 29,
+      "tesprixCovered": 31,
+      "both": 18,
+      "medianGap": 0,
+      "within5pct": 10,
+      "beyond20pct": 7
+    },
+    {
+      "chainId": "denner",
+      "essentials": 50,
+      "foodallyCovered": 14,
+      "tesprixCovered": 0,
+      "both": 0,
+      "medianGap": null,
+      "within5pct": 0,
+      "beyond20pct": 0
+    }
+  ],
+  "largestGaps": [
+    {
+      "slug": "liquide-vaisselle-750ml",
+      "chainId": "lidl",
+      "gap": 3.904,
+      "foodally": {
+        "name": "Geschirrspülmittel",
+        "quantity": "500 ml",
+        "priceCents": 179,
+        "url": "https://foodally.ch/product/5300890-Lidl-Geschirrspuelmittel"
+      },
+      "tesprix": {
+        "name": "Liquide vaisselle Original",
+        "priceCents": 109
+      }
+    },
+    {
+      "slug": "gel-douche-250ml",
+      "chainId": "lidl",
+      "gap": -0.854,
+      "foodally": {
+        "name": "Duschgel mit Mandel",
+        "quantity": "500 ml",
+        "priceCents": 58,
+        "url": "https://foodally.ch/product/5293558-Lidl-Duschgel-mit-Mandel"
+      },
+      "tesprix": {
+        "name": "Gel douche Nature",
+        "priceCents": 199
+      }
+    },
+    {
+      "slug": "fusilli-500g",
+      "chainId": "aldi",
+      "gap": -0.539,
+      "foodally": {
+        "name": "CUCINA Pasta Fusilli",
+        "quantity": "1000 g",
+        "priceCents": 119,
+        "url": "https://foodally.ch/product/3663720-Aldi-CUCINA-Pasta-Fusilli"
+      },
+      "tesprix": {
+        "name": "Assortiment de pâtes au bronze, fusilli",
+        "priceCents": 129
+      }
+    },
+    {
+      "slug": "spaghetti-500g",
+      "chainId": "aldi",
+      "gap": -0.5,
+      "foodally": {
+        "name": "CUCINA Spaghetti N°5",
+        "quantity": "1000 g",
+        "priceCents": 119,
+        "url": "https://foodally.ch/product/3663699-Aldi-CUCINA-Spaghetti-N-5"
+      },
+      "tesprix": {
+        "name": "Spaghetti, blé dur",
+        "priceCents": 119
+      }
+    },
+    {
+      "slug": "dentifrice-75ml",
+      "chainId": "aldi",
+      "gap": -0.419,
+      "foodally": {
+        "name": "DENTOFIT Spezial-Zahnpasta, Sensitive",
+        "quantity": "125 ml",
+        "priceCents": 145,
+        "url": "https://foodally.ch/product/10837953-Aldi-DENTOFIT-Spezial-Zahnpasta-Sensitive"
+      },
+      "tesprix": {
+        "name": "Trio de dentifrices Fresh Blue Gel",
+        "priceCents": 599
+      }
+    },
+    {
+      "slug": "mozzarella-150g",
+      "chainId": "aldi",
+      "gap": -0.392,
+      "foodally": {
+        "name": "CUCINA Mozzarella Bambini, Classic",
+        "quantity": "245 g",
+        "priceCents": 94,
+        "url": "https://foodally.ch/product/667085-Aldi-CUCINA-Mozzarella-Bambini-Classic"
+      },
+      "tesprix": {
+        "name": "Mozzarella, standard",
+        "priceCents": 79
+      }
+    },
+    {
+      "slug": "tomates-concassees-400g",
+      "chainId": "aldi",
+      "gap": -0.305,
+      "foodally": {
+        "name": "CUCINA Tomaten gehackt",
+        "quantity": "400 g",
+        "priceCents": 59,
+        "url": "https://foodally.ch/product/920039-Aldi-CUCINA-Tomaten-gehackt"
+      },
+      "tesprix": {
+        "name": "Tomates concassées, nature",
+        "priceCents": 85
+      }
+    },
+    {
+      "slug": "jus-orange-1l",
+      "chainId": "lidl",
+      "gap": -0.252,
+      "foodally": {
+        "name": "Orangensaft",
+        "quantity": "1500 ml",
+        "priceCents": 179,
+        "url": "https://foodally.ch/product/5292988-Lidl-Orangensaft"
+      },
+      "tesprix": {
+        "name": "Jus de Orange",
+        "priceCents": 159
+      }
+    },
+    {
+      "slug": "miel-fleurs-500g",
+      "chainId": "lidl",
+      "gap": -0.251,
+      "foodally": {
+        "name": "Blütenhonig / Waldhonig",
+        "quantity": "500 g",
+        "priceCents": 299,
+        "url": "https://foodally.ch/product/9161661-Lidl-Bluetenhonig-Waldhonig"
+      },
+      "tesprix": {
+        "name": "Fairtrade miel de fleurs crémeux",
+        "priceCents": 399
+      }
+    },
+    {
+      "slug": "thon-huile-240g",
+      "chainId": "aldi",
+      "gap": -0.243,
+      "foodally": {
+        "name": "ALMARE SEAFOOD Thunfischfilet in Öl",
+        "quantity": "185 g",
+        "priceCents": 135,
+        "url": "https://foodally.ch/product/1658435-Aldi-ALMARE-SEAFOOD-Thunfischfilet-in-Oel"
+      },
+      "tesprix": {
+        "name": "Filets de thon à l’huile de tournesol",
+        "priceCents": 135
+      }
+    },
+    {
+      "slug": "riz-long-1kg",
+      "chainId": "aldi",
+      "gap": 0.214,
+      "foodally": {
+        "name": "BIO Langkornreis Weiss",
+        "quantity": "1000 g",
+        "priceCents": 289,
+        "url": "https://foodally.ch/product/1054116-Aldi-BIO-Langkornreis-Weiss"
+      },
+      "tesprix": {
+        "name": "Riz à grains longs",
+        "priceCents": 119
+      }
+    },
+    {
+      "slug": "tomates-concassees-400g",
+      "chainId": "lidl",
+      "gap": -0.213,
+      "foodally": {
+        "name": "Gehackte Tomaten",
+        "quantity": "400 g",
+        "priceCents": 59,
+        "url": "https://foodally.ch/product/5292715-Lidl-Gehackte-Tomaten"
+      },
+      "tesprix": {
+        "name": "Piacelli Polpa in Pezzetti",
+        "priceCents": 75
+      }
+    }
+  ]
+}
