@@ -18,16 +18,21 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
 - **Détours chiffrés** (économie brute, trajet ajouté, économie nette, seuil personnel, accepter/refuser) et
   signal **« attendre serait moins cher »** fondé sur les actions déjà annoncées.
 
-**État actuel (phase 2) : prix réels partiels, service non ouvert au public.**
+**État actuel (phase 3) : prix réels officiels pour Lidl et Aldi, gratuit pour les consommateurs, service
+non ouvert au public.**
 
-- **Lidl** : prix officiels collectés chaque jour sur son site (1 148 prix, 517 actions dont 244 futures),
-  98 références du catalogue couvertes.
-- **Migros, Coop, Denner, Aldi, OTTO'S** : relevés communautaires Open Prices (ODbL), peu nombreux, toujours
+- **Lidl** : prix officiels collectés chaque jour sur son site (3 012 articles avec prix, 531 actions dont 244
+  futures), 194 références du catalogue couvertes.
+- **Aldi Suisse** : prix officiels lus sur l'API publique de son site (1 484 articles avec prix, 712 actions),
+  106 références couvertes.
+- **Migros, Coop, Denner, OTTO'S** : relevés communautaires Open Prices (ODbL), peu nombreux, toujours
   signalés « indicatifs ». Leurs sites refusent l'accès automatisé ou l'interdisent : un accord est nécessaire.
+- Moteur multi-sources (officiel > sous licence > communautaire), divergences signalées, tableau de qualité
+  des données, API professionnelle (fermée par défaut).
 - Le mode démonstration (prix fictifs) reste disponible et **n'est jamais mélangé** aux prix réels
   (`PRICE_DATA`).
 
-Voir [docs/STATUT.md](docs/STATUT.md) et [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md).
+Voir [docs/STATUT.md](docs/STATUT.md) et [docs/RAPPORT_PHASE3.md](docs/RAPPORT_PHASE3.md).
 
 ## Démarrage rapide
 
@@ -56,8 +61,8 @@ Ou avec Docker : voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) (`docker compos
 comparateur/
 ├── packages/
 │   ├── core/         Domaine pur : prix, promotions, dates, horaires, géographie, optimiseur
-│   ├── reference/    Enseignes, zones tarifaires, catégories, catalogue normalisé (200 références)
-│   ├── connectors/   Démo, import CSV/JSON, connecteur par enseigne, OSM, swisstopo
+│   ├── reference/    Enseignes, zones tarifaires, catégories, catalogue normalisé (240 références, priorités P1/P2/P3)
+│   ├── connectors/   Démo, import CSV/JSON, Lidl, Aldi, Open Prices, FoodAlly (comparaison), OSM, swisstopo
 │   └── db/           Schéma Drizzle, migrations PostGIS, dépôts
 ├── apps/
 │   ├── web/          Next.js : site public, API /api/v1, administration
@@ -78,7 +83,9 @@ comparateur/
 | `pnpm test:e2e:admin` | Tests navigateur de l'administration (PostgreSQL requis) |
 | `pnpm typecheck` | Vérification des types de tous les paquets |
 | `pnpm job <tâche>` | `migrate`, `seed`, `reference`, `localities [--download]`, `stores [--download]`, `connectors`, `import <fichiers> --connector <id> [--dry-run]`, `quality`, `daily`, `weekly`, `status`, `purge-demo --confirm` |
-| `pnpm job collect` | Collecte des prix réels (Lidl, Open Prices) ; voir aussi `reprocess-lidl`, `import-live`, `match-candidates`, `export-odbl`, `purge-source`, `rezone` |
+| `pnpm job collect` | Collecte des prix réels (Lidl, Aldi, Open Prices) ; voir aussi `reprocess-lidl`, `reprocess-aldi`, `import-live`, `match-candidates`, `export-odbl`, `purge-source`, `rezone` |
+| `pnpm job data-report` / `validate` | Couverture, fraîcheur et alertes de qualité ; contrôle du jeu de validation des essentiels |
+| `pnpm job benchmark-foodally` | Comparaison ponctuelle avec FoodAlly (quota gratuit, aucune donnée intégrée) |
 
 ## Documentation
 
@@ -94,11 +101,16 @@ comparateur/
 | [docs/SECURITE.md](docs/SECURITE.md) | Mesures de sécurité et de confidentialité |
 | [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) | Installation, variables d'environnement, tâches planifiées, maintenance |
 | [docs/audit/03-sources-prix.md](docs/audit/03-sources-prix.md) | Sources de prix réels : constats, décisions, blocages, charte de collecte |
-| [docs/MARCHE.md](docs/MARCHE.md) | Concurrence, freemium, prix du premium, affiliation vérifiée, données B2B |
-| [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLAN.md) | Plan d'affaires : coûts, revenus, scénarios et seuils (hypothèses avec formules) |
+| [docs/DATA_SURFACES.md](docs/DATA_SURFACES.md) | Surfaces de données first-party des enseignes (Migros, Coop, Aldi, Lidl, Denner) : champs, accès, limites |
+| [docs/DATA_ENGINE.md](docs/DATA_ENGINE.md) | Moteur multi-sources : hiérarchie, confiance, divergences, qualité, couverture, validation |
+| [docs/TICKETS.md](docs/TICKETS.md) | « Scanner mon ticket » : modèle, flux, confidentialité |
+| [docs/MARCHE.md](docs/MARCHE.md) | Concurrence, affiliation vérifiée, données B2B (sections premium remplacées par le modèle v2) |
+| [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLAN.md) | Plan d'affaires de la phase 2 : coûts détaillés (toujours valables), revenus premium (remplacés) |
+| [docs/BUSINESS_MODEL_V2.md](docs/BUSINESS_MODEL_V2.md) | Modèle v2 : gratuit pour les consommateurs, financé par le B2B (API, Intelligence, widget, sponsoring séparé) |
 | [docs/IDENTITE.md](docs/IDENTITE.md) | Nom, domaines, marques proches, identité visuelle |
 | [docs/LANCEMENT.md](docs/LANCEMENT.md) | Zone pilote, verrou de lancement, liste de contrôle d'ouverture |
 | [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md) | Compte rendu de la phase 2 |
+| [docs/RAPPORT_PHASE3.md](docs/RAPPORT_PHASE3.md) | Compte rendu de la phase 3 : données, couverture, technique, modèle économique |
 
 ## Licences des données
 
@@ -107,3 +119,7 @@ comparateur/
 - Prix communautaires : Open Prices (Open Food Facts), ODbL 1.0 ; données dérivées exportables (`export-odbl`).
 - Prix Lidl : faits (désignation, format, prix, dates) lus sur les pages publiques de Lidl Suisse ; aucune
   photo ni aucun texte descriptif repris.
+- Prix Aldi Suisse : mêmes faits, lus sur l'API publique utilisée par son site (liste paginée, sans recherche
+  ni fiche produit) ; aucune photo ni aucun texte descriptif repris.
+- FoodAlly : utilisé uniquement pour une comparaison ponctuelle (quota anonyme, attribution) ; aucune de ses
+  données n'est affichée ni intégrée sans licence.

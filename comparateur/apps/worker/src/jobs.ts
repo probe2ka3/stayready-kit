@@ -240,6 +240,9 @@ export async function jobDaily(ctx: JobContext) {
     await jobConnectors(ctx);
     await jobQuality(ctx);
   }
+  // Couverture, fraîcheur, qualité et non-régression sur les instantanés du jour.
+  await jobDataReport({ ...ctx, flags: { ...ctx.flags, quiet: true } });
+  await jobValidate({ ...ctx, flags: { ...ctx.flags, quiet: true } }).catch((e) => ctx.log.warn('Validation impossible', { error: String(e) }));
 }
 
 /** Tâche hebdomadaire : rafraîchissement des succursales OpenStreetMap. */
@@ -269,7 +272,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },
-  daily: { run: jobDaily, help: 'Tâche quotidienne (collecte réelle + connecteurs + qualité)' },
+  daily: { run: jobDaily, help: 'Tâche quotidienne (collecte réelle, connecteurs, qualité, couverture, validation)' },
   weekly: { run: jobWeekly, help: 'Tâche hebdomadaire (succursales OSM)' },
   'purge-demo': { run: jobPurgeDemo, help: 'Supprime les données de démonstration (--confirm)' },
 };

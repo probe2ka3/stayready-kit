@@ -157,10 +157,12 @@ de la dernière collecte). Une couverture complète passe par une autorisation o
 - `www.coop.ch` : protection anti-robot (défi JavaScript/captcha) dès `robots.txt`.
 - Aucune API publique. **Blocage** : accord avec Coop nécessaire.
 
-### 4.4 Aldi Suisse 📄 ⛔
+### 4.4 Aldi Suisse ✅ ⚖️ (mis à jour en phase 3)
 
-- `www.aldi-suisse.ch` : **403** (protection du réseau de diffusion) dès `robots.txt`.
-- **Blocage** : accord avec Aldi Suisse nécessaire.
+- `www.aldi-suisse.ch` : pages catégories, fiches et `robots.txt` en **403** (réseau de diffusion).
+- **Phase 3** : l'API publique consommée par le site (`api.aldi-suisse.ch/v3/product-search`, `robots.txt`
+  absent) est accessible et complète (prix en magasin, actions annoncées) : connecteur `aldi-api`.
+  Détails, refus rencontrés et clause des conditions d'utilisation : `docs/DATA_SURFACES.md` §3.
 
 ### 4.5 Denner 📄
 

@@ -32,18 +32,21 @@ en UTC.
 
 | Champ | Contenu |
 |---|---|
-| `retailer_product_id` | Article de l'enseigne (`lidl:<n° d'article>`, `<enseigne>:gtin-<code>` pour Open Prices) |
+| `retailer_product_id` | Article de l'enseigne (`lidl:<n° d'article>`, `aldi:<n° d'article>`, `<enseigne>:gtin-<code>` pour Open Prices) |
 | `price_cents` | Prix TTC en centimes |
 | quantité, unité (article) | Conditionnement normalisé (g, ml, pièces) ; le prix unitaire est calculé |
 | `observed_at` | Instant de la collecte ou du relevé |
 | `zone_id`, `store_id` | Portée : nationale, zone tarifaire, succursale |
 | `price_type` | `regular` (les prix d'action sans dates sont des promotions du jour) |
 | `channel` | `store` (magasin) ou `online` |
-| `reliability` | `official`, `survey`, `crowd` |
+| `reliability` | `official`, `survey`, `crowd`, `third_party` (fournisseur tiers, comparaison ou repli sous licence) |
 | `license` | `ODbL-1.0` pour Open Prices, vide pour les données propres |
 | `source_url`, `source_ref` | Page ou relevé d'origine |
 | `observed_at_place` | Lieu réel d'un relevé communautaire généralisé |
-| `proof` | `web_page`, `receipt`, `price_tag` |
+| `proof` | `web_page`, `public_api` (API publique du site de l'enseigne), `receipt`, `price_tag` |
+
+Niveau de source (officiel, sous licence, communautaire, inconnu), confiance et divergences : voir
+`docs/DATA_ENGINE.md`.
 
 Promotions : `published_at`, `valid_from`, `valid_to` distincts, `end_is_presumed`, `while_stocks_last`,
 `loyalty_program`, `zone_id` (actions régionales), `region_note` (texte de l'enseigne), `source_url`.

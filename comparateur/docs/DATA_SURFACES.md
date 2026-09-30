@@ -18,12 +18,12 @@
 | **Coop** | `www.coop.ch` | Défi anti-robot (DataDome) dès `robots.txt` | ⛔ 📄 | — |
 | **Denner** | Pages d'actions SSR (Nuxt) avec données embarquées | 200 | 📄 (conditions : usage commercial interdit sans autorisation écrite) | — (documenté, non développé) |
 
-Résultat mesuré (collectes des 28 et 30.09.2026) :
+Résultat mesuré (instantanés au 30.09.2026, après les collectes des 28 et 30.09) :
 
-| Enseigne | Articles lus | Prix normaux | Actions | Dont actions futures | Requêtes | Blocages |
+| Enseigne | Articles lus le 30.09 | Articles retenus (cumul) | Articles avec prix | Actions (en cours / annoncées) | Requêtes par jour | Blocages |
 |---|---|---|---|---|---|---|
-| Aldi Suisse | 2 551 (1 894 retenus) | 1 477 | 525 | 93 | 43 | 0 |
-| Lidl Suisse | 3 547 | 3 004 | 660 | (dates publiées) | 3 288 | 0 |
+| Aldi Suisse | 2 513 (196 non alimentaires, 415 sans contenance) | 1 901 | 1 484 | 609 / 95 | 43 | 0 |
+| Lidl Suisse | 1 799 (catégories) + 415 fiches + 410 actions | 3 429 | 3 012 | 287 / 244 | ≈ 530 (passe complète du 28.09 : 3 288) | 0 |
 
 ## 2. Méthode d'exploration
 
@@ -57,7 +57,7 @@ Résultat mesuré (collectes des 28 et 30.09.2026) :
 | Identifiant | `sku` (18 chiffres) ; `abstractSku` (famille de variantes) | Stable ; utilisé comme identifiant TesPrix `aldi:<sku sans zéros>` |
 | Désignation | `name` (FR) ; `urlSlugTextAlternatives` (de, fr, it) | |
 | Marque | `brandName` (marques propres : MILSANI, BIO, SAVEURS SUISSES…) | `null` = sans marque |
-| Conditionnement | `sellingSize` (« 450 g », « 0,75 l », « 6 x 1,5 l », « 15 Pièce »), `quantityUnit`, `weightType` | **Absent pour 633 articles** (spaghetti, farine, sel, Nutella…) : ces articles sont écartés, jamais devinés |
+| Conditionnement | `sellingSize` (« 450 g », « 0,75 l », « 6 x 1,5 l », « 15 Pièce »), `quantityUnit`, `weightType` | **Absent pour 633 articles le 28.09, 415 le 30.09** (spaghetti, farine, sel, Nutella…) : ces articles sont écartés, jamais devinés |
 | Prix | `price.amount` / `amountRelevant` (centimes) | |
 | Prix de base | `price.comparison` + `comparisonDisplay` (« CHF 0.44/100 g ») | Contrôle de cohérence : 8 rejets (erreurs de la source : « Muesli 750 kg », « Viande des Grisons 0,08 g ») |
 | Promotion | `price.wasPriceDisplay` (« au lieu de »), `savingsDisplay` ; rayon « Actions » | 108 réductions, 417 articles d'action |

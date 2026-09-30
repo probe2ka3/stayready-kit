@@ -79,3 +79,24 @@ Réponse (`CompareResultDto`, `packages/core/src/compare.ts`) :
 Chaque option d'article comprend : article de l'enseigne, paquets, prix normal, prix payé, prix unitaire,
 promotion (mécanique, validité, publication, carte requise, fin présumée), **statut** et **motifs**,
 **date de vérification**, **source**, `isDemo`.
+
+## API professionnelle `/api/b2b/v1` (phase 3, fermée par défaut)
+
+Authentification : `Authorization: Bearer <clé>` ; les clés ne sont jamais stockées en clair
+(`B2B_API_KEY_HASHES` = empreintes SHA-256 hexadécimales, séparées par des virgules). Sans clé configurée,
+toutes les routes répondent `403 not_open` ; clé absente ou invalide : `401 unauthorized`.
+
+| Méthode | Route | Réponse |
+|---|---|---|
+| GET | `/api/b2b/v1/observations?retailer=lidl&product=penne-500g&limit=500` | `{ data: ApiPriceObservation[], count, license }` — observations **officielles** rapprochées du catalogue |
+| GET | `/api/b2b/v1/coverage` | Couverture par enseigne et références comparables dans ≥ 2, 3, 4, 5 enseignes |
+| GET | `/api/b2b/v1/basket-index?retailers=lidl,aldi&priority=P1` | Indice du panier commun (base 100 = enseigne la moins chère) |
+
+`ApiPriceObservation` : `product_id`, `retailer`, `store_id`, `region`, `geographic_scope`, `price`,
+`regular_price`, `promotional_price`, `unit_price`, `unit_price_basis`, `currency`, `quantity`, `unit`,
+`observed_at`, `valid_from`, `valid_until`, `source_type`, `source_url`, `source_provider`, `confidence`,
+`collection_method`, `promotion_conditions`, `loyalty_requirement`, `license` (montants en CHF).
+
+Garanties : aucune donnée personnelle (contrôle `assertNoPersonalData` sur chaque réponse) ; seules les
+sources officielles sont servies (données tierces et ODbL exclues par défaut) ; aucune incidence sur le
+service grand public.

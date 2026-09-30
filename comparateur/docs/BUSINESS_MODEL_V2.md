@@ -38,8 +38,8 @@
 |---|---|---|
 | Catalogue normalisé des besoins de base | 240 références, priorités P1/P2/P3 | Base commune de comparaison entre enseignes |
 | Correspondances revues article ↔ référence | 449 décisions (Lidl, Aldi, Open Prices) | Travail humain non reproductible automatiquement |
-| Séries de prix officielles quotidiennes | Lidl (3 547 articles), Aldi (1 894) depuis le 28.09.2026 | Historique qui prend de la valeur chaque jour |
-| Calendrier des actions, y compris **futures** | 660 (Lidl) + 525 (Aldi), dont annoncées | Rare : les dates de validité et conditions sont normalisées |
+| Séries de prix officielles quotidiennes | Lidl (3 429 articles), Aldi (1 901) depuis le 28.09.2026 | Historique qui prend de la valeur chaque jour |
+| Calendrier des actions, y compris **futures** | 531 (Lidl, dont 244 annoncées) + 712 (Aldi, dont 95 annoncées) au 30.09.2026 | Rare : les dates de validité et conditions sont normalisées |
 | Moteur de qualité | Divergences, confiance, validation des 50 essentiels | Fiabilité mesurable, vendable comme telle |
 | Signaux d'usage agrégés | Compteurs anonymes (phase 2) | Demande par référence et par canton, seuil minimal d'agrégation |
 | Tickets de caisse (à ouvrir) | Architecture prête (`docs/TICKETS.md`) | Seule voie vers Migros/Coop/Denner sans accord |

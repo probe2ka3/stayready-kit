@@ -31,14 +31,16 @@ Hors zone pilote, un message l'indique sans bloquer l'utilisateur.
 
 **Données**
 
-- [ ] Au moins un accord (Migros, Coop, Aldi ou Denner), ou décision assumée d'ouvrir avec la couverture actuelle
-- [ ] Collecte quotidienne active (`pnpm job daily`), alertes surveillées (administration → tableau de bord)
-- [ ] Correspondances revues pour le panier type du pilote (≥ 40 références par enseigne couverte)
+- [ ] Au moins un accord (Migros, Coop ou Denner), une licence de repli (FoodAlly) ou décision assumée d'ouvrir
+      avec Lidl + Aldi (98 références comparables au 30.09.2026)
+- [ ] Collecte quotidienne active (`pnpm job daily`), alertes surveillées (`/admin/qualite`)
+- [x] Correspondances revues pour le panier type du pilote (Lidl 194, Aldi 106 références)
+- [ ] `pnpm job validate --strict` sans écart pendant 7 jours consécutifs
 - [ ] `PRICE_DATA=live`, `DEMO_DATA=false`, `pnpm job purge-demo --confirm`
 
 **Juridique**
 
-- [ ] Avis juridique : collecte Lidl, ODbL, comparaisons, OIP (`docs/STATUT.md` ⚖️)
+- [ ] Avis juridique : collecte Lidl, API Aldi (clause « fins privées »), ODbL, comparaisons, OIP (`docs/STATUT.md` ⚖️)
 - [ ] Mentions légales, confidentialité et conditions d'utilisation complétées (« À compléter »)
 - [ ] Nom : recherche d'antériorité (Swissreg, Zefix), puis décision sur le domaine
 - [ ] Agent HTTP de collecte avec contact de l'exploitant (`HTTP_USER_AGENT`)
@@ -59,7 +61,11 @@ Hors zone pilote, un message l'indique sans bloquer l'utilisateur.
 
 | Fonction | Variable | Condition d'activation |
 |---|---|---|
-| Paiement premium | `BILLING_PROVIDER=none` | Prestataire choisi, CGU, TVA |
+| Facturation des offres professionnelles | `BILLING_PROVIDER=none` | Premiers clients, contrats, TVA (aucun paiement consommateur) |
+| API professionnelle | `B2B_API_KEY_HASHES` vide | Contrat client, avis juridique sur la revente de prix |
+| Tickets de caisse | `RECEIPTS_ENABLED=false` | Politique de confidentialité validée |
+| Repli fournisseur tiers | `PRICE_FALLBACK_SOURCES` vide, `FOODALLY=off` | Licence FoodAlly souscrite par l'exploitant |
 | Liste d'attente | `SIGNUP_ENABLED=false` | Confidentialité complétée, double confirmation |
 | Emplacements partenaires | `data/commercial/placements.json` vide | Partenariat réel, signalé |
 | Collecte Lidl | `LIDL_WEB` (actif par défaut) | Mettre `off` immédiatement si Lidl le demande |
+| Collecte Aldi | `ALDI_API` (actif par défaut) | Mettre `off` immédiatement si Aldi le demande |

@@ -30,13 +30,18 @@
 | `HTTP_USER_AGENT` | `TesPrixBot/0.1 (…)` | Agent de collecte identifiable, **avec contact de l'exploitant en production** (jamais un agent de navigateur) |
 | `CRAWL_MIN_DELAY_MS` | `3000` | Délai minimal entre deux requêtes vers un même site (le `Crawl-delay` de robots.txt s'il est plus long) |
 | `RAW_ARCHIVE_DIR` / `RAW_ARCHIVE_DAYS` | `<DATA_DIR>/raw` / `30` | Archive des pages lues (preuve du prix affiché), purge automatique |
-| `LIDL_WEB` / `OPEN_PRICES` | actifs | `off` pour désactiver une source immédiatement |
+| `LIDL_WEB` / `ALDI_API` / `OPEN_PRICES` | actifs | `off` pour désactiver une source immédiatement |
+| `LIDL_PRODUCT_PAGES_PER_RUN` | `460` | Fiches produits Lidl relues par jour (tout l'assortiment en 7 jours) |
+| `FOODALLY` / `FOODALLY_MAX_QUERIES` / `FOODALLY_DAILY_RESERVE` | `off` / `50` / `10` | Fournisseur tiers, **comparaison uniquement** (quota anonyme 100/jour) |
+| `PRICE_FALLBACK_SOURCES` | vide | `foodally` : repli sur le fournisseur tiers pour les prix affichés — **seulement avec licence** et correspondances revues |
+| `B2B_API_KEY_HASHES` | vide | Empreintes SHA-256 des clés de l'API professionnelle ; vide = API fermée |
+| `RECEIPTS_ENABLED` | `false` | Envoi des tickets de caisse (après validation de la politique de confidentialité) |
 | `OPEN_PRICES_MAX_AGE_DAYS` | `400` | Ancienneté maximale des relevés importés |
 | `PUBLIC_ACCESS` | `open` | `waitlist` : seules la page d'attente et les pages d'information sont publiques |
 | `PREVIEW_TOKEN` | — | ≥ 16 caractères : accès de prévisualisation `?acces=<jeton>` en mode `waitlist` |
 | `SIGNUP_ENABLED` | `false` | Ouvre la liste d'attente (PostgreSQL requis) |
 | `PILOT_CANTONS` | `GE,VD,NE,FR,VS,JU` | Zone pilote (message hors zone) |
-| `BILLING_PROVIDER` | `none` | Paiement : seul `none` (désactivé) existe |
+| `BILLING_PROVIDER` | `none` | Facturation des offres professionnelles : seul `none` (désactivé) existe ; aucun paiement consommateur |
 | `COST_*_CHF_MONTH`, `COST_DOMAIN_CHF_YEAR` | 0 | Coûts déclarés, affichés dans les indicateurs d'administration |
 | `DATABASE_URL_TEST` | `postgres://cabas:cabas_dev_only@localhost:5432/cabas_test` | Tests d'intégration |
 
@@ -69,8 +74,9 @@ administration en lecture seule.
 
 | Fréquence | Commande | Rôle |
 |---|---|---|
-| Quotidienne (ex. 05:15) | `pnpm job daily` | **Collecte des prix réels** (Lidl, Open Prices), imports déposés, contrôles qualité |
-| Lundi et jeudi 07:10 | `pnpm job collect --only lidl-web` | Nouvelles actions Lidl (vagues du lundi et du jeudi) |
+| Quotidienne (ex. 05:15) | `pnpm job daily` | **Collecte des prix réels** (Lidl en rotation, Aldi, Open Prices), imports déposés, contrôles qualité, rapport de couverture (`data/quality/`), validation des essentiels |
+| Lundi et jeudi 07:10 | `pnpm job collect --only lidl-web,aldi-api` | Nouvelles actions Lidl et Aldi (vagues du lundi et du jeudi) |
+| Hebdomadaire (facultatif) | `FOODALLY=on pnpm job benchmark-foodally` | Comparaison avec FoodAlly sur les 50 essentiels (50 requêtes) |
 | Mercredi et jeudi 06:30 | `pnpm job connectors` | Imports structurés déposés pour les nouvelles actions |
 | Hebdomadaire (lundi 04:10) | `pnpm job weekly` | Rafraîchissement des succursales OpenStreetMap |
 | Trimestrielle | `pnpm job localities --download` | Rafraîchissement des localités swisstopo |
@@ -79,7 +85,7 @@ Exemple `crontab` (fuseau du serveur réglé sur Europe/Zurich) :
 
 ```cron
 15 5 * * *   cd /srv/cabas/comparateur && pnpm job daily   >> /var/log/cabas/daily.log 2>&1
-10 7 * * 1,4 cd /srv/cabas/comparateur && pnpm job collect --only lidl-web >> /var/log/cabas/collect.log 2>&1
+10 7 * * 1,4 cd /srv/cabas/comparateur && pnpm job collect --only lidl-web,aldi-api >> /var/log/cabas/collect.log 2>&1
 30 6 * * 3,4 cd /srv/cabas/comparateur && pnpm job connectors >> /var/log/cabas/connectors.log 2>&1
 10 4 * * 1   cd /srv/cabas/comparateur && pnpm job weekly  >> /var/log/cabas/weekly.log 2>&1
 ```
@@ -105,8 +111,11 @@ production (conditions d'utilisation). En cas d'indisponibilité, l'estimation p
 
 | Tâche | Rôle |
 |---|---|
-| `pnpm job collect [--only lidl-web,open-prices]` | Collecte en ligne ; chaque source est isolée (une panne n'arrête pas les autres) ; alertes `connector_blocked`, `connector_failed`, `coverage_drop`, `parse_drift` |
-| `pnpm job reprocess-lidl --date AAAA-MM-JJ` | Retraite une collecte depuis l'archive, sans nouvelle requête (après correction de l'analyseur) |
+| `pnpm job collect [--only lidl-web,aldi-api,open-prices]` | Collecte en ligne ; chaque source est isolée (une panne n'arrête pas les autres) ; alertes `connector_blocked`, `connector_failed`, `coverage_drop`, `parse_drift` |
+| `pnpm job reprocess-lidl --date AAAA-MM-JJ` / `reprocess-aldi` | Retraite une collecte depuis l'archive, sans nouvelle requête (après correction de l'analyseur) |
+| `pnpm job data-report` | Couverture, fraîcheur, qualité (`data/quality/summary.json`) |
+| `pnpm job validation-calibrate` / `validate [--strict]` | Jeu de validation des 50 essentiels et contrôle de non-régression |
+| `pnpm job benchmark-foodally [--max N]` | Comparaison avec le fournisseur tiers (résumé agrégé versionné, résultats bruts hors dépôt) |
 | `pnpm job import-live` | Charge les instantanés `data/prices/live/*.json` dans la base (amorçage) |
 | `pnpm job match-candidates` | Feuille de revue des correspondances (`data/matching/candidates.json`) |
 | `pnpm job export-odbl` | Exporte les données dérivées d'Open Prices sous ODbL (`data/exports/`) |
@@ -116,8 +125,9 @@ production (conditions d'utilisation). En cas d'indisponibilité, l'estimation p
 Les correspondances validées se trouvent dans `data/matching/reviewed.json` (versionné) : une revue prend
 effet à la collecte suivante (base) ou immédiatement (mode mémoire).
 
-Règles de collecte : `docs/audit/03-sources-prix.md` §7. En cas de demande d'une enseigne : `LIDL_WEB=off`
-puis `pnpm job purge-source --connector lidl-web --confirm` (base et instantané ; action journalisée).
+Règles de collecte : `docs/audit/03-sources-prix.md` §7 ; surfaces : `docs/DATA_SURFACES.md`. En cas de
+demande d'une enseigne : `LIDL_WEB=off` (ou `ALDI_API=off`) puis
+`pnpm job purge-source --connector lidl-web --confirm` (base et instantané ; action journalisée).
 
 ## Mises à jour du schéma
 

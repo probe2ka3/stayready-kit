@@ -1,67 +1,65 @@
 # Statut des fonctionnalités — TesPrix
 
-Situation au 28 septembre 2026 (fin de la phase 2). Trois catégories : **opérationnel**, **dépend d'une
-source de données ou d'une autorisation**, **nécessite une validation juridique**.
+Situation au 30 septembre 2026 (fin de la phase 3). Trois catégories : **opérationnel**, **dépend d'une
+source de données ou d'une autorisation**, **nécessite une validation juridique**. Détails des sources :
+`docs/DATA_SURFACES.md` ; moteur de données : `docs/DATA_ENGINE.md`.
 
-## Chiffres clés des données réelles (collecte du 28.09.2026)
+## Chiffres clés des données réelles (collectes des 28 et 30.09.2026)
 
-| Enseigne | Source | Articles | Prix normaux | Promotions | Références du catalogue couvertes (sur 200) |
-|---|---|---|---|---|---|
-| Lidl | Site officiel (assortiment + actions) | 1 549 | 1 148 | 517 (dont 244 futures, 29 régionales, 52 Lidl Plus) | **98** (prix du jour) |
-| Migros | Open Prices (ODbL) | — | 113 (47 de moins de 90 jours) | — | 7 (2 avec prix récent) |
-| Coop | Open Prices | — | 100 (25 de moins de 90 jours) | — | 6 (2 récents) |
-| Denner | Open Prices | — | 12 (4 de moins de 90 jours) | — | 4 (0 récent) |
-| Lidl | Open Prices | — | 12 | — | inclus ci-dessus |
-| Aldi Suisse | Open Prices | — | 3 (anciens) | — | 0 |
-| OTTO'S | Open Prices | — | 1 (ancien) | — | 1 (0 récent) |
-| Action, Aligro | — | — | 0 | — | 0 |
+| Enseigne | Source (niveau) | Articles | Articles avec prix | Actions (en cours / annoncées) | Fraîcheur | Références couvertes (sur 240) |
+|---|---|---|---|---|---|---|
+| Lidl | Site officiel : fiches du plan du site, catégories, actions (officiel) | 3 429 | 3 012 | 287 / 244 | 1 207 < 24 h, 1 805 < 7 j | **194** |
+| Aldi Suisse | API publique du site (officiel) | 1 901 | 1 484 | 609 / 95 | 1 477 < 24 h | **106** |
+| Migros | Open Prices (communautaire) | 109 | 109 (113 prix) | — | surtout > 7 j | 2 |
+| Coop | Open Prices | 85 | 85 (100 prix) | — | > 7 j | 2 |
+| Denner | Open Prices | 12 | 12 | — | > 7 j | 0 |
+| OTTO'S | Open Prices | 1 | 1 | — | ancien | 0 |
+| Action, Aligro | — | 0 | 0 | — | — | 0 |
 
-- Open Prices : 222 articles (codes-barres), 241 prix au total.
-- **Comparables entre au moins deux enseignes** : 12 références (penne, fusilli, chips, séré, tofu, huile
-  d'olive 1 l et 50 cl, mozzarella, fromage râpé, sauce soja, liquide vaisselle, café en grains), dont **3 avec
-  des prix récents des deux côtés** (penne, fusilli, chips).
-- Correspondances : 143 validées à la main et 13 refus explicites (`data/matching/reviewed.json`) ;
-  suggestions automatiques jamais utilisées sans validation.
+- **Comparables** : 98 références dans ≥ 2 enseignes, 4 dans ≥ 3, 0 dans ≥ 4 ou 5.
+  Essentiels (P1) : 30 sur 50 comparables dans ≥ 2 enseignes.
+- Correspondances revues : 449 (Lidl, Aldi, Open Prices), seules utilisées (exigences bio, origine, AOP,
+  marque respectées).
+- Contrôle de qualité (30.09.2026) : 0 prix suspect, 0 divergence, 0 doublon, 0 action lue comme prix
+  normal, 18 relevés communautaires anciens ; jeu de validation : 76/76 paires valides.
+- FoodAlly (référence tierce, comparaison uniquement) : prix identiques sur les articles communs (écart
+  médian 0 %) ; couvre Migros, Coop et Denner.
 
 ## ✅ Opérationnel
 
 | Fonctionnalité | Détail |
 |---|---|
-| **Collecte de prix réels** | Lidl (quotidienne, robots.txt respecté, 3 s entre requêtes) et Open Prices ; archivage des pages, reprises, blocage détecté et jamais contourné, alertes, retraitement depuis l'archive |
-| **Séparation réel / démo** | `PRICE_DATA=live|demo` : jamais de mélange ; provenance, date, lieu et licence affichés prix par prix |
-| Fiabilité | Vérifié (officiel ≤ 7 j), indicatif (8 à 30 j, relevé communautaire, date future), périmé (> 30 j ; > 90 j pour les relevés communautaires), promotion confirmée |
-| Actions datées | Publication, début et fin distincts ; actions annoncées à l'avance (Lidl) ; régionales (Tessin, Romandie, Suisse alémanique) ; Lidl Plus |
-| Localisation, succursales | 4 073 localités (swisstopo), 2 955 succursales (OSM), régions Lidl selon la langue de la localité |
-| Comparaison | 3 scénarios, optimisation exacte ≤ 5 magasins, horaires à l'heure d'arrivée, coûts de trajet paramétrables |
-| **Détours intelligents** | Réoptimisation conjointe par magasin candidat ; économie brute, articles ajoutés, km, minutes, coût du trajet, économie nette ; seuil personnel ; accepter (magasin imposé) / refuser (exclu et recalcul) |
-| **Attendre serait moins cher** | Signal fondé uniquement sur les actions déjà annoncées (≥ 1 CHF et ≥ 3 %, sans perte d'article) |
-| Planification | Aujourd'hui vs date choisie ; aperçu sur 10 jours à partir de la date choisie |
-| Listes, partage, impression | Inchangé (phase 1) |
-| Administration | Collectes et alertes, correspondances, anomalies, imports, journal, **indicateurs anonymes** |
-| Offres gratuite / premium | Droits définis ; **paiement désactivé** |
-| Contenus commerciaux | Emplacements signalés, séparés du classement ; **aucun partenaire** |
-| Lancement | Verrou `PUBLIC_ACCESS=waitlist`, prévisualisation par jeton, page d'attente, liste d'attente **fermée** |
-| Tests | 133 tests unitaires et d'intégration, 4 parcours navigateur (mobile et bureau), 2 parcours d'administration |
+| **Collecte officielle Lidl** | Pages catégories, 3 167 fiches du plan du site en rotation (7 jours), actions datées, futures, régionales, Lidl Plus |
+| **Collecte officielle Aldi** | API publique : 2 500 articles, 43 requêtes, prix en magasin, réductions « au lieu de », actions annoncées à l'avance |
+| Collecte communautaire | Open Prices (ODbL), toujours « indicatif » |
+| **Moteur multi-sources** | Hiérarchie officiel > tiers > communautaire, alternatives conservées, divergences > 15 % signalées, confiance par prix |
+| **Qualité des données** | Tableau `/admin/qualite` : couverture, fraîcheur, sources, alertes par type ; tâche `data-report` |
+| **Jeu de validation** | 50 essentiels × 5 enseignes, tests de non-régression, tâche `validate` |
+| Catalogue | 240 besoins de base, priorités P1/P2/P3 |
+| Comparaison | 3 scénarios, optimisation ≤ 5 magasins, détours, attente rentable, source et confiance affichées |
+| **Gratuit** | Toutes les fonctions grand public, sans abonnement |
+| Tickets de caisse | Lecture et nettoyage dans le navigateur (`/fr/ticket`) ; envoi **fermé** |
+| API professionnelle | `/api/b2b/v1/*` implémentée, **fermée** tant qu'aucune clé n'est configurée |
+| Tests | 171 tests unitaires, 7 d'intégration PostgreSQL, 8 parcours navigateur, 2 d'administration |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 
 | Élément | Situation | Ce qui débloque |
 |---|---|---|
-| **Prix Migros, Coop, Aldi** | Sites protégés contre l'accès automatisé (403, défi anti-robot) : **aucun contournement** | Accord écrit ou flux de l'enseigne |
-| **Prix Denner** | Site accessible mais conditions (reprises de Migros) interdisant l'usage commercial sans autorisation écrite | Autorisation de Denner/Migros |
-| Prix OTTO'S, Aligro, Action | Voir `docs/audit/03-sources-prix.md` §4.6–4.8 | Lecture humaine des conditions ou accord |
-| Couverture Lidl complète | Pagination interdite par robots.txt : première page de chaque catégorie seulement | Accord ou flux Lidl |
-| Itinéraires routiers précis | Estimation (vol d'oiseau × détour) | Serveur OSRM (`OSRM_URL`) |
-| Premium, alertes, historique | Architecture prête, comptes et paiement non ouverts | Décision de l'exploitant, CGU, prestataire de paiement |
-| Liste d'attente | Prête, fermée | Politique de confidentialité complétée, `SIGNUP_ENABLED=true` |
+| **Prix Migros, Coop** | Refus technique sur leurs sites (403, DataDome) : aucun contournement | Accord écrit ; ou licence FoodAlly (repli signalé) ; ou tickets de caisse |
+| **Prix Denner** | Accessible, mais conditions : usage commercial interdit sans autorisation écrite | Autorisation de Denner |
+| Aldi : 415 articles sans contenance publiée (30.09) | Fiches refusées (403) : contenance inconnue, articles écartés | Accord ou flux Aldi |
+| Repli FoodAlly | Implémenté, désactivé | Licence (Pro CHF 49 ou Business CHF 499/mois) et revue des correspondances |
+| Tickets de caisse | Envoi fermé | Politique de confidentialité validée, file de revue |
+| API professionnelle, facturation | Fermées | Clients, contrats, prestataire de facturation |
 
 ## ⚖️ Nécessite une validation juridique avant exploitation commerciale
 
-- Collecte automatisée des pages publiques de Lidl (LCD art. 5 let. c, conditions du site).
-- ODbL : qualification « base collective » de la base TesPrix, export des données dérivées.
-- Comparaisons publiées (LCD art. 3 al. 1 let. e) et indication des prix (OIP).
-- Nom « TesPrix » : marques proches en « -prix », caractère descriptif (`docs/IDENTITE.md`).
-- Conditions d'utilisation (projet), mentions légales et confidentialité (champs « à compléter »).
+- Collecte des pages publiques de Lidl et de l'API publique d'Aldi (conditions d'Aldi : clause « fins
+  privées » dans les conditions du compte utilisateur, portée à préciser ; LCD art. 5 let. c).
+- Revente de prix collectés (API professionnelle) ; ODbL pour la part Open Prices.
+- Conditions d'utilisation, confidentialité (tickets), mentions légales.
+- Nom « TesPrix » (`docs/IDENTITE.md`).
 
 ## Avant l'ouverture publique
 
