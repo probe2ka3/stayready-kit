@@ -36,6 +36,8 @@ import { jobDemoBaskets } from './demo-baskets';
 import { jobMatchAudit } from './match-audit';
 import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
+import { jobMagasins, jobReleves } from './releves';
+import { jobEssentialsMatrix } from './matrix';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
 
@@ -272,6 +274,9 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   'benchmark-foodally': { run: jobBenchmarkFoodAlly, help: 'Comparaison avec FoodAlly sur les 50 essentiels (quota anonyme ; --max N ; --from fichier)' },
   validate: { run: jobValidate, help: 'Contrôle de non-régression de la collecte sur le jeu de validation (--strict)' },
   'match-audit': { run: jobMatchAudit, help: 'Articles non revus nettement moins chers que les correspondances retenues (data/matching/audit.md)' },
+  releves: { run: jobReleves, help: 'Importe les relevés en magasin (data/releves/*.csv → data/prices/live/releves.json ; --dry-run)' },
+  magasins: { run: jobMagasins, help: 'Identifiants des magasins proches d’un NPA pour les relevés (--npa=1630 --rayon=5)' },
+  'matrice-essentiels': { run: jobEssentialsMatrix, help: 'Matrice des 50 aliments de base × 5 enseignes (data/matrice/) et page publique statique (data/public/index.html)' },
   'demo-baskets': { run: jobDemoBaskets, help: 'Paniers de démonstration reproductibles sur les prix réels (--now=ISO ; data/demo/resultats.md)' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },

@@ -54,7 +54,7 @@ function p(
 
 export const PRODUCTS: ProductSeed[] = [
   // --- Fruits ---------------------------------------------------------------------------
-  p('pommes-gala-1kg', 'Pommes Gala', 'fruits', 1, 'kg', 3.5, { swissTypical: true, kw: 'pomme' }),
+  p('pommes-gala-1kg', 'Pommes (Gala ou variété courante)', 'fruits', 1, 'kg', 3.5, { swissTypical: true, kw: 'pomme, gala' }),
   p('pommes-bio-1kg', 'Pommes bio', 'fruits', 1, 'kg', 5.2, { organic: true, swissTypical: true, kw: 'pomme' }),
   p('poires-1kg', 'Poires', 'fruits', 1, 'kg', 3.9, { swissTypical: true }),
   p('bananes-1kg', 'Bananes', 'fruits', 1, 'kg', 2.6, { kw: 'banane' }),
@@ -393,7 +393,7 @@ for (const product of PRODUCTS) {
  */
 export const ESSENTIAL_QUERIES: Record<(typeof P1_ESSENTIALS)[number], { de: string; fr: string }> = {
   'bananes-1kg': { de: 'Bananen', fr: 'bananes' },
-  'pommes-gala-1kg': { de: 'Äpfel Gala', fr: 'pommes gala' },
+  'pommes-gala-1kg': { de: 'Äpfel', fr: 'pommes' },
   'poires-1kg': { de: 'Birnen', fr: 'poires' },
   'oranges-2kg': { de: 'Orangen', fr: 'oranges' },
   'citrons-500g': { de: 'Zitronen', fr: 'citrons' },

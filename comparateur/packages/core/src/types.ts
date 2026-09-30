@@ -166,6 +166,11 @@ export interface RetailerProduct {
   attributes: ProductAttributes;
   url?: string | null;
   isDemo: boolean;
+  /**
+   * Besoin de base déclaré par la source elle-même (relevé en magasin, catégorie Open Prices) :
+   * correspondance validée sauf décision contraire dans `data/matching/reviewed.json`.
+   */
+  declaredSlug?: string | null;
 }
 
 /**

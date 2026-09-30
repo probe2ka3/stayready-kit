@@ -1,0 +1,4103 @@
+{
+ "generatedAt": "2026-09-30T20:55:37.785Z",
+ "sources": [
+  {
+   "connectorId": "aldi-api",
+   "collectedAt": "2026-09-30T16:55:13.404Z",
+   "publicUse": "requires_authorization"
+  },
+  {
+   "connectorId": "lidl-web",
+   "collectedAt": "2026-09-30T16:53:05.577Z",
+   "publicUse": "no_restriction_found"
+  },
+  {
+   "connectorId": "open-prices",
+   "collectedAt": "2026-09-30T20:51:04.747Z",
+   "publicUse": "open_license"
+  }
+ ],
+ "rows": [
+  {
+   "slug": "bananes-1kg",
+   "name": "Bananes",
+   "quantity": "1 kg",
+   "category": "Fruits",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 119
+     },
+     "productName": "Bananes",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:17:06.686Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "pommes-gala-1kg",
+   "name": "Pommes (Gala ou variété courante)",
+   "quantity": "1 kg",
+   "category": "Fruits",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 279,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 279
+     },
+     "productName": "QUALITÉ SUISSE Pommes rouges suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:52:53.589Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "poires-1kg",
+   "name": "Poires",
+   "quantity": "1 kg",
+   "category": "Fruits",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 329,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 329
+     },
+     "productName": "QUALITÉ SUISSE Poires suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:52:53.589Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "oranges-2kg",
+   "name": "Oranges (filet)",
+   "quantity": "2 kg",
+   "category": "Fruits",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 279,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 140
+     },
+     "productName": "Oranges",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:18:39.594Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "citrons-500g",
+   "name": "Citrons",
+   "quantity": "500 g",
+   "category": "Fruits",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 179,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 239
+     },
+     "productName": "Citrons",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:02:12.569Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "carottes-1kg",
+   "name": "Carottes",
+   "quantity": "1 kg",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 289,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 193
+     },
+     "productName": "Carottes suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:31:08.098Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "oignons-1kg",
+   "name": "Oignons jaunes",
+   "quantity": "1 kg",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 169,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 169
+     },
+     "productName": "Oignons suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:27:08.097Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "tomates-grappe-500g",
+   "name": "Tomates en grappe",
+   "quantity": "500 g",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 379,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 379
+     },
+     "productName": "Tomates en grappe suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:31:08.098Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "concombre-1",
+   "name": "Concombre",
+   "quantity": "1 pièce",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 149,
+     "unitPrice": {
+      "basis": "piece",
+      "cents": 149
+     },
+     "productName": "Concombres suisses",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:31:08.098Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "poivrons-500g",
+   "name": "Poivrons mélangés",
+   "quantity": "500 g",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 165,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 330
+     },
+     "productName": "Poivrons tricolores",
+     "packs": 1,
+     "observedAt": "2026-09-28T06:59:09.304Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "courgettes-500g",
+   "name": "Courgettes",
+   "quantity": "500 g",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 249,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 249
+     },
+     "productName": "Courgettes suisses",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:00:51.648Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "salade-iceberg-1",
+   "name": "Salade iceberg",
+   "quantity": "1 pièce",
+   "category": "Légumes",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 0,
+   "privateChains": 0
+  },
+  {
+   "slug": "pdt-fermes-2500g",
+   "name": "Pommes de terre fermes à la cuisson",
+   "quantity": "2,5 kg",
+   "category": "Pommes de terre",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 1145,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 382
+     },
+     "productName": "Pommes de terre cireuses suisses",
+     "packs": 5,
+     "observedAt": "2026-09-30T16:31:08.098Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "pdt-farineuses-2500g",
+   "name": "Pommes de terre farineuses",
+   "quantity": "2,5 kg",
+   "category": "Pommes de terre",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 375,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 150
+     },
+     "productName": "Pommes de terre farineuses suisses",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:23:33.568Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "riz-long-1kg",
+   "name": "Riz long grain",
+   "quantity": "1 kg",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 238,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 238
+     },
+     "productName": "Riz à grains longs",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:53:49.507Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 135,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 135
+     },
+     "productName": "Riz long grain parbolied",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:30:50.095Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "spaghetti-500g",
+   "name": "Spaghetti",
+   "quantity": "500 g",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 238
+     },
+     "productName": "Spaghetti, blé dur",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:54:43.438Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 89,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 178
+     },
+     "productName": "Spaghetti",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:30:47.097Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "penne-500g",
+   "name": "Penne",
+   "quantity": "500 g",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "community",
+     "connectorId": "open-prices",
+     "totalCents": 250,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 500
+     },
+     "productName": "Pasta Penne Lisce",
+     "packs": 1,
+     "observedAt": "2026-08-04T10:00:00.000Z",
+     "scope": "national",
+     "place": "Coop Maladière, Neuchâtel",
+     "promotion": null,
+     "reasons": [
+      "aging_price",
+      "crowd_sourced",
+      "fallback_source"
+     ]
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 119
+     },
+     "productName": "Penne rigate",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:13.650Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 119
+     },
+     "productName": "Penne Rigate",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:27:11.097Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 2,
+   "privateChains": 3
+  },
+  {
+   "slug": "flocons-avoine-500g",
+   "name": "Flocons d’avoine",
+   "quantity": "500 g",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 69,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 138
+     },
+     "productName": "Flocons d’avoine, tendres",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:54:31.370Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 69,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 138
+     },
+     "productName": "Fiocons d'avoine gros",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:30:56.097Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "polenta-500g",
+   "name": "Polenta",
+   "quantity": "500 g",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 145,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 145
+     },
+     "productName": "Polenta instantanée",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:28:29.098Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "lentilles-500g",
+   "name": "Lentilles vertes",
+   "quantity": "500 g",
+   "category": "Pâtes, riz et céréales",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 189,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 378
+     },
+     "productName": "Légumineuses, lentille de montagne",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:54:07.466Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 0,
+   "privateChains": 1
+  },
+  {
+   "slug": "farine-blanche-1kg",
+   "name": "Farine blanche",
+   "quantity": "1 kg",
+   "category": "Farine, sucre et sel",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 99,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 99
+     },
+     "productName": "Farine blanche",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:28:26.094Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "farine-mi-blanche-1kg",
+   "name": "Farine mi-blanche",
+   "quantity": "1 kg",
+   "category": "Farine, sucre et sel",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 0,
+   "privateChains": 0
+  },
+  {
+   "slug": "sucre-cristal-1kg",
+   "name": "Sucre cristallisé",
+   "quantity": "1 kg",
+   "category": "Farine, sucre et sel",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 149,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 149
+     },
+     "productName": "Sucre cristallisé fin",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:28:26.094Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "sel-cuisine-1kg",
+   "name": "Sel de cuisine iodé",
+   "quantity": "1 kg",
+   "category": "Farine, sucre et sel",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 0,
+   "privateChains": 0
+  },
+  {
+   "slug": "huile-tournesol-1l",
+   "name": "Huile de tournesol",
+   "quantity": "1 l",
+   "category": "Huiles, vinaigres et condiments",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 399,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 399
+     },
+     "productName": "Huile de tournesol",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:30:20.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "huile-colza-1l",
+   "name": "Huile de colza",
+   "quantity": "1 l",
+   "category": "Huiles, vinaigres et condiments",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 349,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 349
+     },
+     "productName": "Huile de colza",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:34.770Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 349,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 349
+     },
+     "productName": "Huile de colza",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:30:20.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "huile-olive-1l",
+   "name": "Huile d’olive extra vierge",
+   "quantity": "1 l",
+   "category": "Huiles, vinaigres et condiments",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 1098,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 1098
+     },
+     "productName": "Huile d’olive vierge extra de Grèce",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:53:31.425Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 999,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 999
+     },
+     "productName": "Sabo Extra Vergine Huile d'olive",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:34:29.377Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "vinaigre-vin-1l",
+   "name": "Vinaigre de vin",
+   "quantity": "1 l",
+   "category": "Huiles, vinaigres et condiments",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 0,
+   "privateChains": 0
+  },
+  {
+   "slug": "lait-entier-uht-1l",
+   "name": "Lait entier UHT",
+   "quantity": "1 l",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 155,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 155
+     },
+     "productName": "Lait entier 3.5% UHT",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:08.101Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "lait-demi-uht-1l",
+   "name": "Lait demi-écrémé UHT",
+   "quantity": "1 l",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 145,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 145
+     },
+     "productName": "Lait drink 1.5% UHT",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:08.101Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "beurre-cuisine-250g",
+   "name": "Beurre de cuisine",
+   "quantity": "250 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 339,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1356
+     },
+     "productName": "Beurre de cuisine",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:19.928Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 339,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1356
+     },
+     "productName": "Beurre de cuisine suisse",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:11.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "beurre-choix-200g",
+   "name": "Beurre de choix",
+   "quantity": "200 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 385,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1540
+     },
+     "productName": "Beurre",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:19.928Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 309,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 155
+     },
+     "productName": "Beurre de choix",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:11.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "creme-entiere-250ml",
+   "name": "Crème entière",
+   "quantity": "250 ml",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 209,
+     "unitPrice": {
+      "basis": "l",
+      "cents": 836
+     },
+     "productName": "Crème entière 35% UHT",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:08.101Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "yogourt-nature-180g",
+   "name": "Yogourt nature",
+   "quantity": "180 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 45,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 23
+     },
+     "productName": "Yogourt nature ferme",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:22:03.623Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "sere-maigre-500g",
+   "name": "Séré maigre",
+   "quantity": "500 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "stale",
+     "connectorId": "open-prices",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": "2025-09-22T10:00:00.000Z",
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 125,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 250
+     },
+     "productName": "Séré maigre",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:27:02.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "gruyere-aop-250g",
+   "name": "Gruyère AOP",
+   "quantity": "250 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 598,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 150
+     },
+     "productName": "Le Gruyère AOP, doux",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:53:25.367Z",
+     "scope": "national",
+     "place": null,
+     "promotion": {
+      "validFrom": "2026-09-28",
+      "validTo": "2026-10-04",
+      "confirmed": false
+     },
+     "reasons": [
+      "promo_end_presumed",
+      "promo_not_confirmed_on_date",
+      "while_stocks_last",
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 598,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 150
+     },
+     "productName": "Gruyère AOP doux",
+     "packs": 2,
+     "observedAt": "2026-09-28T07:07:36.591Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "emmentaler-aop-250g",
+   "name": "Emmentaler AOP",
+   "quantity": "250 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 385,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1540
+     },
+     "productName": "Emmentaler AOP, doux",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:31.425Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 419,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1676
+     },
+     "productName": "Emmentaler AOP surchoix",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:00:18.593Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "mozzarella-150g",
+   "name": "Mozzarella",
+   "quantity": "150 g",
+   "category": "Lait, beurre et fromages",
+   "cells": {
+    "migros": {
+     "status": "stale",
+     "connectorId": "open-prices",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": "2025-09-01T10:00:00.000Z",
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "stale",
+     "connectorId": "open-prices",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": "2025-09-01T10:00:00.000Z",
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 145,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 97
+     },
+     "productName": "Mozzarella",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:22.858Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 145,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 97
+     },
+     "productName": "Mozzarella suisse",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:07:15.638Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "oeufs-sol-6",
+   "name": "Œufs suisses d’élevage au sol",
+   "quantity": "6 pièces",
+   "category": "Œufs",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 269,
+     "unitPrice": {
+      "basis": "piece",
+      "cents": 45
+     },
+     "productName": "Oeufs suisses élevage au sol",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:51:08.364Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "oeufs-plein-air-6",
+   "name": "Œufs suisses de plein air",
+   "quantity": "6 pièces",
+   "category": "Œufs",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 429,
+     "unitPrice": {
+      "basis": "piece",
+      "cents": 54
+     },
+     "productName": "Oeufs suisses élevage plein air",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:51:05.366Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "pain-mi-blanc-500g",
+   "name": "Pain mi-blanc",
+   "quantity": "500 g",
+   "category": "Pain et boulangerie",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 99,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 198
+     },
+     "productName": "Pain mi-blanc",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:31.425Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 99,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 198
+     },
+     "productName": "Pain mi-blanc",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:15:51.665Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "pain-complet-500g",
+   "name": "Pain complet",
+   "quantity": "500 g",
+   "category": "Pain et boulangerie",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 538,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 769
+     },
+     "productName": "Pain complet",
+     "packs": 2,
+     "observedAt": "2026-09-28T08:17:06.304Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 1
+  },
+  {
+   "slug": "poulet-poitrine-500g",
+   "name": "Poitrine de poulet suisse",
+   "quantity": "500 g",
+   "category": "Viande et poisson",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 1350,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 2250
+     },
+     "productName": "Poitrine de poulet",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:53:19.928Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 1350,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 2250
+     },
+     "productName": "Poitrine de poulet",
+     "packs": 2,
+     "observedAt": "2026-09-28T07:20:12.582Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "boeuf-hache-500g",
+   "name": "Viande hachée de bœuf",
+   "quantity": "500 g",
+   "category": "Viande et poisson",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 779,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1558
+     },
+     "productName": "Viande hachée de bœuf",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:22.858Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 779,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 1558
+     },
+     "productName": "Viande hachée de boeuf",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:26.108Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "jambon-cuit-150g",
+   "name": "Jambon cuit en tranches",
+   "quantity": "150 g",
+   "category": "Viande et poisson",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 329,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 165
+     },
+     "productName": "Jambon de derrière",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:31.425Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 249,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 166
+     },
+     "productName": "Jambon d'épaule",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:26:53.097Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "thon-huile-240g",
+   "name": "Thon à l’huile (3 boîtes)",
+   "quantity": "240 g",
+   "category": "Conserves",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 270,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 96
+     },
+     "productName": "Filets de thon à l’huile de tournesol",
+     "packs": 2,
+     "observedAt": "2026-09-28T06:37:27.948Z",
+     "scope": "national",
+     "place": null,
+     "promotion": {
+      "validFrom": "2026-09-28",
+      "validTo": "2026-10-04",
+      "confirmed": false
+     },
+     "reasons": [
+      "promo_end_presumed",
+      "promo_not_confirmed_on_date",
+      "while_stocks_last",
+      "pack_size_differs",
+      "regular_price_unknown"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 270,
+     "unitPrice": {
+      "basis": "100g",
+      "cents": 96
+     },
+     "productName": "MSC Thon à l'huile de tourn",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:26:50.096Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "tomates-concassees-400g",
+   "name": "Tomates concassées",
+   "quantity": "400 g",
+   "category": "Conserves",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 59,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 148
+     },
+     "productName": "I COLORI DEL SAPORE Tomates concassées premium, 425 ml",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:10.803Z",
+     "scope": "national",
+     "place": null,
+     "promotion": {
+      "validFrom": "2026-09-07",
+      "validTo": "2026-09-30",
+      "confirmed": true
+     },
+     "reasons": [
+      "promo_end_presumed",
+      "while_stocks_last",
+      "regular_price_unknown"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 75,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 188
+     },
+     "productName": "Piacelli Polpa in Pezzetti",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:29:59.093Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "pois-chiches-400g",
+   "name": "Pois chiches",
+   "quantity": "400 g",
+   "category": "Conserves",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 224,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 423
+     },
+     "productName": "Pois chiches",
+     "packs": 2,
+     "observedAt": "2026-09-30T16:53:40.543Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": [
+      "pack_size_differs"
+     ]
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 169,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 423
+     },
+     "productName": "Pois chiches",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:31:29.106Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "confiture-fraises-500g",
+   "name": "Confiture de fraises",
+   "quantity": "500 g",
+   "category": "Petit-déjeuner, café et douceurs",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 264
+     },
+     "productName": "Confiture de fraise",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:43.405Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 119,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 264
+     },
+     "productName": "Confiture de fraises",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:18:15.605Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  },
+  {
+   "slug": "cafe-moulu-500g",
+   "name": "Café moulu",
+   "quantity": "500 g",
+   "category": "Petit-déjeuner, café et douceurs",
+   "cells": {
+    "migros": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "coop": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "denner": {
+     "status": "missing",
+     "connectorId": null,
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "aldi": {
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 349,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 698
+     },
+     "productName": "Café moulu, Classic Intenso",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:17.024Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    },
+    "lidl": {
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 349,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 698
+     },
+     "productName": "Café Intenso moulu",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:39:21.607Z",
+     "scope": "national",
+     "place": null,
+     "promotion": null,
+     "reasons": []
+    }
+   },
+   "publicChains": 1,
+   "privateChains": 2
+  }
+ ],
+ "summary": {
+  "needs": 50,
+  "byChain": {
+   "migros": {
+    "official_public": 0,
+    "store_survey": 0,
+    "community": 0,
+    "private_only": 0,
+    "stale": 1,
+    "missing": 49
+   },
+   "coop": {
+    "official_public": 0,
+    "store_survey": 0,
+    "community": 1,
+    "private_only": 0,
+    "stale": 1,
+    "missing": 48
+   },
+   "denner": {
+    "official_public": 0,
+    "store_survey": 0,
+    "community": 0,
+    "private_only": 0,
+    "stale": 1,
+    "missing": 49
+   },
+   "aldi": {
+    "official_public": 0,
+    "store_survey": 0,
+    "community": 0,
+    "private_only": 21,
+    "stale": 0,
+    "missing": 29
+   },
+   "lidl": {
+    "official_public": 45,
+    "store_survey": 0,
+    "community": 0,
+    "private_only": 0,
+    "stale": 0,
+    "missing": 5
+   }
+  },
+  "comparablePublic": {
+   "1": 45,
+   "2": 1,
+   "3": 0,
+   "4": 0,
+   "5": 0
+  },
+  "comparablePrivate": {
+   "1": 46,
+   "2": 20,
+   "3": 1,
+   "4": 0,
+   "5": 0
+  }
+ }
+}

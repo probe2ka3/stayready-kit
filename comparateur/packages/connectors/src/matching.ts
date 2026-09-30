@@ -54,6 +54,14 @@ export function matchesFor(
       }
       continue;
     }
+    // Besoin déclaré par la source (relevé, catégorie) : pris tel quel, jamais complété par une suggestion.
+    if (p.declaredSlug) {
+      const c = bySlug.get(p.declaredSlug);
+      if (c && c.quantity.unit === p.quantity.unit) {
+        matches.push({ canonicalId: c.id, retailerProductId: p.id, kind: kindFor(p, c), status: 'validated', confidence: 1 });
+      }
+      continue;
+    }
     for (const s of suggestMatches(p, catalog)) {
       matches.push({
         canonicalId: s.canonicalId,

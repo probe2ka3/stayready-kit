@@ -17,3 +17,4 @@ export * from './aldi';
 export * from './foodally';
 export * from './open-prices';
 export * from './live-snapshot';
+export * from './releves';

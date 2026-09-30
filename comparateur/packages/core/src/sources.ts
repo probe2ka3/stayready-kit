@@ -109,6 +109,17 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     publicUse: 'licence_required',
     termsNote: 'Accès gratuit limité (usage « hobby ») ; collecte en masse interdite sans licence ; attribution avec lien ; usage dans une application : offre Pro ou Business.',
   },
+  releves: {
+    connectorId: 'releves',
+    provider: 'Relevés en magasin (exploitant et bénévoles)',
+    tier: 'community',
+    collectionMethod: 'manual_survey',
+    license: null,
+    attribution: null,
+    publicUse: 'own_data',
+    termsNote:
+      'Prix constatés soi-même en rayon ou sur un ticket, un magasin et un jour à la fois ; preuve conservée ; règlement du magasin respecté (pas de photo si elle est interdite : prix notés à la main).',
+  },
   receipts: {
     connectorId: 'receipts',
     provider: 'Tickets de caisse TesPrix (anonymisés)',

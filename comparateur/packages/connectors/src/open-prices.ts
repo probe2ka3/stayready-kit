@@ -1,5 +1,7 @@
 import {
+  VARIABLE_WEIGHT_LABEL,
   zurichLocalToInstant,
+  type CanonicalProduct,
   type PriceObservation,
   type ProductAttributes,
   type Quantity,
@@ -63,6 +65,11 @@ export interface OpPrice {
   type?: string | null;
   product_code?: string | null;
   product_name?: string | null;
+  /** Prix sans code-barres (fruits, légumes en vrac) : catégorie Open Food Facts, ex. `en:bananas`. */
+  category_tag?: string | null;
+  /** Unité du prix d'une catégorie : `KILOGRAM` ou `UNIT`. */
+  price_per?: string | null;
+  labels_tags?: string[] | null;
   price?: number | null;
   price_is_discounted?: boolean | null;
   price_without_discount?: number | null;
@@ -101,8 +108,44 @@ function quantityOf(p: OpProduct | null | undefined): Quantity | null {
   return p.quantity ? (parsePackText(p.quantity)?.quantity ?? null) : null;
 }
 
+/**
+ * Catégories Open Prices (prix sans code-barres, au kilo ou à la pièce) → besoin du noyau. Seules des
+ * étiquettes effectivement utilisées dans Open Prices (vérifiées le 30.09.2026) ; `name` exige une
+ * précision dans la désignation lorsque la catégorie est plus large que le besoin (variété, type de
+ * cuisson) ; `notName` écarte les variantes non équivalentes. Sans précision : prix ignoré.
+ */
+export const OP_CATEGORY_MAP: Array<{ tag: string; slug: string; name?: RegExp; notName?: RegExp }> = [
+  { tag: 'en:bananas', slug: 'bananes-1kg' },
+  { tag: 'en:gala-apples', slug: 'pommes-gala-1kg' },
+  { tag: 'en:apples', slug: 'pommes-gala-1kg', notName: /pink lady|jazz|kanzi|envy|honeycrunch|smitten|ambrosia|golden|granny|sauce|compote|jus/i },
+  { tag: 'en:pears', slug: 'poires-1kg' },
+  { tag: 'en:oranges', slug: 'oranges-2kg', notName: /sanguin|blut|blood/i },
+  { tag: 'en:lemons', slug: 'citrons-500g' },
+  { tag: 'en:carrots', slug: 'carottes-1kg' },
+  { tag: 'en:yellow-onions', slug: 'oignons-1kg' },
+  { tag: 'en:onions', slug: 'oignons-1kg', notName: /rouge|\bred\b|\brot|blanc|white|weiss|échalote|echalote|shallot|nouveaux|frühling|printemps/i },
+  { tag: 'en:tomatoes', slug: 'tomates-grappe-500g', name: /grappe|rispe|vigne|vine/i },
+  { tag: 'en:cucumbers', slug: 'concombre-1' },
+  { tag: 'en:sweet-peppers', slug: 'poivrons-500g' },
+  { tag: 'en:zucchini', slug: 'courgettes-500g' },
+  { tag: 'en:iceberg-lettuce', slug: 'salade-iceberg-1' },
+  { tag: 'en:potatoes', slug: 'pdt-fermes-2500g', name: /ferme|festkoch/i },
+  { tag: 'en:potatoes', slug: 'pdt-farineuses-2500g', name: /farineu|mehlig/i },
+];
+
+export function categorySlug(p: Pick<OpPrice, 'category_tag' | 'product_name'>): string | null {
+  const name = p.product_name ?? '';
+  for (const m of OP_CATEGORY_MAP) {
+    if (m.tag !== p.category_tag) continue;
+    if (m.name && !m.name.test(name)) continue;
+    if (m.notName?.test(name)) continue;
+    return m.slug;
+  }
+  return null;
+}
+
 function attributesOf(price: OpPrice): ProductAttributes {
-  const tags = new Set([...(price.product?.labels_tags ?? [])]);
+  const tags = new Set([...(price.product?.labels_tags ?? []), ...(price.labels_tags ?? [])]);
   const origins = new Set(price.origins_tags ?? []);
   const labels: string[] = [];
   if (tags.has('en:vegan')) labels.push('vegan');
@@ -127,6 +170,65 @@ export interface OpContext {
 /** Enseignes dont le prix relevé dans une succursale vaut pour la zone (et non le pays). */
 const ZONAL_CHAINS = new Set(['migros']);
 
+type Found = { product: RetailerProduct; priceCents: number } | { skip: string };
+
+/** Article à code-barres : contenance lue sur la fiche Open Food Facts, jamais devinée. */
+function barcodeProduct(p: OpPrice, chainId: string, value: number): Found {
+  const quantity = quantityOf(p.product);
+  if (!quantity) return { skip: 'contenance inconnue' };
+  const gtin = p.product_code as string;
+  return {
+    priceCents: Math.round(value * 100),
+    product: {
+      id: `${chainId}:gtin-${gtin}`,
+      chainId,
+      connectorId: OPEN_PRICES_CONNECTOR_ID,
+      sku: `gtin-${gtin}`,
+      gtin,
+      name: (p.product?.product_name || p.product_name || gtin).trim(),
+      brand: p.product?.brands?.split(',')[0]?.trim() || null,
+      quantity,
+      attributes: attributesOf(p),
+      url: `https://prices.openfoodfacts.org/products/${gtin}`,
+      isDemo: false,
+    },
+  };
+}
+
+/**
+ * Vrac (catégorie sans code-barres) : un prix au kilo est ramené à la quantité du besoin
+ * (1 kg de bananes, 500 g de citrons) et marqué « vendu au poids » (montant estimé) ; un prix à la
+ * pièce ne vaut que pour un besoin compté en pièces. Article propre à l'enseigne et au besoin.
+ */
+function categoryProduct(p: OpPrice, chainId: string, value: number, catalogBySlug: Map<string, CanonicalProduct>): Found {
+  const slug = categorySlug(p);
+  const canonical = slug ? catalogBySlug.get(slug) : undefined;
+  if (!canonical) return { skip: 'catégorie hors noyau ou imprécise' };
+  const perKg = p.price_per === 'KILOGRAM';
+  if (perKg ? canonical.quantity.unit !== 'g' : p.price_per !== 'UNIT' || canonical.quantity.unit !== 'piece') {
+    return { skip: 'unité de prix incompatible' };
+  }
+  const attributes = attributesOf(p);
+  const sku = `cat-${canonical.slug}${attributes.organic ? '-bio' : ''}${attributes.swissOrigin ? '-ch' : ''}`;
+  return {
+    priceCents: perKg ? Math.round((value * 100 * canonical.quantity.amount) / 1000) : Math.round(value * 100),
+    product: {
+      id: `${chainId}:${sku}`,
+      chainId,
+      connectorId: OPEN_PRICES_CONNECTOR_ID,
+      sku,
+      gtin: null,
+      name: `${canonical.name}${attributes.organic ? ' bio' : ''}${attributes.swissOrigin ? ' (Suisse)' : ''}, ${perKg ? 'au kilo' : 'à la pièce'}`,
+      brand: null,
+      quantity: canonical.quantity,
+      attributes: perKg ? { ...attributes, labels: [...(attributes.labels ?? []), VARIABLE_WEIGHT_LABEL] } : attributes,
+      url: `https://prices.openfoodfacts.org/prices/${p.id}`,
+      isDemo: false,
+      declaredSlug: canonical.slug,
+    },
+  };
+}
+
 export function buildOpenPricesBatch(
   locations: OpLocation[],
   prices: OpPrice[],
@@ -138,6 +240,8 @@ export function buildOpenPricesBatch(
   const products = new Map<string, RetailerProduct>();
   const observations: PriceObservation[] = [];
   const minDate = new Date(ctx.now.getTime() - ctx.maxAgeDays * 86_400_000).toISOString().slice(0, 10);
+  const catalogBySlug = new Map((ctx.catalog ?? PRODUCTS).map((c) => [c.slug, c]));
+  let categoryPrices = 0;
   const skipped: Record<string, number> = {};
   const skip = (why: string) => {
     skipped[why] = (skipped[why] ?? 0) + 1;
@@ -154,7 +258,8 @@ export function buildOpenPricesBatch(
       skip('doublon signalé');
       continue;
     }
-    if (p.type !== 'PRODUCT' || !p.product_code || !isValidGtin(p.product_code)) {
+    const isCategory = p.type === 'CATEGORY';
+    if (!isCategory && (p.type !== 'PRODUCT' || !p.product_code || !isValidGtin(p.product_code))) {
       skip('sans code-barres valide');
       continue;
     }
@@ -172,28 +277,13 @@ export function buildOpenPricesBatch(
       skip(p.price_is_discounted ? 'remise sans prix normal' : 'prix invalide');
       continue;
     }
-    const quantity = quantityOf(p.product);
-    if (!quantity) {
-      skip('contenance inconnue');
+    const found = isCategory ? categoryProduct(p, chainId, value, catalogBySlug) : barcodeProduct(p, chainId, value);
+    if ('skip' in found) {
+      skip(found.skip);
       continue;
     }
-    const gtin = p.product_code;
-    const id = `${chainId}:gtin-${gtin}`;
-    if (!products.has(id)) {
-      products.set(id, {
-        id,
-        chainId,
-        connectorId: OPEN_PRICES_CONNECTOR_ID,
-        sku: `gtin-${gtin}`,
-        gtin,
-        name: (p.product?.product_name || p.product_name || gtin).trim(),
-        brand: p.product?.brands?.split(',')[0]?.trim() || null,
-        quantity,
-        attributes: attributesOf(p),
-        url: `https://prices.openfoodfacts.org/products/${gtin}`,
-        isDemo: false,
-      });
-    }
+    const { product, priceCents } = found;
+    const id = product.id;
     const storeId = loc.osm_type && loc.osm_id ? `osm:${loc.osm_type.toLowerCase()}/${loc.osm_id}` : null;
     const store = storeId ? storesById.get(storeId) : undefined;
     let zoneId: string | null = null;
@@ -206,6 +296,8 @@ export function buildOpenPricesBatch(
         continue;
       }
     }
+    if (!products.has(id)) products.set(id, product);
+    if (isCategory) categoryPrices++;
     const place = [store?.name ?? loc.osm_name ?? chainId, store?.city ?? loc.osm_address_city].filter(Boolean).join(', ');
     const proofType = (p.proof?.type ?? '').toUpperCase();
     observations.push({
@@ -213,7 +305,7 @@ export function buildOpenPricesBatch(
       retailerProductId: id,
       zoneId,
       storeId: null,
-      priceCents: Math.round(value * 100),
+      priceCents,
       observedAt: zurichLocalToInstant(p.date, '12:00').toISOString(),
       source: { connectorId: OPEN_PRICES_CONNECTOR_ID, kind: 'open_data', ref: `open-prices:${p.id}` },
       isDemo: false,
@@ -239,6 +331,7 @@ export function buildOpenPricesBatch(
     locations: locations.length,
     pricesRead: prices.length,
     reviewedProducts: reviewedCount,
+    categoryPrices,
     ...Object.fromEntries(Object.entries(byChain).map(([k, v]) => [`prices_${k}`, v])),
     ...Object.fromEntries(Object.entries(skipped).map(([k, v]) => [`skipped: ${k}`, v])),
   };

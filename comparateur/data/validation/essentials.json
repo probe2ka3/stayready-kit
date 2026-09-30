@@ -1,7 +1,7 @@
 {
  "description": "Jeu de validation TesPrix : 50 besoins essentiels × 5 enseignes. Articles attendus (correspondances revues satisfaisant les exigences), contenance admise et bande de prix normalisé (centimes par kg, litre ou pièce). Sert à détecter les régressions de collecte.",
  "version": "1",
- "calibratedAt": "2026-09-30T20:38:29.310Z",
+ "calibratedAt": "2026-09-30T20:55:31.096Z",
  "chains": [
   "migros",
   "coop",
@@ -49,10 +49,10 @@
   },
   {
    "slug": "pommes-gala-1kg",
-   "name": "Pommes Gala",
+   "name": "Pommes (Gala ou variété courante)",
    "query": {
-    "de": "Äpfel Gala",
-    "fr": "pommes gala"
+    "de": "Äpfel",
+    "fr": "pommes"
    },
    "unit": "g",
    "amount": {
