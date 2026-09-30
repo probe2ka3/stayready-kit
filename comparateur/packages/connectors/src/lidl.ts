@@ -104,7 +104,8 @@ export function parseProductPage(html: string, pageUrl: string): LidlAssortmentI
     const strong = /<strong class="pricefield__price"[^>]*>([\s\S]*?)<\/strong>/.exec(box.slice(lp));
     lidlPlusPriceCents = strong ? displayedCents(strong[1] as string) : null;
   }
-  const main = html.slice(html.indexOf('product-info-main'), start);
+  // Pastilles (origine suisse…) : liste placée après le bloc de prix.
+  const badges = /<ul class="product-badges-list">([\s\S]*?)<\/ul>/.exec(html)?.[1] ?? '';
   return {
     articleNo: article,
     name,
@@ -112,7 +113,7 @@ export function parseProductPage(html: string, pageUrl: string): LidlAssortmentI
     lidlPlusPriceCents,
     packText: footer ? textOf(footer[1] as string) : '',
     isAction: /pricefield--discount/.test(box) || /pricefield__header">\s*Aktion/.test(box),
-    swiss: /badges\/(Schweizer_Kreuz|suisse_garantie)/i.test(main) || SWISS_NAME.test(name),
+    swiss: /badges\/(Schweizer_Kreuz|suisse_garantie)/i.test(badges) || SWISS_NAME.test(name),
     url: og ?? pageUrl,
   };
 }
@@ -381,6 +382,10 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
         report.warnings.push({ message: `Prix de base divergent (${(dev * 100).toFixed(0)} %), prix conservé : ${it.name} ${it.packText}` });
       }
       const id = `lidl:${it.articleNo}`;
+      // Un même article peut figurer sur une page catégorie et sur sa fiche : les indications
+      // d'origine lues sur l'une ou l'autre sont conservées.
+      const seen = products.get(id);
+      if (seen?.attributes.swissOrigin) it.swiss = true;
       products.set(id, {
         id,
         chainId: 'lidl',

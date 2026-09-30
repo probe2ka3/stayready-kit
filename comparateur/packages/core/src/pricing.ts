@@ -419,6 +419,27 @@ function toApplied(p: Promotion): AppliedPromotion {
   };
 }
 
+/**
+ * Marque imposée : champ marque identique, ou marque citée dans la désignation lorsque l'enseigne
+ * ne publie pas de champ marque (« Ferrero Nutella », « Coca-Cola Original »).
+ */
+function hasBrand(product: RetailerProduct, required: string): boolean {
+  const want = normalizeText(required);
+  if (normalizeText(product.brand ?? '') === want) return true;
+  return ` ${normalizeText(product.name)} `.includes(` ${want} `);
+}
+
+/** Exigences de la référence (bio, origine, labels, marque, dimension) satisfaites par l'article. */
+export function meetsRequirements(canonical: CanonicalProduct, product: RetailerProduct): boolean {
+  if (canonical.attributes.organic && !product.attributes.organic) return false;
+  if (canonical.attributes.swissOrigin && !product.attributes.swissOrigin) return false;
+  for (const label of canonical.attributes.labels ?? []) {
+    if (!(product.attributes.labels ?? []).includes(label)) return false;
+  }
+  if (canonical.brandRequired && !hasBrand(product, canonical.brandRequired)) return false;
+  return product.quantity.unit === canonical.quantity.unit;
+}
+
 function attributesSatisfy(
   canonical: CanonicalProduct,
   product: RetailerProduct,
@@ -432,10 +453,7 @@ function attributesSatisfy(
   for (const label of canonical.attributes.labels ?? []) {
     if (!(product.attributes.labels ?? []).includes(label)) return false;
   }
-  if (canonical.brandRequired) {
-    const brand = (product.brand ?? '').trim().toLowerCase();
-    if (brand !== canonical.brandRequired.trim().toLowerCase()) return false;
-  }
+  if (canonical.brandRequired && !hasBrand(product, canonical.brandRequired)) return false;
   return product.quantity.unit === canonical.quantity.unit;
 }
 

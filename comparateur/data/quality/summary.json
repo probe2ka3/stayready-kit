@@ -1,25 +1,25 @@
 {
-  "at": "2026-09-28T07:01:59.530Z",
-  "catalogSize": 200,
+  "at": "2026-09-30T16:28:50.287Z",
+  "catalogSize": 240,
   "comparable": {
-    "2": 47,
-    "3": 3,
+    "2": 98,
+    "3": 4,
     "4": 0,
     "5": 0
   },
   "freshness": {
-    "h24": 3182,
+    "h24": 0,
     "h48": 0,
-    "d7": 1,
+    "d7": 4760,
     "older": 76,
-    "total": 3259
+    "total": 4836
   },
   "chains": [
     {
       "chainId": "migros",
       "references": 2,
       "referencesFirstParty": 0,
-      "share": 0.01,
+      "share": 0.008,
       "fresh24h": 0,
       "fresh48h": 0,
       "fresh7d": 1,
@@ -31,7 +31,7 @@
       "chainId": "coop",
       "references": 2,
       "referencesFirstParty": 0,
-      "share": 0.01,
+      "share": 0.008,
       "fresh24h": 0,
       "fresh48h": 0,
       "fresh7d": 0,
@@ -53,27 +53,27 @@
     },
     {
       "chainId": "aldi",
-      "references": 81,
-      "referencesFirstParty": 81,
-      "share": 0.405,
-      "fresh24h": 1801,
+      "references": 106,
+      "referencesFirstParty": 106,
+      "share": 0.442,
+      "fresh24h": 0,
       "fresh48h": 0,
-      "fresh7d": 0,
+      "fresh7d": 1623,
       "older": 0,
       "products": 1897,
-      "pricedProducts": 1801
+      "pricedProducts": 1623
     },
     {
       "chainId": "lidl",
-      "references": 96,
-      "referencesFirstParty": 96,
-      "share": 0.48,
-      "fresh24h": 1381,
+      "references": 192,
+      "referencesFirstParty": 192,
+      "share": 0.8,
+      "fresh24h": 0,
       "fresh48h": 0,
-      "fresh7d": 0,
+      "fresh7d": 3136,
       "older": 1,
-      "products": 1561,
-      "pricedProducts": 1382
+      "products": 3584,
+      "pricedProducts": 3137
     },
     {
       "chainId": "ottos",
@@ -112,11 +112,24 @@
       "pricedProducts": 0
     }
   ],
-  "byPriority": null,
+  "byPriority": {
+    "P1": {
+      "size": 50,
+      "covered2": 30
+    },
+    "P2": {
+      "size": 121,
+      "covered2": 49
+    },
+    "P3": {
+      "size": 69,
+      "covered2": 19
+    }
+  },
   "records": {
-    "total": 3908,
+    "total": 5937,
     "byTier": {
-      "first_party": 3667,
+      "first_party": 5696,
       "community": 241
     }
   },
@@ -128,7 +141,7 @@
     "stale_data": 18,
     "source_divergence": 0,
     "promo_as_regular": 0,
-    "connector_broken": 0
+    "connector_broken": 3
   },
   "connectors": [
     {
@@ -140,7 +153,7 @@
     {
       "connectorId": "lidl-web",
       "status": "partial",
-      "collectedAt": "2026-09-28T00:42:07.472Z",
+      "collectedAt": "2026-09-28T09:30:21.627Z",
       "message": "Retraité depuis l'archive du 2026-09-28"
     },
     {

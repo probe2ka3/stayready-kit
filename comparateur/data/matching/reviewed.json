@@ -1887,6 +1887,1136 @@
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-09-28",
    "note": "20 l"
+  },
+  {
+   "retailerProductId": "lidl:0081560",
+   "canonicalSlug": "pommes-bio-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pommes rouges bio suisses, 500 g"
+  },
+  {
+   "retailerProductId": "lidl:0080000",
+   "canonicalSlug": "bananes-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0080142",
+   "canonicalSlug": "oranges-2kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0080135",
+   "canonicalSlug": "oranges-2kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Filet de 1 kg"
+  },
+  {
+   "retailerProductId": "lidl:0080085",
+   "canonicalSlug": "mandarines-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Clémentines"
+  },
+  {
+   "retailerProductId": "lidl:0080676",
+   "canonicalSlug": "kiwis-6",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "À la pièce"
+  },
+  {
+   "retailerProductId": "lidl:0084611",
+   "canonicalSlug": "carottes-bio-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5114149",
+   "canonicalSlug": "mesclun-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Salad Box, 300 g"
+  },
+  {
+   "retailerProductId": "lidl:0082586",
+   "canonicalSlug": "poivrons-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Tricolores"
+  },
+  {
+   "retailerProductId": "lidl:0082895",
+   "canonicalSlug": "brocoli-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1 kg"
+  },
+  {
+   "retailerProductId": "lidl:0083015",
+   "canonicalSlug": "champignons-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0083017",
+   "canonicalSlug": "champignons-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "400 g"
+  },
+  {
+   "retailerProductId": "lidl:0082255",
+   "canonicalSlug": "poireaux-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1 kg"
+  },
+  {
+   "retailerProductId": "lidl:0084540",
+   "canonicalSlug": "poireaux-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "lidl:0082319",
+   "canonicalSlug": "epinards-frais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "500 g"
+  },
+  {
+   "retailerProductId": "lidl:0084440",
+   "canonicalSlug": "epinards-frais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Jeunes pousses bio, 100 g"
+  },
+  {
+   "retailerProductId": "lidl:0083137",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pommes de terre cireuses (fermes), 600 g"
+  },
+  {
+   "retailerProductId": "lidl:0083222",
+   "canonicalSlug": "pdt-grenailles-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pommes de terre à raclette (petites)"
+  },
+  {
+   "retailerProductId": "lidl:0126325",
+   "canonicalSlug": "couscous-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Couscous ou boulgour bio au choix, même prix"
+  },
+  {
+   "retailerProductId": "lidl:0126325",
+   "canonicalSlug": "boulgour-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Couscous ou boulgour bio au choix, même prix"
+  },
+  {
+   "retailerProductId": "lidl:0119437",
+   "canonicalSlug": "quinoa-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio, 400 g"
+  },
+  {
+   "retailerProductId": "lidl:0001469",
+   "canonicalSlug": "amidon-mais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Maïzena"
+  },
+  {
+   "retailerProductId": "lidl:5006310",
+   "canonicalSlug": "vinaigre-pomme-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1 l"
+  },
+  {
+   "retailerProductId": "lidl:0003216",
+   "canonicalSlug": "mayonnaise-265g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0012046",
+   "canonicalSlug": "poivre-noir-50g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0001463",
+   "canonicalSlug": "assaisonnement-90g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Aromat"
+  },
+  {
+   "retailerProductId": "lidl:0166433",
+   "canonicalSlug": "assaisonnement-90g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0002197",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "lidl:0001546",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pot de 500 g, 1,5 %"
+  },
+  {
+   "retailerProductId": "lidl:0001547",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pot de 500 g, 3,5 %"
+  },
+  {
+   "retailerProductId": "lidl:5100398",
+   "canonicalSlug": "yogourt-fraise-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "lidl:0003341",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Doux, 200 g"
+  },
+  {
+   "retailerProductId": "lidl:0003309",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Salé, 200 g"
+  },
+  {
+   "retailerProductId": "lidl:0003310",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Surchoix, 200 g"
+  },
+  {
+   "retailerProductId": "lidl:5110779",
+   "canonicalSlug": "emmentaler-aop-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0003195",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0019051",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "125 g"
+  },
+  {
+   "retailerProductId": "lidl:0032459",
+   "canonicalSlug": "raclette-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0002779",
+   "canonicalSlug": "raclette-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "300 g"
+  },
+  {
+   "retailerProductId": "lidl:5114825",
+   "canonicalSlug": "oeufs-sol-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Boîte de 6"
+  },
+  {
+   "retailerProductId": "lidl:5114297",
+   "canonicalSlug": "oeufs-importes-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Boîte de 15"
+  },
+  {
+   "retailerProductId": "lidl:5112442",
+   "canonicalSlug": "pain-mi-blanc-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5114091",
+   "canonicalSlug": "pain-mi-blanc-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5112426",
+   "canonicalSlug": "pain-complet-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "350 g"
+  },
+  {
+   "retailerProductId": "lidl:5113437",
+   "canonicalSlug": "pain-complet-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "390 g"
+  },
+  {
+   "retailerProductId": "lidl:5107401",
+   "canonicalSlug": "tresse-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "460 g"
+  },
+  {
+   "retailerProductId": "lidl:5103560",
+   "canonicalSlug": "tresse-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "460 g"
+  },
+  {
+   "retailerProductId": "lidl:0001353",
+   "canonicalSlug": "poulet-poitrine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "300 g"
+  },
+  {
+   "retailerProductId": "lidl:5104269",
+   "canonicalSlug": "poulet-poitrine-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Blanc de poulet suisse, 330 g"
+  },
+  {
+   "retailerProductId": "lidl:0001414",
+   "canonicalSlug": "porc-cotelettes-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5112412",
+   "canonicalSlug": "saucisses-veau-260g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Saucisses à rôtir de Saint-Gall (veau)"
+  },
+  {
+   "retailerProductId": "lidl:0029924",
+   "canonicalSlug": "cervelas-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5108282",
+   "canonicalSlug": "cervelas-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0142043",
+   "canonicalSlug": "concentre-tomates-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "lidl:0178286",
+   "canonicalSlug": "haricots-rouges-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "255 g"
+  },
+  {
+   "retailerProductId": "lidl:0028260",
+   "canonicalSlug": "mais-340g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "285 g"
+  },
+  {
+   "retailerProductId": "lidl:0152886",
+   "canonicalSlug": "thon-huile-240g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "140 g"
+  },
+  {
+   "retailerProductId": "lidl:0200047",
+   "canonicalSlug": "thon-huile-240g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "560 g"
+  },
+  {
+   "retailerProductId": "lidl:0124068",
+   "canonicalSlug": "lait-coco-400ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0200205",
+   "canonicalSlug": "confiture-fraises-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "450 g"
+  },
+  {
+   "retailerProductId": "lidl:0002334",
+   "canonicalSlug": "nutella-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0021238",
+   "canonicalSlug": "chocolat-lait-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0021237",
+   "canonicalSlug": "chocolat-lait-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0153451",
+   "canonicalSlug": "cafe-moulu-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0012903",
+   "canonicalSlug": "petits-beurre-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "400 g"
+  },
+  {
+   "retailerProductId": "lidl:1800508",
+   "canonicalSlug": "eau-plate-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Vittel, bouteille de 1,5 l"
+  },
+  {
+   "retailerProductId": "lidl:5111224",
+   "canonicalSlug": "jus-pomme-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1,5 l"
+  },
+  {
+   "retailerProductId": "lidl:5112327",
+   "canonicalSlug": "jus-pomme-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0000026",
+   "canonicalSlug": "the-froid-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pêche ou citron au choix"
+  },
+  {
+   "retailerProductId": "lidl:0000022",
+   "canonicalSlug": "cola-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0001151",
+   "canonicalSlug": "coca-cola-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "2 l"
+  },
+  {
+   "retailerProductId": "lidl:0003481",
+   "canonicalSlug": "coca-cola-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1,25 l"
+  },
+  {
+   "retailerProductId": "lidl:5109559",
+   "canonicalSlug": "sirop-framboise-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1,5 l"
+  },
+  {
+   "retailerProductId": "lidl:5111304",
+   "canonicalSlug": "epinards-surg-600g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Épinards en branches, 750 g"
+  },
+  {
+   "retailerProductId": "lidl:5111294",
+   "canonicalSlug": "legumes-surg-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0190905",
+   "canonicalSlug": "colin-surg-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "800 g"
+  },
+  {
+   "retailerProductId": "lidl:0155075",
+   "canonicalSlug": "eponges-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "6 éponges"
+  },
+  {
+   "retailerProductId": "lidl:0139643",
+   "canonicalSlug": "lavettes-microfibre-3",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Lot de 5"
+  },
+  {
+   "retailerProductId": "lidl:0029772",
+   "canonicalSlug": "sacs-poubelle-35l-20",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5719698",
+   "canonicalSlug": "deodorant-50ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:1801008",
+   "canonicalSlug": "deodorant-50ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Rexona"
+  },
+  {
+   "retailerProductId": "lidl:1009619",
+   "canonicalSlug": "coton-tiges-200",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio, 400 pièces"
+  },
+  {
+   "retailerProductId": "lidl:0229353",
+   "canonicalSlug": "disques-demaquillants-80",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "140 pièces"
+  },
+  {
+   "retailerProductId": "lidl:0207692",
+   "canonicalSlug": "disques-demaquillants-80",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "100 pièces"
+  },
+  {
+   "retailerProductId": "lidl:0208361",
+   "canonicalSlug": "couches-t4-44",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "84 couches"
+  },
+  {
+   "retailerProductId": "lidl:0168553",
+   "canonicalSlug": "creme-mains-100ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0195191",
+   "canonicalSlug": "serviettes-hygieniques-16",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "28 pièces"
+  },
+  {
+   "retailerProductId": "lidl:0029451",
+   "canonicalSlug": "serviettes-hygieniques-16",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "14 pièces"
+  },
+  {
+   "retailerProductId": "lidl:5113854",
+   "canonicalSlug": "papier-toilette-10",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Hakle, 24 rouleaux (action)"
+  },
+  {
+   "retailerProductId": "lidl:5113854",
+   "canonicalSlug": "papier-toilette-24",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Hakle (action)"
+  },
+  {
+   "retailerProductId": "lidl:1800483",
+   "canonicalSlug": "papier-toilette-24",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Tempo (action)"
+  },
+  {
+   "retailerProductId": "lidl:5112392",
+   "canonicalSlug": "essuie-tout-4",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Tela, 16 rouleaux (action)"
+  },
+  {
+   "retailerProductId": "lidl:0025018",
+   "canonicalSlug": "mouchoirs-boite-100",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:1017607",
+   "canonicalSlug": "litiere-chat-10l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "6 l"
+  },
+  {
+   "retailerProductId": "lidl:0031774",
+   "canonicalSlug": "rosti-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Rösti bernois"
+  },
+  {
+   "retailerProductId": "lidl:5109505",
+   "canonicalSlug": "rosti-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "750 g"
+  },
+  {
+   "retailerProductId": "lidl:6014771",
+   "canonicalSlug": "lasagne-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:6000422",
+   "canonicalSlug": "gnocchi-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:6002441",
+   "canonicalSlug": "gnocchi-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1 kg"
+  },
+  {
+   "retailerProductId": "lidl:6015694",
+   "canonicalSlug": "tortellini-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "À la viande"
+  },
+  {
+   "retailerProductId": "lidl:0109155",
+   "canonicalSlug": "riz-complet-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Riz long ou complet bio au choix, 500 g"
+  },
+  {
+   "retailerProductId": "lidl:1011118",
+   "canonicalSlug": "muesli-croustillant-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0184830",
+   "canonicalSlug": "muesli-croustillant-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "750 g"
+  },
+  {
+   "retailerProductId": "lidl:0001270",
+   "canonicalSlug": "sucre-morceaux-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0079804",
+   "canonicalSlug": "pesto-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0029600",
+   "canonicalSlug": "cornichons-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "360 g"
+  },
+  {
+   "retailerProductId": "lidl:1014493",
+   "canonicalSlug": "paprika-poudre-50g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0074726",
+   "canonicalSlug": "fromage-frais-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "300 g"
+  },
+  {
+   "retailerProductId": "lidl:0002719",
+   "canonicalSlug": "fromage-frais-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Philadelphia"
+  },
+  {
+   "retailerProductId": "lidl:0002383",
+   "canonicalSlug": "creme-acidulee-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "lidl:5104016",
+   "canonicalSlug": "yogourt-grec-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0048087",
+   "canonicalSlug": "feta-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0032177",
+   "canonicalSlug": "fondue-800g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:5104366",
+   "canonicalSlug": "pain-seigle-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pain de seigle valaisan AOP"
+  },
+  {
+   "retailerProductId": "lidl:0029059",
+   "canonicalSlug": "tortillas-320g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0022934",
+   "canonicalSlug": "tortillas-320g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "370 g"
+  },
+  {
+   "retailerProductId": "lidl:offer-10059622",
+   "canonicalSlug": "lardons-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "lidl:5103327",
+   "canonicalSlug": "salami-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Salami de bœuf"
+  },
+  {
+   "retailerProductId": "lidl:0011641",
+   "canonicalSlug": "salami-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0027500",
+   "canonicalSlug": "jambon-cru-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0011813",
+   "canonicalSlug": "jambon-cru-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Serrano"
+  },
+  {
+   "retailerProductId": "lidl:0029929",
+   "canonicalSlug": "saucisses-vienne-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Action"
+  },
+  {
+   "retailerProductId": "lidl:1012143",
+   "canonicalSlug": "saumon-frais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "300 g"
+  },
+  {
+   "retailerProductId": "lidl:0026947",
+   "canonicalSlug": "saumon-frais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Saumon sauvage"
+  },
+  {
+   "retailerProductId": "lidl:0143542",
+   "canonicalSlug": "compote-pommes-700g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "710 g"
+  },
+  {
+   "retailerProductId": "lidl:0013261",
+   "canonicalSlug": "cacahuetes-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "500 g"
+  },
+  {
+   "retailerProductId": "lidl:0150378",
+   "canonicalSlug": "noix-melangees-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "150 g"
+  },
+  {
+   "retailerProductId": "lidl:1018572",
+   "canonicalSlug": "noix-melangees-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Grillées et salées"
+  },
+  {
+   "retailerProductId": "lidl:0031293",
+   "canonicalSlug": "amandes-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0029814",
+   "canonicalSlug": "raisins-secs-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "250 g"
+  },
+  {
+   "retailerProductId": "lidl:0070296",
+   "canonicalSlug": "chips-paprika-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "280 g"
+  },
+  {
+   "retailerProductId": "lidl:5102998",
+   "canonicalSlug": "biere-6x500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bière blonde suisse, 3 l"
+  },
+  {
+   "retailerProductId": "lidl:0112834",
+   "canonicalSlug": "poisson-pane-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "MSC"
+  },
+  {
+   "retailerProductId": "lidl:0012139",
+   "canonicalSlug": "poisson-pane-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0002872",
+   "canonicalSlug": "bain-bouche-500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Listerine"
+  },
+  {
+   "retailerProductId": "lidl:1016636",
+   "canonicalSlug": "croquettes-chien-3kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "1,2 kg"
+  },
+  {
+   "retailerProductId": "aldi:155064",
+   "canonicalSlug": "nutella-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:294339",
+   "canonicalSlug": "rosti-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "750 g (action)"
+  },
+  {
+   "retailerProductId": "aldi:635511",
+   "canonicalSlug": "lasagne-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:358243",
+   "canonicalSlug": "gnocchi-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Gnocchi du Tessin"
+  },
+  {
+   "retailerProductId": "aldi:696620",
+   "canonicalSlug": "muesli-croustillant-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:553756003",
+   "canonicalSlug": "muesli-croustillant-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "750 g"
+  },
+  {
+   "retailerProductId": "aldi:156741001",
+   "canonicalSlug": "pesto-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Barilla"
+  },
+  {
+   "retailerProductId": "aldi:177188002",
+   "canonicalSlug": "pesto-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:690920001",
+   "canonicalSlug": "pesto-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:511918",
+   "canonicalSlug": "cornichons-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "370 g"
+  },
+  {
+   "retailerProductId": "aldi:509164001",
+   "canonicalSlug": "cornichons-190g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Aux herbes"
+  },
+  {
+   "retailerProductId": "aldi:578243",
+   "canonicalSlug": "fromage-frais-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Cottage cheese, 250 g"
+  },
+  {
+   "retailerProductId": "aldi:686573",
+   "canonicalSlug": "creme-acidulee-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "aldi:560486",
+   "canonicalSlug": "creme-acidulee-180g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio"
+  },
+  {
+   "retailerProductId": "aldi:615890",
+   "canonicalSlug": "yogourt-grec-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:290155",
+   "canonicalSlug": "fondue-800g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:719199",
+   "canonicalSlug": "tortillas-320g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "496 g"
+  },
+  {
+   "retailerProductId": "aldi:289346",
+   "canonicalSlug": "lardons-150g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "200 g"
+  },
+  {
+   "retailerProductId": "aldi:203644001",
+   "canonicalSlug": "jambon-cru-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Serrano"
+  },
+  {
+   "retailerProductId": "aldi:635479",
+   "canonicalSlug": "saumon-frais-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bio, 200 g"
+  },
+  {
+   "retailerProductId": "aldi:630494002",
+   "canonicalSlug": "compote-pommes-700g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Non sucrée, 710 g"
+  },
+  {
+   "retailerProductId": "aldi:630494001",
+   "canonicalSlug": "compote-pommes-700g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Sucrée, 710 g"
+  },
+  {
+   "retailerProductId": "aldi:155863002",
+   "canonicalSlug": "cacahuetes-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:157442001",
+   "canonicalSlug": "noix-melangees-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "150 g"
+  },
+  {
+   "retailerProductId": "aldi:289455",
+   "canonicalSlug": "amandes-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:634704",
+   "canonicalSlug": "raisins-secs-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:290477",
+   "canonicalSlug": "chips-paprika-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "280 g"
+  },
+  {
+   "retailerProductId": "aldi:155755002",
+   "canonicalSlug": "chips-paprika-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "130 g"
+  },
+  {
+   "retailerProductId": "aldi:477598001",
+   "canonicalSlug": "the-vert-20",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "25 sachets"
+  },
+  {
+   "retailerProductId": "aldi:271649002",
+   "canonicalSlug": "jus-multifruits-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "2,8 l"
+  },
+  {
+   "retailerProductId": "aldi:100049",
+   "canonicalSlug": "poisson-pane-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:197995002",
+   "canonicalSlug": "poisson-pane-450g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "aldi:594191",
+   "canonicalSlug": "patee-chat-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30"
   }
  ]
 }

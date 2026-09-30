@@ -1,4 +1,4 @@
-import { describeMechanic, DIVERGENCE_THRESHOLD, reliabilityOf, sameArticle, staleAfterDays } from './pricing';
+import { describeMechanic, DIVERGENCE_THRESHOLD, meetsRequirements, reliabilityOf, sameArticle, staleAfterDays } from './pricing';
 import { confidenceOf, sourceInfo, type CollectionMethod, type SourceTier } from './sources';
 import { ageInDays, zurichToday } from './time';
 import type {
@@ -279,13 +279,14 @@ export interface CoverageKpis {
 
 export function coverageKpis(
   data: DataSet,
-  catalog: Array<Pick<CanonicalProduct, 'id'> & { priority?: string }>,
+  catalog: Array<Pick<CanonicalProduct, 'id'> & Partial<CanonicalProduct>>,
   chainIds: ChainId[],
   now: Date,
   policy: FreshnessPolicy,
 ): CoverageKpis {
   const usable = usablePrices(data, now, policy);
   const products = new Map(data.products.map((p) => [p.id, p]));
+  const canonicalById = new Map(catalog.map((c) => [c.id, c]));
   const refChains = new Map<string, Set<ChainId>>();
   const refChainsFirstParty = new Map<string, Set<ChainId>>();
   for (const m of data.matches) {
@@ -293,6 +294,9 @@ export function coverageKpis(
     const rp = products.get(m.retailerProductId);
     const u = usable.get(m.retailerProductId);
     if (!rp || !u?.length) continue;
+    // Seuls les articles qui satisfont les exigences de la référence comptent (comme au comparateur).
+    const c = canonicalById.get(m.canonicalId);
+    if (c?.attributes && c.quantity && !meetsRequirements(c as CanonicalProduct, rp)) continue;
     (refChains.get(m.canonicalId) ?? refChains.set(m.canonicalId, new Set()).get(m.canonicalId)!).add(rp.chainId);
     if (u.some((x) => x.tier === 'first_party')) {
       (refChainsFirstParty.get(m.canonicalId) ?? refChainsFirstParty.set(m.canonicalId, new Set()).get(m.canonicalId)!).add(rp.chainId);
