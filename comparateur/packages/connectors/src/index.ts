@@ -14,6 +14,7 @@ export * from './http/robots';
 export * from './http/fetcher';
 export * from './lidl';
 export * from './aldi';
+export * from './denner';
 export * from './foodally';
 export * from './open-prices';
 export * from './live-snapshot';

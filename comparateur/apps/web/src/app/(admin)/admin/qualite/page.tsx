@@ -2,7 +2,7 @@ import { TIER_LABEL, type QualityIssueKind, type SourceTier } from '@cabas/core'
 import { CHAINS, PRODUCTS } from '@cabas/reference';
 import { AdminTitle, fmt, Table } from '@/components/admin/ui';
 import { requireAdmin } from '@/server/auth';
-import { dataQualityView } from '@/server/data-quality';
+import { dataQualityView, latestDailyRun } from '@/server/data-quality';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Qualité des données' };
@@ -28,6 +28,8 @@ export default async function DataQuality({ searchParams }: { searchParams: Prom
   await requireAdmin();
   const { type } = await searchParams;
   const { coverage, quality, sources } = await dataQualityView();
+  const run = latestDailyRun();
+  const minutes = (ms: number) => `${Math.round(ms / 6000) / 10} min`;
   const chainName = new Map(CHAINS.map((c) => [c.id, c.name]));
   const productName = new Map(PRODUCTS.map((p) => [p.id, p.name]));
   const issues = type ? quality.issues.filter((i) => i.kind === type) : quality.issues;
@@ -73,6 +75,52 @@ export default async function DataQuality({ searchParams }: { searchParams: Prom
           Fraîcheur des prix utilisables : {share(f.h24)} de moins de 24 h, {share(f.h24 + f.h48)} de moins de 48 h,{' '}
           {share(f.h24 + f.h48 + f.d7)} de moins de 7 jours ({f.total} articles).
         </p>
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-bold">Collecte quotidienne</h2>
+        {!run ? (
+          <p className="text-sm text-muted">Aucun journal : lancer « pnpm job quotidien » (ou installer la tâche planifiée, docs/COLLECTE_QUOTIDIENNE.md).</p>
+        ) : (
+          <>
+            <p className="text-sm">
+              Dernière exécution le {fmt(run.finishedAt)} ({minutes(run.durationMs)} ; {run.requests} requêtes pour la journée, reprises comprises) :{' '}
+              <span className={run.ok ? 'font-semibold' : 'font-semibold text-danger'}>{run.ok ? 'données produites' : 'aucune source n’a abouti'}</span>
+              {run.validation ? ` · contrôle de non-régression ${run.validation.passed}/${run.validation.checked}` : ''}
+            </p>
+            <Table head={['Source', 'État', 'Requêtes', 'Articles', 'Prix', 'Actions', 'Durée', 'Dernière collecte réussie', 'Message']}>
+              {run.sources.map((s) => (
+                <tr key={s.connector}>
+                  <td className="px-3 py-2 font-medium">{s.connector}</td>
+                  <td className={`px-3 py-2 ${s.status === 'success' ? '' : 'text-warn'}`}>{s.status}</td>
+                  <td className="px-3 py-2">{s.requests}</td>
+                  <td className="px-3 py-2">{s.products}</td>
+                  <td className="px-3 py-2">{s.prices}</td>
+                  <td className="px-3 py-2">{s.promotions}</td>
+                  <td className="px-3 py-2">{minutes(s.durationMs)}</td>
+                  <td className="px-3 py-2">{fmt(s.collectedAt)}</td>
+                  <td className="px-3 py-2 text-muted">{s.message ?? ''}</td>
+                </tr>
+              ))}
+            </Table>
+            <Table head={['Enseigne', 'Collecte automatique', 'Besoins du noyau avec prix', 'Lus le jour même', 'Dernier relevé', 'Actions en cours', 'Fin non publiée']}>
+              {run.chains.map((c) => (
+                <tr key={c.chainId}>
+                  <td className="px-3 py-2 font-medium">{chainName.get(c.chainId) ?? c.chainId}</td>
+                  <td className="px-3 py-2">{c.automatic === 'public' ? 'oui, publiable' : c.automatic === 'private' ? 'oui, usage privé' : 'non'}</td>
+                  <td className="px-3 py-2">{c.coreNeedsPriced}/50</td>
+                  <td className="px-3 py-2">{c.coreNeedsToday}</td>
+                  <td className="px-3 py-2">{fmt(c.newestObservation)}</td>
+                  <td className="px-3 py-2">{c.promotionsActive}</td>
+                  <td className="px-3 py-2">{c.promotionsEndUnknown}</td>
+                </tr>
+              ))}
+            </Table>
+            {run.steps.some((s) => !s.ok) && (
+              <p className="text-sm text-danger">Étapes en échec : {run.steps.filter((s) => !s.ok).map((s) => `${s.step} (${s.message ?? ''})`).join(' ; ')}</p>
+            )}
+          </>
+        )}
       </section>
 
       <section className="space-y-2">

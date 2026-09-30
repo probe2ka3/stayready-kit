@@ -1,18 +1,18 @@
 {
-  "at": "2026-09-30T20:58:18.699Z",
+  "at": "2026-09-30T23:07:51.221Z",
   "catalogSize": 240,
   "comparable": {
-    "2": 101,
-    "3": 4,
-    "4": 0,
+    "2": 121,
+    "3": 16,
+    "4": 1,
     "5": 0
   },
   "freshness": {
-    "h24": 3179,
+    "h24": 3288,
     "h48": 0,
-    "d7": 1886,
+    "d7": 1860,
     "older": 76,
-    "total": 5141
+    "total": 5224
   },
   "chains": [
     {
@@ -41,39 +41,39 @@
     },
     {
       "chainId": "denner",
-      "references": 0,
-      "referencesFirstParty": 0,
-      "share": 0,
-      "fresh24h": 0,
+      "references": 34,
+      "referencesFirstParty": 34,
+      "share": 0.142,
+      "fresh24h": 145,
       "fresh48h": 0,
       "fresh7d": 0,
       "older": 4,
-      "products": 12,
-      "pricedProducts": 4
+      "products": 175,
+      "pricedProducts": 149
     },
     {
       "chainId": "aldi",
       "references": 106,
       "referencesFirstParty": 106,
       "share": 0.442,
-      "fresh24h": 1726,
+      "fresh24h": 1728,
       "fresh48h": 0,
       "fresh7d": 80,
       "older": 0,
-      "products": 1904,
-      "pricedProducts": 1806
+      "products": 1917,
+      "pricedProducts": 1808
     },
     {
       "chainId": "lidl",
-      "references": 202,
-      "referencesFirstParty": 202,
-      "share": 0.842,
-      "fresh24h": 1453,
+      "references": 200,
+      "referencesFirstParty": 200,
+      "share": 0.833,
+      "fresh24h": 1415,
       "fresh48h": 0,
-      "fresh7d": 1805,
+      "fresh7d": 1779,
       "older": 1,
       "products": 3441,
-      "pricedProducts": 3259
+      "pricedProducts": 3195
     },
     {
       "chainId": "ottos",
@@ -115,7 +115,7 @@
   "byPriority": {
     "P1": {
       "size": 50,
-      "covered2": 21
+      "covered2": 41
     },
     "P2": {
       "size": 122,
@@ -127,9 +127,9 @@
     }
   },
   "records": {
-    "total": 8653,
+    "total": 10945,
     "byTier": {
-      "first_party": 8412,
+      "first_party": 10704,
       "community": 241
     }
   },
@@ -140,26 +140,32 @@
     "duplicate": 0,
     "stale_data": 18,
     "source_divergence": 0,
-    "promo_as_regular": 0,
+    "promo_as_regular": 1,
     "connector_broken": 0
   },
   "connectors": [
     {
       "connectorId": "aldi-api",
       "status": "partial",
-      "collectedAt": "2026-09-30T16:55:13.404Z",
-      "message": "Retraité depuis l'archive du 2026-09-30"
+      "collectedAt": "2026-09-30T22:28:55.304Z",
+      "message": null
+    },
+    {
+      "connectorId": "denner-web",
+      "status": "success",
+      "collectedAt": "2026-09-30T22:51:04.735Z",
+      "message": null
     },
     {
       "connectorId": "lidl-web",
       "status": "partial",
-      "collectedAt": "2026-09-30T16:53:05.577Z",
-      "message": "Retraité depuis l'archive du 2026-09-30"
+      "collectedAt": "2026-09-30T22:28:55.304Z",
+      "message": null
     },
     {
       "connectorId": "open-prices",
       "status": "success",
-      "collectedAt": "2026-09-30T20:51:04.747Z",
+      "collectedAt": "2026-09-30T23:07:27.958Z",
       "message": null
     }
   ]

@@ -3178,6 +3178,433 @@
    "reviewer": "équipe données TesPrix (revue assistée, plan sans dépenses)",
    "reviewedAt": "2026-09-30",
    "note": "Pain complet à l’épeautre, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1006135",
+   "canonicalSlug": "bananes-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Bananes Denner, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006255",
+   "canonicalSlug": "bananes-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Bananes bio, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006042",
+   "canonicalSlug": "pommes-gala-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pommes IP-SUISSE classe 1, au kilo (variété non précisée)"
+  },
+  {
+   "retailerProductId": "denner:1006090",
+   "canonicalSlug": "poires-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Poires, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1006089",
+   "canonicalSlug": "poires-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Poires, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006076",
+   "canonicalSlug": "oranges-2kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Oranges blondes, filet de 1,5 kg"
+  },
+  {
+   "retailerProductId": "denner:1006306",
+   "canonicalSlug": "citrons-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Citrons, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1006290",
+   "canonicalSlug": "carottes-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Carottes IP-SUISSE, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1006140",
+   "canonicalSlug": "oignons-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Oignons IP-SUISSE, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006139",
+   "canonicalSlug": "oignons-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Oignons IP-SUISSE, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1006258",
+   "canonicalSlug": "tomates-grappe-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Tomates en grappe suisses, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006297",
+   "canonicalSlug": "concombre-1",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Concombre long, à la pièce"
+  },
+  {
+   "retailerProductId": "denner:1006163",
+   "canonicalSlug": "poivrons-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Poivrons mélangés, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1006073",
+   "canonicalSlug": "courgettes-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Courgettes, au kilo"
+  },
+  {
+   "retailerProductId": "denner:1006038",
+   "canonicalSlug": "salade-iceberg-1",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Laitue iceberg, à la pièce"
+  },
+  {
+   "retailerProductId": "denner:1006114",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pommes de terre IP-SUISSE fermes à la cuisson, 2,5 kg"
+  },
+  {
+   "retailerProductId": "denner:1006206",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pommes de terre IP-SUISSE fermes à la cuisson, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1006054",
+   "canonicalSlug": "pdt-farineuses-2500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pommes de terre IP-SUISSE farineuses, 2,5 kg"
+  },
+  {
+   "retailerProductId": "denner:1003401",
+   "canonicalSlug": "farine-blanche-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Farine de cuisine Denner (farine fleur, blanche), 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1004173",
+   "canonicalSlug": "farine-blanche-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Farine fleur IP-SUISSE, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1003385",
+   "canonicalSlug": "farine-mi-blanche-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Farine mi-blanche IP-SUISSE, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1003674",
+   "canonicalSlug": "huile-tournesol-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Huile de tournesol Denner, 2 l"
+  },
+  {
+   "retailerProductId": "denner:1004229",
+   "canonicalSlug": "huile-tournesol-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Huile de tournesol IP-SUISSE, 500 ml"
+  },
+  {
+   "retailerProductId": "denner:1003398",
+   "canonicalSlug": "huile-colza-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Huile de colza Denner, 1 l"
+  },
+  {
+   "retailerProductId": "denner:1003348",
+   "canonicalSlug": "huile-colza-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Huile de colza IP-SUISSE, 500 ml"
+  },
+  {
+   "retailerProductId": "denner:1021867",
+   "canonicalSlug": "huile-olive-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Huile d’olive extra vergine Bertolli, 2 l"
+  },
+  {
+   "retailerProductId": "denner:1023751",
+   "canonicalSlug": "riz-long-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Riz long grain Ben’s Original, 2 x 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1102035",
+   "canonicalSlug": "spaghetti-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Spaghetti Barilla al bronzo, 3 x 500 g"
+  },
+  {
+   "retailerProductId": "denner:1035329",
+   "canonicalSlug": "penne-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Penne Denner, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1004167",
+   "canonicalSlug": "flocons-avoine-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Flocons d’avoine complète Denner, fins, 1 kg"
+  },
+  {
+   "retailerProductId": "denner:1104538",
+   "canonicalSlug": "lait-entier-uht-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Lait entier UHT 3,5 % IP-SUISSE, 1 l"
+  },
+  {
+   "retailerProductId": "denner:1002942",
+   "canonicalSlug": "lait-entier-uht-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Lait entier des prés IP-SUISSE UHT, 500 ml"
+  },
+  {
+   "retailerProductId": "denner:1002943",
+   "canonicalSlug": "lait-demi-uht-1l",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Lait drink des prés IP-SUISSE UHT 2,5 %, 500 ml"
+  },
+  {
+   "retailerProductId": "denner:1003517",
+   "canonicalSlug": "beurre-choix-200g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Beurre de choix IP-SUISSE, 100 g"
+  },
+  {
+   "retailerProductId": "denner:1003518",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Yogourt bifidus nature IP-SUISSE, 180 g"
+  },
+  {
+   "retailerProductId": "denner:1003497",
+   "canonicalSlug": "yogourt-nature-180g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Yogourt bifidus nature IP-SUISSE, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1003618",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Le Gruyère AOP salé, 8 mois, 380 g"
+  },
+  {
+   "retailerProductId": "denner:1105196",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Le Gruyère AOP affiné en grotte, 200 g"
+  },
+  {
+   "retailerProductId": "denner:1100558",
+   "canonicalSlug": "gruyere-aop-250g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Le Gruyère AOP Kaltbach Emmi, 220 g"
+  },
+  {
+   "retailerProductId": "denner:1003654",
+   "canonicalSlug": "emmentaler-aop-250g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Emmentaler AOP Réserve, prix aux 100 g"
+  },
+  {
+   "retailerProductId": "denner:1003515",
+   "canonicalSlug": "mozzarella-150g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Mozzarella IP-SUISSE boule, 150 g"
+  },
+  {
+   "retailerProductId": "denner:1002294",
+   "canonicalSlug": "pain-mi-blanc-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pain mi-blanc, 500 g"
+  },
+  {
+   "retailerProductId": "denner:1103832",
+   "canonicalSlug": "boeuf-hache-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Viande hachée de bœuf Angus IP-SUISSE, 300 g"
+  },
+  {
+   "retailerProductId": "denner:1002920",
+   "canonicalSlug": "jambon-cuit-150g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Jambon supérieur IP-SUISSE, 150 g"
+  },
+  {
+   "retailerProductId": "denner:1009102",
+   "canonicalSlug": "jambon-cuit-150g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Jambon supérieur Del Maître IP-SUISSE, 130 g"
+  },
+  {
+   "retailerProductId": "denner:1002690",
+   "canonicalSlug": "thon-huile-240g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Thon rosé Denner à l’huile, 6 x 155 g"
+  },
+  {
+   "retailerProductId": "denner:1102078",
+   "canonicalSlug": "pois-chiches-400g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pois chiches bio enerBiO cuits, 400 g"
+  },
+  {
+   "retailerProductId": "denner:1104429",
+   "canonicalSlug": "cafe-moulu-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Café moulu La Semeuse, 2 x 500 g"
+  },
+  {
+   "retailerProductId": "denner:1006192",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Tomates cerises en grappe : autre produit que les tomates en grappe"
+  },
+  {
+   "retailerProductId": "denner:1006292",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Tomates (vrac) : pas en grappe"
+  },
+  {
+   "retailerProductId": "denner:1003083",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Viande hachée mélangée porc et bœuf"
+  },
+  {
+   "retailerProductId": "denner:1009253",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Viande hachée de porc"
+  },
+  {
+   "retailerProductId": "denner:1002850",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Jambon cru"
+  },
+  {
+   "retailerProductId": "denner:1129399",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Jambon cru au citron"
+  },
+  {
+   "retailerProductId": "denner:1028696",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Vinaigre de vin aux herbes (aromatisé)"
+  },
+  {
+   "retailerProductId": "denner:1036094",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Nettoyant ménager au vinaigre"
+  },
+  {
+   "retailerProductId": "denner:1023919",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Spaghetti à l’épeautre (pas de blé dur)"
+  },
+  {
+   "retailerProductId": "denner:1006280",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Oignons rouges"
+  },
+  {
+   "retailerProductId": "denner:1105181",
+   "canonicalSlug": "oeufs-plein-air-6",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Œufs IP-SUISSE plein air, 6 x 53+ g"
+  },
+  {
+   "retailerProductId": "denner:1003330",
+   "canonicalSlug": "oeufs-plein-air-6",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Grands œufs suisses plein air Denner, 6 x 63+ g"
+  },
+  {
+   "retailerProductId": "denner:1003936",
+   "canonicalSlug": "oeufs-plein-air-6",
+   "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
+   "reviewedAt": "2026-10-01",
+   "note": "Œufs suisses Denner plein air, 12 x 53+ g"
   }
  ]
 }

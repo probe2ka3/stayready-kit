@@ -142,18 +142,21 @@ avec la Fédération des coopératives Migros, ou relevés communautaires / tick
 
 **Conclusion** : aucune surface de prix first-party exploitable. Accord avec Coop nécessaire.
 
-## 7. Denner 📄
+## 7. Denner ✅ (usage privé) 📄
+
+Mise à jour du 01.10.2026 (docs/COLLECTE_QUOTIDIENNE.md) : la **recherche du site** publie aussi des prix
+permanents ; un collecteur ciblé (`denner-web`) est en service, en **collecte privée**.
 
 | Élément | Constat |
 |---|---|
-| Surfaces | `/fr/actions/actions-actuelles`, `/fr/actions/actions-dès-jeudi` (actions futures), fiches `/fr/actions/<slug>~p<id>`, boutique de vins (assortiment vins complet avec prix) |
-| Technique | Nuxt SSR : HTML complet + charge `__NUXT_DATA__` (≈ 9 000 entrées) ; `robots.txt` permissif (hors panier, liste) |
-| Champs visibles | Désignation, origine, conditionnement (« 4 x 115 g », « le kg »), prix, « au lieu de », pourcentage, fin de validité (« Jusqu'au 30.09.2026 »), actions conditionnelles (« 20 % à partir de 2 pièces »), mention « comparaison concurrentielle », filtres de labels (IP-Suisse, Suisse Garantie, Bio, MSC…) |
-| Assortiment permanent | **Non publié avec prix** (hors vins) |
-| Conditions générales (§ 15) | « Sans autorisation écrite préalable, la reproduction […], la transmission […] ou l'utilisation du portail à des fins publiques ou commerciales sont interdites. » |
+| Surfaces | Recherche `/fr/search?q=…` (5 résultats les plus pertinents : prix permanents et actions), `/fr/actions/actions-actuelles`, `/fr/actions/actions-dès-jeudi` (paginées), fiches `/fr/actions/<slug>~p<id>`, boutique de vins |
+| Technique | Nuxt SSR : état `__NUXT_DATA__` (format « devalue ») avec les articles du moteur de recherche du site ; `robots.txt` permissif (hors panier, liste) ; 200 pour un robot identifié |
+| Champs | `articleId`, `name`, `nameSubline` (« UHT, 3,5 %, 6 x 1 litre », « Suisse, le kg »), `price`, `standardPrice`, `insteadPriceText` (« au lieu de »), `promotionLabel` (« 24.09–30.09.2026 », « Jusqu'au … », « Dès le … »), `promotionFrom/To` (époques), `salesQuantity` (lots), `has_discount`, `promo_current_week`, `promo_next_week`, `content_size_text` (« 0.5 unit.ml » = 0,5 l) |
+| Couverture du noyau | 34/50 ; absents du site : sucre, sel, séré, blanc de poulet suisse, tomates en conserve, polenta, beurre de cuisine, pain complet |
+| Conditions (« Précisions d'ordre juridique ») | « La reproduction (complète ou partielle), la transmission […], la modification, la mise en réseau et l'utilisation du portail / de l'app **dans un but de publication ou à des fins commerciales** sont interdites sauf accord préalable écrit. » « Seuls sont valides les prix affichés dans les points de vente. » |
 
-**Conclusion** : techniquement accessible, **juridiquement fermé** sans autorisation écrite. Aucun
-connecteur n'a été développé ; le mécanisme ci-dessus permet de l'écrire en une journée après accord.
+**Conclusion** : collecte privée quotidienne (≈ 53 requêtes), instantané dans `data/private/`, jamais
+publié ; publication après accord écrit.
 
 ## 8. Référence : FoodAlly (fournisseur tiers, pas first-party)
 

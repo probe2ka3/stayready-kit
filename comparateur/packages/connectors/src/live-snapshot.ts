@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
-import { mkdir, readdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { addDays, ageInDays, sourceInfo, zurichToday, type CanonicalProduct, type ConnectorHealth, type DataSet } from '@cabas/core';
+import { addDays, ageInDays, isPublishableSource, sourceInfo, zurichToday, type CanonicalProduct, type ConnectorHealth, type DataSet } from '@cabas/core';
 import { matchesFor, type ReviewedMatch, type ReviewedMatchesFile } from './matching';
 import type { ConnectorBatch } from './types';
 
@@ -20,26 +20,50 @@ export interface LiveSnapshot {
   message: string | null;
   metrics: Record<string, number | string | boolean>;
   batch: Pick<ConnectorBatch, 'retailerProducts' | 'prices' | 'promotions'>;
+  /** Renseigné à la lecture : instantané d'une source non publiable (`data/private/live/`). */
+  private?: boolean;
 }
 
+/** Instantanés des sources publiables, versionnés (`data/prices/live/`). */
 export function liveSnapshotDir(dataDir: string): string {
   return join(dataDir, 'prices', 'live');
 }
 
-export async function readLiveSnapshots(dataDir: string): Promise<LiveSnapshot[]> {
-  const dir = liveSnapshotDir(dataDir);
-  if (!existsSync(dir)) return [];
-  const files = (await readdir(dir)).filter((f) => f.endsWith('.json')).sort();
+/**
+ * Instantanés des sources non publiables (conditions : usage privé, publication interdite) :
+ * `data/private/live/`, exclu du dépôt, des exports, des artefacts et des pages publiques.
+ */
+export function privateSnapshotDir(dataDir: string): string {
+  return join(dataDir, 'private', 'live');
+}
+
+/** Dossier d'un instantané selon le droit de publication de la source. */
+export function snapshotDirFor(dataDir: string, connectorId: string): string {
+  return isPublishableSource(connectorId) ? liveSnapshotDir(dataDir) : privateSnapshotDir(dataDir);
+}
+
+export async function readLiveSnapshots(dataDir: string, opts: { publicOnly?: boolean } = {}): Promise<LiveSnapshot[]> {
+  // Dossier privé d'abord : un ancien instantané resté dans le dossier public ne masque jamais le plus récent.
+  const dirs = opts.publicOnly ? [liveSnapshotDir(dataDir)] : [privateSnapshotDir(dataDir), liveSnapshotDir(dataDir)];
   const out: LiveSnapshot[] = [];
-  for (const f of files) {
-    const snap = JSON.parse(await readFile(join(dir, f), 'utf8')) as LiveSnapshot;
-    // Garde-fou : aucune donnée de démonstration dans un instantané réel.
-    snap.batch.retailerProducts = snap.batch.retailerProducts.filter((p) => !p.isDemo);
-    snap.batch.prices = snap.batch.prices.filter((p) => !p.isDemo);
-    snap.batch.promotions = snap.batch.promotions.filter((p) => !p.isDemo);
-    out.push(snap);
+  const seen = new Set<string>();
+  for (const dir of dirs) {
+    if (!existsSync(dir)) continue;
+    for (const f of (await readdir(dir)).filter((x) => x.endsWith('.json')).sort()) {
+      const snap = JSON.parse(await readFile(join(dir, f), 'utf8')) as LiveSnapshot;
+      if (seen.has(snap.connectorId)) continue;
+      seen.add(snap.connectorId);
+      // « Privé » dépend du droit de publication de la source, pas du dossier où se trouve le fichier.
+      snap.private = !isPublishableSource(snap.connectorId);
+      if (opts.publicOnly && snap.private) continue;
+      // Garde-fou : aucune donnée de démonstration dans un instantané réel.
+      snap.batch.retailerProducts = snap.batch.retailerProducts.filter((p) => !p.isDemo);
+      snap.batch.prices = snap.batch.prices.filter((p) => !p.isDemo);
+      snap.batch.promotions = snap.batch.promotions.filter((p) => !p.isDemo);
+      out.push(snap);
+    }
   }
-  return out;
+  return out.sort((a, b) => a.connectorId.localeCompare(b.connectorId));
 }
 
 /**
@@ -77,12 +101,15 @@ export function mergeLiveBatch(
 }
 
 export async function writeLiveSnapshot(dataDir: string, snap: LiveSnapshot): Promise<string> {
-  const dir = liveSnapshotDir(dataDir);
+  const dir = snapshotDirFor(dataDir, snap.connectorId);
   await mkdir(dir, { recursive: true });
   const path = join(dir, `${snap.connectorId}.json`);
   const tmp = `${path}.tmp`;
-  await writeFile(tmp, `${JSON.stringify(snap)}\n`);
+  const { private: _private, ...data } = snap;
+  await writeFile(tmp, `${JSON.stringify(data)}\n`);
   await rename(tmp, path);
+  // Une source non publiable ne laisse jamais de copie dans le dossier versionné.
+  if (dir !== liveSnapshotDir(dataDir)) await rm(join(liveSnapshotDir(dataDir), `${snap.connectorId}.json`), { force: true });
   return path;
 }
 

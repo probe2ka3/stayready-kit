@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { appendFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { silentLogger, type ConnectorContext, type Logger } from '../types';
@@ -21,6 +21,12 @@ export interface FetcherOptions {
   maxBytes?: number;
   /** Dossier d'archivage des réponses (gzip) ; null = pas d'archive. */
   archiveDir?: string | null;
+  /** Plafond de requêtes pour ce client (une source) pendant l'exécution ; défaut : aucun. */
+  maxRequests?: number;
+  /** Erreurs consécutives sur un hôte au-delà desquelles l'hôte n'est plus sollicité (défaut 5). */
+  maxConsecutiveErrors?: number;
+  /** Dossier du cache des ressources peu changeantes (plans du site) ; null = pas de cache. */
+  cacheDir?: string | null;
   fetchImpl?: typeof fetch;
   sleep?: (ms: number) => Promise<void>;
   clock?: () => number;
@@ -45,6 +51,16 @@ export class HttpBlockedError extends Error {
           ? `Protection anti-robot détectée : ${url}`
           : `Accès refusé (HTTP ${status}) : ${url}`,
     );
+  }
+}
+
+/** Plafond de requêtes de la source atteint : la collecte s'arrête proprement (lot partiel). */
+export class HttpBudgetError extends Error {
+  constructor(
+    public readonly url: string,
+    public readonly limit: number,
+  ) {
+    super(`Plafond de ${limit} requêtes atteint pour cette source : ${url}`);
   }
 }
 
@@ -76,6 +92,11 @@ export interface FetcherStats {
   retries: number;
   blocked: Record<string, BlockReason>;
   errors: number;
+  /** Réponses servies par le cache local (aucune requête). */
+  cacheHits: number;
+  /** Hôtes abandonnés après trop d'erreurs consécutives (disjoncteur). */
+  tripped: string[];
+  budgetExhausted: boolean;
 }
 
 const CHALLENGE_MARKERS = [
@@ -89,10 +110,11 @@ const CHALLENGE_MARKERS = [
 const RETRYABLE = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 export class PoliteFetcher {
-  readonly stats: FetcherStats = { requests: 0, bytes: 0, retries: 0, blocked: {}, errors: 0 };
+  readonly stats: FetcherStats = { requests: 0, bytes: 0, retries: 0, blocked: {}, errors: 0, cacheHits: 0, tripped: [], budgetExhausted: false };
   private readonly robotsCache = new Map<string, Promise<RobotsPolicy>>();
   private readonly nextSlot = new Map<string, number>();
-  private readonly opts: Required<Omit<FetcherOptions, 'archiveDir'>> & { archiveDir: string | null };
+  private readonly consecutiveErrors = new Map<string, number>();
+  private readonly opts: Required<Omit<FetcherOptions, 'archiveDir' | 'cacheDir'>> & { archiveDir: string | null; cacheDir: string | null };
 
   constructor(options: FetcherOptions) {
     if (!options.userAgent || /mozilla|chrome|safari/i.test(options.userAgent)) {
@@ -107,8 +129,11 @@ export class PoliteFetcher {
       sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
       clock: () => Date.now(),
       log: silentLogger,
+      maxRequests: Number.POSITIVE_INFINITY,
+      maxConsecutiveErrors: 5,
       ...options,
       archiveDir: options.archiveDir ?? null,
+      cacheDir: options.cacheDir ?? null,
     };
   }
 
@@ -150,6 +175,33 @@ export class PoliteFetcher {
   }
 
   /**
+   * GET d'une ressource peu changeante (plan du site) : servie par le cache local tant qu'elle a moins
+   * de `maxAgeMs`, sinon relue et remise en cache. Sans dossier de cache : GET ordinaire.
+   */
+  async getCached(url: string, maxAgeMs: number, accept = 'application/xml'): Promise<FetchResult> {
+    if (!this.opts.cacheDir) return this.get(url, accept);
+    const file = join(this.opts.cacheDir, `${createHash('sha1').update(url).digest('hex').slice(0, 20)}.json`);
+    try {
+      const st = await stat(file);
+      if (this.opts.clock() - st.mtimeMs < maxAgeMs) {
+        const cached = JSON.parse(await readFile(file, 'utf8')) as FetchResult & { fetchedAt: string };
+        this.stats.cacheHits++;
+        return { ...cached, fetchedAt: new Date(cached.fetchedAt) };
+      }
+    } catch {
+      // absent ou illisible : relecture
+    }
+    const res = await this.get(url, accept);
+    try {
+      await mkdir(this.opts.cacheDir, { recursive: true });
+      await writeFile(file, JSON.stringify(res));
+    } catch (e) {
+      this.opts.log.warn('Mise en cache impossible', { url, error: String(e) });
+    }
+    return res;
+  }
+
+  /**
    * POST vers un point d'accès public explicitement prévu pour les machines (ex. serveur MCP
    * autorisé par robots.txt) : mêmes règles que `get` (robots.txt, délai, reprises, arrêt).
    */
@@ -161,6 +213,11 @@ export class PoliteFetcher {
   private async admit(url: string): Promise<number> {
     const u = new URL(url);
     if (u.host in this.stats.blocked) throw new HttpBlockedError(url, this.stats.blocked[u.host] as BlockReason);
+    if (this.stats.tripped.includes(u.host)) throw new HttpFetchError(url, `Hôte abandonné après ${this.opts.maxConsecutiveErrors} erreurs consécutives : ${url}`);
+    if (this.stats.requests >= this.opts.maxRequests) {
+      this.stats.budgetExhausted = true;
+      throw new HttpBudgetError(url, this.opts.maxRequests);
+    }
     const policy = await this.robots(u.origin);
     if (!isAllowed(policy, `${u.pathname}${u.search}`)) throw new HttpBlockedError(url, 'robots');
     return Math.max(this.opts.minDelayMs, (policy.crawlDelaySec ?? 0) * 1000);
@@ -232,8 +289,10 @@ export class PoliteFetcher {
       }
       if (!res.ok) {
         this.stats.errors++;
+        this.noteError(host);
         throw new HttpFetchError(url, `HTTP ${res.status} : ${url}`, res.status);
       }
+      this.consecutiveErrors.set(host, 0);
       const fetchedAt = new Date(this.opts.clock());
       const sha256 = createHash('sha256').update(body).digest('hex');
       const contentType = res.headers.get('content-type') ?? '';
@@ -245,8 +304,19 @@ export class PoliteFetcher {
       return { url, status: res.status, contentType, body, fetchedAt, sha256, archivedAs, headers };
     }
     this.stats.errors++;
+    this.noteError(host);
     if (lastError instanceof HttpFetchError) throw lastError;
     throw new HttpFetchError(url, `Échec après ${attempts} tentatives : ${String(lastError)}`);
+  }
+
+  /** Disjoncteur : au-delà de N erreurs consécutives, l'hôte n'est plus sollicité pendant l'exécution. */
+  private noteError(host: string) {
+    const n = (this.consecutiveErrors.get(host) ?? 0) + 1;
+    this.consecutiveErrors.set(host, n);
+    if (n >= this.opts.maxConsecutiveErrors && !this.stats.tripped.includes(host)) {
+      this.stats.tripped.push(host);
+      this.opts.log.warn('Hôte abandonné pour cette exécution (erreurs consécutives)', { host, errors: n });
+    }
   }
 
   private async archive(url: string, status: number, contentType: string, body: string, at: Date, sha256: string) {

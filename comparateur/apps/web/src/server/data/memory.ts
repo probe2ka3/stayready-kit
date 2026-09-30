@@ -18,6 +18,7 @@ import {
 import {
   generateDemoData,
   liveSnapshotDir,
+  privateSnapshotDir,
   matchesFor,
   readLiveSnapshots,
   readReviewedMatches,
@@ -164,8 +165,7 @@ export class MemoryAppData implements AppData {
   private async liveData(now: Date): Promise<LiveState | null> {
     if (this.live && Date.now() - this.liveCheckedAt < 30_000) return this.live;
     this.liveCheckedAt = Date.now();
-    const dir = liveSnapshotDir(this.dataDir);
-    const files = readdirSafe(dir).map((f) => join(dir, f));
+    const files = [liveSnapshotDir(this.dataDir), privateSnapshotDir(this.dataDir)].flatMap((dir) => readdirSafe(dir).map((f) => join(dir, f)));
     const key = `${mtimeKey([...files, reviewedMatchesPath(this.dataDir)])}|${zurichToday(now)}`;
     if (this.live?.key === key) return this.live;
     const snapshots = await readLiveSnapshots(this.dataDir);

@@ -132,3 +132,17 @@ export function validateAgainstDataset(dataset: ValidationDataset, data: DataSet
   }
   return { at: now.toISOString(), checked, passed, failures, byChain };
 }
+
+/**
+ * Restreint le jeu de validation aux enseignes données. Sert quand les instantanés d'une source à
+ * usage privé (Aldi, Denner) ne sont pas présents sur la machine (clone neuf, serveur d'intégration) :
+ * leur absence n'est alors pas une panne de collecte.
+ */
+export function scopeValidationDataset(dataset: ValidationDataset, chainIds: Iterable<ChainId>): ValidationDataset {
+  const keep = new Set(chainIds);
+  return {
+    ...dataset,
+    chains: dataset.chains.filter((c) => keep.has(c)),
+    entries: dataset.entries.map((e) => ({ ...e, chains: Object.fromEntries(Object.entries(e.chains).filter(([c]) => keep.has(c))) })),
+  };
+}

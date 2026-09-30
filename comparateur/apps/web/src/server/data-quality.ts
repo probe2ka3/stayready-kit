@@ -1,5 +1,5 @@
 import 'server-only';
-import { statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   coverageKpis,
@@ -9,7 +9,7 @@ import {
   type CoverageKpis,
   type QualityReport,
 } from '@cabas/core';
-import { liveSnapshotDir, readLiveDataSet, reviewedMatchesPath } from '@cabas/connectors';
+import { liveSnapshotDir, privateSnapshotDir, readLiveDataSet, reviewedMatchesPath } from '@cabas/connectors';
 import { CHAINS, PRODUCTS } from '@cabas/reference';
 import { serverEnv } from './env';
 
@@ -35,8 +35,9 @@ export interface DataQualityView {
 let cache: { key: string; at: number; view: DataQualityView } | null = null;
 
 function cacheKey(): string {
-  const dir = liveSnapshotDir(serverEnv.dataDir);
-  const files = ['lidl-web', 'aldi-api', 'open-prices', 'foodally'].map((id) => join(dir, `${id}.json`));
+  const files = ['lidl-web', 'aldi-api', 'denner-web', 'open-prices', 'releves', 'foodally'].flatMap((id) =>
+    [liveSnapshotDir(serverEnv.dataDir), privateSnapshotDir(serverEnv.dataDir)].map((dir) => join(dir, `${id}.json`)),
+  );
   return [...files, reviewedMatchesPath(serverEnv.dataDir)]
     .map((p) => {
       try {
@@ -86,4 +87,40 @@ export async function dataQualityView(now = new Date()): Promise<DataQualityView
   };
   cache = { key, at: now.getTime(), view };
   return view;
+}
+
+/** Résumé d'une source dans le journal de la collecte quotidienne (`pnpm job quotidien`). */
+export interface DailyRunSource {
+  connector: string;
+  status: string;
+  message?: string | null;
+  requests: number;
+  products: number;
+  prices: number;
+  promotions: number;
+  durationMs: number;
+  collectedAt: string | null;
+  budgetExhausted?: boolean;
+}
+
+export interface DailyRunView {
+  date: string;
+  startedAt: string;
+  finishedAt: string;
+  durationMs: number;
+  requests: number;
+  ok: boolean;
+  sources: DailyRunSource[];
+  steps: Array<{ step: string; ok: boolean; durationMs: number; message?: string }>;
+  chains: Array<{ chainId: string; automatic: string; coreNeedsPriced: number; coreNeedsToday: number; newestObservation: string | null; promotionsActive: number; promotionsEndUnknown: number }>;
+  validation: { checked: number; passed: number; failures: number } | null;
+}
+
+/** Dernier journal de la collecte quotidienne (`data/private/runs/latest.json`), null s'il n'y en a pas. */
+export function latestDailyRun(): DailyRunView | null {
+  try {
+    return JSON.parse(readFileSync(join(serverEnv.dataDir, 'private', 'runs', 'latest.json'), 'utf8')) as DailyRunView;
+  } catch {
+    return null;
+  }
 }

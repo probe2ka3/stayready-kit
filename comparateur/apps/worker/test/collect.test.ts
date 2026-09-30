@@ -87,9 +87,9 @@ describe('collecte : dégradation progressive', () => {
       ['en-panne', 'failed'],
       ['saine', 'success'],
     ]);
-    const ok = JSON.parse(await readFile(join(dir, 'prices', 'live', 'saine.json'), 'utf8')) as LiveSnapshot;
+    const ok = JSON.parse(await readFile(join(dir, 'private', 'live', 'saine.json'), 'utf8')) as LiveSnapshot;
     expect(ok.batch.prices).toHaveLength(1);
-    const blocked = JSON.parse(await readFile(join(dir, 'prices', 'live', 'bloquee.json'), 'utf8')) as LiveSnapshot;
+    const blocked = JSON.parse(await readFile(join(dir, 'private', 'live', 'bloquee.json'), 'utf8')) as LiveSnapshot;
     expect(blocked.status).toBe('blocked');
     expect(blocked.message).toContain('403');
   });
@@ -101,8 +101,11 @@ describe('collecte : dégradation progressive', () => {
         throw new Error('site indisponible');
       }),
     ]);
-    const snap = JSON.parse(await readFile(join(dir, 'prices', 'live', 'saine.json'), 'utf8')) as LiveSnapshot;
+    const snap = JSON.parse(await readFile(join(dir, 'private', 'live', 'saine.json'), 'utf8')) as LiveSnapshot;
     expect(snap.status).toBe('failed');
+    // Une collecte échouée ne rajeunit jamais les données : date de la dernière collecte réussie conservée.
+    expect(snap.collectedAt).toBe(ctx.now.toISOString());
+    expect(snap.batch.prices[0]?.observedAt.slice(0, 10)).toBe('2026-09-28');
     // Le prix de la veille reste disponible (il vieillira et sera signalé comme tel), une seule fois.
     expect(snap.batch.prices.map((p) => p.id)).toEqual(['saine:1:2026-09-28']);
   });

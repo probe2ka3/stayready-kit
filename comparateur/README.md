@@ -18,11 +18,13 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
 - **Détours chiffrés** (économie brute, trajet ajouté, économie nette, seuil personnel, accepter/refuser) et
   signal **« attendre serait moins cher »** fondé sur les actions déjà annoncées.
 
-**État actuel : plan sans dépenses** ([docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md)) — noyau de
-50 aliments de base × 5 enseignes, uniquement des sources gratuites. Mesure au 30.09.2026 : Lidl 47/50
-(public), Aldi 22/50 (privé seulement), Migros / Coop / Denner : relevés en magasin
-([docs/RELEVES.md](docs/RELEVES.md)) ; 1 besoin comparable dans deux enseignes en version publique, 21 en
-pilote privé. Offres B2B et licence FoodAlly hors plan.
+**État actuel : collecte quotidienne automatique à 0 CHF** ([docs/COLLECTE_QUOTIDIENNE.md](docs/COLLECTE_QUOTIDIENNE.md))
+sur les 50 aliments de base : Lidl 47/50 (publiable, sous réserve), Denner 34/50 et Aldi 22/50 (usage
+privé, jamais publiés), Coop 1/50 et Migros 0/50 (aucune source automatique autorisée : Open Prices
+seulement). Pilote privé : 41 besoins comparables dans ≥ 2 enseignes, 13 dans ≥ 3, 1 dans ≥ 4 ; version
+publique : 1. Une commande (`pnpm quotidien`), planifiable dans Windows à 06:00 (`scripts/windows/`).
+Cadre budgétaire : [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) ; relevés en magasin facultatifs :
+[docs/RELEVES.md](docs/RELEVES.md).
 
 Acquis de la phase 4 (comparateur grand public validé sur prix réels, non ouvert au public) :
 
@@ -97,6 +99,8 @@ comparateur/
 | `pnpm job benchmark-foodally` | Comparaison ponctuelle avec FoodAlly (plafond de 100 requêtes par jour, aucune donnée intégrée) |
 | `pnpm job demo-baskets --now=…` / `match-audit` | Paniers de Lausanne, Bulle et Genève rejoués sur les prix réels ; correspondances manquantes à revoir |
 | `pnpm test:e2e:demo` | Parcours des paniers d'exemple sur les prix réels, captures (`E2E_SCREENSHOTS=…`) |
+| `pnpm quotidien [--force] [--sources=a,b]` | Chaîne quotidienne : collecte ciblée des 50 aliments (Lidl, Denner, Aldi, Open Prices), contrôles, exports publiables, journal `data/private/runs/` |
+| `scripts/windows/installer-tache.ps1` | Tâche planifiée Windows (06:00, rattrapage, nouvel essai, journaux) |
 | `pnpm job magasins --npa=…` / `releves` | Identifiants des magasins proches ; import des relevés en magasin (`data/releves/*.csv`) |
 | `pnpm job matrice-essentiels` | Matrice 50 aliments × 5 enseignes (`data/matrice/`) et page publique statique (`data/public/index.html`) |
 
@@ -106,7 +110,8 @@ comparateur/
 |---|---|
 | [docs/audit/01-enseignes.md](docs/audit/01-enseignes.md) | Audit des 8 enseignes : catalogues, prix, promotions, calendriers vérifiés, accès aux données |
 | [docs/audit/02-juridique.md](docs/audit/02-juridique.md) | Analyse juridique préliminaire (LCD, OIP, LPD, LDA, LPM) sourcée sur Fedlex |
-| [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) | **Plan en vigueur** : audit, sources gratuites testées, matrice, fonctionnement à 0 CHF, prochaines étapes |
+| [docs/COLLECTE_QUOTIDIENNE.md](docs/COLLECTE_QUOTIDIENNE.md) | **Collecte quotidienne** : concurrents, sources par enseigne, chaîne, planification Windows, exemple, blocages |
+| [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) | Plan à 0 CHF : audit, sources gratuites testées, matrice, fonctionnement à 0 CHF, prochaines étapes |
 | [docs/RELEVES.md](docs/RELEVES.md) | Relevés de prix en magasin : Open Prices ou CSV, règles, transcription assistée, 50 besoins |
 | [docs/STATUT.md](docs/STATUT.md) | Ce qui est opérationnel, ce qui attend une autorisation ou une validation |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Décisions d'architecture, modules, flux de données |
@@ -137,6 +142,8 @@ comparateur/
 - Prix Lidl : faits (désignation, format, prix, dates) lus sur les pages publiques de Lidl Suisse ; aucune
   photo ni aucun texte descriptif repris.
 - Prix Aldi Suisse : mêmes faits, lus sur l'API publique utilisée par son site (liste paginée, sans recherche
-  ni fiche produit) ; aucune photo ni aucun texte descriptif repris.
+  ni fiche produit) ; aucune photo ni aucun texte descriptif repris. **Usage privé** : `data/private/`, hors dépôt.
+- Prix Denner : faits lus sur les pages publiques du site (recherche, actions). **Usage privé** : `data/private/`,
+  hors dépôt ; publication interdite sans accord écrit.
 - FoodAlly : utilisé uniquement pour une comparaison ponctuelle (quota anonyme, attribution) ; aucune de ses
   données n'est affichée ni intégrée sans licence.

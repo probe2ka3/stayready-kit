@@ -1,9 +1,11 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import {
+  CHAIN_ACCESS,
   DEFAULT_FRESHNESS,
   meetsRequirements,
   normalizedUnitCents,
+  scopeValidationDataset,
   sourceInfo,
   usablePrices,
   validateAgainstDataset,
@@ -90,8 +92,14 @@ export async function jobValidationCalibrate(ctx: JobContext) {
 
 /** Contrôle de non-régression (`validate`) : écarts entre la dernière collecte et le jeu de validation. */
 export async function jobValidate(ctx: JobContext) {
-  const dataset = JSON.parse(await readFile(validationPath(ctx.env.dataDir), 'utf8')) as ValidationDataset;
+  const full = JSON.parse(await readFile(validationPath(ctx.env.dataDir), 'utf8')) as ValidationDataset;
   const { data } = await readLiveDataSet(ctx.env.dataDir, PRODUCTS);
+  // Enseigne à collecte privée sans aucun article officiel ici : instantané absent de cette machine (clone
+  // neuf, intégration continue), pas une panne. Une enseigne à collecte publique reste contrôlée.
+  const present = new Set(data.products.filter((p) => sourceInfo({ connectorId: p.connectorId, kind: 'retailer_site' }).tier === 'first_party').map((p) => p.chainId));
+  const absentPrivate = full.chains.filter((c) => !present.has(c) && CHAIN_ACCESS[c]?.automatic === 'private');
+  const dataset = scopeValidationDataset(full, full.chains.filter((c) => !absentPrivate.includes(c)));
+  if (absentPrivate.length) ctx.log.info('Enseignes non contrôlées : instantané privé absent de cette machine', { chains: absentPrivate });
   const res = validateAgainstDataset(dataset, data, ctx.now, DEFAULT_FRESHNESS);
   if (!ctx.flags.quiet) {
     console.table(Object.entries(res.byChain).map(([chain, v]) => ({ enseigne: chain, attendus: v.expected, valides: v.ok })));

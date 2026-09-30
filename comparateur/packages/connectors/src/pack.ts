@@ -33,6 +33,9 @@ function parsePack(raw: string): ParsedPack | null {
     .toLowerCase()
     .replace(/&nbsp;| /g, ' ')
     .replace(/\s+/g, ' ')
+    // « 1,5 litre », « 6 x 1 litre », « 2 kilos » (désignations Denner).
+    .replace(/(\d)\s*(?:litres?|liter)\b/g, '$1 l')
+    .replace(/(\d)\s*kilos?\b/g, '$1 kg')
     .trim();
   // Le prix de base (« 100g = 2,16 CHF ») n'est pas le conditionnement.
   const segments = text

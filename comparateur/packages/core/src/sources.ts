@@ -48,6 +48,16 @@ export type CollectionMethod =
  */
 export type PublicUse = 'open_license' | 'own_data' | 'no_restriction_found' | 'requires_authorization' | 'licence_required';
 
+/**
+ * Droit de **collecter** (distinct du droit de publier, `PublicUse`) :
+ * - permitted : collecte automatisée compatible avec les conditions constatées ;
+ * - private_use : conditions limitées à un usage privé ou interdisant seulement la publication et
+ *   l'usage commercial : collecte pour l'évaluation privée de l'exploitant, données stockées hors
+ *   dépôt (`data/private/`), jamais publiées ;
+ * - not_permitted : accès refusé ou non accordé : aucune collecte.
+ */
+export type CollectionRight = 'permitted' | 'private_use' | 'not_permitted';
+
 export interface SourceInfo {
   connectorId: string;
   provider: string;
@@ -58,6 +68,8 @@ export interface SourceInfo {
   /** Source de comparaison uniquement : jamais utilisée pour un prix affiché sans activation explicite. */
   benchmarkOnly?: boolean;
   publicUse: PublicUse;
+  /** Droit de collecter (défaut : `permitted` si la source est publiable, sinon `private_use`). */
+  collection?: CollectionRight;
   /** Conditions constatées, en clair (référence : docs/DROITS_DONNEES.md). */
   termsNote: string;
   /** Enseignes couvertes par la source (sources officielles). */
@@ -86,7 +98,21 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     attribution: null,
     chainIds: ['aldi'],
     publicUse: 'requires_authorization',
+    collection: 'private_use',
     termsNote: 'Conditions d’utilisation d’Aldi Suisse : services « à des fins privées uniquement », usage des données à des fins commerciales interdit ; autorisation écrite ou avis juridique favorable requis.',
+  },
+  'denner-web': {
+    connectorId: 'denner-web',
+    provider: 'Denner (site officiel, recherche et actions)',
+    tier: 'first_party',
+    collectionMethod: 'public_web_page',
+    license: null,
+    attribution: null,
+    chainIds: ['denner'],
+    publicUse: 'requires_authorization',
+    collection: 'private_use',
+    termsNote:
+      'Précisions d’ordre juridique de Denner : « La reproduction (complète ou partielle), la transmission […], la modification, la mise en réseau et l’utilisation du portail / de l’app dans un but de publication ou à des fins commerciales sont interdites sauf accord préalable écrit. » Prix indicatifs : « Seuls sont valides les prix affichés dans les points de vente. » Collecte privée seulement.',
   },
   'open-prices': {
     connectorId: 'open-prices',
@@ -206,3 +232,30 @@ export function restrictedConnectorIds(authorized: string[]): string[] {
     .filter((s) => s.publicUse === 'requires_authorization' && !authorized.includes(s.connectorId))
     .map((s) => s.connectorId);
 }
+
+/** Source dont les données peuvent être publiées (versionnées, exportées, affichées publiquement). */
+export function isPublishableSource(connectorId: string): boolean {
+  const info = SOURCE_REGISTRY[connectorId];
+  if (!info) return false;
+  return info.publicUse === 'open_license' || info.publicUse === 'own_data' || info.publicUse === 'no_restriction_found';
+}
+
+/** Droit de collecte d'une source répertoriée ; une source inconnue n'est jamais collectée. */
+export function collectionRight(connectorId: string): CollectionRight {
+  const info = SOURCE_REGISTRY[connectorId];
+  if (!info) return 'not_permitted';
+  return info.collection ?? (isPublishableSource(connectorId) ? 'permitted' : 'private_use');
+}
+
+/**
+ * Accès automatisé et gratuit par enseigne, constaté le 30.09.2026 (docs/COLLECTE_QUOTIDIENNE.md).
+ * Sert au rapport quotidien et à l'administration : une enseigne sans source automatique n'est jamais
+ * présentée comme couverte.
+ */
+export const CHAIN_ACCESS: Record<string, { automatic: 'public' | 'private' | 'none'; sources: string[]; note: string }> = {
+  lidl: { automatic: 'public', sources: ['lidl-web', 'open-prices'], note: 'Site officiel (catégories, fiches, actions) ; aucune condition restrictive trouvée.' },
+  aldi: { automatic: 'private', sources: ['aldi-api', 'open-prices'], note: 'API publique du site ; conditions : usage privé uniquement.' },
+  denner: { automatic: 'private', sources: ['denner-web', 'open-prices'], note: 'Recherche et actions du site ; publication et usage commercial interdits sans accord écrit.' },
+  migros: { automatic: 'none', sources: ['open-prices'], note: 'Site : 403 pour un robot identifié ; fiches sans prix dans le HTML ; API produits non ouverte (réponse officielle Migros) ; prospectus sur Issuu (extraction interdite par Issuu).' },
+  coop: { automatic: 'none', sources: ['open-prices'], note: 'Site protégé par DataDome (403 dès robots.txt), aucun contournement ; journal numérique sans accès documenté, actions seulement.' },
+};

@@ -70,45 +70,95 @@ function snapshotMeta(c: PriceConnector) {
   return { license: null, attribution: null };
 }
 
+/** Plafonds de requêtes par source pour la collecte ciblée (surchargeables : `<ID>_MAX_REQUESTS`). */
+export const DEFAULT_CAPS: Record<string, number> = {
+  'lidl-web': 160,
+  'aldi-api': 60,
+  'denner-web': 90,
+  'open-prices': 60,
+  foodally: 100,
+};
+
+export interface CollectOptions {
+  /** Collecte ciblée sur le noyau (besoins et fiches déjà reliées). */
+  targets?: { needs?: string[]; productUrls?: string[] };
+  /** Plafonds de requêtes par source (défaut : aucun, sauf variables `<ID>_MAX_REQUESTS`). */
+  caps?: Record<string, number>;
+}
+
+export interface CollectSummary {
+  connector: string;
+  status: LiveSnapshot['status'] | 'disabled' | 'not_configured' | 'awaiting_authorization' | 'blocked';
+  message?: string | null;
+  products: number;
+  prices: number;
+  promotions: number;
+  rejected: number;
+  anomalies: string;
+  requests: number;
+  cacheHits: number;
+  budgetExhausted: boolean;
+  durationMs: number;
+  /** Dernière collecte réussie de la source (inchangée en cas d'échec). */
+  collectedAt: string | null;
+}
+
+function capFor(ctx: JobContext, id: string, opts: CollectOptions): number {
+  const env = ctx.env.env[`${id.replace(/-/g, '_').toUpperCase()}_MAX_REQUESTS`];
+  const n = Number(env ?? opts.caps?.[id]);
+  return Number.isFinite(n) && n > 0 ? n : Number.POSITIVE_INFINITY;
+}
+
 /**
  * Collecte des prix réels (`collect [--only lidl-web,open-prices]`).
- * Chaque connecteur est isolé : l'échec ou le blocage de l'un n'empêche pas les autres.
- * Avec une base : enregistrement idempotent + alertes. Toujours : instantané dans
- * `data/prices/live/` (utilisé par le mode mémoire).
+ * Chaque connecteur est isolé (son propre client HTTP, son plafond de requêtes) : l'échec, le blocage
+ * ou le plafond de l'un n'empêche pas les autres. Avec une base : enregistrement idempotent + alertes.
+ * Toujours : instantané dans `data/prices/live/` (sources publiables) ou `data/private/live/`.
  */
-export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): Promise<Array<Record<string, unknown>>> {
+export async function jobCollect(ctx: JobContext, override?: PriceConnector[], opts: CollectOptions = {}): Promise<CollectSummary[]> {
   const only = typeof ctx.flags.only === 'string' ? new Set(ctx.flags.only.split(',')) : null;
   const deps = await connectorDeps(ctx);
-  const connectors = (override ?? priceConnectors(deps).filter((c) => LIVE_CONNECTOR_IDS.includes(c.id))).filter(
-    (c) => !only || only.has(c.id),
-  );
+  const order = only ? [...only] : [];
+  const connectors = (override ?? priceConnectors(deps).filter((c) => LIVE_CONNECTOR_IDS.includes(c.id)))
+    .filter((c) => !only || only.has(c.id))
+    // Ordre demandé (`--only a,b`) respecté ; sinon ordre du registre.
+    .sort((a, b) => (order.length ? order.indexOf(a.id) - order.indexOf(b.id) : 0));
   const archiveDir = ctx.env.env.RAW_ARCHIVE_DIR ?? join(ctx.env.dataDir, 'raw');
-  const fetcher = new PoliteFetcher({
-    userAgent: ctx.env.env.HTTP_USER_AGENT || DEFAULT_USER_AGENT,
-    minDelayMs: Number(ctx.env.env.CRAWL_MIN_DELAY_MS ?? 3000),
-    archiveDir: ctx.flags['no-archive'] ? null : archiveDir,
-    log: ctx.log,
-  });
+  const makeFetcher = (id: string) =>
+    new PoliteFetcher({
+      userAgent: ctx.env.env.HTTP_USER_AGENT || DEFAULT_USER_AGENT,
+      minDelayMs: Number(ctx.env.env.CRAWL_MIN_DELAY_MS ?? 3000),
+      archiveDir: ctx.flags['no-archive'] ? null : archiveDir,
+      cacheDir: join(ctx.env.dataDir, 'private', 'cache', 'http'),
+      maxRequests: capFor(ctx, id, opts),
+      log: ctx.log,
+    });
+  const totals = { requests: 0, bytes: 0, retries: 0, cacheHits: 0, blocked: {} as Record<string, string> };
   const reviewedMatches = await readReviewedMatches(ctx.env.dataDir);
   const previous = new Map((await readLiveSnapshots(ctx.env.dataDir)).map((s) => [s.connectorId, s]));
   const db: DbHandle | null = ctx.env.databaseUrl ? requireDb(ctx.env) : null;
-  const summary: Array<Record<string, unknown>> = [];
+  const summary: CollectSummary[] = [];
 
   try {
     for (const connector of connectors) {
       const status = await connector.status({ env: ctx.env.env });
       if (status.state !== 'ready') {
-        summary.push({ connector: connector.id, status: status.state, message: status.message });
+        summary.push({ connector: connector.id, status: status.state, message: status.message, products: 0, prices: 0, promotions: 0, rejected: 0, anomalies: '-', requests: 0, cacheHits: 0, budgetExhausted: false, durationMs: 0, collectedAt: previous.get(connector.id)?.collectedAt ?? null });
         continue;
       }
+      const started = Date.now();
+      const fetcher = makeFetcher(connector.id);
       const runId = db ? await startRun(db, connector.id, 'collect', String(ctx.flags.by ?? 'scheduler')) : null;
       const anomalies: Anomaly[] = [];
       let batch: ConnectorBatch | null = null;
       let runStatus: LiveSnapshot['status'] = 'success';
       let message: string | null = null;
       try {
-        batch = await connector.run({ now: ctx.now, log: ctx.log, env: ctx.env.env, fetcher, reviewedMatches, catalog: PRODUCTS });
-        if (batch.report.rejected.length > 0) runStatus = 'partial';
+        batch = await connector.run({ now: ctx.now, log: ctx.log, env: ctx.env.env, fetcher, reviewedMatches, catalog: PRODUCTS, targets: opts.targets });
+        // « partiel » : pages manquantes (échecs, plafond, hôte abandonné). Des articles écartés pour
+        // incohérence de la source relèvent du contrôle de qualité (colonne « rejetés »), pas d'une panne.
+        if (fetcher.stats.budgetExhausted || fetcher.stats.tripped.length > 0 || Number(batch.report.metrics?.pageFailures ?? 0) > 0) runStatus = 'partial';
+        if (fetcher.stats.budgetExhausted) message = `Plafond de requêtes atteint (${fetcher.stats.requests})`;
       } catch (e) {
         message = e instanceof Error ? e.message : String(e);
         runStatus = e instanceof HttpBlockedError ? 'blocked' : 'failed';
@@ -125,6 +175,11 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): 
         });
         ctx.log.error('Collecte en échec', { connector: connector.id, status: runStatus, message });
       }
+      totals.requests += fetcher.stats.requests;
+      totals.bytes += fetcher.stats.bytes;
+      totals.retries += fetcher.stats.retries;
+      totals.cacheHits += fetcher.stats.cacheHits;
+      Object.assign(totals.blocked, fetcher.stats.blocked);
 
       const prevSnap = previous.get(connector.id) ?? null;
       if (batch) {
@@ -135,7 +190,8 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): 
           if (s && typeof s.prices === 'number') {
             prevStats = { ...statsOf(connector.id, { report: { metrics: s } } as unknown as ConnectorBatch), products: Number(s.products ?? 0), prices: Number(s.prices), promotions: Number(s.promotions ?? 0) };
           }
-        } else if (prevSnap) {
+        } else if (prevSnap && (prevSnap.metrics.mode ?? 'complet') === (batch.report.metrics?.mode ?? 'complet')) {
+          // Volumes comparés seulement entre collectes du même mode (ciblée ou complète).
           prevStats = {
             ...statsOf(connector.id, { report: { metrics: prevSnap.metrics } } as unknown as ConnectorBatch),
             products: Number(prevSnap.metrics.products ?? 0),
@@ -185,19 +241,25 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): 
       summary.push({
         connector: connector.id,
         status: runStatus,
+        message,
         products: batch?.retailerProducts.length ?? 0,
         prices: batch?.prices.length ?? 0,
         promotions: batch?.promotions.length ?? 0,
         rejected: batch?.report.rejected.length ?? 0,
         anomalies: anomalies.map((a) => a.kind).join(',') || '-',
+        requests: fetcher.stats.requests,
+        cacheHits: fetcher.stats.cacheHits,
+        budgetExhausted: fetcher.stats.budgetExhausted,
+        durationMs: Date.now() - started,
+        collectedAt: snap.collectedAt,
       });
     }
   } finally {
     if (db) await db.close();
   }
   const purged = await purgeArchive(archiveDir, Number(ctx.env.env.RAW_ARCHIVE_DAYS ?? 30), ctx.now);
-  ctx.log.info('Collecte terminée', { requests: fetcher.stats.requests, bytes: fetcher.stats.bytes, retries: fetcher.stats.retries, blocked: fetcher.stats.blocked, archivesPurged: purged });
-  if (!ctx.flags.quiet) console.table(summary);
+  ctx.log.info('Collecte terminée', { ...totals, archivesPurged: purged });
+  if (!ctx.flags.quiet) console.table(summary.map(({ message: _m, ...r }) => r));
   return summary;
 }
 

@@ -18,6 +18,7 @@
     "typecheck": "pnpm -r --parallel typecheck",
     "lint": "pnpm --filter @cabas/web lint",
     "job": "pnpm --filter @cabas/worker job",
+    "quotidien": "pnpm -C apps/worker job quotidien",
     "db:migrate": "pnpm job migrate",
     "db:seed": "pnpm job seed",
     "data:refresh": "pnpm job daily",

@@ -1,7 +1,8 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-09-30T20:58:15.703Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-09-30T23:07:51.221Z` sur les instantanés versionnés :
 - `aldi-api` du 30.09.2026 (réutilisation : requires_authorization)
+- `denner-web` du 30.09.2026 (réutilisation : requires_authorization)
 - `lidl-web` du 30.09.2026 (réutilisation : no_restriction_found)
 - `open-prices` du 30.09.2026 (réutilisation : open_license)
 
@@ -15,80 +16,80 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 |---|---|---|---|---|---|---|
 | Migros | 0 | 0 | 0 | 0 | 1 | 49 |
 | Coop | 0 | 0 | 1 | 0 | 1 | 48 |
-| Denner | 0 | 0 | 0 | 0 | 1 | 49 |
+| Denner | 0 | 0 | 0 | 34 | 1 | 15 |
 | Aldi Suisse | 0 | 0 | 0 | 22 | 0 | 28 |
 | Lidl Suisse | 47 | 0 | 0 | 0 | 0 | 3 |
 
 | Besoins comparables dans au moins… | 1 enseigne | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| Version publique (sans Aldi) | 47 | 1 | 0 | 0 | 0 |
-| Pilote privé (avec Aldi) | 48 | 21 | 1 | 0 | 0 |
+| Version publique (sources publiables seulement) | 47 | 1 | 0 | 0 | 0 |
+| Pilote privé (avec Aldi et Denner) | 49 | 41 | 13 | 1 | 0 |
 
 ## Détail
 
 | Besoin | Migros | Coop | Denner | Aldi Suisse | Lidl Suisse | Public | Privé |
 |---|---|---|---|---|---|---|---|
 | **Fruits** | | | | | | | |
-| Bananes (1 kg) | — | — | — | — | ● 1.19 (1.19/kg) 28.09.2026 | 1 | 1 |
-| Pommes (Gala ou variété courante) (1 kg) | — | — | — | — | ● 2.79 (2.79/kg) 30.09.2026 | 1 | 1 |
-| Poires (1 kg) | — | — | — | — | ● 3.29 (3.29/kg) 30.09.2026 | 1 | 1 |
-| Oranges (filet) (2 kg) | — | — | — | — | ● 2.79 (1.40/kg) 28.09.2026 | 1 | 1 |
-| Citrons (500 g) | — | — | — | — | ● 1.79 (2.39/kg) 28.09.2026 | 1 | 1 |
+| Bananes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.19 (1.19/kg) 30.09.2026 | 1 | 2 |
+| Pommes (Gala ou variété courante) (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.99 (1.99/kg) 30.09.2026, action 01.10–07.10 | 1 | 2 |
+| Poires (1 kg) | — | — | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 30.09.2026, action 01.10–07.10 | 1 | 2 |
+| Oranges (filet) (2 kg) | — | — | ◐ collecté, non publiable | — | ● 2.79 (1.40/kg) 30.09.2026 | 1 | 2 |
+| Citrons (500 g) | — | — | ◐ collecté, non publiable | — | ● 1.79 (2.39/kg) 30.09.2026 | 1 | 2 |
 | **Légumes** | | | | | | | |
-| Carottes (1 kg) | — | — | — | — | ● 2.89 (1.93/kg) 30.09.2026 | 1 | 1 |
-| Oignons jaunes (1 kg) | — | — | — | — | ● 1.69 (1.69/kg) 30.09.2026 | 1 | 1 |
-| Tomates en grappe (500 g) | — | — | — | — | ● 3.79 (3.79/kg) 30.09.2026 | 1 | 1 |
-| Concombre (1 pièce) | — | — | — | — | ● 1.49 (1.49/pce) 30.09.2026 | 1 | 1 |
-| Poivrons mélangés (500 g) | — | — | — | — | ● 1.65 (3.30/kg) 28.09.2026 | 1 | 1 |
-| Courgettes (500 g) | — | — | — | — | ● 2.49 (2.49/kg) 28.09.2026 | 1 | 1 |
-| Salade iceberg (1 pièce) | — | — | — | — | ● 1.95 (1.95/pce) 28.09.2026 | 1 | 1 |
+| Carottes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 2.89 (1.93/kg) 30.09.2026 | 1 | 2 |
+| Oignons jaunes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.69 (1.69/kg) 30.09.2026 | 1 | 2 |
+| Tomates en grappe (500 g) | — | — | ◐ collecté, non publiable | — | ● 3.79 (3.79/kg) 30.09.2026 | 1 | 2 |
+| Concombre (1 pièce) | — | — | ◐ collecté, non publiable | — | ● 1.49 (1.49/pce) 30.09.2026 | 1 | 2 |
+| Poivrons mélangés (500 g) | — | — | ◐ collecté, non publiable | — | ● 1.65 (3.30/kg) 30.09.2026 | 1 | 2 |
+| Courgettes (500 g) | — | — | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 30.09.2026 | 1 | 2 |
+| Salade iceberg (1 pièce) | — | — | ◐ collecté, non publiable | — | ● 1.95 (1.95/pce) 30.09.2026 | 1 | 2 |
 | **Pommes de terre** | | | | | | | |
-| Pommes de terre fermes à la cuisson (2,5 kg) | — | — | — | — | ● 3.75 (1.50/kg) 28.09.2026 | 1 | 1 |
-| Pommes de terre farineuses (2,5 kg) | — | — | — | — | ● 3.75 (1.50/kg) 28.09.2026 | 1 | 1 |
+| Pommes de terre fermes à la cuisson (2,5 kg) | — | — | ◐ collecté, non publiable | — | ● 3.75 (1.50/kg) 30.09.2026 | 1 | 2 |
+| Pommes de terre farineuses (2,5 kg) | — | — | ◐ collecté, non publiable | — | ● 3.75 (1.50/kg) 30.09.2026 | 1 | 2 |
 | **Pâtes, riz et céréales** | | | | | | | |
-| Riz long grain (1 kg) | — | — | — | ◐ 2.38 (2.38/kg) 30.09.2026 | ● 1.35 (1.35/kg) 30.09.2026 | 1 | 2 |
-| Spaghetti (500 g) | — | — | — | ◐ 1.19 (2.38/kg) 30.09.2026 | ● 0.89 (1.78/kg) 30.09.2026 | 1 | 2 |
-| Penne (500 g) | — | ○ 2.50 (5.00/kg) 04.08.2026 | — | ◐ 1.19 (1.19/kg) 30.09.2026 | ● 1.19 (1.19/kg) 30.09.2026 | 2 | 3 |
-| Flocons d’avoine (500 g) | — | — | — | ◐ 0.69 (1.38/kg) 30.09.2026 | ● 0.69 (1.38/kg) 30.09.2026 | 1 | 2 |
+| Riz long grain (1 kg) | — | — | — | ◐ collecté, non publiable | ● 1.35 (1.35/kg) 30.09.2026 | 1 | 2 |
+| Spaghetti (500 g) | — | — | — | ◐ collecté, non publiable | ● 0.89 (1.78/kg) 30.09.2026 | 1 | 2 |
+| Penne (500 g) | — | ○ 2.50 (5.00/kg) 04.08.2026 | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 1.19 (1.19/kg) 30.09.2026 | 2 | 4 |
+| Flocons d’avoine (500 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 0.69 (1.38/kg) 30.09.2026 | 1 | 3 |
 | Polenta (500 g) | — | — | — | — | ● 1.45 (1.45/kg) 30.09.2026 | 1 | 1 |
-| Lentilles vertes (500 g) | — | — | — | ◐ 1.89 (3.78/kg) 30.09.2026 | — | 0 | 1 |
+| Lentilles vertes (500 g) | — | — | — | ◐ collecté, non publiable | — | 0 | 1 |
 | **Farine, sucre et sel** | | | | | | | |
-| Farine blanche (1 kg) | — | — | — | — | ● 0.99 (0.99/kg) 30.09.2026 | 1 | 1 |
-| Farine mi-blanche (1 kg) | — | — | — | — | — | 0 | 0 |
+| Farine blanche (1 kg) | — | — | ◐ collecté, non publiable | — | ● 0.99 (0.99/kg) 30.09.2026 | 1 | 2 |
+| Farine mi-blanche (1 kg) | — | — | ◐ collecté, non publiable | — | — | 0 | 1 |
 | Sucre cristallisé (1 kg) | — | — | — | — | ● 1.49 (1.49/kg) 30.09.2026 | 1 | 1 |
-| Sel de cuisine iodé (1 kg) | — | — | — | — | ● 1.05 (1.05/kg) 28.09.2026 | 1 | 1 |
+| Sel de cuisine iodé (1 kg) | — | — | — | — | ● 1.05 (1.05/kg) 30.09.2026 | 1 | 1 |
 | **Huiles, vinaigres et condiments** | | | | | | | |
-| Huile de tournesol (1 l) | — | — | — | — | ● 3.99 (3.99/l) 30.09.2026 | 1 | 1 |
-| Huile de colza (1 l) | — | — | — | ◐ 3.49 (3.49/l) 30.09.2026 | ● 3.49 (3.49/l) 30.09.2026 | 1 | 2 |
-| Huile d’olive extra vierge (1 l) | — | — | — | ◐ 10.98 (10.98/l) 30.09.2026 | ● 9.99 (9.99/l) 30.09.2026 | 1 | 2 |
+| Huile de tournesol (1 l) | — | — | ◐ collecté, non publiable | — | ● 3.99 (3.99/l) 30.09.2026 | 1 | 2 |
+| Huile de colza (1 l) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 2.99 (2.99/l) 30.09.2026, action 01.10–07.10 | 1 | 3 |
+| Huile d’olive extra vierge (1 l) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 9.95 (9.95/l) 30.09.2026, action 01.10–03.10 | 1 | 3 |
 | Vinaigre de vin (1 l) | — | — | — | — | — | 0 | 0 |
 | **Lait, beurre et fromages** | | | | | | | |
-| Lait entier UHT (1 l) | — | — | — | — | ● 1.55 (1.55/l) 30.09.2026 | 1 | 1 |
-| Lait demi-écrémé UHT (1 l) | — | — | — | — | ● 1.45 (1.45/l) 30.09.2026 | 1 | 1 |
-| Beurre de cuisine (250 g) | — | — | — | ◐ 3.39 (13.56/kg) 30.09.2026 | ● 3.39 (13.56/kg) 30.09.2026 | 1 | 2 |
-| Beurre de choix (200 g) | — | — | — | ◐ 3.85 (15.40/kg) 30.09.2026 | ● 3.09 (1.55/100g) 30.09.2026 | 1 | 2 |
+| Lait entier UHT (1 l) | — | — | ◐ collecté, non publiable | — | ● 1.55 (1.55/l) 30.09.2026 | 1 | 2 |
+| Lait demi-écrémé UHT (1 l) | — | — | ◐ collecté, non publiable | — | ● 1.45 (1.45/l) 30.09.2026 | 1 | 2 |
+| Beurre de cuisine (250 g) | — | — | — | ◐ collecté, non publiable | ● 3.39 (13.56/kg) 30.09.2026 | 1 | 2 |
+| Beurre de choix (200 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 3.09 (1.55/100g) 30.09.2026 | 1 | 3 |
 | Crème entière (250 ml) | — | — | — | — | ● 2.09 (8.36/l) 30.09.2026 | 1 | 1 |
-| Yogourt nature (180 g) | — | — | — | — | ● 0.45 (0.23/100g) 28.09.2026 | 1 | 1 |
+| Yogourt nature (180 g) | — | — | ◐ collecté, non publiable | — | ● 0.45 (0.23/100g) 30.09.2026 | 1 | 2 |
 | Séré maigre (500 g) | — | — | · trop ancien (22.09.2025) | — | ● 1.25 (2.50/kg) 30.09.2026 | 1 | 1 |
-| Gruyère AOP (250 g) | — | — | — | ◐ 5.98 (1.50/100g) 30.09.2026, action 28.09–04.10 | ● 5.98 (1.50/100g) 28.09.2026 | 1 | 2 |
-| Emmentaler AOP (250 g) | — | — | — | ◐ 3.85 (15.40/kg) 30.09.2026 | ● 4.19 (16.76/kg) 28.09.2026 | 1 | 2 |
-| Mozzarella (150 g) | · trop ancien (01.09.2025) | · trop ancien (01.09.2025) | — | ◐ 1.45 (0.97/100g) 30.09.2026 | ● 1.45 (0.97/100g) 28.09.2026 | 1 | 2 |
+| Gruyère AOP (250 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 5.98 (1.50/100g) 30.09.2026 | 1 | 3 |
+| Emmentaler AOP (250 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 4.19 (16.76/kg) 30.09.2026 | 1 | 3 |
+| Mozzarella (150 g) | · trop ancien (01.09.2025) | · trop ancien (01.09.2025) | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 1.45 (0.97/100g) 30.09.2026 | 1 | 3 |
 | **Œufs** | | | | | | | |
 | Œufs suisses d’élevage au sol (6 pièces) | — | — | — | — | ● 2.69 (0.45/pce) 30.09.2026 | 1 | 1 |
-| Œufs suisses de plein air (6 pièces) | — | — | — | — | ● 4.29 (0.54/pce) 30.09.2026 | 1 | 1 |
+| Œufs suisses de plein air (6 pièces) | — | — | ◐ collecté, non publiable | — | ● 4.29 (0.54/pce) 30.09.2026 | 1 | 2 |
 | **Pain et boulangerie** | | | | | | | |
-| Pain mi-blanc (500 g) | — | — | — | ◐ 0.99 (1.98/kg) 30.09.2026 | ● 0.99 (1.98/kg) 28.09.2026 | 1 | 2 |
-| Pain complet (500 g) | — | — | — | ◐ 2.99 (5.98/kg) 30.09.2026 | ● 5.38 (7.69/kg) 28.09.2026 | 1 | 2 |
+| Pain mi-blanc (500 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 0.99 (1.98/kg) 30.09.2026 | 1 | 3 |
+| Pain complet (500 g) | — | — | — | ◐ collecté, non publiable | ● 5.38 (7.69/kg) 30.09.2026 | 1 | 2 |
 | **Viande et poisson** | | | | | | | |
-| Poitrine de poulet suisse (500 g) | — | — | — | ◐ 13.50 (22.50/kg) 30.09.2026 | ● 13.50 (22.50/kg) 28.09.2026 | 1 | 2 |
-| Viande hachée de bœuf (500 g) | — | — | — | ◐ 7.79 (15.58/kg) 30.09.2026 | ● 7.79 (15.58/kg) 30.09.2026 | 1 | 2 |
-| Jambon cuit en tranches (150 g) | — | — | — | ◐ 3.29 (1.65/100g) 30.09.2026 | ● 2.49 (1.66/100g) 30.09.2026 | 1 | 2 |
+| Poitrine de poulet suisse (500 g) | — | — | — | ◐ collecté, non publiable | ● 13.50 (22.50/kg) 30.09.2026 | 1 | 2 |
+| Viande hachée de bœuf (500 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 7.79 (15.58/kg) 30.09.2026 | 1 | 3 |
+| Jambon cuit en tranches (150 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 2.49 (1.66/100g) 30.09.2026 | 1 | 3 |
 | **Conserves** | | | | | | | |
-| Thon à l’huile (3 boîtes) (240 g) | — | — | — | ◐ 2.70 (0.96/100g) 28.09.2026, action 28.09–04.10 | ● 2.70 (0.96/100g) 30.09.2026 | 1 | 2 |
-| Tomates concassées (400 g) | — | — | — | ◐ 0.59 (1.48/kg) 30.09.2026, action 07.09–30.09 | ● 0.75 (1.88/kg) 30.09.2026 | 1 | 2 |
-| Pois chiches (400 g) | — | — | — | ◐ 2.24 (4.23/kg) 30.09.2026 | ● 1.69 (4.23/kg) 30.09.2026 | 1 | 2 |
+| Thon à l’huile (3 boîtes) (240 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 2.70 (0.96/100g) 30.09.2026 | 1 | 3 |
+| Tomates concassées (400 g) | — | — | — | ◐ collecté, non publiable | ● 0.75 (1.88/kg) 30.09.2026 | 1 | 2 |
+| Pois chiches (400 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 1.69 (4.23/kg) 30.09.2026 | 1 | 3 |
 | **Petit-déjeuner, café et douceurs** | | | | | | | |
-| Confiture de fraises (500 g) | — | — | — | ◐ 1.19 (2.64/kg) 30.09.2026 | ● 1.19 (2.64/kg) 28.09.2026 | 1 | 2 |
-| Café moulu (500 g) | — | — | — | ◐ 3.49 (6.98/kg) 30.09.2026 | ● 3.49 (6.98/kg) 28.09.2026 | 1 | 2 |
+| Confiture de fraises (500 g) | — | — | — | ◐ collecté, non publiable | ● 1.19 (2.64/kg) 30.09.2026 | 1 | 2 |
+| Café moulu (500 g) | — | — | — | ◐ collecté, non publiable | ● 3.49 (6.98/kg) 30.09.2026 | 1 | 2 |
 
-Les cellules « relevé local » ne valent que pour le magasin relevé ; « Open Prices » : relevé communautaire d’un magasin, généralisé à la zone (Migros) ou au pays selon la politique tarifaire de l’enseigne ; « privé seulement » : prix Aldi, dont les conditions d’utilisation réservent le site à un usage privé (jamais publiés sans autorisation écrite).
+Les cellules « relevé local » ne valent que pour le magasin relevé ; « Open Prices » : relevé communautaire d’un magasin, généralisé à la zone (Migros) ou au pays selon la politique tarifaire de l’enseigne ; « privé seulement » : prix Aldi et Denner, dont les conditions réservent l’usage à des fins privées ou interdisent la publication (jamais publiés sans autorisation écrite ; dans le fichier versionné, seul le statut apparaît).

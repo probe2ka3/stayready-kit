@@ -1,9 +1,9 @@
 # Paniers de démonstration — résultats reproductibles
 
-Calculé avec `pnpm job demo-baskets --now=2026-09-30T19:00:00.000Z --baskets=panier-noyau.json --exclude=aldi-api` sur les instantanés versionnés
-(aldi-api du 2026-09-30, lidl-web du 2026-09-30, open-prices du 2026-09-30).
+Calculé avec `pnpm job demo-baskets --now=2026-09-30T23:07:51.221Z --baskets=panier-noyau.json --exclude=aldi-api,denner-web` sur les instantanés versionnés
+(aldi-api du 2026-09-30, denner-web du 2026-09-30, lidl-web du 2026-09-30, open-prices du 2026-09-30).
 Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.
-**Sources exclues : aldi-api** — ce que verrait le public en production sans autorisation (docs/DROITS_DONNEES.md).
+**Sources exclues : aldi-api, denner-web** — ce que verrait le public en production sans autorisation (docs/DROITS_DONNEES.md).
 
 ## Bulle — panier de base, 17 aliments du noyau (5 enseignes)
 
@@ -17,27 +17,25 @@ Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × 1.3, durée 
 
 | Article demandé | Migros : article, paquets, montant | Coop : article, paquets, montant | Denner : article, paquets, montant | Aldi Suisse : article, paquets, montant | Lidl Suisse : article, paquets, montant | Retenu |
 |---|---|---|---|---|---|---|
-| 1 × Bananes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Bananes 1 kg × 1 = **1.19** (indicatif, relevé 28.09) | Lidl Suisse |
-| 1 × Pommes (Gala ou variété courante) (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | QUALITÉ SUISSE Pommes rouges suisses 1 kg × 1 = **1.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | Lidl Suisse |
-| 1 × Carottes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Carottes suisses 1,5 kg × 1 = **2.89** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Oignons jaunes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Oignons suisses 1 kg × 1 = **1.69** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Pommes de terre fermes à la cuisson (2,5 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Pommes de terre cireuses suisses 2,5 kg × 1 = **3.75** (indicatif, relevé 28.09) | Lidl Suisse |
-| 1 × Farine blanche (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Farine blanche 1 kg × 1 = **0.99** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Sucre cristallisé (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Sucre cristallisé fin 1 kg × 1 = **1.49** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Huile de colza (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | VITA D’OR Huile de colza 1 l × 1 = **2.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | Lidl Suisse |
-| 1 × Riz long grain (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Riz long grain parbolied 1 kg × 1 = **1.35** (indicatif, relevé 30.09) | Lidl Suisse |
-| 2 × Spaghetti (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Spaghetti 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Lidl Suisse |
-| 4 × Lait entier UHT (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Lait entier 3.5% UHT 1 l × 4 = **6.20** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Beurre de cuisine (250 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Beurre de cuisine suisse 250 g × 1 = **3.39** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Œufs suisses d’élevage au sol (6 pièces) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Oeufs suisses élevage au sol 6 pièces × 1 = **2.69** (indicatif, relevé 30.09) | Lidl Suisse |
-| 4 × Yogourt nature (180 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Yogourt nature 1.5% 500 g × 2 = **1.58** (indicatif, relevé 28.09) | Lidl Suisse |
-| 1 × Gruyère AOP (250 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Gruyère AOP doux 200 g × 2 = **5.98** (indicatif, relevé 28.09) | Lidl Suisse |
-| 1 × Pain mi-blanc (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Pain mi-blanc 500 g × 1 = **0.99** (indicatif, relevé 28.09) | Lidl Suisse |
-| 2 × Tomates concassées (400 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | Piacelli Polpa in Pezzetti 400 g × 2 = **1.50** (indicatif, relevé 30.09) | Lidl Suisse |
-
-Même panier aujourd’hui (30.09) : 43.15 ; le 01.10 : 41.85 (actions qui commencent : 2, qui auront expiré : 0).
+| 1 × Bananes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Bananes 1 kg × 1 = **1.19** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Pommes (Gala ou variété courante) (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | QUALITÉ SUISSE Pommes rouges suisses 1 kg × 1 = **1.99** (action confirmée, relevé 30.09 ; action en cours 01.10–07.10) | Lidl Suisse |
+| 1 × Carottes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Carottes suisses 1,5 kg × 1 = **2.89** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Oignons jaunes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Oignons suisses 1 kg × 1 = **1.69** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Pommes de terre fermes à la cuisson (2,5 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Pommes de terre cireuses suisses 2,5 kg × 1 = **3.75** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Farine blanche (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Farine blanche 1 kg × 1 = **0.99** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Sucre cristallisé (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Sucre cristallisé fin 1 kg × 1 = **1.49** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Huile de colza (1 l) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | VITA D’OR Huile de colza 1 l × 1 = **2.99** (action confirmée, relevé 30.09 ; action en cours 01.10–07.10) | Lidl Suisse |
+| 1 × Riz long grain (1 kg) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Riz long grain parbolied 1 kg × 1 = **1.35** (vérifié, relevé 30.09) | Lidl Suisse |
+| 2 × Spaghetti (500 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Spaghetti 1 kg × 1 = **1.19** (vérifié, relevé 30.09) | Lidl Suisse |
+| 4 × Lait entier UHT (1 l) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Lait entier 3.5% UHT 1 l × 4 = **6.20** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Beurre de cuisine (250 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Beurre de cuisine suisse 250 g × 1 = **3.39** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Œufs suisses d’élevage au sol (6 pièces) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Oeufs suisses élevage au sol 6 pièces × 1 = **2.69** (vérifié, relevé 30.09) | Lidl Suisse |
+| 4 × Yogourt nature (180 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Yogourt nature 1.5% 500 g × 2 = **1.58** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Gruyère AOP (250 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Gruyère AOP doux 200 g × 2 = **5.98** (vérifié, relevé 30.09) | Lidl Suisse |
+| 1 × Pain mi-blanc (500 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Pain mi-blanc 500 g × 1 = **0.99** (vérifié, relevé 30.09) | Lidl Suisse |
+| 2 × Tomates concassées (400 g) | aucune donnée gratuite | aucune donnée gratuite | non affiché (source sans autorisation de réutilisation) | non affiché (source sans autorisation de réutilisation) | Piacelli Polpa in Pezzetti 400 g × 2 = **1.50** (vérifié, relevé 30.09) | Lidl Suisse |
 
 Coût du panier selon le jour (magasins retenus, actions publiées uniquement) : 01.10 41.85 · 02.10 41.85 · 03.10 41.85 · 04.10 41.85 · 05.10 41.85 · 06.10 41.85 · 07.10 41.85 · 08.10 43.15 · 09.10 43.15 · 10.10 43.15.
 
-Dates des relevés : lidl 28.09–30.09. Avertissements : travel_estimated.
+Dates des relevés : lidl 30.09–30.09. Avertissements : travel_estimated.
 

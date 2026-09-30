@@ -1,19 +1,24 @@
 {
- "generatedAt": "2026-09-30T20:58:15.703Z",
+ "generatedAt": "2026-09-30T23:07:51.221Z",
  "sources": [
   {
    "connectorId": "aldi-api",
-   "collectedAt": "2026-09-30T16:55:13.404Z",
+   "collectedAt": "2026-09-30T22:28:55.304Z",
+   "publicUse": "requires_authorization"
+  },
+  {
+   "connectorId": "denner-web",
+   "collectedAt": "2026-09-30T22:51:04.735Z",
    "publicUse": "requires_authorization"
   },
   {
    "connectorId": "lidl-web",
-   "collectedAt": "2026-09-30T16:53:05.577Z",
+   "collectedAt": "2026-09-30T22:28:55.304Z",
    "publicUse": "no_restriction_found"
   },
   {
    "connectorId": "open-prices",
-   "collectedAt": "2026-09-30T20:51:04.747Z",
+   "collectedAt": "2026-09-30T23:07:27.958Z",
    "publicUse": "open_license"
   }
  ],
@@ -51,8 +56,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -86,7 +91,7 @@
      },
      "productName": "Bananes",
      "packs": 1,
-     "observedAt": "2026-09-28T07:17:06.686Z",
+     "observedAt": "2026-09-30T22:32:51.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -94,7 +99,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "pommes-gala-1kg",
@@ -129,8 +134,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -157,22 +162,28 @@
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 279,
+     "totalCents": 199,
      "unitPrice": {
       "basis": "kg",
-      "cents": 279
+      "cents": 199
      },
      "productName": "QUALITÉ SUISSE Pommes rouges suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:52:53.589Z",
+     "observedAt": "2026-09-30T22:34:09.567Z",
      "scope": "national",
      "place": null,
-     "promotion": null,
-     "reasons": []
+     "promotion": {
+      "validFrom": "2026-10-01",
+      "validTo": "2026-10-07",
+      "confirmed": true
+     },
+     "reasons": [
+      "while_stocks_last"
+     ]
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "poires-1kg",
@@ -207,8 +218,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -235,22 +246,28 @@
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 329,
+     "totalCents": 249,
      "unitPrice": {
       "basis": "kg",
-      "cents": 329
+      "cents": 249
      },
      "productName": "QUALITÉ SUISSE Poires suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:52:53.589Z",
+     "observedAt": "2026-09-30T22:34:09.567Z",
      "scope": "national",
      "place": null,
-     "promotion": null,
-     "reasons": []
+     "promotion": {
+      "validFrom": "2026-10-01",
+      "validTo": "2026-10-07",
+      "confirmed": true
+     },
+     "reasons": [
+      "while_stocks_last"
+     ]
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "oranges-2kg",
@@ -285,8 +302,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -320,7 +337,7 @@
      },
      "productName": "Oranges",
      "packs": 1,
-     "observedAt": "2026-09-28T07:18:39.594Z",
+     "observedAt": "2026-09-30T22:32:54.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -328,7 +345,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "citrons-500g",
@@ -363,8 +380,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -398,7 +415,7 @@
      },
      "productName": "Citrons",
      "packs": 1,
-     "observedAt": "2026-09-28T08:02:12.569Z",
+     "observedAt": "2026-09-30T22:32:03.039Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -408,7 +425,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "carottes-1kg",
@@ -443,8 +460,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -478,7 +495,7 @@
      },
      "productName": "Carottes suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:31:08.098Z",
+     "observedAt": "2026-09-30T22:32:06.033Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -488,7 +505,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "oignons-1kg",
@@ -523,8 +540,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -558,7 +575,7 @@
      },
      "productName": "Oignons suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:27:08.097Z",
+     "observedAt": "2026-09-30T22:30:39.339Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -566,7 +583,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "tomates-grappe-500g",
@@ -601,8 +618,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -636,7 +653,7 @@
      },
      "productName": "Tomates en grappe suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:31:08.098Z",
+     "observedAt": "2026-09-30T22:32:15.034Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -646,7 +663,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "concombre-1",
@@ -681,8 +698,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -716,7 +733,7 @@
      },
      "productName": "Concombres suisses",
      "packs": 1,
-     "observedAt": "2026-09-30T16:31:08.098Z",
+     "observedAt": "2026-09-30T22:32:18.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -724,7 +741,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "poivrons-500g",
@@ -759,8 +776,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -794,7 +811,7 @@
      },
      "productName": "Poivrons tricolores",
      "packs": 1,
-     "observedAt": "2026-09-28T06:59:09.304Z",
+     "observedAt": "2026-09-30T22:32:27.033Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -802,7 +819,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "courgettes-500g",
@@ -837,8 +854,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -870,9 +887,9 @@
       "basis": "kg",
       "cents": 249
      },
-     "productName": "Courgettes suisses",
+     "productName": "Courgettes",
      "packs": 1,
-     "observedAt": "2026-09-28T07:00:51.648Z",
+     "observedAt": "2026-09-30T22:32:24.410Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -882,7 +899,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "salade-iceberg-1",
@@ -917,8 +934,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -952,7 +969,7 @@
      },
      "productName": "Laitue iceberg suisse",
      "packs": 1,
-     "observedAt": "2026-09-28T07:02:00.606Z",
+     "observedAt": "2026-09-30T22:32:30.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -960,7 +977,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "pdt-fermes-2500g",
@@ -995,8 +1012,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1030,7 +1047,7 @@
      },
      "productName": "Pommes de terre cireuses suisses",
      "packs": 1,
-     "observedAt": "2026-09-28T08:26:48.571Z",
+     "observedAt": "2026-09-30T22:33:33.286Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1038,7 +1055,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "pdt-farineuses-2500g",
@@ -1073,8 +1090,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1108,7 +1125,7 @@
      },
      "productName": "Pommes de terre farineuses suisses",
      "packs": 1,
-     "observedAt": "2026-09-28T08:23:33.568Z",
+     "observedAt": "2026-09-30T22:33:30.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1116,7 +1133,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "riz-long-1kg",
@@ -1166,20 +1183,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 238,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 238
-     },
-     "productName": "Riz à grains longs",
-     "packs": 2,
-     "observedAt": "2026-09-30T16:53:49.507Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -1191,7 +1203,7 @@
      },
      "productName": "Riz long grain parbolied",
      "packs": 1,
-     "observedAt": "2026-09-30T16:30:50.095Z",
+     "observedAt": "2026-09-30T22:30:45.356Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1249,15 +1261,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 119,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 238
-     },
-     "productName": "Spaghetti, blé dur",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:54:43.438Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -1272,7 +1281,7 @@
      },
      "productName": "Spaghetti",
      "packs": 1,
-     "observedAt": "2026-09-30T16:30:47.097Z",
+     "observedAt": "2026-09-30T22:31:54.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1322,8 +1331,8 @@
      ]
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1337,20 +1346,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 119,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 119
-     },
-     "productName": "Penne rigate",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:13.650Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -1362,7 +1366,7 @@
      },
      "productName": "Penne Rigate",
      "packs": 1,
-     "observedAt": "2026-09-30T16:27:11.097Z",
+     "observedAt": "2026-09-30T22:30:51.338Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1372,7 +1376,7 @@
     }
    },
    "publicChains": 2,
-   "privateChains": 3
+   "privateChains": 4
   },
   {
    "slug": "flocons-avoine-500g",
@@ -1407,8 +1411,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1422,15 +1426,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 69,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 138
-     },
-     "productName": "Flocons d’avoine, tendres",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:54:31.370Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -1445,7 +1446,7 @@
      },
      "productName": "Fiocons d'avoine gros",
      "packs": 1,
-     "observedAt": "2026-09-30T16:30:56.097Z",
+     "observedAt": "2026-09-30T22:31:57.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1453,7 +1454,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "polenta-500g",
@@ -1523,7 +1524,7 @@
      },
      "productName": "Polenta instantanée",
      "packs": 1,
-     "observedAt": "2026-09-30T16:28:29.098Z",
+     "observedAt": "2026-09-30T22:31:12.300Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1583,15 +1584,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 189,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 378
-     },
-     "productName": "Légumineuses, lentille de montagne",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:54:07.466Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -1646,8 +1644,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1681,7 +1679,7 @@
      },
      "productName": "Farine blanche",
      "packs": 1,
-     "observedAt": "2026-09-30T16:28:26.094Z",
+     "observedAt": "2026-09-30T22:31:09.297Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1689,7 +1687,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "farine-mi-blanche-1kg",
@@ -1724,8 +1722,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1764,7 +1762,7 @@
     }
    },
    "publicChains": 0,
-   "privateChains": 0
+   "privateChains": 1
   },
   {
    "slug": "sucre-cristal-1kg",
@@ -1834,7 +1832,7 @@
      },
      "productName": "Sucre cristallisé fin",
      "packs": 1,
-     "observedAt": "2026-09-30T16:28:26.094Z",
+     "observedAt": "2026-09-30T22:31:03.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1912,7 +1910,7 @@
      },
      "productName": "JuraSel Sel",
      "packs": 1,
-     "observedAt": "2026-09-28T07:09:48.604Z",
+     "observedAt": "2026-09-30T22:32:48.345Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1955,8 +1953,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -1990,7 +1988,7 @@
      },
      "productName": "Huile de tournesol",
      "packs": 1,
-     "observedAt": "2026-09-30T16:30:20.096Z",
+     "observedAt": "2026-09-30T22:31:48.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -1998,7 +1996,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "huile-colza-1l",
@@ -2033,8 +2031,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2048,15 +2046,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 349,
-     "unitPrice": {
-      "basis": "l",
-      "cents": 349
-     },
-     "productName": "Huile de colza",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:34.770Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -2064,22 +2059,28 @@
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 349,
+     "totalCents": 299,
      "unitPrice": {
       "basis": "l",
-      "cents": 349
+      "cents": 299
      },
-     "productName": "Huile de colza",
+     "productName": "VITA D’OR Huile de colza",
      "packs": 1,
-     "observedAt": "2026-09-30T16:30:20.096Z",
+     "observedAt": "2026-09-30T22:34:09.567Z",
      "scope": "national",
      "place": null,
-     "promotion": null,
-     "reasons": []
+     "promotion": {
+      "validFrom": "2026-10-01",
+      "validTo": "2026-10-07",
+      "confirmed": true
+     },
+     "reasons": [
+      "while_stocks_last"
+     ]
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "huile-olive-1l",
@@ -2114,8 +2115,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2129,40 +2130,41 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 1098,
-     "unitPrice": {
-      "basis": "l",
-      "cents": 1098
-     },
-     "productName": "Huile d’olive vierge extra de Grèce",
-     "packs": 2,
-     "observedAt": "2026-09-30T16:53:31.425Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 999,
+     "totalCents": 995,
      "unitPrice": {
       "basis": "l",
-      "cents": 999
+      "cents": 995
      },
-     "productName": "Sabo Extra Vergine Huile d'olive",
+     "productName": "MONINI Huile d’olive vierge extra",
      "packs": 1,
-     "observedAt": "2026-09-30T16:34:29.377Z",
+     "observedAt": "2026-09-30T22:34:18.330Z",
      "scope": "national",
      "place": null,
-     "promotion": null,
-     "reasons": []
+     "promotion": {
+      "validFrom": "2026-10-01",
+      "validTo": "2026-10-03",
+      "confirmed": true
+     },
+     "reasons": [
+      "while_stocks_last"
+     ]
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "vinaigre-vin-1l",
@@ -2272,8 +2274,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2307,7 +2309,7 @@
      },
      "productName": "Lait entier 3.5% UHT",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:08.101Z",
+     "observedAt": "2026-09-30T22:31:15.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2315,7 +2317,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "lait-demi-uht-1l",
@@ -2350,8 +2352,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2385,7 +2387,7 @@
      },
      "productName": "Lait drink 1.5% UHT",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:08.101Z",
+     "observedAt": "2026-09-30T22:31:18.336Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2393,7 +2395,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "beurre-cuisine-250g",
@@ -2443,15 +2445,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 339,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 1356
-     },
-     "productName": "Beurre de cuisine",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:19.928Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -2466,7 +2465,7 @@
      },
      "productName": "Beurre de cuisine suisse",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:11.096Z",
+     "observedAt": "2026-09-30T22:31:27.032Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2509,8 +2508,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2524,20 +2523,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 385,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 1540
-     },
-     "productName": "Beurre",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:19.928Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -2549,7 +2543,7 @@
      },
      "productName": "Beurre de choix",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:11.096Z",
+     "observedAt": "2026-09-30T22:31:24.317Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2557,7 +2551,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "creme-entiere-250ml",
@@ -2627,7 +2621,7 @@
      },
      "productName": "Crème entière 35% UHT",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:08.101Z",
+     "observedAt": "2026-09-30T22:31:21.338Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2670,8 +2664,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2705,7 +2699,7 @@
      },
      "productName": "Yogourt nature ferme",
      "packs": 1,
-     "observedAt": "2026-09-28T07:22:03.623Z",
+     "observedAt": "2026-09-30T22:33:09.355Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2715,7 +2709,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "sere-maigre-500g",
@@ -2785,7 +2779,7 @@
      },
      "productName": "Séré maigre",
      "packs": 1,
-     "observedAt": "2026-09-30T16:27:02.096Z",
+     "observedAt": "2026-09-30T22:30:30.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2828,8 +2822,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2843,27 +2837,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 598,
-     "unitPrice": {
-      "basis": "100g",
-      "cents": 150
-     },
-     "productName": "Le Gruyère AOP, doux",
-     "packs": 2,
-     "observedAt": "2026-09-30T16:53:25.367Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
-     "promotion": {
-      "validFrom": "2026-09-28",
-      "validTo": "2026-10-04",
-      "confirmed": false
-     },
-     "reasons": [
-      "promo_end_presumed",
-      "promo_not_confirmed_on_date",
-      "while_stocks_last",
-      "pack_size_differs"
-     ]
+     "promotion": null,
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -2875,7 +2857,7 @@
      },
      "productName": "Gruyère AOP doux",
      "packs": 2,
-     "observedAt": "2026-09-28T07:07:36.591Z",
+     "observedAt": "2026-09-30T22:32:45.029Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2885,7 +2867,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "emmentaler-aop-250g",
@@ -2920,8 +2902,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -2935,15 +2917,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 385,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 1540
-     },
-     "productName": "Emmentaler AOP, doux",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:31.425Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -2958,7 +2937,7 @@
      },
      "productName": "Emmentaler AOP surchoix",
      "packs": 1,
-     "observedAt": "2026-09-28T08:00:18.593Z",
+     "observedAt": "2026-09-30T22:33:18.292Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -2966,7 +2945,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "mozzarella-150g",
@@ -3001,8 +2980,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3016,15 +2995,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 145,
-     "unitPrice": {
-      "basis": "100g",
-      "cents": 97
-     },
-     "productName": "Mozzarella",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:22.858Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3039,7 +3015,7 @@
      },
      "productName": "Mozzarella suisse",
      "packs": 1,
-     "observedAt": "2026-09-28T07:07:15.638Z",
+     "observedAt": "2026-09-30T22:32:36.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3047,7 +3023,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "oeufs-sol-6",
@@ -3117,7 +3093,7 @@
      },
      "productName": "Oeufs suisses élevage au sol",
      "packs": 1,
-     "observedAt": "2026-09-30T16:51:08.364Z",
+     "observedAt": "2026-09-30T22:30:33.041Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3160,8 +3136,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3195,7 +3171,7 @@
      },
      "productName": "Oeufs suisses élevage plein air",
      "packs": 1,
-     "observedAt": "2026-09-30T16:51:05.366Z",
+     "observedAt": "2026-09-30T22:30:36.032Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3205,7 +3181,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "pain-mi-blanc-500g",
@@ -3240,8 +3216,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3255,15 +3231,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 99,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 198
-     },
-     "productName": "Pain mi-blanc",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:31.425Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3278,7 +3251,7 @@
      },
      "productName": "Pain mi-blanc",
      "packs": 1,
-     "observedAt": "2026-09-28T08:15:51.665Z",
+     "observedAt": "2026-09-30T22:33:21.324Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3286,7 +3259,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "pain-complet-500g",
@@ -3336,15 +3309,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 299,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 598
-     },
-     "productName": "Pain complet à l'épeautre",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:49.507Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3359,7 +3329,7 @@
      },
      "productName": "Pain complet",
      "packs": 2,
-     "observedAt": "2026-09-28T08:17:06.304Z",
+     "observedAt": "2026-09-30T22:33:24.054Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3419,20 +3389,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 1350,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 2250
-     },
-     "productName": "Poitrine de poulet",
-     "packs": 2,
-     "observedAt": "2026-09-30T16:53:19.928Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -3444,7 +3409,7 @@
      },
      "productName": "Poitrine de poulet",
      "packs": 2,
-     "observedAt": "2026-09-28T07:20:12.582Z",
+     "observedAt": "2026-09-30T22:32:57.031Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3489,8 +3454,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3504,15 +3469,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 779,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 1558
-     },
-     "productName": "Viande hachée de bœuf",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:22.858Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3527,7 +3489,7 @@
      },
      "productName": "Viande hachée de boeuf",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:26.108Z",
+     "observedAt": "2026-09-30T22:30:21.352Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3535,7 +3497,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "jambon-cuit-150g",
@@ -3570,8 +3532,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3585,20 +3547,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 329,
-     "unitPrice": {
-      "basis": "100g",
-      "cents": 165
-     },
-     "productName": "Jambon de derrière",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:31.425Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -3610,7 +3567,7 @@
      },
      "productName": "Jambon d'épaule",
      "packs": 1,
-     "observedAt": "2026-09-30T16:26:53.097Z",
+     "observedAt": "2026-09-30T22:30:24.425Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3618,7 +3575,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "thon-huile-240g",
@@ -3653,8 +3610,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3668,28 +3625,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 270,
-     "unitPrice": {
-      "basis": "100g",
-      "cents": 96
-     },
-     "productName": "Filets de thon à l’huile de tournesol",
-     "packs": 2,
-     "observedAt": "2026-09-28T06:37:27.948Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
-     "promotion": {
-      "validFrom": "2026-09-28",
-      "validTo": "2026-10-04",
-      "confirmed": false
-     },
-     "reasons": [
-      "promo_end_presumed",
-      "promo_not_confirmed_on_date",
-      "while_stocks_last",
-      "pack_size_differs",
-      "regular_price_unknown"
-     ]
+     "promotion": null,
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -3701,7 +3645,7 @@
      },
      "productName": "MSC Thon à l'huile de tourn",
      "packs": 2,
-     "observedAt": "2026-09-30T16:26:50.096Z",
+     "observedAt": "2026-09-30T22:30:18.415Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3711,7 +3655,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "tomates-concassees-400g",
@@ -3761,26 +3705,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 59,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 148
-     },
-     "productName": "I COLORI DEL SAPORE Tomates concassées premium, 425 ml",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:10.803Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
-     "promotion": {
-      "validFrom": "2026-09-07",
-      "validTo": "2026-09-30",
-      "confirmed": true
-     },
-     "reasons": [
-      "promo_end_presumed",
-      "while_stocks_last",
-      "regular_price_unknown"
-     ]
+     "promotion": null,
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -3792,7 +3725,7 @@
      },
      "productName": "Piacelli Polpa in Pezzetti",
      "packs": 1,
-     "observedAt": "2026-09-30T16:29:59.093Z",
+     "observedAt": "2026-09-30T22:31:36.309Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3835,8 +3768,8 @@
      "reasons": []
     },
     "denner": {
-     "status": "missing",
-     "connectorId": null,
+     "status": "private_only",
+     "connectorId": "denner-web",
      "totalCents": null,
      "unitPrice": null,
      "productName": null,
@@ -3850,20 +3783,15 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 224,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 423
-     },
-     "productName": "Pois chiches",
-     "packs": 2,
-     "observedAt": "2026-09-30T16:53:40.543Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     },
     "lidl": {
      "status": "official_public",
@@ -3875,7 +3803,7 @@
      },
      "productName": "Pois chiches",
      "packs": 1,
-     "observedAt": "2026-09-30T16:31:29.106Z",
+     "observedAt": "2026-09-30T22:32:12.337Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -3883,7 +3811,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 2
+   "privateChains": 3
   },
   {
    "slug": "confiture-fraises-500g",
@@ -3933,15 +3861,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 119,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 264
-     },
-     "productName": "Confiture de fraise",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:43.405Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3956,7 +3881,7 @@
      },
      "productName": "Confiture de fraises",
      "packs": 1,
-     "observedAt": "2026-09-28T08:18:15.605Z",
+     "observedAt": "2026-09-30T22:33:27.030Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -4014,15 +3939,12 @@
     "aldi": {
      "status": "private_only",
      "connectorId": "aldi-api",
-     "totalCents": 349,
-     "unitPrice": {
-      "basis": "kg",
-      "cents": 698
-     },
-     "productName": "Café moulu, Classic Intenso",
-     "packs": 1,
-     "observedAt": "2026-09-30T16:53:17.024Z",
-     "scope": "national",
+     "totalCents": null,
+     "unitPrice": null,
+     "productName": null,
+     "packs": null,
+     "observedAt": null,
+     "scope": null,
      "place": null,
      "promotion": null,
      "reasons": []
@@ -4037,7 +3959,7 @@
      },
      "productName": "Café Intenso moulu",
      "packs": 1,
-     "observedAt": "2026-09-28T07:39:21.607Z",
+     "observedAt": "2026-09-30T22:33:15.343Z",
      "scope": "national",
      "place": null,
      "promotion": null,
@@ -4071,9 +3993,9 @@
     "official_public": 0,
     "store_survey": 0,
     "community": 0,
-    "private_only": 0,
+    "private_only": 34,
     "stale": 1,
-    "missing": 49
+    "missing": 15
    },
    "aldi": {
     "official_public": 0,
@@ -4100,10 +4022,10 @@
    "5": 0
   },
   "comparablePrivate": {
-   "1": 48,
-   "2": 21,
-   "3": 1,
-   "4": 0,
+   "1": 49,
+   "2": 41,
+   "3": 13,
+   "4": 1,
    "5": 0
   }
  }

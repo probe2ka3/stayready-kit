@@ -5,6 +5,7 @@ import {
   DEFAULT_FRESHNESS,
   DEFAULT_PREFS,
   formatQuantity,
+  isPublishableSource,
   sourceInfo,
   zurichToday,
   resolveLine,
@@ -25,7 +26,7 @@ export const MATRIX_CHAINS = ['migros', 'coop', 'denner', 'aldi', 'lidl'] as con
  * - official_public : prix officiel d'une source réutilisable publiquement (Lidl ; ⚖️ avis conseillé) ;
  * - store_survey : relevé en magasin (vaut pour ce magasin seulement) ;
  * - community : relevé communautaire Open Prices (ODbL), daté ;
- * - private_only : prix officiel d'une source dont les conditions interdisent l'usage public (Aldi) :
+ * - private_only : prix officiel d'une source dont les conditions interdisent l'usage public (Aldi, Denner) :
  *   pilote privé de l'exploitant uniquement ;
  * - stale : seul un prix trop ancien existe ;
  * - missing : aucune donnée gratuite.
@@ -223,8 +224,8 @@ export function matrixMarkdown(m: EssentialsMatrix): string {
     '',
     '| Besoins comparables dans au moins… | 1 enseigne | 2 | 3 | 4 | 5 |',
     '|---|---|---|---|---|---|',
-    `| Version publique (sans Aldi) | ${(['1', '2', '3', '4', '5'] as const).map((k) => s.comparablePublic[k]).join(' | ')} |`,
-    `| Pilote privé (avec Aldi) | ${(['1', '2', '3', '4', '5'] as const).map((k) => s.comparablePrivate[k]).join(' | ')} |`,
+    `| Version publique (sources publiables seulement) | ${(['1', '2', '3', '4', '5'] as const).map((k) => s.comparablePublic[k]).join(' | ')} |`,
+    `| Pilote privé (avec Aldi et Denner) | ${(['1', '2', '3', '4', '5'] as const).map((k) => s.comparablePrivate[k]).join(' | ')} |`,
     '',
     '## Détail',
     '',
@@ -240,7 +241,8 @@ export function matrixMarkdown(m: EssentialsMatrix): string {
     const cells = MATRIX_CHAINS.map((c) => {
       const x = r.cells[c] as MatrixCell;
       if (x.status === 'missing') return SYMBOL.missing;
-      if (x.status === 'stale') return `${SYMBOL.stale} trop ancien (${dm(x.observedAt)})`;
+      if (x.status === 'stale') return x.observedAt ? `${SYMBOL.stale} trop ancien (${dm(x.observedAt)})` : `${SYMBOL.stale} trop ancien`;
+      if (x.totalCents == null) return `${SYMBOL.private_only} collecté, non publiable`;
       const promo = x.promotion ? `, action ${dm(x.promotion.validFrom).slice(0, 5)}–${dm(x.promotion.validTo).slice(0, 5)}` : '';
       const weight = x.reasons.includes('variable_weight') ? ', au poids' : '';
       return `${SYMBOL[x.status]} ${chf(x.totalCents)} (${unitTxt(x.unitPrice)}) ${dm(x.observedAt)}${promo}${weight}`;
@@ -249,7 +251,7 @@ export function matrixMarkdown(m: EssentialsMatrix): string {
   }
   out.push(
     '',
-    'Les cellules « relevé local » ne valent que pour le magasin relevé ; « Open Prices » : relevé communautaire d’un magasin, généralisé à la zone (Migros) ou au pays selon la politique tarifaire de l’enseigne ; « privé seulement » : prix Aldi, dont les conditions d’utilisation réservent le site à un usage privé (jamais publiés sans autorisation écrite).',
+    'Les cellules « relevé local » ne valent que pour le magasin relevé ; « Open Prices » : relevé communautaire d’un magasin, généralisé à la zone (Migros) ou au pays selon la politique tarifaire de l’enseigne ; « privé seulement » : prix Aldi et Denner, dont les conditions réservent l’usage à des fins privées ou interdisent la publication (jamais publiés sans autorisation écrite ; dans le fichier versionné, seul le statut apparaît).',
     '',
   );
   return out.join('\n');
@@ -264,17 +266,42 @@ export async function jobEssentialsMatrix(ctx: JobContext) {
   const dataDir = ctx.env.dataDir;
   const snapshots = await readLiveSnapshots(dataDir);
   const matrix = buildEssentialsMatrix(snapshots, await readReviewedMatches(dataDir), now);
+  // Version versionnée : prix des sources non publiables retirés (statut seul) ; version complète hors dépôt.
   const outDir = typeof ctx.flags.out === 'string' ? ctx.flags.out : join(dataDir, 'matrice');
+  const privateDir = join(dataDir, 'private', 'matrice');
   await mkdir(outDir, { recursive: true });
-  await writeFile(join(outDir, 'essentiels.json'), `${JSON.stringify(matrix, null, 1)}\n`);
-  const md = matrixMarkdown(matrix);
+  await mkdir(privateDir, { recursive: true });
+  const redacted = redactPrivate(matrix);
+  await writeFile(join(outDir, 'essentiels.json'), `${JSON.stringify(redacted, null, 1)}\n`);
+  const md = matrixMarkdown(redacted);
   await writeFile(join(outDir, 'essentiels.md'), md);
+  await writeFile(join(privateDir, 'essentiels.json'), `${JSON.stringify(matrix, null, 1)}\n`);
+  await writeFile(join(privateDir, 'essentiels.md'), matrixMarkdown(matrix));
   const publicDir = typeof ctx.flags.public === 'string' ? ctx.flags.public : join(dataDir, 'public');
   await mkdir(publicDir, { recursive: true });
   const template = await readFile(join(dataDir, 'public', 'template.html'), 'utf8');
   await writeFile(join(publicDir, 'index.html'), publicPage(template, matrix));
   if (!ctx.flags.quiet) console.log(md.split('## Détail')[0]);
-  ctx.log.info('Matrice écrite', { outDir, publicDir, public: matrix.summary.comparablePublic, private: matrix.summary.comparablePrivate });
+  ctx.log.info('Matrice écrite', { outDir, privateDir, publicDir, public: matrix.summary.comparablePublic, private: matrix.summary.comparablePrivate });
+}
+
+/**
+ * Matrice sans aucune valeur issue d'une source non publiable : pour ces cases, seul le statut
+ * « privé seulement » reste (ni prix, ni article, ni date, ni lieu).
+ */
+export function redactPrivate(m: EssentialsMatrix): EssentialsMatrix {
+  return {
+    ...m,
+    rows: m.rows.map((r) => ({
+      ...r,
+      cells: Object.fromEntries(
+        Object.entries(r.cells).map(([c, x]) => {
+          const privateSource = x.connectorId !== null && !isPublishableSource(x.connectorId);
+          return [c, privateSource ? { ...emptyCell(x.status === 'stale' ? 'stale' : 'private_only'), connectorId: x.connectorId } : x];
+        }),
+      ),
+    })),
+  };
 }
 
 /**

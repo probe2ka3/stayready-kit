@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { LiveSnapshot } from '@cabas/connectors';
 import type { RetailerProduct } from '@cabas/core';
-import { buildEssentialsMatrix, matrixMarkdown, publicPage } from '../src/matrix';
+import { buildEssentialsMatrix, matrixMarkdown, publicPage, redactPrivate } from '../src/matrix';
 
 // Données fictives : vérifient le classement des sources, pas des prix réels.
 const now = new Date('2026-09-30T10:00:00Z');
@@ -51,7 +51,7 @@ describe('matrice des essentiels', () => {
     expect(row).toMatchObject({ publicChains: 1, privateChains: 2 });
     expect(m.summary.comparablePublic['2']).toBe(0);
     expect(m.summary.comparablePrivate['2']).toBe(1);
-    expect(matrixMarkdown(m)).toContain('Pilote privé (avec Aldi)');
+    expect(matrixMarkdown(m)).toContain('Pilote privé (avec Aldi et Denner)');
   });
 
   it('la page publique ne contient jamais de donnée privée', async () => {
@@ -61,5 +61,14 @@ describe('matrice des essentiels', () => {
     expect(html).not.toContain('Spaghetti Aldi secret');
     expect(html).not.toContain('aldi-api');
     expect(html).not.toContain('"total":89');
+  });
+
+  it('la matrice versionnée ne garde que le statut des sources non publiables', () => {
+    const r = redactPrivate(m);
+    const cell = r.rows.find((x) => x.slug === 'spaghetti-500g')!.cells.aldi!;
+    expect(cell).toMatchObject({ status: 'private_only', totalCents: null, productName: null, observedAt: null, unitPrice: null });
+    expect(JSON.stringify(r)).not.toContain('Spaghetti Aldi secret');
+    expect(matrixMarkdown(r)).toContain('collecté, non publiable');
+    expect(r.rows.find((x) => x.slug === 'spaghetti-500g')!.cells.lidl!.totalCents).toBe(99);
   });
 });

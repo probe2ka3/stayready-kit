@@ -1,3 +1,6 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { checkCollection } from '@cabas/core';
 import {
@@ -8,6 +11,8 @@ import {
   discoverOfferPages,
   discoverProductPages,
   HttpBlockedError,
+  HttpBudgetError,
+  HttpFetchError,
   isAllowed,
   matchesFor,
   mergeLiveBatch,
@@ -126,6 +131,43 @@ describe('client HTTP poli', () => {
     expect((await f.get('https://d.ch/x')).body).toBe('ok');
     expect(f.stats.retries).toBe(1);
     expect(sleeps).toContain(7000);
+  });
+
+  it('plafond de requêtes par source : arrêt propre, sans requête supplémentaire', async () => {
+    const { impl, calls } = fakeFetch({ 'https://e.ch/robots.txt': { status: 200, body: '' }, 'https://e.ch/1': { status: 200, body: 'a' }, 'https://e.ch/2': { status: 200, body: 'b' } });
+    const f = new PoliteFetcher({ ...base, fetchImpl: impl, maxRequests: 2 });
+    await f.get('https://e.ch/1');
+    await expect(f.get('https://e.ch/2')).rejects.toBeInstanceOf(HttpBudgetError);
+    expect(f.stats.budgetExhausted).toBe(true);
+    expect(calls).toEqual(['https://e.ch/robots.txt', 'https://e.ch/1']);
+  });
+
+  it('disjoncteur : hôte abandonné après des erreurs consécutives', async () => {
+    const { impl, calls } = fakeFetch({ 'https://g.ch/robots.txt': { status: 200, body: '' } });
+    const f = new PoliteFetcher({ ...base, fetchImpl: impl, maxConsecutiveErrors: 2 });
+    await expect(f.get('https://g.ch/a')).rejects.toBeInstanceOf(HttpFetchError);
+    await expect(f.get('https://g.ch/b')).rejects.toBeInstanceOf(HttpFetchError);
+    await expect(f.get('https://g.ch/c')).rejects.toThrow(/abandonné/);
+    expect(f.stats.tripped).toEqual(['g.ch']);
+    expect(calls.filter((c) => c.endsWith('/c'))).toHaveLength(0);
+  });
+
+  it('cache des plans du site : aucune requête tant que la copie est récente', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tesprix-cache-'));
+    try {
+      const { impl, calls } = fakeFetch({ 'https://h.ch/robots.txt': { status: 200, body: '' }, 'https://h.ch/sitemap.xml': { status: 200, body: '<urlset/>' } });
+      let clock = Date.now();
+      const f = new PoliteFetcher({ ...base, clock: () => clock, fetchImpl: impl, cacheDir: dir });
+      expect((await f.getCached('https://h.ch/sitemap.xml', 3_600_000)).body).toBe('<urlset/>');
+      expect((await f.getCached('https://h.ch/sitemap.xml', 3_600_000)).body).toBe('<urlset/>');
+      expect(f.stats.cacheHits).toBe(1);
+      expect(calls.filter((c) => c.endsWith('sitemap.xml'))).toHaveLength(1);
+      clock += 2 * 3_600_000;
+      await f.getCached('https://h.ch/sitemap.xml', 3_600_000);
+      expect(calls.filter((c) => c.endsWith('sitemap.xml'))).toHaveLength(2);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
   });
 });
 

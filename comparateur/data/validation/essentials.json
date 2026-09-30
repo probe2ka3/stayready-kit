@@ -1,7 +1,7 @@
 {
  "description": "Jeu de validation TesPrix : 50 besoins essentiels × 5 enseignes. Articles attendus (correspondances revues satisfaisant les exigences), contenance admise et bande de prix normalisé (centimes par kg, litre ou pièce). Sert à détecter les régressions de collecte.",
  "version": "1",
- "calibratedAt": "2026-09-30T20:58:06.618Z",
+ "calibratedAt": "2026-09-30T22:46:22.416Z",
  "chains": [
   "migros",
   "coop",
@@ -24,7 +24,7 @@
    },
    "unitCents": {
     "min": 39,
-    "max": 357
+    "max": 825
    },
    "chains": {
     "migros": {
@@ -43,7 +43,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006135",
+      "denner:1006255"
+     ]
     }
    }
   },
@@ -61,7 +65,7 @@
    },
    "unitCents": {
     "min": 93,
-    "max": 837
+    "max": 855
    },
    "chains": {
     "migros": {
@@ -81,7 +85,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006042"
+     ]
     }
    }
   },
@@ -98,8 +105,8 @@
     "max": 5000
    },
    "unitCents": {
-    "min": 109,
-    "max": 987
+    "min": 100,
+    "max": 1005
    },
    "chains": {
     "migros": {
@@ -118,7 +125,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006089",
+      "denner:1006090"
+     ]
     }
    }
   },
@@ -156,7 +167,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006076"
+     ]
     }
    }
   },
@@ -174,7 +188,7 @@
    },
    "unitCents": {
     "min": 79,
-    "max": 717
+    "max": 720
    },
    "chains": {
     "migros": {
@@ -193,7 +207,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006306"
+     ]
     }
    }
   },
@@ -211,7 +228,7 @@
    },
    "unitCents": {
     "min": 64,
-    "max": 579
+    "max": 585
    },
    "chains": {
     "migros": {
@@ -230,7 +247,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006290"
+     ]
     }
    }
   },
@@ -248,7 +268,7 @@
    },
    "unitCents": {
     "min": 56,
-    "max": 507
+    "max": 720
    },
    "chains": {
     "migros": {
@@ -267,7 +287,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006139",
+      "denner:1006140"
+     ]
     }
    }
   },
@@ -285,7 +309,7 @@
    },
    "unitCents": {
     "min": 126,
-    "max": 1137
+    "max": 1170
    },
    "chains": {
     "migros": {
@@ -304,7 +328,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006258"
+     ]
     }
    }
   },
@@ -322,7 +349,7 @@
    },
    "unitCents": {
     "min": 49,
-    "max": 447
+    "max": 450
    },
    "chains": {
     "migros": {
@@ -341,7 +368,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006297"
+     ]
     }
    }
   },
@@ -378,7 +408,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006163"
+     ]
     }
    }
   },
@@ -396,7 +429,7 @@
    },
    "unitCents": {
     "min": 83,
-    "max": 747
+    "max": 840
    },
    "chains": {
     "migros": {
@@ -415,7 +448,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006073"
+     ]
     }
    }
   },
@@ -452,7 +488,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006038"
+     ]
     }
    }
   },
@@ -469,7 +508,7 @@
     "max": 12500
    },
    "unitCents": {
-    "min": 50,
+    "min": 40,
     "max": 1146
    },
    "chains": {
@@ -490,7 +529,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006114",
+      "denner:1006206"
+     ]
     }
    }
   },
@@ -527,7 +570,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1006054"
+     ]
     }
    }
   },
@@ -566,7 +612,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003401",
+      "denner:1004173"
+     ]
     }
    }
   },
@@ -583,8 +633,8 @@
     "max": 5000
    },
    "unitCents": {
-    "min": 20,
-    "max": 20000
+    "min": 83,
+    "max": 750
    },
    "chains": {
     "migros": {
@@ -600,7 +650,10 @@
      "status": "not_listed"
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003385"
+     ]
     }
    }
   },
@@ -638,7 +691,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -675,7 +728,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -693,7 +746,7 @@
    },
    "unitCents": {
     "min": 133,
-    "max": 1197
+    "max": 2370
    },
    "chains": {
     "migros": {
@@ -712,7 +765,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1004229"
+     ]
     }
    }
   },
@@ -730,7 +786,7 @@
    },
    "unitCents": {
     "min": 116,
-    "max": 1485
+    "max": 2160
    },
    "chains": {
     "migros": {
@@ -755,7 +811,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003348",
+      "denner:1003398"
+     ]
     }
    }
   },
@@ -799,7 +859,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1021867"
+     ]
     }
    }
   },
@@ -833,7 +896,7 @@
      "status": "not_listed"
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -875,7 +938,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -917,7 +980,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -959,7 +1022,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1035329"
+     ]
     }
    }
   },
@@ -1002,7 +1068,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1004167"
+     ]
     }
    }
   },
@@ -1039,7 +1108,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1076,7 +1145,7 @@
      "status": "not_listed"
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1094,7 +1163,7 @@
    },
    "unitCents": {
     "min": 51,
-    "max": 465
+    "max": 690
    },
    "chains": {
     "migros": {
@@ -1113,7 +1182,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1002942",
+      "denner:1104538"
+     ]
     }
    }
   },
@@ -1131,7 +1204,7 @@
    },
    "unitCents": {
     "min": 48,
-    "max": 435
+    "max": 690
    },
    "chains": {
     "migros": {
@@ -1150,7 +1223,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1002943"
+     ]
     }
    }
   },
@@ -1190,7 +1266,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1208,7 +1284,7 @@
    },
    "unitCents": {
     "min": 513,
-    "max": 5235
+    "max": 5850
    },
    "chains": {
     "migros": {
@@ -1231,7 +1307,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003517"
+     ]
     }
    }
   },
@@ -1268,7 +1347,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1286,7 +1365,7 @@
    },
    "unitCents": {
     "min": 52,
-    "max": 690
+    "max": 1251
    },
    "chains": {
     "migros": {
@@ -1307,7 +1386,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003497",
+      "denner:1003518"
+     ]
     }
    }
   },
@@ -1344,7 +1427,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1362,7 +1445,7 @@
    },
    "unitCents": {
     "min": 498,
-    "max": 6585
+    "max": 7425
    },
    "chains": {
     "migros": {
@@ -1386,7 +1469,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1105196"
+     ]
     }
    }
   },
@@ -1427,7 +1513,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003654"
+     ]
     }
    }
   },
@@ -1466,11 +1555,15 @@
      "status": "covered",
      "retailerProductIds": [
       "lidl:0003195",
-      "lidl:0019051"
+      "lidl:0019051",
+      "lidl:offer-10059639"
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003515"
+     ]
     }
    }
   },
@@ -1507,7 +1600,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1524,8 +1617,8 @@
     "max": 30
    },
    "unitCents": {
-    "min": 18,
-    "max": 162
+    "min": 13,
+    "max": 186
    },
    "chains": {
     "migros": {
@@ -1544,7 +1637,12 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1003330",
+      "denner:1003936",
+      "denner:1105181"
+     ]
     }
    }
   },
@@ -1562,7 +1660,7 @@
    },
    "unitCents": {
     "min": 66,
-    "max": 594
+    "max": 600
    },
    "chains": {
     "migros": {
@@ -1585,7 +1683,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1002294"
+     ]
     }
    }
   },
@@ -1626,7 +1727,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1643,7 +1744,7 @@
     "max": 2500
    },
    "unitCents": {
-    "min": 696,
+    "min": 555,
     "max": 6750
    },
    "chains": {
@@ -1656,7 +1757,8 @@
     "aldi": {
      "status": "covered",
      "retailerProductIds": [
-      "aldi:288375"
+      "aldi:288375",
+      "aldi:776627"
      ]
     },
     "lidl": {
@@ -1667,7 +1769,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1685,7 +1787,7 @@
    },
    "unitCents": {
     "min": 512,
-    "max": 4674
+    "max": 6951
    },
    "chains": {
     "migros": {
@@ -1708,7 +1810,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1103832"
+     ]
     }
    }
   },
@@ -1726,7 +1831,7 @@
    },
    "unitCents": {
     "min": 548,
-    "max": 7101
+    "max": 11424
    },
    "chains": {
     "migros": {
@@ -1749,7 +1854,11 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1002920",
+      "denner:1009102"
+     ]
     }
    }
   },
@@ -1791,7 +1900,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1002690"
+     ]
     }
    }
   },
@@ -1832,7 +1944,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1850,7 +1962,7 @@
    },
    "unitCents": {
     "min": 141,
-    "max": 1269
+    "max": 1464
    },
    "chains": {
     "migros": {
@@ -1872,7 +1984,10 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "covered",
+     "retailerProductIds": [
+      "denner:1102078"
+     ]
     }
    }
   },
@@ -1915,7 +2030,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   },
@@ -1956,7 +2071,7 @@
      ]
     },
     "denner": {
-     "status": "no_source"
+     "status": "not_listed"
     }
    }
   }

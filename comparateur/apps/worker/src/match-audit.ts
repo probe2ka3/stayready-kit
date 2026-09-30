@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { meetsRequirements, normalizedUnitCents, normalizeText, significantTokens } from '@cabas/core';
+import { isPublishableSource, meetsRequirements, normalizedUnitCents, normalizeText, significantTokens } from '@cabas/core';
 import { matchesFor, readLiveSnapshots, readReviewedMatches } from '@cabas/connectors';
 import { PRODUCTS } from '@cabas/reference';
 import type { JobContext } from './jobs';
@@ -16,7 +16,8 @@ import type { JobContext } from './jobs';
 export async function jobMatchAudit(ctx: JobContext) {
   const ratio = typeof ctx.flags.ratio === 'string' ? Number(ctx.flags.ratio) : 0.7;
   const snapshots = await readLiveSnapshots(ctx.env.dataDir);
-  const products = snapshots.flatMap((s) => s.batch.retailerProducts).filter((p) => p.chainId === 'lidl' || p.chainId === 'aldi');
+  const chains = ['lidl', 'aldi', 'denner'];
+  const products = snapshots.flatMap((s) => s.batch.retailerProducts).filter((p) => chains.includes(p.chainId));
   const latest = new Map<string, { cents: number; at: string }>();
   for (const s of snapshots) {
     for (const o of s.batch.prices) {
@@ -36,11 +37,11 @@ export async function jobMatchAudit(ctx: JobContext) {
     return p && l ? normalizedUnitCents(l.cents, p.quantity) : null;
   };
 
-  const rows: string[] = [];
+  const rows: Array<{ line: string; publishable: boolean }> = [];
   for (const c of PRODUCTS) {
     const words = significantTokens(c.name).filter((w) => w.length > 3);
     if (!words.length) continue;
-    for (const chain of ['lidl', 'aldi']) {
+    for (const chain of chains) {
       const matched = (byCanonical.get(c.id) ?? []).filter((id) => byId.get(id)?.chainId === chain);
       const best = Math.min(...matched.map((id) => unit(id) ?? Infinity));
       for (const p of products) {
@@ -48,23 +49,29 @@ export async function jobMatchAudit(ctx: JobContext) {
         if (!words.every((w) => normalizeText(p.name).includes(w)) || !meetsRequirements(c, p)) continue;
         const u = unit(p.id);
         if (!u || (matched.length > 0 && u >= best * ratio)) continue;
-        rows.push(
-          `| ${c.id} | ${chain} | ${matched.length ? (best / 100).toFixed(2) : 'non couverte'} | ${p.id} | ${p.name} | ${p.quantity.amount} ${p.quantity.unit} | ${((latest.get(p.id)?.cents ?? 0) / 100).toFixed(2)} | ${(u / 100).toFixed(2)} |`,
-        );
+        rows.push({
+          line: `| ${c.id} | ${chain} | ${matched.length ? (best / 100).toFixed(2) : 'non couverte'} | ${p.id} | ${p.name} | ${p.quantity.amount} ${p.quantity.unit} | ${((latest.get(p.id)?.cents ?? 0) / 100).toFixed(2)} | ${(u / 100).toFixed(2)} |`,
+          publishable: isPublishableSource(p.connectorId),
+        });
       }
     }
   }
+  // Version versionnée : sources publiables seulement ; version complète (Aldi, Denner) hors dépôt.
+  const render = (list: typeof rows) =>
+    [
+      '# Contrôle des correspondances manquantes',
+      '',
+      `Généré le ${ctx.now.toISOString().slice(0, 10)} (\`pnpm job match-audit\`) : ${list.length} candidats à revoir (beaucoup de faux positifs attendus : « pain d'épices au chocolat » n'est pas du chocolat).`,
+      '',
+      '| Référence | Enseigne | Meilleur prix rapproché (CHF/kg, l ou pièce) | Article | Désignation | Contenance | Prix | Prix normalisé |',
+      '|---|---|---|---|---|---|---|---|',
+      ...list.map((r) => r.line),
+    ].join('\n');
   const outDir = join(ctx.env.dataDir, 'matching');
+  const privateDir = join(ctx.env.dataDir, 'private', 'matching');
   await mkdir(outDir, { recursive: true });
-  const md = [
-    '# Contrôle des correspondances manquantes',
-    '',
-    `Généré le ${ctx.now.toISOString().slice(0, 10)} (\`pnpm job match-audit\`) : ${rows.length} candidats à revoir (beaucoup de faux positifs attendus : « pain d'épices au chocolat » n'est pas du chocolat).`,
-    '',
-    '| Référence | Enseigne | Meilleur prix rapproché (CHF/kg, l ou pièce) | Article | Désignation | Contenance | Prix | Prix normalisé |',
-    '|---|---|---|---|---|---|---|---|',
-    ...rows,
-  ].join('\n');
-  await writeFile(join(outDir, 'audit.md'), `${md}\n`);
-  ctx.log.info('Contrôle des correspondances', { candidats: rows.length, fichier: 'data/matching/audit.md' });
+  await mkdir(privateDir, { recursive: true });
+  await writeFile(join(outDir, 'audit.md'), `${render(rows.filter((r) => r.publishable))}\n`);
+  await writeFile(join(privateDir, 'audit.md'), `${render(rows)}\n`);
+  ctx.log.info('Contrôle des correspondances', { candidats: rows.length, publiables: rows.filter((r) => r.publishable).length, fichiers: ['data/matching/audit.md', 'data/private/matching/audit.md'] });
 }

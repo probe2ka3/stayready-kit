@@ -2,6 +2,7 @@ import type { Store } from '@cabas/core';
 import { AldiApiConnector } from './aldi';
 import { chainConnectors } from './chains';
 import { DemoPriceConnector } from './demo';
+import { DennerWebConnector } from './denner';
 import { FoodAllyConnector } from './foodally';
 import { LidlWebConnector } from './lidl';
 import { OpenPricesConnector, type OpContext } from './open-prices';
@@ -17,7 +18,7 @@ export interface ConnectorDeps {
  * Registre des connecteurs de prix :
  * - démonstration (données fictives, jamais mélangées aux données réelles) ;
  * - sources réelles en ligne : Lidl (site officiel), Aldi Suisse (API publique du site),
- *   Open Prices (ODbL), FoodAlly (fournisseur tiers, comparaison uniquement, désactivé par défaut) ;
+ *   Denner (site officiel, usage privé), Open Prices (ODbL), FoodAlly (fournisseur tiers, comparaison uniquement, désactivé par défaut) ;
  * - un connecteur d'enseigne par entrée de `@cabas/reference` (CHAINS) pour les imports
  *   structurés et, lorsqu'un accord existe, un flux officiel.
  */
@@ -26,6 +27,7 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
     new DemoPriceConnector(),
     new LidlWebConnector(),
     new AldiApiConnector(),
+    new DennerWebConnector(),
     new OpenPricesConnector(deps.stores ?? [], deps.resolveZone),
     new FoodAllyConnector(),
     ...chainConnectors(),
@@ -33,7 +35,7 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
 }
 
 /** Connecteurs qui collectent des prix réels en ligne (tâche `collect`). */
-export const LIVE_CONNECTOR_IDS = ['lidl-web', 'aldi-api', 'open-prices', 'foodally'];
+export const LIVE_CONNECTOR_IDS = ['lidl-web', 'aldi-api', 'denner-web', 'open-prices', 'foodally'];
 
 export function findConnector(id: string, deps: ConnectorDeps = {}): PriceConnector | undefined {
   return priceConnectors(deps).find((c) => c.id === id);

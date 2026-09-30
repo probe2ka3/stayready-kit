@@ -184,3 +184,30 @@ describe('Open Prices : prix sans code-barres (vrac)', () => {
     expect(matchesFor(batch.retailerProducts, PRODUCTS).matches.every((m) => m.status === 'validated')).toBe(true);
   });
 });
+
+describe('instantanés : sources publiables et privées séparées', () => {
+  it('une source non publiable est écrite hors du dossier versionné et en efface toute copie', async () => {
+    const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises');
+    const { existsSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const { readLiveSnapshots, writeLiveSnapshot } = await import('../src');
+    const dir = await mkdtemp(join(tmpdir(), 'tesprix-snap-'));
+    try {
+      const snap = (connectorId: string) => ({ connectorId, label: connectorId, license: null, attribution: null, collectedAt: now.toISOString(), status: 'success' as const, message: null, metrics: {}, batch: { retailerProducts: [], prices: [], promotions: [] } });
+      await mkdir(join(dir, 'prices', 'live'), { recursive: true });
+      await writeFile(join(dir, 'prices', 'live', 'aldi-api.json'), JSON.stringify(snap('aldi-api')));
+      await writeLiveSnapshot(dir, snap('aldi-api'));
+      await writeLiveSnapshot(dir, snap('denner-web'));
+      await writeLiveSnapshot(dir, snap('lidl-web'));
+      expect(existsSync(join(dir, 'prices', 'live', 'aldi-api.json'))).toBe(false);
+      expect(existsSync(join(dir, 'private', 'live', 'aldi-api.json'))).toBe(true);
+      expect(existsSync(join(dir, 'private', 'live', 'denner-web.json'))).toBe(true);
+      expect(existsSync(join(dir, 'prices', 'live', 'lidl-web.json'))).toBe(true);
+      expect((await readLiveSnapshots(dir)).map((s) => [s.connectorId, s.private])).toEqual([['aldi-api', true], ['denner-web', true], ['lidl-web', false]]);
+      expect((await readLiveSnapshots(dir, { publicOnly: true })).map((s) => s.connectorId)).toEqual(['lidl-web']);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});

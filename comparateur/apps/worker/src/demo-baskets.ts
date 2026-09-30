@@ -54,8 +54,12 @@ export async function jobDemoBaskets(ctx: JobContext) {
   const snapshots = await readLiveSnapshots(dataDir);
   const products = snapshots.flatMap((s) => s.batch.retailerProducts);
   const { matches } = matchesFor(products, PRODUCTS, await readReviewedMatches(dataDir));
-  // --exclude=aldi-api : même calcul qu'en production sans autorisation de la source.
-  const exclude = typeof ctx.flags.exclude === 'string' ? ctx.flags.exclude.split(',').filter(Boolean) : [];
+  // --exclude=aldi-api : même calcul qu'en production sans autorisation de la source ;
+  // --public : toutes les sources non publiables exclues (Aldi, Denner…).
+  const exclude = [
+    ...(typeof ctx.flags.exclude === 'string' ? ctx.flags.exclude.split(',').filter(Boolean) : []),
+    ...(ctx.flags.public ? snapshots.filter((s) => s.private).map((s) => s.connectorId) : []),
+  ];
   const index = buildOfferIndex(
     {
       products,
@@ -79,11 +83,13 @@ export async function jobDemoBaskets(ctx: JobContext) {
     'Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.',
     exclude.length
       ? `**Sources exclues : ${exclude.join(', ')}** — ce que verrait le public en production sans autorisation (docs/DROITS_DONNEES.md).`
-      : 'Évaluation interne : toutes les sources collectées, y compris Aldi (exclu en production sans autorisation écrite, docs/DROITS_DONNEES.md).',
+      : `Évaluation interne (fichier hors dépôt) : toutes les sources collectées, y compris ${snapshots.filter((s) => s.private).map((s) => s.connectorId).join(', ') || 'aucune source privée'} (usage privé : jamais publiées sans autorisation écrite, docs/COLLECTE_QUOTIDIENNE.md).`,
     '',
   ];
   const json: Array<{ id: string; result: CompareResultDto }> = [];
 
+  // --aujourdhui : courses le jour même (collecte quotidienne), la date du fichier étant fixe.
+  if (ctx.flags.aujourdhui) for (const b of def.baskets) b.when = { ...b.when, date: zurichToday(now) };
   for (const b of def.baskets) {
     const lines: BasketLine[] = b.lines.map((l, i) => ({ id: `l${i + 1}`, productId: l.productId, qty: l.qty }));
     const stores = withCrowDistance(b.origin, allStores.filter((s) => b.chains.includes(s.chainId))).filter((s) => s.crowKm <= b.radiusKm);
@@ -162,9 +168,11 @@ export async function jobDemoBaskets(ctx: JobContext) {
     out.push(`Dates des relevés : ${r.meta.priceDates.map((d) => `${d.chainId} ${day(d.oldest)}–${day(d.newest)}`).join(', ')}. Avertissements : ${r.meta.warnings.join(', ') || 'aucun'}.`, '');
   }
 
-  const outDir = typeof ctx.flags.out === 'string' ? ctx.flags.out : join(dataDir, 'demo');
+  // Un résultat qui contient des prix de sources non publiables reste hors dépôt (data/private/demo).
+  const usesPrivate = snapshots.some((s) => s.private && !exclude.includes(s.connectorId));
+  const outDir = typeof ctx.flags.out === 'string' ? ctx.flags.out : join(dataDir, usesPrivate ? 'private' : '', 'demo');
   await mkdir(outDir, { recursive: true });
-  const name = typeof ctx.flags.name === 'string' ? ctx.flags.name : exclude.length ? `resultats-sans-${exclude.join('-')}` : 'resultats';
+  const name = typeof ctx.flags.name === 'string' ? ctx.flags.name : ctx.flags.public ? 'resultats-public' : exclude.length ? `resultats-sans-${exclude.join('-')}` : 'resultats';
   await writeFile(join(outDir, `${name}.md`), `${out.join('\n')}\n`);
   if (ctx.flags.json) await writeFile(join(outDir, 'resultats.json'), `${JSON.stringify(json, null, 1)}\n`);
   if (!ctx.flags.quiet) console.log(out.join('\n'));

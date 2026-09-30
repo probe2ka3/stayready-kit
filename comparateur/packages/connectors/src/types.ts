@@ -70,6 +70,11 @@ export interface ConnectorContext {
   catalog?: CanonicalProduct[];
   /** Correspondances revues par l'équipe données. */
   reviewedMatches?: ReviewedMatch[];
+  /**
+   * Collecte ciblée sur le noyau (tâche `quotidien`) : besoins à chercher et fiches déjà reliées à
+   * ces besoins. Absent : collecte complète historique.
+   */
+  targets?: { needs?: string[]; productUrls?: string[] };
 }
 
 /** Connecteur de prix et promotions. Chaque enseigne dispose du sien. */

@@ -14,6 +14,9 @@ apps/web/next-env.d.ts
 apps/web/AGENTS.md
 apps/web/CLAUDE.md
 
+# Données non publiables (sources à usage privé : Aldi, Denner…), journaux et cache de collecte
+data/private/
+
 # Collecte : pages brutes archivées et rapports détaillés (non versionnés)
 data/raw/
 data/prices/reports/

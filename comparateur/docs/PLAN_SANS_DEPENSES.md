@@ -1,5 +1,10 @@
 # TesPrix — plan sans dépenses (état mesuré au 30.09.2026)
 
+> **Mise à jour du 01.10.2026** : collecte quotidienne automatique (Lidl, Denner, Aldi, Open Prices),
+> sans relevé obligatoire — voir [COLLECTE_QUOTIDIENNE.md](COLLECTE_QUOTIDIENNE.md). Denner est désormais
+> collecté (usage privé) ; l'instantané Aldi a quitté le dépôt (§ 3.4 réglé) ; pilote privé : 41 besoins
+> comparables dans au moins 2 enseignes, 13 dans 3, 1 dans 4.
+
 **Objectif initial** : comparer les prix des aliments de base dans les cinq enseignes nationales
 (Migros, Coop, Denner, Aldi, Lidl), avec les équipements, accès et outils déjà disponibles, **sans
 aucune dépense nouvelle**. Ce plan remplace les hypothèses précédentes (abonnements, licences, offres
@@ -79,7 +84,11 @@ enseignes**. Toute comparaison Migros, Coop ou Denner vue dans ce mode est ficti
 une fonctionnalité disponible. Les paniers de `/fr/exemples` et `data/demo/*.md` utilisent des prix réels,
 Aldi compris (vue privée), sauf les fichiers `*-sans-aldi-api.md` et `panier-noyau-public.md`.
 
-### 3.4 Constat à corriger : instantané Aldi dans le dépôt public
+### 3.4 Constat à corriger : instantané Aldi dans le dépôt public (réglé le 01.10.2026)
+
+Réglé : les instantanés des sources non publiables sont écrits dans `data/private/` (exclu de Git) ;
+`aldi-api.json` a été retiré de la branche (il reste dans l'historique).
+
 
 `data/prices/live/aldi-api.json` (prix Aldi, 2,8 Mo) est versionné depuis la phase 3 dans un dépôt
 **public**, ce qui contredit l'exclusion d'Aldi de tout usage public. Recommandation (décision de

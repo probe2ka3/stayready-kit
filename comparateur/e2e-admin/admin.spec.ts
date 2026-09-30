@@ -22,7 +22,9 @@ test('accès refusé sans session, puis connexion', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Qualité des données' })).toBeVisible();
   await expect(page.getByText('Comparables dans ≥ 2 enseignes')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Couverture par enseigne' })).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'Aldi Suisse (API publique du site officiel)' })).toBeVisible();
+  // Lidl : instantané versionné ; ceux d'Aldi et de Denner (usage privé) restent hors du dépôt.
+  await expect(page.getByRole('cell', { name: 'Lidl Suisse (site officiel)' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Collecte quotidienne' })).toBeVisible();
 });
 
 test('import (simulation puis réel), correspondances, anomalies, journal', async ({ page }) => {

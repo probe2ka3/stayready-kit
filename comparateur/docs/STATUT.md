@@ -5,18 +5,20 @@ Trois catégories : **opérationnel**, **dépend d'une source de données ou d'u
 juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.md`, droits :
 `docs/DROITS_DONNEES.md`, relevés : `docs/RELEVES.md`.
 
-## Noyau de 50 aliments de base × 5 enseignes (`pnpm job matrice-essentiels`)
+## Noyau de 50 aliments de base × 5 enseignes (cycle quotidien du 01.10.2026)
 
-| Enseigne | Source gratuite | Besoins avec prix récent | Public ? |
+| Enseigne | Collecte automatique quotidienne | Besoins avec prix | Public ? |
 |---|---|---|---|
-| Lidl | Site officiel | **47/50** | Oui (⚖️ réserve LCD / `robots.txt`) |
-| Aldi | API du site | 22/50 | **Non** : usage privé (conditions d'Aldi) |
-| Coop | Open Prices | 1/50 | Oui (ODbL) |
-| Migros, Denner | Open Prices | 0/50 | — |
-| Toutes | Relevés en magasin (`docs/RELEVES.md`) | 0 relevé réel à ce jour | Oui (magasin relevé seulement) |
+| Lidl | ✅ site officiel, ciblée (≈ 109 requêtes) | **47/50** | Oui (⚖️ réserve LCD / `robots.txt`) |
+| Denner | ✅ site officiel, recherche ciblée + actions (≈ 53 requêtes) | **34/50** | **Non** : publication interdite sans accord écrit |
+| Aldi | ✅ API du site (≈ 44 requêtes) | 22/50 | **Non** : usage privé (conditions d'Aldi) |
+| Coop | ❌ DataDome, aucun contournement ; Open Prices | 1/50 | Oui (ODbL) |
+| Migros | ❌ 403, API non ouverte ; Open Prices | 0/50 | — |
 
-Comparables dans 2 / 3 / 4 / 5 enseignes : **1 / 0 / 0 / 0** en version publique, **21 / 1 / 0 / 0** en
-pilote privé avec Aldi. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
+Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 13 / 1 / 0** en pilote privé, **1 / 0 / 0 / 0** en
+version publique. Commande : `pnpm quotidien` (≈ 11 min, 214 requêtes) ; planification Windows :
+`scripts/windows/installer-tache.ps1`. Détails : `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly
+(licence), offres B2B, widgets, marque blanche.
 
 ## Chiffres clés des données réelles (instantanés du 30.09.2026)
 
@@ -65,7 +67,7 @@ pilote privé avec Aldi. Hors plan : FoodAlly (licence), offres B2B, widgets, ma
 | **Prix Denner** | Conditions : usage commercial interdit sans autorisation écrite | Autorisation (demande gratuite prête) ; relevés en magasin |
 | Aldi : 415 articles sans contenance | Écartés (jamais devinés) | Accord ou flux Aldi |
 | Repli FoodAlly | Implémenté, désactivé, **hors plan** (licence payante) | — |
-| **Instantané Aldi versionné** | `data/prices/live/aldi-api.json` est dans le dépôt public | Retrait décidé par l'exploitant (plan § 3.4) |
+| Sources privées (Aldi, Denner) | Instantanés dans `data/private/` (hors dépôt) ; l'ancien instantané Aldi reste dans l'historique Git | Accord écrit pour publier |
 | Page publique statique | Générée (`data/public/index.html`), non publiée | Fusion dans `main` + `TESPRIX_PAGES=oui` |
 | Tickets de caisse, API professionnelle, facturation | Fermés | Voir `docs/LANCEMENT.md` |
 

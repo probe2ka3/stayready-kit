@@ -35,6 +35,20 @@ export const LIDL_CONNECTOR_ID = 'lidl-web';
 
 /** Catégories hors périmètre (médicaments, tabac, distributeurs, pages techniques). */
 const EXCLUDED_CATEGORY = /(tabakwaren|arzneimittel|heissgetrankeautomat|privacy|alle-kategorien|catalog\/|\/fr\/?$)/;
+/**
+ * Catégories utiles au noyau de 50 aliments (collecte ciblée) : fruits, légumes, pommes de terre,
+ * farine, sucre, sel, huiles, pâtes, riz, produits laitiers, œufs, pain, viande, conserves,
+ * confiture, café, plus les listes « moins cher durablement » et « actions ».
+ */
+export const LIDL_CORE_CATEGORY =
+  /\/fr\/(obst-gemuese\/(obst|gemuese|huelsenfruechte)|pasta-reis\/(pasta|reis)|brot-backwaren\/(brot|zucker-salz-mehl)|gewu(e)?rze-o(e)?le\/(ole|zucker-salz-mehl|saucen)|milchprodukte-eier\/(joghurt-quark|milch|butter|kaese|eier)|fleisch\/(gefluegel|rind|wurst-aufschnitt)|konserven\/(obstkonserven-gemuesekonserven|fleisch-und-fischkonserven)|muesli-brotaufstrich\/(brotaufstriche-honig|mueesli)|kaffee-tee\/kaffee|auf-dauer-guenstiger|aktuelle-aktionen)\/?$/;
+
+/** Forme canonique d'une fiche (`…/view/id/N/`), quelle que soit l'adresse enregistrée. */
+export function lidlProductPageUrl(url: string): string | null {
+  const id = /\/catalog\/product\/view\/id\/(\d+)/.exec(url)?.[1];
+  return id ? `${LIDL_ASSORTMENT_ORIGIN}/fr/catalog/product/view/id/${id}` : null;
+}
+
 /** Pages d'actions non alimentaires connues (le filtre « Food » s'applique de toute façon). */
 const NON_FOOD_OFFERS = /(parkside|mode-|vestes|dormir|maison|plantes|cuisine\/|bebe|bricolage|cartes-prepayees|coupons|offres-lidl-plus)/;
 
@@ -634,8 +648,12 @@ export class LidlWebConnector implements PriceConnector {
     const pages: LidlPages = { assortment: [], offers: [] };
     const failures: string[] = [];
 
-    const sitemap = await fetcher.get(`${LIDL_ASSORTMENT_ORIGIN}/sitemaps/fr.xml`, 'application/xml');
-    const categories = discoverAssortmentCategories(sitemap.body).slice(0, maxCategories);
+    // Plan du site : relu au plus une fois par semaine (cache local), il change rarement et pèse ~2 Mo.
+    const sitemap = await fetcher.getCached(`${LIDL_ASSORTMENT_ORIGIN}/sitemaps/fr.xml`, 7 * 86_400_000, 'application/xml');
+    const targeted = Boolean(ctx.targets);
+    const categories = discoverAssortmentCategories(sitemap.body)
+      .filter((u) => !targeted || LIDL_CORE_CATEGORY.test(new URL(u).pathname))
+      .slice(0, maxCategories);
     for (const url of categories) {
       if (ctx.signal?.aborted) break;
       try {
@@ -647,11 +665,17 @@ export class LidlWebConnector implements PriceConnector {
       }
     }
 
-    // Fiches produits : tranche du jour (défaut 460 fiches, soit tout l'assortiment en 7 jours).
-    const perRun = Number(ctx.env?.LIDL_PRODUCT_PAGES_PER_RUN ?? '460');
-    const rotation = rotationSlice(discoverProductPages(sitemap.body), Number.isFinite(perRun) ? perRun : 0, ctx.now);
+    // Fiches produits. Collecte ciblée : fiches déjà reliées au noyau (chaque jour), plus une petite
+    // tranche de découverte (LIDL_DISCOVERY_PAGES_PER_RUN, défaut 0). Collecte complète : tranche du
+    // jour de la rotation (défaut 460 fiches, soit tout l'assortiment en 7 jours).
+    const all = discoverProductPages(sitemap.body);
+    const listed = new Set(all.map((u) => lidlProductPageUrl(u)));
+    const perRun = Number(targeted ? (ctx.env?.LIDL_DISCOVERY_PAGES_PER_RUN ?? '0') : (ctx.env?.LIDL_PRODUCT_PAGES_PER_RUN ?? '460'));
+    const rotation = rotationSlice(all, Number.isFinite(perRun) ? perRun : 0, ctx.now);
+    const targetPages = [...new Set((ctx.targets?.productUrls ?? []).map(lidlProductPageUrl).filter((u): u is string => Boolean(u) && listed.has(u)))];
+    const productUrls = [...new Set([...targetPages, ...rotation.slice.map((u) => lidlProductPageUrl(u) ?? u)])];
     pages.products = [];
-    for (const url of rotation.slice) {
+    for (const url of productUrls) {
       if (ctx.signal?.aborted) break;
       try {
         const r = await fetcher.get(url);
@@ -684,6 +708,8 @@ export class LidlWebConnector implements PriceConnector {
     batch.report.metrics = {
       ...batch.report.metrics,
       categoriesListed: categories.length,
+      mode: targeted ? 'noyau' : 'complet',
+      targetProductPages: targetPages.length,
       productRotation: rotation.chunks ? `${rotation.chunk + 1}/${rotation.chunks}` : 'off',
       pageFailures: failures.length,
     };

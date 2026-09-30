@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
   checkCollection,
   DEFAULT_FRESHNESS,
+  scopeValidationDataset,
+  sourceInfo,
   validateAgainstDataset,
   type DataSet,
   type ValidationDataset,
@@ -132,9 +134,16 @@ describe.skipIf(!existsSync(join(dataDir, 'validation', 'essentials.json')))('je
   it('au moins 90 % des paires attendues restent valides', async () => {
     const ds = JSON.parse(readFileSync(join(dataDir, 'validation', 'essentials.json'), 'utf8')) as ValidationDataset;
     const { data } = await readLiveDataSet(dataDir, PRODUCTS);
-    // Date de référence : calibrage du jeu (les instantanés versionnés vieillissent ensuite).
-    const r = validateAgainstDataset(ds, data, new Date(ds.calibratedAt), DEFAULT_FRESHNESS);
+    // Seules les enseignes dont l'instantané est présent : ceux d'Aldi et de Denner restent dans
+    // data/private (non versionné), absents d'un clone neuf.
+    const present = new Set(data.products.filter((p) => sourceInfo({ connectorId: p.connectorId, kind: 'retailer_site' }).tier === 'first_party').map((p) => p.chainId));
+    const scoped = scopeValidationDataset(ds, present);
+    // Date de référence : calibrage du jeu (les instantanés versionnés vieillissent ensuite), ou
+    // dernier relevé local s'il est plus récent.
+    const latest = Math.max(Date.parse(ds.calibratedAt), ...data.prices.map((p) => Date.parse(p.observedAt)));
+    const r = validateAgainstDataset(scoped, data, new Date(latest), DEFAULT_FRESHNESS);
     expect(ds.entries).toHaveLength(50);
+    expect(present.has('lidl')).toBe(true);
     expect(r.checked).toBeGreaterThan(0);
     expect(r.passed / r.checked).toBeGreaterThanOrEqual(0.9);
   });

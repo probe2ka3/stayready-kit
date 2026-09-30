@@ -123,7 +123,7 @@ if (DATA) {
   const cats = [...new Set(DATA.rows.map((r) => r.category))];
   document.getElementById('cat').innerHTML += cats.map((c) => '<option>' + esc(c) + '</option>').join('');
   document.getElementById('foot').innerHTML = 'Sources : ' + DATA.sources.map((s) => esc(s.connectorId) + ' (' + day(s.collectedAt) + ')').join(', ') +
-    '. Prix communautaires : Open Prices (Open Food Facts), base de données sous licence ODbL 1.0. Les prix Aldi ne sont pas affichés : les conditions d’utilisation du site Aldi réservent ses données à un usage privé. Migros, Coop et Denner : aucune source officielle réutilisable gratuitement ; seuls les relevés communautaires ou en magasin apparaissent.';
+    '. Prix communautaires : Open Prices (Open Food Facts), base de données sous licence ODbL 1.0. Les prix Aldi et Denner ne sont pas affichés : leurs conditions réservent ces données à un usage privé ou interdisent leur publication sans accord écrit. Migros et Coop : aucune source officielle accessible ; seuls les relevés communautaires ou en magasin apparaissent.';
   for (const id of ['q', 'cat', 'cmp']) document.getElementById(id).addEventListener('input', render);
   render();
 }
