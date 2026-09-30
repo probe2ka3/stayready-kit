@@ -18,7 +18,13 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
 - **Détours chiffrés** (économie brute, trajet ajouté, économie nette, seuil personnel, accepter/refuser) et
   signal **« attendre serait moins cher »** fondé sur les actions déjà annoncées.
 
-**État actuel (phase 4) : comparateur grand public validé sur prix réels, non ouvert au public.**
+**État actuel : plan sans dépenses** ([docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md)) — noyau de
+50 aliments de base × 5 enseignes, uniquement des sources gratuites. Mesure au 30.09.2026 : Lidl 47/50
+(public), Aldi 22/50 (privé seulement), Migros / Coop / Denner : relevés en magasin
+([docs/RELEVES.md](docs/RELEVES.md)) ; 1 besoin comparable dans deux enseignes en version publique, 21 en
+pilote privé. Offres B2B et licence FoodAlly hors plan.
+
+Acquis de la phase 4 (comparateur grand public validé sur prix réels, non ouvert au public) :
 
 - **Lidl** : prix officiels collectés chaque jour (3 012 articles avec prix, 531 actions), 200 références
   du catalogue couvertes.
@@ -91,6 +97,8 @@ comparateur/
 | `pnpm job benchmark-foodally` | Comparaison ponctuelle avec FoodAlly (plafond de 100 requêtes par jour, aucune donnée intégrée) |
 | `pnpm job demo-baskets --now=…` / `match-audit` | Paniers de Lausanne, Bulle et Genève rejoués sur les prix réels ; correspondances manquantes à revoir |
 | `pnpm test:e2e:demo` | Parcours des paniers d'exemple sur les prix réels, captures (`E2E_SCREENSHOTS=…`) |
+| `pnpm job magasins --npa=…` / `releves` | Identifiants des magasins proches ; import des relevés en magasin (`data/releves/*.csv`) |
+| `pnpm job matrice-essentiels` | Matrice 50 aliments × 5 enseignes (`data/matrice/`) et page publique statique (`data/public/index.html`) |
 
 ## Documentation
 
@@ -98,6 +106,8 @@ comparateur/
 |---|---|
 | [docs/audit/01-enseignes.md](docs/audit/01-enseignes.md) | Audit des 8 enseignes : catalogues, prix, promotions, calendriers vérifiés, accès aux données |
 | [docs/audit/02-juridique.md](docs/audit/02-juridique.md) | Analyse juridique préliminaire (LCD, OIP, LPD, LDA, LPM) sourcée sur Fedlex |
+| [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) | **Plan en vigueur** : audit, sources gratuites testées, matrice, fonctionnement à 0 CHF, prochaines étapes |
+| [docs/RELEVES.md](docs/RELEVES.md) | Relevés de prix en magasin : Open Prices ou CSV, règles, transcription assistée, 50 besoins |
 | [docs/STATUT.md](docs/STATUT.md) | Ce qui est opérationnel, ce qui attend une autorisation ou une validation |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Décisions d'architecture, modules, flux de données |
 | [docs/ALGORITHMES.md](docs/ALGORITHMES.md) | Optimisation panier + itinéraire, prix, promotions, limites |
@@ -112,7 +122,7 @@ comparateur/
 | [docs/TICKETS.md](docs/TICKETS.md) | « Scanner mon ticket » : modèle, flux, confidentialité |
 | [docs/MARCHE.md](docs/MARCHE.md) | Concurrence, affiliation vérifiée, données B2B (sections premium remplacées par le modèle v2) |
 | [docs/BUSINESS_PLAN.md](docs/BUSINESS_PLAN.md) | Plan d'affaires de la phase 2 : coûts détaillés (toujours valables), revenus premium (remplacés) |
-| [docs/BUSINESS_MODEL_V2.md](docs/BUSINESS_MODEL_V2.md) | Modèle v2 : gratuit pour les consommateurs, financé par le B2B (API, Intelligence, widget, sponsoring séparé) |
+| [docs/BUSINESS_MODEL_V2.md](docs/BUSINESS_MODEL_V2.md) | Modèle v2 (B2B) — **remplacé** par le plan sans dépenses |
 | [docs/IDENTITE.md](docs/IDENTITE.md) | Nom, domaines, marques proches, identité visuelle |
 | [docs/LANCEMENT.md](docs/LANCEMENT.md) | Zone pilote, verrou de lancement, liste de contrôle d'ouverture |
 | [docs/RAPPORT_PHASE2.md](docs/RAPPORT_PHASE2.md) | Compte rendu de la phase 2 |

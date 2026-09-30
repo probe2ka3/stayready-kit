@@ -163,6 +163,10 @@ est désactivé par défaut (`PRICE_FALLBACK_SOURCES`) et peut être coupé sans
 
 ## 7. Demandes d'accord aux enseignes (brouillon, non envoyé)
 
+Version à jour et message prêt à adapter : `docs/PLAN_SANS_DEPENSES.md` § 7 (plan sans dépenses : aucun
+avis juridique payant ; les points du § 6 restent ouverts et sont traités par des demandes gratuites et
+une limitation prudente des usages).
+
 Modèle de base : `docs/audit/02-juridique.md` § 8. Points propres à la phase 4 :
 
 - **Aldi Suisse** : autorisation écrite de réutiliser, dans un comparateur gratuit pour les

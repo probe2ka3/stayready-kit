@@ -1,6 +1,7 @@
 import {
   chfToCents,
   isIsoDate,
+  meetsRequirements,
   normalizeQuantity,
   VARIABLE_WEIGHT_LABEL,
   zurichLocalToInstant,
@@ -125,6 +126,18 @@ function quantityOf(row: Row, canonical: CanonicalProduct, loose: boolean): { qu
   return { quantity, factor: 1 };
 }
 
+/** Mentions reconnues dans la désignation (reprise telle qu'affichée en rayon). */
+function labelsFromName(name: string): string[] {
+  const labels: string[] = [];
+  if (/\b(AOP|AOC|GUB|DOP)\b/i.test(name)) labels.push('aop');
+  if (/sans lactose|laktosefrei|lactose[- ]free/i.test(name)) labels.push('lactose-free');
+  return labels;
+}
+
+function requirementText(c: CanonicalProduct): string {
+  return [c.attributes.swissOrigin ? 'suisse = oui' : '', c.attributes.organic ? 'bio = oui' : '', ...(c.attributes.labels ?? []).map((l) => `« ${l.toUpperCase()} » dans la désignation`)].filter(Boolean).join(', ') || 'unité';
+}
+
 /** Lit un ou plusieurs fichiers de relevés et construit le lot (lignes invalides écartées et listées). */
 export function buildRelevesBatch(files: Array<{ name: string; content: string }>, opts: ReleveOptions): ConnectorBatch {
   const report = emptyReport();
@@ -184,22 +197,24 @@ export function buildRelevesBatch(files: Array<{ name: string; content: string }
         const key = [slug, name.toLowerCase(), (brand ?? '').toLowerCase(), quantity.amount, quantity.unit, loose, organic, swiss].join('|');
         const sku = `rel-${hash32(key).toString(36)}`;
         const id = `${chain.id}:${sku}`;
-        if (!products.has(id)) {
-          products.set(id, {
-            id,
-            chainId: chain.id,
-            connectorId: RELEVES_CONNECTOR_ID,
-            sku,
-            gtin: null,
-            name: loose ? `${name}, ${quantity.unit === 'g' ? 'au kilo' : 'à la pièce'}` : name,
-            brand,
-            quantity,
-            attributes: { organic, swissOrigin: swiss, labels: loose && quantity.unit === 'g' ? [VARIABLE_WEIGHT_LABEL] : [] },
-            url: null,
-            isDemo: false,
-            declaredSlug: slug,
-          });
-        }
+        const labels = [...labelsFromName(name), ...(loose && quantity.unit === 'g' ? [VARIABLE_WEIGHT_LABEL] : [])];
+        const product: RetailerProduct = {
+          id,
+          chainId: chain.id,
+          connectorId: RELEVES_CONNECTOR_ID,
+          sku,
+          gtin: null,
+          name: loose ? `${name}, ${quantity.unit === 'g' ? 'au kilo' : 'à la pièce'}` : name,
+          brand,
+          quantity,
+          attributes: { organic, swissOrigin: swiss, labels },
+          url: null,
+          isDemo: false,
+          declaredSlug: slug,
+        };
+        // Exigences du besoin (origine suisse, bio, AOP, sans lactose) : refus explicite plutôt qu'un prix ignoré.
+        if (!meetsRequirements(canonical, product)) throw new RowError('besoin', `L'article ne remplit pas les exigences du besoin ${slug} (${requirementText(canonical)})`);
+        if (!products.has(id)) products.set(id, product);
         const observedAt = zurichLocalToInstant(date, '12:00').toISOString();
         const who = text(row, 'releve_par');
         const source = { connectorId: RELEVES_CONNECTOR_ID, kind: 'manual_survey' as const, ref: `${file.name}:${line} — ${proof}${who ? ` (${who})` : ''}` };

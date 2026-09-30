@@ -97,14 +97,24 @@ describe('relevés en magasin', () => {
             row({ prix_chf: '', prix_action_chf: '' }),
             row({ besoin: 'concombre-1', au_poids: 'oui', unite: 'kg' }),
             row({ preuve: 'EXEMPLE fictif' }),
+            row({ besoin: 'gruyere-aop-250g', article: 'Gruyère doux', contenance: '250', suisse: 'oui' }),
           ),
         },
       ],
       { now, stores },
     );
     expect(batch.prices).toEqual([]);
-    expect(batch.report.rejected.map((r) => r.field)).toEqual(['magasin', 'magasin', 'date', 'besoin', 'preuve', 'unite', 'prix_action_chf', 'carte', 'prix_chf', 'unite']);
+    expect(batch.report.rejected.map((r) => r.field)).toEqual(['magasin', 'magasin', 'date', 'besoin', 'preuve', 'unite', 'prix_action_chf', 'carte', 'prix_chf', 'unite', 'besoin']);
     expect(batch.report.metrics?.ignoredExamples).toBe(1);
+  });
+
+  it('exigences du besoin : origine suisse déclarée, AOP lue dans la désignation', () => {
+    const batch = buildRelevesBatch(
+      [{ name: 'a.csv', content: csv(row({ besoin: 'gruyere-aop-250g', article: 'Le Gruyère AOP doux', contenance: '250', suisse: 'oui', prix_chf: '5.00' })) }],
+      { now, stores },
+    );
+    expect(batch.report.rejected).toEqual([]);
+    expect(batch.retailerProducts[0]?.attributes).toMatchObject({ swissOrigin: true, labels: ['aop'] });
   });
 
   it('un fichier sans les colonnes obligatoires est refusé entièrement', () => {

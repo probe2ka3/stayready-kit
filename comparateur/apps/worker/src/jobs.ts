@@ -38,6 +38,7 @@ import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
 import { jobMagasins, jobReleves } from './releves';
 import { jobEssentialsMatrix } from './matrix';
+import { jobLiveRestore } from './publication';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
 import { readLocalitiesSnapshot, readStoresSnapshot, writeLocalitiesSnapshot, writeStoresSnapshot } from './snapshots';
 
@@ -277,6 +278,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   releves: { run: jobReleves, help: 'Importe les relevés en magasin (data/releves/*.csv → data/prices/live/releves.json ; --dry-run)' },
   magasins: { run: jobMagasins, help: 'Identifiants des magasins proches d’un NPA pour les relevés (--npa=1630 --rayon=5)' },
   'matrice-essentiels': { run: jobEssentialsMatrix, help: 'Matrice des 50 aliments de base × 5 enseignes (data/matrice/) et page publique statique (data/public/index.html)' },
+  'live-restore': { run: jobLiveRestore, help: 'Reprend les instantanés d’un dossier (cache) seulement s’ils sont plus récents (--from=dossier)' },
   'demo-baskets': { run: jobDemoBaskets, help: 'Paniers de démonstration reproductibles sur les prix réels (--now=ISO ; data/demo/resultats.md)' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },

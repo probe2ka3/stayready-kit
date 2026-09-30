@@ -1,5 +1,9 @@
 # TesPrix — modèle économique v2 : gratuit pour les consommateurs, financé par le B2B
 
+> **Remplacé le 30.09.2026** par [PLAN_SANS_DEPENSES.md](PLAN_SANS_DEPENSES.md) : aucune dépense nouvelle ;
+> offres B2B, widgets, marque blanche, revente de données et licence FoodAlly sortent du périmètre.
+> Ce document est conservé pour mémoire.
+
 > Version de travail du 30.09.2026. **Tous les montants prospectifs sont des hypothèses**, avec leur
 > formule ; aucun revenu n'est acquis, aucun client n'a été contacté, aucun paiement n'est actif.
 > Remplace les sections « premium » de `BUSINESS_PLAN.md` (phase 2), dont les coûts restent valables.

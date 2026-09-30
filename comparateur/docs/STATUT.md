@@ -1,9 +1,22 @@
 # Statut des fonctionnalités — TesPrix
 
-Situation au 30 septembre 2026 (fin de la phase 4 : comparateur grand public). Trois catégories :
-**opérationnel**, **dépend d'une source de données ou d'une autorisation**, **nécessite une validation
-juridique**. Détails : `docs/RAPPORT_PHASE4.md`, droits : `docs/DROITS_DONNEES.md`, moteur :
-`docs/DATA_ENGINE.md`.
+Situation au 30 septembre 2026 (**plan sans dépenses** : `docs/PLAN_SANS_DEPENSES.md`, après la phase 4).
+Trois catégories : **opérationnel**, **dépend d'une source de données ou d'une autorisation**, **point
+juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.md`, droits :
+`docs/DROITS_DONNEES.md`, relevés : `docs/RELEVES.md`.
+
+## Noyau de 50 aliments de base × 5 enseignes (`pnpm job matrice-essentiels`)
+
+| Enseigne | Source gratuite | Besoins avec prix récent | Public ? |
+|---|---|---|---|
+| Lidl | Site officiel | **47/50** | Oui (⚖️ réserve LCD / `robots.txt`) |
+| Aldi | API du site | 22/50 | **Non** : usage privé (conditions d'Aldi) |
+| Coop | Open Prices | 1/50 | Oui (ODbL) |
+| Migros, Denner | Open Prices | 0/50 | — |
+| Toutes | Relevés en magasin (`docs/RELEVES.md`) | 0 relevé réel à ce jour | Oui (magasin relevé seulement) |
+
+Comparables dans 2 / 3 / 4 / 5 enseignes : **1 / 0 / 0 / 0** en version publique, **21 / 1 / 0 / 0** en
+pilote privé avec Aldi. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
 
 ## Chiffres clés des données réelles (instantanés du 30.09.2026)
 
@@ -38,7 +51,9 @@ juridique**. Détails : `docs/RAPPORT_PHASE4.md`, droits : `docs/DROITS_DONNEES.
 | Démonstration | `/fr/exemples` (Lausanne, Bulle, Genève en un clic), `pnpm job demo-baskets`, captures `docs/captures/phase4` |
 | Contrôles | `match-audit`, `data-report`, `validate`, `/admin/qualite` |
 | Gratuit | Toutes les fonctions grand public, sans compte ni abonnement |
-| Tests | 200 unitaires, 7 d'intégration PostgreSQL, 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels |
+| Relevés en magasin | `pnpm job magasins`, `pnpm job releves` (CSV, un magasin, un jour, une preuve) |
+| Matrice et page publique | `pnpm job matrice-essentiels` : 50 × 5, vues publique et privée, page statique sans donnée Aldi |
+| Tests | 211 unitaires, 7 d'intégration PostgreSQL, 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 
@@ -46,13 +61,15 @@ juridique**. Détails : `docs/RAPPORT_PHASE4.md`, droits : `docs/DROITS_DONNEES.
 |---|---|---|
 | **Affichage des prix Aldi** | Collecte pour évaluation interne ; exclu en production | Autorisation écrite d'Aldi Suisse ou avis juridique favorable |
 | **Fiches produits Lidl** | Lues en rotation (`/fr/catalog/…`, hors `Disallow: /catalog/` selon RFC 9309, listées au plan du site) | Confirmation de Lidl ; sinon `LIDL_PRODUCT_PAGES_PER_RUN=0` (≈ 99 références au lieu de 200) |
-| **Prix Migros, Coop** | Refus technique (403, DataDome) : aucun contournement | Accord écrit ; ou licence FoodAlly (≈ 160 et ≈ 170 besoins, borne haute) |
-| **Prix Denner** | Conditions : usage commercial interdit sans autorisation écrite | Autorisation ; ou FoodAlly (≈ 69 besoins) |
+| **Prix Migros, Coop** | Refus technique (403, DataDome) : aucun contournement | Accord écrit (demande gratuite prête) ; relevés en magasin |
+| **Prix Denner** | Conditions : usage commercial interdit sans autorisation écrite | Autorisation (demande gratuite prête) ; relevés en magasin |
 | Aldi : 415 articles sans contenance | Écartés (jamais devinés) | Accord ou flux Aldi |
-| Repli FoodAlly | Implémenté, désactivé | Licence et droits d'affichage public confirmés (questions prêtes) |
+| Repli FoodAlly | Implémenté, désactivé, **hors plan** (licence payante) | — |
+| **Instantané Aldi versionné** | `data/prices/live/aldi-api.json` est dans le dépôt public | Retrait décidé par l'exploitant (plan § 3.4) |
+| Page publique statique | Générée (`data/public/index.html`), non publiée | Fusion dans `main` + `TESPRIX_PAGES=oui` |
 | Tickets de caisse, API professionnelle, facturation | Fermés | Voir `docs/LANCEMENT.md` |
 
-## ⚖️ Nécessite une validation juridique avant exploitation
+## ⚖️ Points juridiques ouverts (aucun avis payant prévu : demandes d'autorisation gratuites, plan § 7–8)
 
 Points détaillés dans `docs/DROITS_DONNEES.md` § 6 : LCD art. 5 let. c (collecte Lidl et Aldi), clause
 « fins privées » d'Aldi, `robots.txt` de Lidl, OIP (prix de base, « au lieu de »), responsabilité en cas

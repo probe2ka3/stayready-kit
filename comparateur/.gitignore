@@ -22,3 +22,4 @@ data/matching/candidates.json
 data/quality/report.json
 data/prices/live/foodally.json
 data/benchmark/raw/
+.cache-live/
