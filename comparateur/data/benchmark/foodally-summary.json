@@ -1,12 +1,9 @@
 {
-  "at": "2026-09-30T16:34:09.136Z",
+  "at": "2026-09-30T19:45:51.196Z",
   "attribution": "Source : FoodAlly (foodally.ch)",
   "method": "Une requête search_products par essentiel (termes allemands), 5 enseignes. Meilleur prix normalisé plausible (même dimension, contenance 1/6 à 5 fois la référence, mots de la requête dans la désignation, exigences de la référence) contre meilleur prix officiel TesPrix des correspondances revues.",
   "queries": 50,
   "results": 1532,
-  "stoppedBy": null,
-  "remainingDay": 50,
-  "requests": 51,
   "byChain": [
     {
       "chainId": "migros",
@@ -32,21 +29,21 @@
       "chainId": "lidl",
       "essentials": 50,
       "foodallyCovered": 27,
-      "tesprixCovered": 45,
-      "both": 26,
+      "tesprixCovered": 46,
+      "both": 27,
       "medianGap": 0,
       "within5pct": 19,
-      "beyond20pct": 5
+      "beyond20pct": 6
     },
     {
       "chainId": "aldi",
       "essentials": 50,
       "foodallyCovered": 29,
-      "tesprixCovered": 31,
+      "tesprixCovered": 29,
       "both": 18,
       "medianGap": 0,
-      "within5pct": 10,
-      "beyond20pct": 7
+      "within5pct": 12,
+      "beyond20pct": 6
     },
     {
       "chainId": "denner",
@@ -57,6 +54,558 @@
       "medianGap": null,
       "within5pct": 0,
       "beyond20pct": 0
+    }
+  ],
+  "byReference": [
+    {
+      "slug": "bananes-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "pommes-gala-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "carottes-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "oignons-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "tomates-grappe-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "pdt-fermes-2500g",
+      "foodally": [
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "spaghetti-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "penne-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "fusilli-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "riz-long-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "flocons-avoine-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "farine-blanche-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "sucre-cristal-1kg",
+      "foodally": [
+        "coop"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "sel-cuisine-1kg",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "huile-tournesol-1l",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "huile-olive-1l",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "huile-colza-1l",
+      "foodally": [
+        "migros",
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "lait-entier-uht-1l",
+      "foodally": [
+        "coop",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "lait-demi-uht-1l",
+      "foodally": [
+        "coop"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "beurre-choix-200g",
+      "foodally": [
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "beurre-cuisine-250g",
+      "foodally": [],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "creme-entiere-250ml",
+      "foodally": [
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "yogourt-nature-180g",
+      "foodally": [
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "sere-maigre-500g",
+      "foodally": [
+        "coop"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "gruyere-aop-250g",
+      "foodally": [],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "emmentaler-aop-250g",
+      "foodally": [],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "mozzarella-150g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "oeufs-sol-6",
+      "foodally": [],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "pain-mi-blanc-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "pain-toast-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "poulet-poitrine-500g",
+      "foodally": [],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "boeuf-hache-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "jambon-cuit-150g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "tomates-concassees-400g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "thon-huile-240g",
+      "foodally": [
+        "migros",
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "confiture-fraises-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "miel-fleurs-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "chocolat-lait-100g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "cafe-moulu-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "cafe-grains-1kg",
+      "foodally": [],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "the-noir-25",
+      "foodally": [
+        "aldi"
+      ],
+      "tesprix": [
+        "aldi"
+      ]
+    },
+    {
+      "slug": "eau-plate-6x1500ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "jus-orange-1l",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "mayonnaise-265g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "papier-toilette-10",
+      "foodally": [
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "essuie-tout-4",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "liquide-vaisselle-750ml",
+      "foodally": [
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "lessive-liquide-40",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "dentifrice-75ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "gel-douche-250ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
     }
   ],
   "largestGaps": [
@@ -73,21 +622,6 @@
       "tesprix": {
         "name": "Liquide vaisselle Original",
         "priceCents": 109
-      }
-    },
-    {
-      "slug": "gel-douche-250ml",
-      "chainId": "lidl",
-      "gap": -0.854,
-      "foodally": {
-        "name": "Duschgel mit Mandel",
-        "quantity": "500 ml",
-        "priceCents": 58,
-        "url": "https://foodally.ch/product/5293558-Lidl-Duschgel-mit-Mandel"
-      },
-      "tesprix": {
-        "name": "Gel douche Nature",
-        "priceCents": 199
       }
     },
     {
@@ -121,6 +655,21 @@
       }
     },
     {
+      "slug": "gel-douche-250ml",
+      "chainId": "lidl",
+      "gap": -0.468,
+      "foodally": {
+        "name": "Duschgel mit Mandel",
+        "quantity": "500 ml",
+        "priceCents": 58,
+        "url": "https://foodally.ch/product/5293558-Lidl-Duschgel-mit-Mandel"
+      },
+      "tesprix": {
+        "name": "Gel douche",
+        "priceCents": 109
+      }
+    },
+    {
       "slug": "dentifrice-75ml",
       "chainId": "aldi",
       "gap": -0.419,
@@ -151,18 +700,18 @@
       }
     },
     {
-      "slug": "tomates-concassees-400g",
-      "chainId": "aldi",
-      "gap": -0.305,
+      "slug": "papier-toilette-10",
+      "chainId": "lidl",
+      "gap": -0.296,
       "foodally": {
-        "name": "CUCINA Tomaten gehackt",
-        "quantity": "400 g",
-        "priceCents": 59,
-        "url": "https://foodally.ch/product/920039-Aldi-CUCINA-Tomaten-gehackt"
+        "name": "Tempo Toilettenpapier Classic",
+        "quantity": "24 piece",
+        "priceCents": 1188,
+        "url": "https://foodally.ch/product/9826429-Lidl-Tempo-Toilettenpapier-Classic"
       },
       "tesprix": {
-        "name": "Tomates concassées, nature",
-        "priceCents": 85
+        "name": "Hakle Papier toilette pur & en douceur",
+        "priceCents": 1695
       }
     },
     {

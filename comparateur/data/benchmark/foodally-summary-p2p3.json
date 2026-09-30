@@ -1,12 +1,9 @@
 {
-  "at": "2026-09-30T19:38:03.133Z",
+  "at": "2026-09-30T19:45:53.870Z",
   "attribution": "Source : FoodAlly (foodally.ch)",
   "method": "Une requête search_products par essentiel (termes allemands), 5 enseignes. Meilleur prix normalisé plausible (même dimension, contenance 1/6 à 5 fois la référence, mots de la requête dans la désignation, exigences de la référence) contre meilleur prix officiel TesPrix des correspondances revues.",
   "queries": 38,
   "results": 1013,
-  "stoppedBy": null,
-  "remainingDay": 62,
-  "requests": 39,
   "byChain": [
     {
       "chainId": "migros",
@@ -57,6 +54,422 @@
       "medianGap": null,
       "within5pct": 0,
       "beyond20pct": 0
+    }
+  ],
+  "byReference": [
+    {
+      "slug": "pommes-bio-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "mandarines-1kg",
+      "foodally": [],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "carottes-bio-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "mesclun-150g",
+      "foodally": [
+        "migros",
+        "coop"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "poireaux-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "pdt-bio-2kg",
+      "foodally": [
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "riz-risotto-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "lentilles-500g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "aldi"
+      ]
+    },
+    {
+      "slug": "sucre-glace-500g",
+      "foodally": [
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "huile-olive-500ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "bouillon-legumes-250g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "lait-bio-1l",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "fromage-rape-120g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "oeufs-bio-6",
+      "foodally": [
+        "coop"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "baguette-250g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "tofu-250g",
+      "foodally": [
+        "migros",
+        "coop",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "haricots-rouges-400g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "nutella-450g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "petits-beurre-200g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "cola-1500ml",
+      "foodally": [
+        "coop",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "legumes-surg-1kg",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "tablettes-lave-vaisselle-40",
+      "foodally": [
+        "migros",
+        "aldi"
+      ],
+      "tesprix": []
+    },
+    {
+      "slug": "nettoyant-wc-750ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "lavettes-microfibre-3",
+      "foodally": [
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "sacs-congelation-30",
+      "foodally": [
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "apres-shampoing-200ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "disques-demaquillants-80",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "creme-mains-100ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "serviettes-table-50",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "bougies-chauffe-plat-50",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "courge-butternut-1",
+      "foodally": [],
+      "tesprix": []
+    },
+    {
+      "slug": "tortellini-250g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "vinaigre-pomme-500ml",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl"
+      ]
+    },
+    {
+      "slug": "creme-acidulee-180g",
+      "foodally": [
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "tortillas-320g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "saumon-frais-250g",
+      "foodally": [
+        "migros",
+        "coop",
+        "lidl",
+        "aldi",
+        "denner"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "raisins-secs-500g",
+      "foodally": [
+        "coop"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
+    },
+    {
+      "slug": "poisson-pane-450g",
+      "foodally": [
+        "migros",
+        "lidl"
+      ],
+      "tesprix": [
+        "lidl",
+        "aldi"
+      ]
     }
   ],
   "largestGaps": [

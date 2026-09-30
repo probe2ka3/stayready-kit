@@ -147,6 +147,13 @@ export async function jobBenchmarkFoodAlly(ctx: JobContext) {
     results: queries.reduce((a, q) => a + q.results.length, 0),
     ...meta,
     byChain,
+    // Couverture par besoin : enseignes trouvées chez FoodAlly (correspondance plausible, non revue)
+    // et enseignes couvertes par les sources officielles de TesPrix.
+    byReference: [...new Set(pairs.map((p) => p.slug))].map((slug) => ({
+      slug,
+      foodally: pairs.filter((p) => p.slug === slug && p.foodally).map((p) => p.chainId),
+      tesprix: pairs.filter((p) => p.slug === slug && p.ours).map((p) => p.chainId),
+    })),
     largestGaps: pairs
       .filter((p) => p.gap !== null && Math.abs(p.gap) > 0.2)
       .sort((a, b) => Math.abs(b.gap ?? 0) - Math.abs(a.gap ?? 0))

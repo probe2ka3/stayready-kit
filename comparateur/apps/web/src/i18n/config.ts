@@ -21,6 +21,7 @@ export const paths = {
   stores: (l: Locale) => `/${l}/magasins`,
   basket: (l: Locale) => `/${l}/panier`,
   compare: (l: Locale) => `/${l}/comparer`,
+  examples: (l: Locale) => `/${l}/exemples`,
   list: (l: Locale) => `/${l}/liste`,
   method: (l: Locale) => `/${l}/methode`,
   sources: (l: Locale) => `/${l}/sources`,

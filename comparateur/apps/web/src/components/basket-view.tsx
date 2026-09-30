@@ -217,7 +217,12 @@ export function BasketView({ locale }: { locale: Locale }) {
           )}
         </div>
         {!hydrated ? null : basket.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border p-4 text-muted">{m.basket.empty}</p>
+          <p className="rounded-2xl border border-dashed border-border p-4 text-muted">
+            {m.basket.empty}{' '}
+            <Link href={paths.examples(locale)} className="font-semibold text-primary underline-offset-2 hover:underline">
+              {m.examples.link}
+            </Link>
+          </p>
         ) : (
           <Card className="py-1">
             <ul className="divide-y divide-border">

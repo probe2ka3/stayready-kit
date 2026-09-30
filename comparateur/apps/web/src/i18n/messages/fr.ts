@@ -149,6 +149,15 @@ export const fr = {
     needBasket: 'Ajoutez au moins un article au panier.',
     error: 'La comparaison a échoué. Réessayez dans un instant.',
   },
+  examples: {
+    title: 'Paniers d’exemple',
+    lead: 'Trois paniers composés à partir des besoins du catalogue, comparés sur les prix réels collectés. Charger un exemple remplace la localité, le panier et les réglages enregistrés dans ce navigateur.',
+    details: '{place} · {items} · courses le {date} · au plus {stores} magasins',
+    load: 'Charger et comparer',
+    none: 'Aucun panier d’exemple disponible.',
+    note: 'Résultats de référence : data/demo/resultats.md (tâche demo-baskets).',
+    link: 'Essayer un panier d’exemple',
+  },
   results: {
     scenarios: {
       single_store: 'Un seul magasin',
