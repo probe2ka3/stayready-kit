@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T20:55:37.785Z",
+ "generatedAt": "2026-09-30T20:58:15.703Z",
  "sources": [
   {
    "connectorId": "aldi-api",
@@ -943,21 +943,24 @@
      "reasons": []
     },
     "lidl": {
-     "status": "missing",
-     "connectorId": null,
-     "totalCents": null,
-     "unitPrice": null,
-     "productName": null,
-     "packs": null,
-     "observedAt": null,
-     "scope": null,
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 195,
+     "unitPrice": {
+      "basis": "piece",
+      "cents": 195
+     },
+     "productName": "Laitue iceberg suisse",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:02:00.606Z",
+     "scope": "national",
      "place": null,
      "promotion": null,
      "reasons": []
     }
    },
-   "publicChains": 0,
-   "privateChains": 0
+   "publicChains": 1,
+   "privateChains": 1
   },
   {
    "slug": "pdt-fermes-2500g",
@@ -1020,20 +1023,18 @@
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 1145,
+     "totalCents": 375,
      "unitPrice": {
       "basis": "kg",
-      "cents": 382
+      "cents": 150
      },
      "productName": "Pommes de terre cireuses suisses",
-     "packs": 5,
-     "observedAt": "2026-09-30T16:31:08.098Z",
+     "packs": 1,
+     "observedAt": "2026-09-28T08:26:48.571Z",
      "scope": "national",
      "place": null,
      "promotion": null,
-     "reasons": [
-      "pack_size_differs"
-     ]
+     "reasons": []
     }
    },
    "publicChains": 1,
@@ -1902,21 +1903,24 @@
      "reasons": []
     },
     "lidl": {
-     "status": "missing",
-     "connectorId": null,
-     "totalCents": null,
-     "unitPrice": null,
-     "productName": null,
-     "packs": null,
-     "observedAt": null,
-     "scope": null,
+     "status": "official_public",
+     "connectorId": "lidl-web",
+     "totalCents": 105,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 105
+     },
+     "productName": "JuraSel Sel",
+     "packs": 1,
+     "observedAt": "2026-09-28T07:09:48.604Z",
+     "scope": "national",
      "place": null,
      "promotion": null,
      "reasons": []
     }
    },
-   "publicChains": 0,
-   "privateChains": 0
+   "publicChains": 1,
+   "privateChains": 1
   },
   {
    "slug": "huile-tournesol-1l",
@@ -3330,14 +3334,17 @@
      "reasons": []
     },
     "aldi": {
-     "status": "missing",
-     "connectorId": null,
-     "totalCents": null,
-     "unitPrice": null,
-     "productName": null,
-     "packs": null,
-     "observedAt": null,
-     "scope": null,
+     "status": "private_only",
+     "connectorId": "aldi-api",
+     "totalCents": 299,
+     "unitPrice": {
+      "basis": "kg",
+      "cents": 598
+     },
+     "productName": "Pain complet à l'épeautre",
+     "packs": 1,
+     "observedAt": "2026-09-30T16:53:49.507Z",
+     "scope": "national",
      "place": null,
      "promotion": null,
      "reasons": []
@@ -3362,7 +3369,7 @@
     }
    },
    "publicChains": 1,
-   "privateChains": 1
+   "privateChains": 2
   },
   {
    "slug": "poulet-poitrine-500g",
@@ -4072,29 +4079,29 @@
     "official_public": 0,
     "store_survey": 0,
     "community": 0,
-    "private_only": 21,
+    "private_only": 22,
     "stale": 0,
-    "missing": 29
+    "missing": 28
    },
    "lidl": {
-    "official_public": 45,
+    "official_public": 47,
     "store_survey": 0,
     "community": 0,
     "private_only": 0,
     "stale": 0,
-    "missing": 5
+    "missing": 3
    }
   },
   "comparablePublic": {
-   "1": 45,
+   "1": 47,
    "2": 1,
    "3": 0,
    "4": 0,
    "5": 0
   },
   "comparablePrivate": {
-   "1": 46,
-   "2": 20,
+   "1": 48,
+   "2": 21,
    "3": 1,
    "4": 0,
    "5": 0

@@ -18,22 +18,22 @@ Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × 1.3, durée 
 | Aldi Suisse seul | Aldi Suisse Rue des Terreaux 25 (0,4 km) | 13/14 | 39.08 | 0,9 km | 7 min | 0.33 | (39.41, incomplet) | non comparable | non comparable |
 | Coop seul | Coop Coop (0,3 km) | 1/14 | 2.50 | 0,7 km | 7 min | 0.25 | (2.75, incomplet) | non comparable | non comparable |
 
-| Article demandé | Lidl Suisse : article, paquets, montant | Aldi Suisse : article, paquets, montant | Retenu |
-|---|---|---|---|
-| 2 × Spaghetti (500 g) | Spaghetti 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Spaghetti, blé dur 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Riz long grain (1 kg) | Riz long grain parbolied 1 kg × 1 = **1.35** (indicatif, relevé 30.09) | Riz à grains longs 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Flocons d’avoine (500 g) | Fiocons d'avoine gros 500 g × 1 = **0.69** (indicatif, relevé 30.09) | Flocons d’avoine, tendres 500 g × 1 = **0.69** (indicatif, relevé 30.09) | Aldi Suisse |
-| 1 × Huile de colza (1 l) | VITA D’OR Huile de colza 1 l × 1 = **2.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | Huile de colza 1 l × 1 = **3.49** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Beurre de cuisine (250 g) | Beurre de cuisine suisse 250 g × 1 = **3.39** (indicatif, relevé 30.09) | Beurre de cuisine 250 g × 1 = **3.39** (indicatif, relevé 30.09) | Aldi Suisse |
-| 2 × Mozzarella (150 g) | Mozzarella classique 125 g × 3 = **2.37** (indicatif, relevé 28.09) | Mozzarella, standard 125 g × 3 = **2.37** (indicatif, relevé 30.09) | Aldi Suisse |
-| 1 × Pain toast (500 g) | Pain de mie 335 g × 2 = **3.98** (indicatif, relevé 30.09) | Pain toast de blé 500 g × 1 = **1.19** (indicatif, relevé 30.09) | Aldi Suisse |
-| 1 × Poitrine de poulet suisse (500 g) | Poitrine de poulet 300 g × 2 = **13.50** (indicatif, relevé 28.09) | Poitrine de poulet 600 g × 1 = **9.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10 (fin non publiée)) | Aldi Suisse |
-| 3 × Tomates concassées (400 g) | Piacelli Polpa in Pezzetti 400 g × 3 = **2.25** (indicatif, relevé 30.09) | Tomates concassées, nature 400 g × 3 = **2.55** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Confiture de fraises (500 g) | Confiture de fraises 450 g × 1 = **1.19** (indicatif, relevé 28.09) | Confiture de fraise 450 g × 1 = **1.19** (indicatif, relevé 30.09) | Aldi Suisse |
-| 1 × Café moulu (500 g) | Café Intenso moulu 500 g × 1 = **3.49** (indicatif, relevé 28.09) | Café moulu, Classic Intenso 500 g × 1 = **3.49** (indicatif, relevé 30.09) | Aldi Suisse |
-| 2 × Chocolat au lait (100 g) | Chocolat au lait 100 g × 2 = **1.38** (indicatif, relevé 28.09) | Chocolat clair, lait entier 125 g × 2 = **4.78** (indicatif, relevé 30.09) | Lidl Suisse |
-| 4 × Yogourt nature (180 g) | Yogourt nature 1.5% 500 g × 2 = **1.58** (indicatif, relevé 28.09) | introuvable | Lidl Suisse |
-| 1 × Penne (500 g) | Penne Rigate 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Penne rigate 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Aldi Suisse |
+| Article demandé | Migros : article, paquets, montant | Coop : article, paquets, montant | Denner : article, paquets, montant | Aldi Suisse : article, paquets, montant | Lidl Suisse : article, paquets, montant | Retenu |
+|---|---|---|---|---|---|---|
+| 2 × Spaghetti (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Spaghetti, blé dur 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Spaghetti 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Riz long grain (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Riz à grains longs 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Riz long grain parbolied 1 kg × 1 = **1.35** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Flocons d’avoine (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Flocons d’avoine, tendres 500 g × 1 = **0.69** (indicatif, relevé 30.09) | Fiocons d'avoine gros 500 g × 1 = **0.69** (indicatif, relevé 30.09) | Aldi Suisse |
+| 1 × Huile de colza (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Huile de colza 1 l × 1 = **3.49** (indicatif, relevé 30.09) | VITA D’OR Huile de colza 1 l × 1 = **2.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | Lidl Suisse |
+| 1 × Beurre de cuisine (250 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Beurre de cuisine 250 g × 1 = **3.39** (indicatif, relevé 30.09) | Beurre de cuisine suisse 250 g × 1 = **3.39** (indicatif, relevé 30.09) | Aldi Suisse |
+| 2 × Mozzarella (150 g) | aucune donnée gratuite | prix trop ancien (01.09) | aucune donnée gratuite | Mozzarella, standard 125 g × 3 = **2.37** (indicatif, relevé 30.09) | Mozzarella classique 125 g × 3 = **2.37** (indicatif, relevé 28.09) | Aldi Suisse |
+| 1 × Pain toast (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Pain toast de blé 500 g × 1 = **1.19** (indicatif, relevé 30.09) | Pain de mie 335 g × 2 = **3.98** (indicatif, relevé 30.09) | Aldi Suisse |
+| 1 × Poitrine de poulet suisse (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Poitrine de poulet 600 g × 1 = **9.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10 (fin non publiée)) | Poitrine de poulet 300 g × 2 = **13.50** (indicatif, relevé 28.09) | Aldi Suisse |
+| 3 × Tomates concassées (400 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Tomates concassées, nature 400 g × 3 = **2.55** (indicatif, relevé 30.09) | Piacelli Polpa in Pezzetti 400 g × 3 = **2.25** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Confiture de fraises (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Confiture de fraise 450 g × 1 = **1.19** (indicatif, relevé 30.09) | Confiture de fraises 450 g × 1 = **1.19** (indicatif, relevé 28.09) | Aldi Suisse |
+| 1 × Café moulu (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Café moulu, Classic Intenso 500 g × 1 = **3.49** (indicatif, relevé 30.09) | Café Intenso moulu 500 g × 1 = **3.49** (indicatif, relevé 28.09) | Aldi Suisse |
+| 2 × Chocolat au lait (100 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Chocolat clair, lait entier 125 g × 2 = **4.78** (indicatif, relevé 30.09) | Chocolat au lait 100 g × 2 = **1.38** (indicatif, relevé 28.09) | Lidl Suisse |
+| 4 × Yogourt nature (180 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Yogourt nature 1.5% 500 g × 2 = **1.58** (indicatif, relevé 28.09) | Lidl Suisse |
+| 1 × Penne (500 g) | aucune donnée gratuite | Pasta Penne Lisce 500 g × 1 = **2.50** (indicatif, relevé 04.08) | aucune donnée gratuite | Penne rigate 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Penne Rigate 1 kg × 1 = **1.19** (indicatif, relevé 30.09) | Aldi Suisse |
 
 Même panier aujourd’hui (30.09) : 38.25 ; le 01.10 : 34.24 (actions qui commencent : 3, qui auront expiré : 1).
 
@@ -54,20 +54,20 @@ Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × 1.3, durée 
 
 Aucune combinaison de magasins n’est moins chère qu’un seul magasin pour ce panier (aucun article n’est moins cher ailleurs).
 
-| Article demandé | Lidl Suisse : article, paquets, montant | Aldi Suisse : article, paquets, montant | Retenu |
-|---|---|---|---|
-| 2 × Lait entier UHT (1 l) | Lait entier 3.5% UHT 1 l × 2 = **3.10** (indicatif, relevé 30.09) | introuvable | Lidl Suisse |
-| 1 × Œufs suisses de plein air (6 pièces) | Oeufs suisses élevage plein air 8 pièces × 1 = **4.29** (indicatif, relevé 30.09) | introuvable | Lidl Suisse |
-| 1 × Gruyère AOP (250 g) | Gruyère AOP doux 200 g × 2 = **5.98** (indicatif, relevé 28.09) | Le Gruyère AOP, doux 200 g × 2 = **5.98** (indicatif, relevé 30.09 ; action en cours 28.09–04.10 (fin non publiée)) | Lidl Suisse |
-| 1 × Pain mi-blanc (500 g) | Pain mi-blanc 500 g × 1 = **0.99** (indicatif, relevé 28.09) | Pain mi-blanc 500 g × 1 = **0.99** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Bananes (1 kg) | Bananes 1 kg × 1 = **1.19** (indicatif, relevé 28.09) | introuvable | Lidl Suisse |
-| 1 × Pommes Gala (1 kg) | QUALITÉ SUISSE Pommes rouges suisses 1 kg × 1 = **1.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | introuvable | Lidl Suisse |
-| 1 × Beurre de choix (200 g) | Beurre de choix 200 g × 1 = **3.09** (indicatif, relevé 30.09) | Beurre 250 g × 1 = **3.85** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Viande hachée de bœuf (500 g) | Viande hachée de boeuf 500 g × 1 = **7.79** (indicatif, relevé 30.09) | Viande hachée de bœuf 500 g × 1 = **7.79** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Riz basmati (1 kg) | Fairtrade Riz basmati 1 kg × 1 = **2.99** (indicatif, relevé 30.09) | Riz Basmati 500 g × 2 = **3.98** (indicatif, relevé 30.09) | Lidl Suisse |
-| 2 × Spaghetti bio (500 g) | Spaghetti bio 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Spaghetti, blé dur 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Café en grains (1 kg) | Grains de Café Rosso 1 kg × 1 = **7.99** (indicatif, relevé 28.09) | Crema Intenso, en grains 500 g × 2 = **9.58** (indicatif, relevé 30.09 ; action en cours 30.09–06.10 (fin non publiée)) | Lidl Suisse |
-| 2 × Jus de pomme (1 l) | Jus de pomme 1,5 l × 2 = **3.58** (indicatif, relevé 28.09) | Jus de pomme 1,5 l × 2 = **3.58** (indicatif, relevé 30.09) | Lidl Suisse |
+| Article demandé | Migros : article, paquets, montant | Coop : article, paquets, montant | Denner : article, paquets, montant | Aldi Suisse : article, paquets, montant | Lidl Suisse : article, paquets, montant | Retenu |
+|---|---|---|---|---|---|---|
+| 2 × Lait entier UHT (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Lait entier 3.5% UHT 1 l × 2 = **3.10** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Œufs suisses de plein air (6 pièces) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Oeufs suisses élevage plein air 8 pièces × 1 = **4.29** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Gruyère AOP (250 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Le Gruyère AOP, doux 200 g × 2 = **5.98** (indicatif, relevé 30.09 ; action en cours 28.09–04.10 (fin non publiée)) | Gruyère AOP doux 200 g × 2 = **5.98** (indicatif, relevé 28.09) | Lidl Suisse |
+| 1 × Pain mi-blanc (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Pain mi-blanc 500 g × 1 = **0.99** (indicatif, relevé 30.09) | Pain mi-blanc 500 g × 1 = **0.99** (indicatif, relevé 28.09) | Lidl Suisse |
+| 1 × Bananes (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Bananes 1 kg × 1 = **1.19** (indicatif, relevé 28.09) | Lidl Suisse |
+| 1 × Pommes (Gala ou variété courante) (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | QUALITÉ SUISSE Pommes rouges suisses 1 kg × 1 = **1.99** (action confirmée, relevé 30.09 ; action annoncée 01.10–07.10) | Lidl Suisse |
+| 1 × Beurre de choix (200 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Beurre 250 g × 1 = **3.85** (indicatif, relevé 30.09) | Beurre de choix 200 g × 1 = **3.09** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Viande hachée de bœuf (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Viande hachée de bœuf 500 g × 1 = **7.79** (indicatif, relevé 30.09) | Viande hachée de boeuf 500 g × 1 = **7.79** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Riz basmati (1 kg) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Riz Basmati 500 g × 2 = **3.98** (indicatif, relevé 30.09) | Fairtrade Riz basmati 1 kg × 1 = **2.99** (indicatif, relevé 30.09) | Lidl Suisse |
+| 2 × Spaghetti bio (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Spaghetti, blé dur 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Spaghetti bio 500 g × 2 = **2.38** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Café en grains (1 kg) | aucune donnée gratuite | aucune donnée gratuite | prix trop ancien (29.08) | Crema Intenso, en grains 500 g × 2 = **9.58** (indicatif, relevé 30.09 ; action en cours 30.09–06.10 (fin non publiée)) | Grains de Café Rosso 1 kg × 1 = **7.99** (indicatif, relevé 28.09) | Lidl Suisse |
+| 2 × Jus de pomme (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Jus de pomme 1,5 l × 2 = **3.58** (indicatif, relevé 30.09) | Jus de pomme 1,5 l × 2 = **3.58** (indicatif, relevé 28.09) | Lidl Suisse |
 
 Même panier aujourd’hui (30.09) : 46.16 ; le 03.10 : 45.36 (actions qui commencent : 1, qui auront expiré : 0).
 
@@ -89,18 +89,18 @@ Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × 1.3, durée 
 
 Introuvables dans toutes les enseignes du périmètre : Papier toilette 3 plis (10 rouleaux).
 
-| Article demandé | Lidl Suisse : article, paquets, montant | Aldi Suisse : article, paquets, montant | Retenu |
-|---|---|---|---|
-| 1 × Lentilles vertes (500 g) | introuvable | Légumineuses, lentille de montagne 500 g × 1 = **1.89** (indicatif, relevé 30.09) | Aldi Suisse |
-| 2 × Lait entier UHT (1 l) | Lait entier 3.5% UHT 1 l × 2 = **3.10** (indicatif, relevé 30.09) | introuvable | Lidl Suisse |
-| 1 × Liquide vaisselle (750 ml) | Liquide vaisselle Original 1,5 l × 1 = **1.09** (indicatif, relevé 30.09) | introuvable | Lidl Suisse |
-| 1 × Papier toilette 3 plis (10 rouleaux) (10 pièces) | introuvable | introuvable | manquant |
-| 2 × Dentifrice au fluor (75 ml) | Dentifrice 125 ml × 2 = **0.78** (indicatif, relevé 30.09) | introuvable | Lidl Suisse |
-| 1 × Gel douche (250 ml) | Gel douche 5 dl × 1 = **1.09** (indicatif, relevé 30.09) | Gel douche Family, Fresh Touch 1 l × 1 = **1.15** (indicatif, relevé 28.09 ; action en cours 28.09–04.10 (fin non publiée)) | Lidl Suisse |
-| 1 × Shampoing cheveux normaux (250 ml) | Shampoing professionnel 250 ml × 1 = **2.49** (indicatif, relevé 30.09) | Shampooing familial aux herbes 5 dl × 1 = **0.58** (indicatif, relevé 30.09) | Aldi Suisse |
-| 2 × Eau minérale plate (6 × 1,5 l) (9 l) | Eau minérale 1,5 l × 12 = **3.00** (indicatif, relevé 30.09) | Eau minérale, naturelle 1,5 l × 12 = **3.00** (indicatif, relevé 30.09) | Aldi Suisse |
-| 3 × Chocolat noir (100 g) | Chocolat noir 100 g × 3 = **2.37** (indicatif, relevé 28.09) | Chocolat noir, cacao 70% 125 g × 3 = **5.25** (indicatif, relevé 30.09) | Lidl Suisse |
-| 1 × Thé noir (25 sachets) (25 pièces) | introuvable | Mélange au thé noir, earl grey 40 pièces × 1 = **0.83** (indicatif, relevé 30.09) | Aldi Suisse |
+| Article demandé | Migros : article, paquets, montant | Coop : article, paquets, montant | Denner : article, paquets, montant | Aldi Suisse : article, paquets, montant | Lidl Suisse : article, paquets, montant | Retenu |
+|---|---|---|---|---|---|---|
+| 1 × Lentilles vertes (500 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Légumineuses, lentille de montagne 500 g × 1 = **1.89** (indicatif, relevé 30.09) | aucune donnée gratuite | Aldi Suisse |
+| 2 × Lait entier UHT (1 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Lait entier 3.5% UHT 1 l × 2 = **3.10** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Liquide vaisselle (750 ml) | aucune donnée gratuite | prix trop ancien (17.09) | aucune donnée gratuite | aucune donnée gratuite | Liquide vaisselle Original 1,5 l × 1 = **1.09** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Papier toilette 3 plis (10 rouleaux) (10 pièces) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | manquant |
+| 2 × Dentifrice au fluor (75 ml) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Dentifrice 125 ml × 2 = **0.78** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Gel douche (250 ml) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Gel douche Family, Fresh Touch 1 l × 1 = **1.15** (indicatif, relevé 28.09 ; action en cours 28.09–04.10 (fin non publiée)) | Gel douche 5 dl × 1 = **1.09** (indicatif, relevé 30.09) | Lidl Suisse |
+| 1 × Shampoing cheveux normaux (250 ml) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Shampooing familial aux herbes 5 dl × 1 = **0.58** (indicatif, relevé 30.09) | Shampoing professionnel 250 ml × 1 = **2.49** (indicatif, relevé 30.09) | Aldi Suisse |
+| 2 × Eau minérale plate (6 × 1,5 l) (9 l) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Eau minérale, naturelle 1,5 l × 12 = **3.00** (indicatif, relevé 30.09) | Eau minérale 1,5 l × 12 = **3.00** (indicatif, relevé 30.09) | Aldi Suisse |
+| 3 × Chocolat noir (100 g) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Chocolat noir, cacao 70% 125 g × 3 = **5.25** (indicatif, relevé 30.09) | Chocolat noir 100 g × 3 = **2.37** (indicatif, relevé 28.09) | Lidl Suisse |
+| 1 × Thé noir (25 sachets) (25 pièces) | aucune donnée gratuite | aucune donnée gratuite | aucune donnée gratuite | Mélange au thé noir, earl grey 40 pièces × 1 = **0.83** (indicatif, relevé 30.09) | aucune donnée gratuite | Aldi Suisse |
 
 Articles manquants dans la solution retenue : Papier toilette 3 plis (10 rouleaux) (aucune enseigne).
 

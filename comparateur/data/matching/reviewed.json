@@ -3150,6 +3150,34 @@
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-09-30",
    "note": "Sauce tomate au basilic 700 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0082031",
+   "canonicalSlug": "salade-iceberg-1",
+   "reviewer": "équipe données TesPrix (revue assistée, plan sans dépenses)",
+   "reviewedAt": "2026-09-30",
+   "note": "Laitue iceberg suisse, à la pièce"
+  },
+  {
+   "retailerProductId": "lidl:0083225",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "reviewer": "équipe données TesPrix (revue assistée, plan sans dépenses)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pommes de terre cireuses (fermes à la cuisson) suisses, 2,5 kg"
+  },
+  {
+   "retailerProductId": "lidl:0001037",
+   "canonicalSlug": "sel-cuisine-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, plan sans dépenses)",
+   "reviewedAt": "2026-09-30",
+   "note": "Sel de table JuraSel 1 kg ; iodation non précisée par l’enseigne"
+  },
+  {
+   "retailerProductId": "aldi:713261",
+   "canonicalSlug": "pain-complet-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, plan sans dépenses)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pain complet à l’épeautre, 500 g"
   }
  ]
 }

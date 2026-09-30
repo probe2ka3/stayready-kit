@@ -1,6 +1,6 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-09-30T20:55:37.785Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-09-30T20:58:15.703Z` sur les instantanés versionnés :
 - `aldi-api` du 30.09.2026 (réutilisation : requires_authorization)
 - `lidl-web` du 30.09.2026 (réutilisation : no_restriction_found)
 - `open-prices` du 30.09.2026 (réutilisation : open_license)
@@ -16,13 +16,13 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Migros | 0 | 0 | 0 | 0 | 1 | 49 |
 | Coop | 0 | 0 | 1 | 0 | 1 | 48 |
 | Denner | 0 | 0 | 0 | 0 | 1 | 49 |
-| Aldi Suisse | 0 | 0 | 0 | 21 | 0 | 29 |
-| Lidl Suisse | 45 | 0 | 0 | 0 | 0 | 5 |
+| Aldi Suisse | 0 | 0 | 0 | 22 | 0 | 28 |
+| Lidl Suisse | 47 | 0 | 0 | 0 | 0 | 3 |
 
 | Besoins comparables dans au moins… | 1 enseigne | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| Version publique (sans Aldi) | 45 | 1 | 0 | 0 | 0 |
-| Pilote privé (avec Aldi) | 46 | 20 | 1 | 0 | 0 |
+| Version publique (sans Aldi) | 47 | 1 | 0 | 0 | 0 |
+| Pilote privé (avec Aldi) | 48 | 21 | 1 | 0 | 0 |
 
 ## Détail
 
@@ -41,9 +41,9 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Concombre (1 pièce) | — | — | — | — | ● 1.49 (1.49/pce) 30.09.2026 | 1 | 1 |
 | Poivrons mélangés (500 g) | — | — | — | — | ● 1.65 (3.30/kg) 28.09.2026 | 1 | 1 |
 | Courgettes (500 g) | — | — | — | — | ● 2.49 (2.49/kg) 28.09.2026 | 1 | 1 |
-| Salade iceberg (1 pièce) | — | — | — | — | — | 0 | 0 |
+| Salade iceberg (1 pièce) | — | — | — | — | ● 1.95 (1.95/pce) 28.09.2026 | 1 | 1 |
 | **Pommes de terre** | | | | | | | |
-| Pommes de terre fermes à la cuisson (2,5 kg) | — | — | — | — | ● 11.45 (3.82/kg) 30.09.2026 | 1 | 1 |
+| Pommes de terre fermes à la cuisson (2,5 kg) | — | — | — | — | ● 3.75 (1.50/kg) 28.09.2026 | 1 | 1 |
 | Pommes de terre farineuses (2,5 kg) | — | — | — | — | ● 3.75 (1.50/kg) 28.09.2026 | 1 | 1 |
 | **Pâtes, riz et céréales** | | | | | | | |
 | Riz long grain (1 kg) | — | — | — | ◐ 2.38 (2.38/kg) 30.09.2026 | ● 1.35 (1.35/kg) 30.09.2026 | 1 | 2 |
@@ -56,7 +56,7 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Farine blanche (1 kg) | — | — | — | — | ● 0.99 (0.99/kg) 30.09.2026 | 1 | 1 |
 | Farine mi-blanche (1 kg) | — | — | — | — | — | 0 | 0 |
 | Sucre cristallisé (1 kg) | — | — | — | — | ● 1.49 (1.49/kg) 30.09.2026 | 1 | 1 |
-| Sel de cuisine iodé (1 kg) | — | — | — | — | — | 0 | 0 |
+| Sel de cuisine iodé (1 kg) | — | — | — | — | ● 1.05 (1.05/kg) 28.09.2026 | 1 | 1 |
 | **Huiles, vinaigres et condiments** | | | | | | | |
 | Huile de tournesol (1 l) | — | — | — | — | ● 3.99 (3.99/l) 30.09.2026 | 1 | 1 |
 | Huile de colza (1 l) | — | — | — | ◐ 3.49 (3.49/l) 30.09.2026 | ● 3.49 (3.49/l) 30.09.2026 | 1 | 2 |
@@ -78,7 +78,7 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Œufs suisses de plein air (6 pièces) | — | — | — | — | ● 4.29 (0.54/pce) 30.09.2026 | 1 | 1 |
 | **Pain et boulangerie** | | | | | | | |
 | Pain mi-blanc (500 g) | — | — | — | ◐ 0.99 (1.98/kg) 30.09.2026 | ● 0.99 (1.98/kg) 28.09.2026 | 1 | 2 |
-| Pain complet (500 g) | — | — | — | — | ● 5.38 (7.69/kg) 28.09.2026 | 1 | 1 |
+| Pain complet (500 g) | — | — | — | ◐ 2.99 (5.98/kg) 30.09.2026 | ● 5.38 (7.69/kg) 28.09.2026 | 1 | 2 |
 | **Viande et poisson** | | | | | | | |
 | Poitrine de poulet suisse (500 g) | — | — | — | ◐ 13.50 (22.50/kg) 30.09.2026 | ● 13.50 (22.50/kg) 28.09.2026 | 1 | 2 |
 | Viande hachée de bœuf (500 g) | — | — | — | ◐ 7.79 (15.58/kg) 30.09.2026 | ● 7.79 (15.58/kg) 30.09.2026 | 1 | 2 |

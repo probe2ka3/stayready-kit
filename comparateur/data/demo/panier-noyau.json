@@ -1,0 +1,107 @@
+{
+ "description": "Panier du noyau d'aliments de base (plan sans dépenses, docs/PLAN_SANS_DEPENSES.md). Relancer : pnpm job demo-baskets --now=2026-09-30T19:00:00Z --baskets=panier-noyau.json --name=panier-noyau-prive, puis avec --exclude=aldi-api --name=panier-noyau-public.",
+ "baskets": [
+  {
+   "id": "noyau-bulle",
+   "title": "Bulle — panier de base, 17 aliments du noyau (5 enseignes)",
+   "origin": {
+    "lat": 46.619,
+    "lon": 7.057,
+    "label": "1630 Bulle (FR)"
+   },
+   "radiusKm": 5,
+   "chains": [
+    "migros",
+    "coop",
+    "denner",
+    "aldi",
+    "lidl"
+   ],
+   "lines": [
+    {
+     "productId": "bananes-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "pommes-gala-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "carottes-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "oignons-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "pdt-fermes-2500g",
+     "qty": 1
+    },
+    {
+     "productId": "farine-blanche-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "sucre-cristal-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "huile-colza-1l",
+     "qty": 1
+    },
+    {
+     "productId": "riz-long-1kg",
+     "qty": 1
+    },
+    {
+     "productId": "spaghetti-500g",
+     "qty": 2
+    },
+    {
+     "productId": "lait-entier-uht-1l",
+     "qty": 4
+    },
+    {
+     "productId": "beurre-cuisine-250g",
+     "qty": 1
+    },
+    {
+     "productId": "oeufs-sol-6",
+     "qty": 1
+    },
+    {
+     "productId": "yogourt-nature-180g",
+     "qty": 4
+    },
+    {
+     "productId": "gruyere-aop-250g",
+     "qty": 1
+    },
+    {
+     "productId": "pain-mi-blanc-500g",
+     "qty": 1
+    },
+    {
+     "productId": "tomates-concassees-400g",
+     "qty": 2
+    }
+   ],
+   "when": {
+    "mode": "plan",
+    "date": "2026-10-01",
+    "time": "10:00"
+   },
+   "maxStores": 2,
+   "travel": {
+    "mode": "car",
+    "costPerKmChf": 0.35,
+    "valueOfTimeChfPerHour": 0,
+    "valueInStoreTime": false,
+    "minutesPerStore": 15,
+    "returnToOrigin": true
+   },
+   "minSavingPerExtraStoreChf": 2
+  }
+ ]
+}

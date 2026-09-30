@@ -8,6 +8,7 @@ import {
   formatQuantity,
   profileForStore,
   resolveLine,
+  sourceInfo,
   storeSpecificIds,
   withCrowDistance,
   zurichToday,
@@ -48,7 +49,8 @@ const day = (iso: string) => iso.slice(8, 10) + '.' + iso.slice(5, 7);
 export async function jobDemoBaskets(ctx: JobContext) {
   const dataDir = ctx.env.dataDir;
   const now = typeof ctx.flags.now === 'string' ? new Date(ctx.flags.now) : ctx.now;
-  const def = JSON.parse(await readFile(join(dataDir, 'demo', 'baskets.json'), 'utf8')) as { baskets: DemoBasket[] };
+  const basketsFile = typeof ctx.flags.baskets === 'string' ? ctx.flags.baskets : 'baskets.json';
+  const def = JSON.parse(await readFile(join(dataDir, 'demo', basketsFile), 'utf8')) as { baskets: DemoBasket[] };
   const snapshots = await readLiveSnapshots(dataDir);
   const products = snapshots.flatMap((s) => s.batch.retailerProducts);
   const { matches } = matchesFor(products, PRODUCTS, await readReviewedMatches(dataDir));
@@ -67,11 +69,12 @@ export async function jobDemoBaskets(ctx: JobContext) {
   const productMap = new Map(PRODUCTS.map((p) => [p.id, p]));
   const chainMap = new Map(CHAINS.map((c) => [c.id, c]));
   const specific = storeSpecificIds(index);
+  const excludedChains = new Set(exclude.flatMap((id) => sourceInfo({ connectorId: id, kind: 'retailer_site' }).chainIds ?? []));
 
   const out: string[] = [
     '# Paniers de démonstration — résultats reproductibles',
     '',
-    `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}\` sur les instantanés versionnés`,
+    `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}${basketsFile !== 'baskets.json' ? ` --baskets=${basketsFile}` : ''}${exclude.length ? ` --exclude=${exclude.join(',')}` : ''}\` sur les instantanés versionnés`,
     `(${snapshots.map((s) => `${s.connectorId} du ${s.collectedAt?.slice(0, 10) ?? '?'}`).join(', ')}).`,
     'Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.',
     exclude.length
@@ -127,7 +130,9 @@ export async function jobDemoBaskets(ctx: JobContext) {
     // Comparaison ligne à ligne : chaque enseigne (succursale la plus proche), paquets et montant payé.
     const today = zurichToday(now);
     const pctx = { asOf: now, today, targetDate: b.when.date, policy: DEFAULT_FRESHNESS, prefs: DEFAULT_PREFS };
-    const chainsShown = ['lidl', 'aldi'].filter((c) => stores.some((s) => s.chainId === c));
+    // Toutes les enseignes du périmètre, succursale la plus proche ; une case vide dit pourquoi.
+    const chainsShown = b.chains.filter((c) => stores.some((s) => s.chainId === c));
+    const nearest = (c: string) => stores.filter((s) => s.chainId === c).sort((x, y) => x.crowKm - y.crowKm)[0] as Store;
     const optimized = r.scenarios.find((s) => s.kind === 'optimized_total');
     const chosen = new Map(optimized?.stops.flatMap((st) => st.items.map((it) => [it.lineId, st.store.chainName] as const)) ?? []);
     out.push(`| Article demandé | ${chainsShown.map((c) => `${chainMap.get(c)?.name} : article, paquets, montant`).join(' | ')} | Retenu |`, `|---|${chainsShown.map(() => '---|').join('')}---|`);
@@ -135,9 +140,11 @@ export async function jobDemoBaskets(ctx: JobContext) {
       const canonical = productMap.get(line.productId);
       if (!canonical) continue;
       const cells = chainsShown.map((c) => {
-        const store = stores.find((s) => s.chainId === c) as Store;
-        const o = resolveLine(line, canonical, profileForStore(store, specific), index, pctx).option;
-        return o ? cell(o) : 'introuvable';
+        const res = resolveLine(line, canonical, profileForStore(nearest(c), specific), index, pctx);
+        if (res.option) return cell(res.option);
+        if (excludedChains.has(c)) return 'non affiché (source sans autorisation de réutilisation)';
+        if (res.unavailable?.lastKnown) return `prix trop ancien (${day(res.unavailable.lastKnown.observedAt)})`;
+        return res.unavailable?.reason === 'filtered_by_preferences' ? 'aucun article conforme' : 'aucune donnée gratuite';
       });
       out.push(`| ${line.qty} × ${canonical.name} (${formatQuantity(canonical.quantity)}) | ${cells.join(' | ')} | ${chosen.get(line.id) ?? 'manquant'} |`);
     }
@@ -157,7 +164,7 @@ export async function jobDemoBaskets(ctx: JobContext) {
 
   const outDir = typeof ctx.flags.out === 'string' ? ctx.flags.out : join(dataDir, 'demo');
   await mkdir(outDir, { recursive: true });
-  const name = exclude.length ? `resultats-sans-${exclude.join('-')}` : 'resultats';
+  const name = typeof ctx.flags.name === 'string' ? ctx.flags.name : exclude.length ? `resultats-sans-${exclude.join('-')}` : 'resultats';
   await writeFile(join(outDir, `${name}.md`), `${out.join('\n')}\n`);
   if (ctx.flags.json) await writeFile(join(outDir, 'resultats.json'), `${JSON.stringify(json, null, 1)}\n`);
   if (!ctx.flags.quiet) console.log(out.join('\n'));

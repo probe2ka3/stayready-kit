@@ -1,7 +1,7 @@
 {
  "description": "Jeu de validation TesPrix : 50 besoins essentiels × 5 enseignes. Articles attendus (correspondances revues satisfaisant les exigences), contenance admise et bande de prix normalisé (centimes par kg, litre ou pièce). Sert à détecter les régressions de collecte.",
  "version": "1",
- "calibratedAt": "2026-09-30T20:55:31.096Z",
+ "calibratedAt": "2026-09-30T20:58:06.618Z",
  "chains": [
   "migros",
   "coop",
@@ -432,8 +432,8 @@
     "max": 5
    },
    "unitCents": {
-    "min": 5,
-    "max": 5000
+    "min": 65,
+    "max": 585
    },
    "chains": {
     "migros": {
@@ -446,7 +446,10 @@
      "status": "not_listed"
     },
     "lidl": {
-     "status": "not_listed"
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0082031"
+     ]
     },
     "denner": {
      "status": "no_source"
@@ -466,7 +469,7 @@
     "max": 12500
    },
    "unitCents": {
-    "min": 127,
+    "min": 50,
     "max": 1146
    },
    "chains": {
@@ -482,7 +485,8 @@
     "lidl": {
      "status": "covered",
      "retailerProductIds": [
-      "lidl:0083137"
+      "lidl:0083137",
+      "lidl:0083225"
      ]
     },
     "denner": {
@@ -651,8 +655,8 @@
     "max": 5000
    },
    "unitCents": {
-    "min": 20,
-    "max": 20000
+    "min": 35,
+    "max": 315
    },
    "chains": {
     "migros": {
@@ -665,7 +669,10 @@
      "status": "not_listed"
     },
     "lidl": {
-     "status": "not_listed"
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0001037"
+     ]
     },
     "denner": {
      "status": "no_source"
@@ -1595,7 +1602,7 @@
     "max": 2500
    },
    "unitCents": {
-    "min": 255,
+    "min": 199,
     "max": 2307
    },
    "chains": {
@@ -1606,7 +1613,10 @@
      "status": "no_source"
     },
     "aldi": {
-     "status": "not_listed"
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:713261"
+     ]
     },
     "lidl": {
      "status": "covered",
