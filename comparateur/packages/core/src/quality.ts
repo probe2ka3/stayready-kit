@@ -201,14 +201,19 @@ export function checkCollection(current: CollectionStats, previous: CollectionSt
     });
   }
   if (previous && previous.prices + previous.promotions >= 20) {
-    const before = previous.prices + previous.promotions;
-    const now = current.prices + current.promotions;
+    // Collectes par rotation (Lidl : une tranche des fiches par jour) : on compare le rendement par
+    // page lue lorsque les deux exécutions l'indiquent, sinon les volumes.
+    const perPage = Boolean(current.pages && previous.pages);
+    const before = (previous.prices + previous.promotions) / (perPage ? (previous.pages as number) : 1);
+    const now = (current.prices + current.promotions) / (perPage ? (current.pages as number) : 1);
     if (now < before * 0.7) {
       out.push({
         ...base,
         kind: 'coverage_drop',
         severity: 'warning',
-        message: `Volume en baisse : ${now} prix et promotions contre ${before} lors de la collecte précédente`,
+        message: perPage
+          ? `Rendement en baisse : ${now.toFixed(2)} prix et promotions par page contre ${before.toFixed(2)} lors de la collecte précédente`
+          : `Volume en baisse : ${now} prix et promotions contre ${before} lors de la collecte précédente`,
         details: { previous, current },
       });
     }

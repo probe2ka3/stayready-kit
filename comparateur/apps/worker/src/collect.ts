@@ -56,10 +56,10 @@ function statsOf(connectorId: string, batch: ConnectorBatch): CollectionStats {
   const m = batch.report.metrics ?? {};
   return {
     connectorId,
-    products: batch.retailerProducts.length,
-    prices: batch.prices.length,
-    promotions: batch.promotions.length,
-    pages: Number(m.pages ?? 0) + Number(m.assortmentPages ?? 0) + Number(m.offerPages ?? 0) || undefined,
+    products: batch.retailerProducts?.length ?? 0,
+    prices: batch.prices?.length ?? 0,
+    promotions: batch.promotions?.length ?? 0,
+    pages: Number(m.pages ?? 0) + Number(m.assortmentPages ?? 0) + Number(m.productPages ?? 0) + Number(m.offerPages ?? 0) || undefined,
     pageFailures: Number(m.pageFailures ?? 0) || undefined,
   };
 }
@@ -133,11 +133,11 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[]): 
         if (db) {
           const s = await lastRunStats(db, connector.id);
           if (s && typeof s.prices === 'number') {
-            prevStats = { connectorId: connector.id, products: Number(s.products ?? 0), prices: Number(s.prices), promotions: Number(s.promotions ?? 0) };
+            prevStats = { ...statsOf(connector.id, { report: { metrics: s } } as unknown as ConnectorBatch), products: Number(s.products ?? 0), prices: Number(s.prices), promotions: Number(s.promotions ?? 0) };
           }
         } else if (prevSnap) {
           prevStats = {
-            connectorId: connector.id,
+            ...statsOf(connector.id, { report: { metrics: prevSnap.metrics } } as unknown as ConnectorBatch),
             products: Number(prevSnap.metrics.products ?? 0),
             prices: Number(prevSnap.metrics.prices ?? 0),
             promotions: Number(prevSnap.metrics.promotions ?? 0),

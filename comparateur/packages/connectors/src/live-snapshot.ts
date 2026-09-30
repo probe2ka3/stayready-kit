@@ -59,6 +59,16 @@ export function mergeLiveBatch(
   for (const p of next.prices) prices.set(p.id, p);
   const promotions = new Map(previous.promotions.filter((p) => p.validTo >= addDays(today, -1)).map((p) => [p.id, p]));
   for (const p of next.promotions) promotions.set(p.id, p);
+  // Fin présumée démentie : l'enseigne affiche aujourd'hui le même prix comme prix normal, sans action.
+  // L'action est close à la veille (le prix devient un prix normal), au lieu de courir jusqu'à la fin
+  // supposée : jamais deux statuts contradictoires pour le même prix.
+  const promotedToday = new Set(next.promotions.filter((p) => p.validFrom <= today && p.validTo >= today).map((p) => p.retailerProductId));
+  const regularToday = new Map<string, number>();
+  for (const o of next.prices) if ((o.priceType ?? 'regular') === 'regular' && zurichToday(new Date(o.observedAt)) === today) regularToday.set(o.retailerProductId, o.priceCents);
+  for (const [id, p] of promotions) {
+    if (!p.endIsPresumed || p.validFrom >= today || p.validTo < today || promotedToday.has(p.retailerProductId)) continue;
+    if (regularToday.get(p.retailerProductId) === p.promoPriceCents) promotions.set(id, { ...p, validTo: addDays(today, -1) });
+  }
   const used = new Set([...prices.values()].map((p) => p.retailerProductId));
   for (const p of promotions.values()) used.add(p.retailerProductId);
   const products = new Map(previous.retailerProducts.filter((p) => used.has(p.id)).map((p) => [p.id, p]));

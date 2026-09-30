@@ -16,6 +16,13 @@ test('accès refusé sans session, puis connexion', async ({ page }) => {
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
   await expect(page.getByText('Données par enseigne')).toBeVisible();
+
+  // Qualité des données : couverture, fraîcheur, sources et alertes (instantanés de collecte).
+  await page.goto('/admin/qualite');
+  await expect(page.getByRole('heading', { name: 'Qualité des données' })).toBeVisible();
+  await expect(page.getByText('Comparables dans ≥ 2 enseignes')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Couverture par enseigne' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Aldi Suisse (API publique du site officiel)' })).toBeVisible();
 });
 
 test('import (simulation puis réel), correspondances, anomalies, journal', async ({ page }) => {
@@ -53,7 +60,8 @@ test('import (simulation puis réel), correspondances, anomalies, journal', asyn
   await page.goto('/admin/anomalies');
   await expect(page.getByRole('heading', { name: 'Anomalies ouvertes' })).toBeVisible();
 
+  // Le journal s'accumule d'une exécution à l'autre : au moins une entrée de chaque type.
   await page.goto('/admin/journal');
-  await expect(page.getByRole('cell', { name: 'match.validated' })).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'import.file' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'match.validated' }).first()).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'import.file' }).first()).toBeVisible();
 });

@@ -161,7 +161,10 @@ denner;R-1;Spaghetti de blé dur;500;g;1.10;2026-09-26;manual_survey;Relevé tes
 
     await reviewMatch(h, 'spaghetti-500g', 'denner:R-1', { status: 'rejected' }, 'admin@test');
     await applyBatch(h, parseImportFile(csv, 't.csv', { connectorId: 'denner', now: NOW }), null);
-    const after = (await listMatches(h, { chainId: 'denner' })).find((x) => x.retailerProductId === 'denner:R-1');
+    // Le catalogue peut proposer d'autres références pour le même article : on vérifie la décision revue.
+    const after = (await listMatches(h, { chainId: 'denner' })).find(
+      (x) => x.retailerProductId === 'denner:R-1' && x.canonicalId === 'spaghetti-500g',
+    );
     expect(after?.status).toBe('rejected');
     expect(after?.origin).toBe('admin');
   });

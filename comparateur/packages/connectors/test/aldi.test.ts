@@ -156,3 +156,20 @@ describe('Aldi Suisse — API publique de recherche', () => {
     expect((await new AldiApiConnector().status({ env: { ALDI_API: 'off' } })).state).toBe('disabled');
   });
 });
+
+describe('Aldi : baisse de prix devenue permanente', () => {
+  it('clôt une action à fin présumée quand le même prix revient comme prix normal', async () => {
+    const { mergeLiveBatch } = await import('../src');
+    const day1 = buildAldiBatch(
+      { pages: [{ url: aldiSearchUrl(0), json: page([item({ sku: '30', name: 'Chips tuiles', sellingSize: '175 g', price: { amount: 169, amountRelevant: 169, wasPriceDisplay: 'CHF 1.79' } })]), fetchedAt: new Date('2026-09-28T06:00:00Z') }] },
+      { now: new Date('2026-09-28T06:00:00Z') },
+    );
+    const day3 = buildAldiBatch(
+      { pages: [{ url: aldiSearchUrl(0), json: page([item({ sku: '30', name: 'Chips tuiles', sellingSize: '175 g', price: { amount: 169, amountRelevant: 169 } })]), fetchedAt: new Date('2026-09-30T06:00:00Z') }] },
+      { now: new Date('2026-09-30T06:00:00Z') },
+    );
+    const merged = mergeLiveBatch(day1, day3, new Date('2026-09-30T06:00:00Z'));
+    expect(merged.promotions[0]).toMatchObject({ promoPriceCents: 169, validFrom: '2026-09-28', validTo: '2026-09-29' });
+    expect(merged.prices.find((o) => o.id.endsWith(':2026-09-30'))?.priceCents).toBe(169);
+  });
+});

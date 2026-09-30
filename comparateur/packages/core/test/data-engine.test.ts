@@ -205,3 +205,14 @@ describe('contrôle de qualité', () => {
     expect(r.issues.find((i) => i.entityId === 'coop-web')?.severity).toBe('error');
   });
 });
+
+describe('contrôle de collecte par rotation', () => {
+  it('compare le rendement par page quand les pages sont connues (pas de fausse alerte)', async () => {
+    const { checkCollection } = await import('../src');
+    const full = { connectorId: 'lidl-web', products: 3547, prices: 3004, promotions: 660, pages: 3284 };
+    const rotation = { connectorId: 'lidl-web', products: 1624, prices: 1208, promotions: 531, pages: 526 };
+    expect(checkCollection(rotation, full)).toEqual([]);
+    const broken = { ...rotation, prices: 100, promotions: 20 };
+    expect(checkCollection(broken, full).map((a) => a.kind)).toEqual(['coverage_drop']);
+  });
+});

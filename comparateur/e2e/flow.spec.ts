@@ -100,3 +100,18 @@ test('planifier ses courses : comparaison aujourd’hui / date choisie', async (
   await expect(page.getByText(/Les promotions pas encore annoncées ne sont pas connues/)).toBeVisible();
   await shot(page, '6-plan');
 });
+
+test('scanner mon ticket : analyse sur l’appareil, données personnelles retirées, envoi fermé', async ({ page }) => {
+  await page.goto('/fr/ticket');
+  await page.getByLabel('Texte du ticket').fill('COOP\nLausanne Gare\nLait entier UHT 1l   1.95\nTOTAL CHF 1.95\nSupercard 2099 1234 5678\n28.09.2026 18:02');
+  await expect(page.getByText(/Retiré avant tout envoi : numéro de carte de fidélité, heure d’achat/)).toBeVisible();
+  await expect(page.getByText('Lait entier UHT 1l', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Envoyer les prix (anonymes)' })).toBeDisabled();
+  await shot(page, '7-ticket');
+});
+
+test('API professionnelle fermée sans clé configurée', async ({ request }) => {
+  const res = await request.get('/api/b2b/v1/coverage');
+  expect(res.status()).toBe(403);
+  expect((await res.json()).error.code).toBe('not_open');
+});

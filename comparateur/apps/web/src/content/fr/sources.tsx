@@ -43,9 +43,10 @@ export function SourcesFr({
         </p>
       ) : (
         <p className="rounded-xl bg-primary-soft p-3">
-          <strong>Prix réels uniquement.</strong> Aucune donnée fictive n’est mélangée aux prix affichés. La couverture est encore partielle :
-          seule Lidl est collectée depuis son site officiel ; Migros, Coop, Denner, Aldi et OTTO’S ne sont couverts que par des relevés
-          communautaires, moins nombreux et toujours signalés comme « indicatifs ». Action et Aligro n’ont pas de prix pour l’instant.
+          <strong>Prix réels uniquement.</strong> Aucune donnée fictive n’est mélangée aux prix affichés. Lidl et Aldi Suisse sont collectés
+          chaque jour depuis leurs sources officielles publiques. Migros, Coop et Denner ne publient pas leurs prix de façon accessible : ils ne
+          sont couverts que par des relevés communautaires, moins nombreux et toujours signalés comme « indicatifs ». Chaque prix indique sa
+          source ; lorsqu’une autre source donne un prix différent, l’écart est affiché. Action et Aligro n’ont pas de prix pour l’instant.
         </p>
       )}
 
@@ -70,6 +71,7 @@ export function SourcesFr({
                 <tr key={c.connectorId}>
                   <td className="font-medium">
                     {c.label}
+                    {c.connectorId === 'foodally' && <span className="block text-sm text-muted">Comparaison uniquement : jamais utilisé pour les prix affichés</span>}
                     {c.license && <span className="block text-sm text-muted">Licence {c.license}</span>}
                   </td>
                   <td>{fmtDate(c.collectedAt)}</td>

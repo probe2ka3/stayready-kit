@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-30T16:28:50.287Z",
+  "at": "2026-09-30T16:58:20.711Z",
   "catalogSize": 240,
   "comparable": {
     "2": 98,
@@ -8,11 +8,11 @@
     "5": 0
   },
   "freshness": {
-    "h24": 0,
+    "h24": 3182,
     "h48": 0,
-    "d7": 4760,
+    "d7": 1886,
     "older": 76,
-    "total": 4836
+    "total": 5144
   },
   "chains": [
     {
@@ -56,24 +56,24 @@
       "references": 106,
       "referencesFirstParty": 106,
       "share": 0.442,
-      "fresh24h": 0,
+      "fresh24h": 1726,
       "fresh48h": 0,
-      "fresh7d": 1623,
+      "fresh7d": 80,
       "older": 0,
-      "products": 1897,
-      "pricedProducts": 1623
+      "products": 1904,
+      "pricedProducts": 1806
     },
     {
       "chainId": "lidl",
-      "references": 192,
-      "referencesFirstParty": 192,
-      "share": 0.8,
-      "fresh24h": 0,
+      "references": 194,
+      "referencesFirstParty": 194,
+      "share": 0.808,
+      "fresh24h": 1456,
       "fresh48h": 0,
-      "fresh7d": 3136,
+      "fresh7d": 1805,
       "older": 1,
-      "products": 3584,
-      "pricedProducts": 3137
+      "products": 3441,
+      "pricedProducts": 3262
     },
     {
       "chainId": "ottos",
@@ -127,9 +127,9 @@
     }
   },
   "records": {
-    "total": 5937,
+    "total": 8653,
     "byTier": {
-      "first_party": 5696,
+      "first_party": 8412,
       "community": 241
     }
   },
@@ -141,25 +141,25 @@
     "stale_data": 18,
     "source_divergence": 0,
     "promo_as_regular": 0,
-    "connector_broken": 3
+    "connector_broken": 0
   },
   "connectors": [
     {
       "connectorId": "aldi-api",
       "status": "partial",
-      "collectedAt": "2026-09-28T06:39:09.789Z",
-      "message": "Retraité depuis l'archive du 2026-09-28"
+      "collectedAt": "2026-09-30T16:55:13.404Z",
+      "message": "Retraité depuis l'archive du 2026-09-30"
     },
     {
       "connectorId": "lidl-web",
       "status": "partial",
-      "collectedAt": "2026-09-28T09:30:21.627Z",
-      "message": "Retraité depuis l'archive du 2026-09-28"
+      "collectedAt": "2026-09-30T16:26:40.245Z",
+      "message": null
     },
     {
       "connectorId": "open-prices",
       "status": "success",
-      "collectedAt": "2026-09-28T00:35:58.573Z",
+      "collectedAt": "2026-09-30T16:26:40.245Z",
       "message": null
     }
   ]
