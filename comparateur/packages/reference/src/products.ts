@@ -332,27 +332,44 @@ export const PRODUCTS: ProductSeed[] = [
 ];
 
 /**
- * Priorités du catalogue des besoins de base (phase 3) :
- * - P1 : 50 essentiels, suivis dans le jeu de validation (`data/validation/essentials.json`) ;
+ * Priorités du catalogue des besoins de base :
+ * - P1 : **noyau de 50 aliments de base** (plan sans dépenses, docs/PLAN_SANS_DEPENSES.md) — fruits,
+ *   légumes, pommes de terre, farine, sucre, sel, huiles, riz, pâtes, lait, œufs, beurre et autres
+ *   aliments courants ; suivis dans le jeu de validation (`data/validation/essentials.json`) ;
  * - P3 : achats occasionnels ou non alimentaires secondaires ;
- * - P2 : tous les autres achats courants.
+ * - P2 : tous les autres achats courants (dont hygiène et entretien, hors du noyau).
  */
 export const P1_ESSENTIALS = [
-  'bananes-1kg', 'pommes-gala-1kg', 'carottes-1kg', 'oignons-1kg', 'tomates-grappe-500g', 'pdt-fermes-2500g',
-  'spaghetti-500g', 'penne-500g', 'fusilli-500g', 'riz-long-1kg', 'flocons-avoine-500g', 'farine-blanche-1kg',
-  'sucre-cristal-1kg', 'sel-cuisine-1kg', 'huile-tournesol-1l', 'huile-olive-1l', 'huile-colza-1l',
-  'lait-entier-uht-1l', 'lait-demi-uht-1l', 'beurre-choix-200g', 'beurre-cuisine-250g', 'creme-entiere-250ml',
+  // Fruits (5)
+  'bananes-1kg', 'pommes-gala-1kg', 'poires-1kg', 'oranges-2kg', 'citrons-500g',
+  // Légumes (7)
+  'carottes-1kg', 'oignons-1kg', 'tomates-grappe-500g', 'concombre-1', 'poivrons-500g', 'courgettes-500g', 'salade-iceberg-1',
+  // Pommes de terre (2)
+  'pdt-fermes-2500g', 'pdt-farineuses-2500g',
+  // Farine, sucre, sel (4)
+  'farine-blanche-1kg', 'farine-mi-blanche-1kg', 'sucre-cristal-1kg', 'sel-cuisine-1kg',
+  // Huiles et vinaigre (4)
+  'huile-tournesol-1l', 'huile-colza-1l', 'huile-olive-1l', 'vinaigre-vin-1l',
+  // Riz, pâtes, céréales, légumineuses (6)
+  'riz-long-1kg', 'spaghetti-500g', 'penne-500g', 'flocons-avoine-500g', 'polenta-500g', 'lentilles-500g',
+  // Lait et produits laitiers (10)
+  'lait-entier-uht-1l', 'lait-demi-uht-1l', 'beurre-cuisine-250g', 'beurre-choix-200g', 'creme-entiere-250ml',
   'yogourt-nature-180g', 'sere-maigre-500g', 'gruyere-aop-250g', 'emmentaler-aop-250g', 'mozzarella-150g',
-  'oeufs-sol-6', 'pain-mi-blanc-500g', 'pain-toast-500g', 'poulet-poitrine-500g', 'boeuf-hache-500g',
-  'jambon-cuit-150g', 'tomates-concassees-400g', 'thon-huile-240g', 'confiture-fraises-500g', 'miel-fleurs-500g',
-  'chocolat-lait-100g', 'cafe-moulu-500g', 'cafe-grains-1kg', 'the-noir-25', 'eau-plate-6x1500ml', 'jus-orange-1l',
-  'mayonnaise-265g', 'papier-toilette-10', 'essuie-tout-4', 'liquide-vaisselle-750ml', 'lessive-liquide-40',
-  'dentifrice-75ml', 'gel-douche-250ml',
+  // Œufs (2)
+  'oeufs-sol-6', 'oeufs-plein-air-6',
+  // Pain (2)
+  'pain-mi-blanc-500g', 'pain-complet-500g',
+  // Viande et poisson (4)
+  'poulet-poitrine-500g', 'boeuf-hache-500g', 'jambon-cuit-150g', 'thon-huile-240g',
+  // Conserves (2)
+  'tomates-concassees-400g', 'pois-chiches-400g',
+  // Autres aliments courants (2)
+  'confiture-fraises-500g', 'cafe-moulu-500g',
 ] as const;
 
 const P3_OCCASIONAL = new Set([
   'ananas-1', 'avocats-2', 'kiwis-6', 'raisin-blanc-500g', 'mesclun-150g', 'epinards-frais-250g', 'quinoa-500g',
-  'couscous-500g', 'polenta-500g', 'birchermuesli-1kg', 'sucre-canne-1kg', 'sucre-glace-500g', 'amidon-mais-250g',
+  'couscous-500g', 'birchermuesli-1kg', 'sucre-canne-1kg', 'sucre-glace-500g', 'amidon-mais-250g',
   'levure-seche-3', 'poudre-lever-5', 'vinaigre-balsamique-500ml', 'sauce-soja-250ml', 'mascarpone-250g', 'raclette-400g',
   'oeufs-importes-10', 'tresse-500g', 'croissants-4', 'saumon-fume-100g', 'lait-coco-400ml', 'raviolis-870g',
   'capsules-cafe-10', 'infusion-menthe-20', 'cacao-poudre-500g', 'sirop-framboise-1l', 'coca-cola-1500ml', 'glace-vanille-1l',
@@ -377,25 +394,36 @@ for (const product of PRODUCTS) {
 export const ESSENTIAL_QUERIES: Record<(typeof P1_ESSENTIALS)[number], { de: string; fr: string }> = {
   'bananes-1kg': { de: 'Bananen', fr: 'bananes' },
   'pommes-gala-1kg': { de: 'Äpfel Gala', fr: 'pommes gala' },
+  'poires-1kg': { de: 'Birnen', fr: 'poires' },
+  'oranges-2kg': { de: 'Orangen', fr: 'oranges' },
+  'citrons-500g': { de: 'Zitronen', fr: 'citrons' },
   'carottes-1kg': { de: 'Karotten', fr: 'carottes' },
   'oignons-1kg': { de: 'Zwiebeln', fr: 'oignons' },
   'tomates-grappe-500g': { de: 'Rispentomaten', fr: 'tomates grappe' },
+  'concombre-1': { de: 'Gurke', fr: 'concombre' },
+  'poivrons-500g': { de: 'Peperoni gemischt', fr: 'poivrons' },
+  'courgettes-500g': { de: 'Zucchetti', fr: 'courgettes' },
+  'salade-iceberg-1': { de: 'Eisbergsalat', fr: 'salade iceberg' },
   'pdt-fermes-2500g': { de: 'Kartoffeln festkochend', fr: 'pommes de terre fermes' },
-  'spaghetti-500g': { de: 'Spaghetti', fr: 'spaghetti' },
-  'penne-500g': { de: 'Penne', fr: 'penne' },
-  'fusilli-500g': { de: 'Fusilli', fr: 'fusilli' },
-  'riz-long-1kg': { de: 'Langkornreis', fr: 'riz long grain' },
-  'flocons-avoine-500g': { de: 'Haferflocken', fr: "flocons d'avoine" },
+  'pdt-farineuses-2500g': { de: 'Kartoffeln mehligkochend', fr: 'pommes de terre farineuses' },
   'farine-blanche-1kg': { de: 'Weissmehl', fr: 'farine blanche' },
+  'farine-mi-blanche-1kg': { de: 'Halbweissmehl', fr: 'farine mi-blanche' },
   'sucre-cristal-1kg': { de: 'Kristallzucker', fr: 'sucre cristallisé' },
   'sel-cuisine-1kg': { de: 'Speisesalz jodiert', fr: 'sel de cuisine' },
   'huile-tournesol-1l': { de: 'Sonnenblumenöl', fr: 'huile de tournesol' },
-  'huile-olive-1l': { de: 'Olivenöl extra vergine', fr: "huile d'olive extra vierge" },
   'huile-colza-1l': { de: 'Rapsöl', fr: 'huile de colza' },
+  'huile-olive-1l': { de: 'Olivenöl extra vergine', fr: "huile d'olive extra vierge" },
+  'vinaigre-vin-1l': { de: 'Weinessig', fr: 'vinaigre de vin' },
+  'riz-long-1kg': { de: 'Langkornreis', fr: 'riz long grain' },
+  'spaghetti-500g': { de: 'Spaghetti', fr: 'spaghetti' },
+  'penne-500g': { de: 'Penne', fr: 'penne' },
+  'flocons-avoine-500g': { de: 'Haferflocken', fr: "flocons d'avoine" },
+  'polenta-500g': { de: 'Polenta', fr: 'polenta' },
+  'lentilles-500g': { de: 'Linsen', fr: 'lentilles' },
   'lait-entier-uht-1l': { de: 'Vollmilch UHT', fr: 'lait entier UHT' },
   'lait-demi-uht-1l': { de: 'Milch Drink UHT', fr: 'lait drink UHT' },
-  'beurre-choix-200g': { de: 'Vorzugsbutter', fr: 'beurre de choix' },
   'beurre-cuisine-250g': { de: 'Kochbutter', fr: 'beurre de cuisine' },
+  'beurre-choix-200g': { de: 'Vorzugsbutter', fr: 'beurre de choix' },
   'creme-entiere-250ml': { de: 'Vollrahm', fr: 'crème entière' },
   'yogourt-nature-180g': { de: 'Joghurt nature', fr: 'yogourt nature' },
   'sere-maigre-500g': { de: 'Magerquark', fr: 'séré maigre' },
@@ -403,26 +431,15 @@ export const ESSENTIAL_QUERIES: Record<(typeof P1_ESSENTIALS)[number], { de: str
   'emmentaler-aop-250g': { de: 'Emmentaler AOP', fr: 'emmentaler AOP' },
   'mozzarella-150g': { de: 'Mozzarella', fr: 'mozzarella' },
   'oeufs-sol-6': { de: 'Eier Bodenhaltung', fr: 'oeufs élevage au sol' },
+  'oeufs-plein-air-6': { de: 'Eier Freilandhaltung', fr: 'oeufs plein air' },
   'pain-mi-blanc-500g': { de: 'Halbweissbrot', fr: 'pain mi-blanc' },
-  'pain-toast-500g': { de: 'Toastbrot', fr: 'pain toast' },
+  'pain-complet-500g': { de: 'Vollkornbrot', fr: 'pain complet' },
   'poulet-poitrine-500g': { de: 'Pouletbrust', fr: 'poitrine de poulet' },
   'boeuf-hache-500g': { de: 'Rindshackfleisch', fr: 'viande hachée de boeuf' },
   'jambon-cuit-150g': { de: 'Hinterschinken', fr: 'jambon cuit' },
-  'tomates-concassees-400g': { de: 'Tomaten gehackt', fr: 'tomates concassées' },
   'thon-huile-240g': { de: 'Thon in Öl', fr: "thon à l'huile" },
+  'tomates-concassees-400g': { de: 'Tomaten gehackt', fr: 'tomates concassées' },
+  'pois-chiches-400g': { de: 'Kichererbsen', fr: 'pois chiches' },
   'confiture-fraises-500g': { de: 'Erdbeerkonfitüre', fr: 'confiture de fraises' },
-  'miel-fleurs-500g': { de: 'Blütenhonig', fr: 'miel de fleurs' },
-  'chocolat-lait-100g': { de: 'Milchschokolade', fr: 'chocolat au lait' },
   'cafe-moulu-500g': { de: 'Kaffee gemahlen', fr: 'café moulu' },
-  'cafe-grains-1kg': { de: 'Kaffeebohnen', fr: 'café en grains' },
-  'the-noir-25': { de: 'Schwarztee', fr: 'thé noir' },
-  'eau-plate-6x1500ml': { de: 'Mineralwasser ohne Kohlensäure', fr: 'eau minérale plate' },
-  'jus-orange-1l': { de: 'Orangensaft', fr: "jus d'orange" },
-  'mayonnaise-265g': { de: 'Mayonnaise', fr: 'mayonnaise' },
-  'papier-toilette-10': { de: 'Toilettenpapier', fr: 'papier toilette' },
-  'essuie-tout-4': { de: 'Haushaltpapier', fr: 'essuie-tout' },
-  'liquide-vaisselle-750ml': { de: 'Geschirrspülmittel', fr: 'liquide vaisselle' },
-  'lessive-liquide-40': { de: 'Flüssigwaschmittel', fr: 'lessive liquide' },
-  'dentifrice-75ml': { de: 'Zahnpasta', fr: 'dentifrice' },
-  'gel-douche-250ml': { de: 'Duschgel', fr: 'gel douche' },
 };

@@ -1,7 +1,7 @@
 {
  "description": "Jeu de validation TesPrix : 50 besoins essentiels × 5 enseignes. Articles attendus (correspondances revues satisfaisant les exigences), contenance admise et bande de prix normalisé (centimes par kg, litre ou pièce). Sert à détecter les régressions de collecte.",
  "version": "1",
- "calibratedAt": "2026-09-30T16:30:12.501Z",
+ "calibratedAt": "2026-09-30T20:38:29.310Z",
  "chains": [
   "migros",
   "coop",
@@ -78,6 +78,118 @@
      "retailerProductIds": [
       "lidl:0080220",
       "lidl:offer-10059585"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "poires-1kg",
+   "name": "Poires",
+   "query": {
+    "de": "Birnen",
+    "fr": "poires"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 166,
+    "max": 5000
+   },
+   "unitCents": {
+    "min": 109,
+    "max": 987
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:offer-10059584"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "oranges-2kg",
+   "name": "Oranges (filet)",
+   "query": {
+    "de": "Orangen",
+    "fr": "oranges"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 333,
+    "max": 10000
+   },
+   "unitCents": {
+    "min": 46,
+    "max": 585
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0080135",
+      "lidl:0080142"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "citrons-500g",
+   "name": "Citrons",
+   "query": {
+    "de": "Zitronen",
+    "fr": "citrons"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 79,
+    "max": 717
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0080171"
      ]
     },
     "denner": {
@@ -197,6 +309,151 @@
    }
   },
   {
+   "slug": "concombre-1",
+   "name": "Concombre",
+   "query": {
+    "de": "Gurke",
+    "fr": "concombre"
+   },
+   "unit": "piece",
+   "amount": {
+    "min": 0,
+    "max": 5
+   },
+   "unitCents": {
+    "min": 49,
+    "max": 447
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0082233"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "poivrons-500g",
+   "name": "Poivrons mélangés",
+   "query": {
+    "de": "Peperoni gemischt",
+    "fr": "poivrons"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 110,
+    "max": 990
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0082586"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "courgettes-500g",
+   "name": "Courgettes",
+   "query": {
+    "de": "Zucchetti",
+    "fr": "courgettes"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 83,
+    "max": 747
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0082345"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "salade-iceberg-1",
+   "name": "Salade iceberg",
+   "query": {
+    "de": "Eisbergsalat",
+    "fr": "salade iceberg"
+   },
+   "unit": "piece",
+   "amount": {
+    "min": 0,
+    "max": 5
+   },
+   "unitCents": {
+    "min": 5,
+    "max": 5000
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "not_listed"
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
    "slug": "pdt-fermes-2500g",
    "name": "Pommes de terre fermes à la cuisson",
    "query": {
@@ -234,20 +491,20 @@
    }
   },
   {
-   "slug": "spaghetti-500g",
-   "name": "Spaghetti",
+   "slug": "pdt-farineuses-2500g",
+   "name": "Pommes de terre farineuses",
    "query": {
-    "de": "Spaghetti",
-    "fr": "spaghetti"
+    "de": "Kartoffeln mehligkochend",
+    "fr": "pommes de terre farineuses"
    },
    "unit": "g",
    "amount": {
-    "min": 83,
-    "max": 2500
+    "min": 416,
+    "max": 12500
    },
    "unitCents": {
-    "min": 39,
-    "max": 750
+    "min": 50,
+    "max": 450
    },
    "chains": {
     "migros": {
@@ -257,187 +514,12 @@
      "status": "no_source"
     },
     "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:632130001",
-      "aldi:638975001"
-     ]
+     "status": "not_listed"
     },
     "lidl": {
      "status": "covered",
      "retailerProductIds": [
-      "lidl:0027325",
-      "lidl:0038954"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "penne-500g",
-   "name": "Penne",
-   "query": {
-    "de": "Penne",
-    "fr": "penne"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 83,
-    "max": 2500
-   },
-   "unitCents": {
-    "min": 39,
-    "max": 1017
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "community_only"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:182172"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0001066",
-      "lidl:0027328",
-      "lidl:6006759"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "fusilli-500g",
-   "name": "Fusilli (torsades)",
-   "query": {
-    "de": "Fusilli",
-    "fr": "fusilli"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 83,
-    "max": 2500
-   },
-   "unitCents": {
-    "min": 39,
-    "max": 1914
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "community_only"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:288191003",
-      "aldi:638935002"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0001067",
-      "lidl:0027326",
-      "lidl:6006759"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "riz-long-1kg",
-   "name": "Riz long grain",
-   "query": {
-    "de": "Langkornreis",
-    "fr": "riz long grain"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 166,
-    "max": 5000
-   },
-   "unitCents": {
-    "min": 45,
-    "max": 1767
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:653829002",
-      "aldi:734792"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0138125",
-      "lidl:1800157"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "flocons-avoine-500g",
-   "name": "Flocons d’avoine",
-   "query": {
-    "de": "Haferflocken",
-    "fr": "flocons d'avoine"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 83,
-    "max": 2500
-   },
-   "unitCents": {
-    "min": 46,
-    "max": 714
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:553740001",
-      "aldi:553740002",
-      "aldi:635148"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0019661",
-      "lidl:0051958"
+      "lidl:0083275"
      ]
     },
     "denner": {
@@ -478,6 +560,40 @@
       "lidl:5103068",
       "lidl:5111923"
      ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "farine-mi-blanche-1kg",
+   "name": "Farine mi-blanche",
+   "query": {
+    "de": "Halbweissmehl",
+    "fr": "farine mi-blanche"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 166,
+    "max": 5000
+   },
+   "unitCents": {
+    "min": 20,
+    "max": 20000
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "not_listed"
     },
     "denner": {
      "status": "no_source"
@@ -594,48 +710,6 @@
    }
   },
   {
-   "slug": "huile-olive-1l",
-   "name": "Huile d’olive extra vierge",
-   "query": {
-    "de": "Olivenöl extra vergine",
-    "fr": "huile d'olive extra vierge"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 166,
-    "max": 5000
-   },
-   "unitCents": {
-    "min": 333,
-    "max": 4797
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:341593"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0068400",
-      "lidl:5114254",
-      "lidl:offer-10059579"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
    "slug": "huile-colza-1l",
    "name": "Huile de colza",
    "query": {
@@ -672,6 +746,327 @@
       "lidl:0099000",
       "lidl:offer-10059620"
      ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "huile-olive-1l",
+   "name": "Huile d’olive extra vierge",
+   "query": {
+    "de": "Olivenöl extra vergine",
+    "fr": "huile d'olive extra vierge"
+   },
+   "unit": "ml",
+   "amount": {
+    "min": 166,
+    "max": 5000
+   },
+   "unitCents": {
+    "min": 333,
+    "max": 4797
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:172733",
+      "aldi:181902",
+      "aldi:341593"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0068400",
+      "lidl:5114254",
+      "lidl:offer-10059579"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "vinaigre-vin-1l",
+   "name": "Vinaigre de vin",
+   "query": {
+    "de": "Weinessig",
+    "fr": "vinaigre de vin"
+   },
+   "unit": "ml",
+   "amount": {
+    "min": 166,
+    "max": 5000
+   },
+   "unitCents": {
+    "min": 20,
+    "max": 20000
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "not_listed"
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "riz-long-1kg",
+   "name": "Riz long grain",
+   "query": {
+    "de": "Langkornreis",
+    "fr": "riz long grain"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 166,
+    "max": 5000
+   },
+   "unitCents": {
+    "min": 45,
+    "max": 1767
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:653829002",
+      "aldi:734792"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0138125",
+      "lidl:1800157"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "spaghetti-500g",
+   "name": "Spaghetti",
+   "query": {
+    "de": "Spaghetti",
+    "fr": "spaghetti"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 39,
+    "max": 750
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:632130001",
+      "aldi:638975001"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0027325",
+      "lidl:0038954"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "penne-500g",
+   "name": "Penne",
+   "query": {
+    "de": "Penne",
+    "fr": "penne"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 39,
+    "max": 1017
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "community_only"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:182172"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0001066",
+      "lidl:0027328",
+      "lidl:6006759"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "flocons-avoine-500g",
+   "name": "Flocons d’avoine",
+   "query": {
+    "de": "Haferflocken",
+    "fr": "flocons d'avoine"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 46,
+    "max": 714
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:553740001",
+      "aldi:553740002",
+      "aldi:635148"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0019661",
+      "lidl:0051958"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "polenta-500g",
+   "name": "Polenta",
+   "query": {
+    "de": "Polenta",
+    "fr": "polenta"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 48,
+    "max": 435
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:6015325"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "lentilles-500g",
+   "name": "Lentilles vertes",
+   "query": {
+    "de": "Linsen",
+    "fr": "lentilles"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 83,
+    "max": 2500
+   },
+   "unitCents": {
+    "min": 126,
+    "max": 1134
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:194190005"
+     ]
+    },
+    "lidl": {
+     "status": "not_listed"
     },
     "denner": {
      "status": "no_source"
@@ -753,6 +1148,46 @@
    }
   },
   {
+   "slug": "beurre-cuisine-250g",
+   "name": "Beurre de cuisine",
+   "query": {
+    "de": "Kochbutter",
+    "fr": "beurre de cuisine"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 41,
+    "max": 1250
+   },
+   "unitCents": {
+    "min": 452,
+    "max": 4068
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:288168"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:0003031"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
    "slug": "beurre-choix-200g",
    "name": "Beurre de choix",
    "query": {
@@ -786,46 +1221,6 @@
      "retailerProductIds": [
       "lidl:0001634",
       "lidl:5110749"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "beurre-cuisine-250g",
-   "name": "Beurre de cuisine",
-   "query": {
-    "de": "Kochbutter",
-    "fr": "beurre de cuisine"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 41,
-    "max": 1250
-   },
-   "unitCents": {
-    "min": 452,
-    "max": 4068
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:288168"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0003031"
      ]
     },
     "denner": {
@@ -884,7 +1279,7 @@
    },
    "unitCents": {
     "min": 52,
-    "max": 1074
+    "max": 690
    },
    "chains": {
     "migros": {
@@ -894,10 +1289,7 @@
      "status": "no_source"
     },
     "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:288229"
-     ]
+     "status": "not_listed"
     },
     "lidl": {
      "status": "covered",
@@ -926,7 +1318,7 @@
    },
    "unitCents": {
     "min": 83,
-    "max": 1500
+    "max": 750
    },
    "chains": {
     "migros": {
@@ -936,10 +1328,7 @@
      "status": "no_source"
     },
     "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:544617"
-     ]
+     "status": "not_listed"
     },
     "lidl": {
      "status": "covered",
@@ -1116,6 +1505,43 @@
    }
   },
   {
+   "slug": "oeufs-plein-air-6",
+   "name": "Œufs suisses de plein air",
+   "query": {
+    "de": "Eier Freilandhaltung",
+    "fr": "oeufs plein air"
+   },
+   "unit": "piece",
+   "amount": {
+    "min": 1,
+    "max": 30
+   },
+   "unitCents": {
+    "min": 18,
+    "max": 162
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "not_listed"
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:5114824"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
    "slug": "pain-mi-blanc-500g",
    "name": "Pain mi-blanc",
    "query": {
@@ -1157,11 +1583,11 @@
    }
   },
   {
-   "slug": "pain-toast-500g",
-   "name": "Pain toast",
+   "slug": "pain-complet-500g",
+   "name": "Pain complet",
    "query": {
-    "de": "Toastbrot",
-    "fr": "pain toast"
+    "de": "Vollkornbrot",
+    "fr": "pain complet"
    },
    "unit": "g",
    "amount": {
@@ -1169,8 +1595,8 @@
     "max": 2500
    },
    "unitCents": {
-    "min": 79,
-    "max": 1782
+    "min": 255,
+    "max": 2307
    },
    "chains": {
     "migros": {
@@ -1180,16 +1606,13 @@
      "status": "no_source"
     },
     "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:319510",
-      "aldi:485333"
-     ]
+     "status": "not_listed"
     },
     "lidl": {
      "status": "covered",
      "retailerProductIds": [
-      "lidl:0147399"
+      "lidl:5112426",
+      "lidl:5113437"
      ]
     },
     "denner": {
@@ -1321,46 +1744,6 @@
    }
   },
   {
-   "slug": "tomates-concassees-400g",
-   "name": "Tomates concassées",
-   "query": {
-    "de": "Tomaten gehackt",
-    "fr": "tomates concassées"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 66,
-    "max": 2000
-   },
-   "unitCents": {
-    "min": 62,
-    "max": 639
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:455111001"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:5114199"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
    "slug": "thon-huile-240g",
    "name": "Thon à l’huile (3 boîtes)",
    "query": {
@@ -1395,6 +1778,87 @@
      "retailerProductIds": [
       "lidl:0152886",
       "lidl:0200047"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "tomates-concassees-400g",
+   "name": "Tomates concassées",
+   "query": {
+    "de": "Tomaten gehackt",
+    "fr": "tomates concassées"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 66,
+    "max": 2000
+   },
+   "unitCents": {
+    "min": 49,
+    "max": 639
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:108628",
+      "aldi:455111001"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:5114199"
+     ]
+    },
+    "denner": {
+     "status": "no_source"
+    }
+   }
+  },
+  {
+   "slug": "pois-chiches-400g",
+   "name": "Pois chiches",
+   "query": {
+    "de": "Kichererbsen",
+    "fr": "pois chiches"
+   },
+   "unit": "g",
+   "amount": {
+    "min": 66,
+    "max": 2000
+   },
+   "unitCents": {
+    "min": 141,
+    "max": 1269
+   },
+   "chains": {
+    "migros": {
+     "status": "no_source"
+    },
+    "coop": {
+     "status": "no_source"
+    },
+    "aldi": {
+     "status": "covered",
+     "retailerProductIds": [
+      "aldi:625269"
+     ]
+    },
+    "lidl": {
+     "status": "covered",
+     "retailerProductIds": [
+      "lidl:5900018"
      ]
     },
     "denner": {
@@ -1446,88 +1910,6 @@
    }
   },
   {
-   "slug": "miel-fleurs-500g",
-   "name": "Miel de fleurs",
-   "query": {
-    "de": "Blütenhonig",
-    "fr": "miel de fleurs"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 83,
-    "max": 2500
-   },
-   "unitCents": {
-    "min": 152,
-    "max": 2970
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:155962002",
-      "aldi:625658001"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0225162"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "chocolat-lait-100g",
-   "name": "Chocolat au lait",
-   "query": {
-    "de": "Milchschokolade",
-    "fr": "chocolat au lait"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 16,
-    "max": 500
-   },
-   "unitCents": {
-    "min": 230,
-    "max": 5736
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:304077004"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0021237",
-      "lidl:0021238"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
    "slug": "cafe-moulu-500g",
    "name": "Café moulu",
    "query": {
@@ -1561,425 +1943,6 @@
      "status": "covered",
      "retailerProductIds": [
       "lidl:0153451"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "cafe-grains-1kg",
-   "name": "Café en grains",
-   "query": {
-    "de": "Kaffeebohnen",
-    "fr": "café en grains"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 166,
-    "max": 5000
-   },
-   "unitCents": {
-    "min": 332,
-    "max": 4497
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:567058"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0155852"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "the-noir-25",
-   "name": "Thé noir (25 sachets)",
-   "query": {
-    "de": "Schwarztee",
-    "fr": "thé noir"
-   },
-   "unit": "piece",
-   "amount": {
-    "min": 4,
-    "max": 125
-   },
-   "unitCents": {
-    "min": 0,
-    "max": 6
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:476159001",
-      "aldi:476159002"
-     ]
-    },
-    "lidl": {
-     "status": "not_listed"
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "eau-plate-6x1500ml",
-   "name": "Eau minérale plate (6 × 1,5 l)",
-   "query": {
-    "de": "Mineralwasser ohne Kohlensäure",
-    "fr": "eau minérale plate"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 1500,
-    "max": 45000
-   },
-   "unitCents": {
-    "min": 5,
-    "max": 231
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:288543",
-      "aldi:581120"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:1800508"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "jus-orange-1l",
-   "name": "Jus d’orange",
-   "query": {
-    "de": "Orangensaft",
-    "fr": "jus d'orange"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 166,
-    "max": 5000
-   },
-   "unitCents": {
-    "min": 53,
-    "max": 477
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "not_listed"
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:5113987"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "mayonnaise-265g",
-   "name": "Mayonnaise",
-   "query": {
-    "de": "Mayonnaise",
-    "fr": "mayonnaise"
-   },
-   "unit": "g",
-   "amount": {
-    "min": 44,
-    "max": 1325
-   },
-   "unitCents": {
-    "min": 182,
-    "max": 3339
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:288215001",
-      "aldi:288445001",
-      "aldi:616562"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0003216"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "papier-toilette-10",
-   "name": "Papier toilette 3 plis (10 rouleaux)",
-   "query": {
-    "de": "Toilettenpapier",
-    "fr": "papier toilette"
-   },
-   "unit": "piece",
-   "amount": {
-    "min": 1,
-    "max": 50
-   },
-   "unitCents": {
-    "min": 5,
-    "max": 5000
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "not_listed"
-    },
-    "lidl": {
-     "status": "not_listed"
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "essuie-tout-4",
-   "name": "Essuie-tout (4 rouleaux)",
-   "query": {
-    "de": "Haushaltpapier",
-    "fr": "essuie-tout"
-   },
-   "unit": "piece",
-   "amount": {
-    "min": 0,
-    "max": 20
-   },
-   "unitCents": {
-    "min": 5,
-    "max": 5000
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "not_listed"
-    },
-    "lidl": {
-     "status": "not_listed"
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "liquide-vaisselle-750ml",
-   "name": "Liquide vaisselle",
-   "query": {
-    "de": "Geschirrspülmittel",
-    "fr": "liquide vaisselle"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 125,
-    "max": 3750
-   },
-   "unitCents": {
-    "min": 24,
-    "max": 1830
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "not_listed"
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0222199",
-      "lidl:1800195"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "lessive-liquide-40",
-   "name": "Lessive liquide couleurs (40 lessives)",
-   "query": {
-    "de": "Flüssigwaschmittel",
-    "fr": "lessive liquide"
-   },
-   "unit": "piece",
-   "amount": {
-    "min": 6,
-    "max": 200
-   },
-   "unitCents": {
-    "min": 5,
-    "max": 5000
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "not_listed"
-    },
-    "lidl": {
-     "status": "not_listed"
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "dentifrice-75ml",
-   "name": "Dentifrice au fluor",
-   "query": {
-    "de": "Zahnpasta",
-    "fr": "dentifrice"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 12,
-    "max": 375
-   },
-   "unitCents": {
-    "min": 104,
-    "max": 17001
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:671760"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0038757",
-      "lidl:0187406"
-     ]
-    },
-    "denner": {
-     "status": "no_source"
-    }
-   }
-  },
-  {
-   "slug": "gel-douche-250ml",
-   "name": "Gel douche",
-   "query": {
-    "de": "Duschgel",
-    "fr": "gel douche"
-   },
-   "unit": "ml",
-   "amount": {
-    "min": 41,
-    "max": 1250
-   },
-   "unitCents": {
-    "min": 38,
-    "max": 2388
-   },
-   "chains": {
-    "migros": {
-     "status": "no_source"
-    },
-    "coop": {
-     "status": "no_source"
-    },
-    "aldi": {
-     "status": "covered",
-     "retailerProductIds": [
-      "aldi:563932001"
-     ]
-    },
-    "lidl": {
-     "status": "covered",
-     "retailerProductIds": [
-      "lidl:0158147"
      ]
     },
     "denner": {
