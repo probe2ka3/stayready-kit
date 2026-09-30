@@ -30,6 +30,10 @@ test('parcours complet : localisation → magasins → panier → comparaison �
   await page.waitForURL('**/fr/magasins');
   await expect(page.getByRole('heading', { name: 'Enseignes présentes' })).toBeVisible();
   await expect(page.getByText('Migros').first()).toBeVisible();
+  // Présence d'un magasin ≠ données de prix ; stock toujours inconnu.
+  await expect(page.getByRole('heading', { name: 'Ce que nous savons de chaque magasin' })).toBeVisible();
+  await expect(page.getByText(/Le stock en rayon est inconnu/)).toBeVisible();
+  await expect(page.getByText('Nombre de magasins au maximum')).toBeVisible();
   await shot(page, '2-stores');
 
   await page.goto('/fr/panier');
@@ -59,6 +63,11 @@ test('parcours complet : localisation → magasins → panier → comparaison �
   await expect(page.getByRole('tab').first()).toBeVisible({ timeout: 20_000 });
   await expect(page.getByRole('tab', { name: /Coût global optimisé/ })).toBeVisible();
   await expect(page.getByText('Résultat calculé sur des prix fictifs de démonstration.')).toBeVisible();
+  // Enseigne seule / combinaison, trajet estimé expliqué (jamais présenté comme un itinéraire routier).
+  await expect(page.getByRole('heading', { name: 'Comparaison des solutions' })).toBeVisible();
+  await expect(page.locator('[data-testid^="solution-chain:"]').first()).toBeVisible();
+  await expect(page.getByText(/pas un itinéraire routier/)).toBeVisible();
+  await expect(page.getByText(/À payer : \d+ ×/).first()).toBeVisible();
   await shot(page, '4-compare');
 
   await page.getByRole('button', { name: 'Utiliser cette liste' }).click();
@@ -96,6 +105,8 @@ test('planifier ses courses : comparaison aujourd’hui / date choisie', async (
     );
   }, nextTuesday());
   await page.goto('/fr/comparer');
+  await expect(page.getByRole('radio', { name: 'Plus tard' })).toBeChecked();
+  await expect(page.getByText(/actions publiées valables ce jour-là dans votre région/)).toBeVisible();
   await expect(page.getByRole('heading', { name: /Aujourd’hui ou le/ })).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText(/Les promotions pas encore annoncées ne sont pas connues/)).toBeVisible();
   await shot(page, '6-plan');
