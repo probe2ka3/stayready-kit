@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { CompareResultDto, OutlookDayDto, ScenarioDto, ScenarioKind } from '@cabas/core';
+import type { CompareResultDto, OutlookDayDto, ScenarioDto, ScenarioKind, SolutionDto } from '@cabas/core';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
 import { duration, km, money, shortCalendarDate, shortDate, time } from '@/lib/format';
 import { track } from '@/lib/metrics';
@@ -48,6 +48,9 @@ export function ResultsView({
 
       {result.waitSignal && <WaitSignal signal={result.waitSignal} locale={locale} onPick={onPickDate} />}
 
+      {(result.solutions ?? []).length > 0 && <Solutions result={result} locale={locale} />}
+      <TravelMethod result={result} locale={locale} />
+
       {scenarios.length === 0 ? null : (
         <>
           <div role="tablist" aria-label="Scénarios" className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -62,12 +65,12 @@ export function ResultsView({
       <Alternatives result={result} locale={locale} chosen={result.scenarios.find((x) => x.kind === 'optimized_total')?.storeCount ?? null} />
       <Ranking result={result} locale={locale} />
       {result.planning && <Planning result={result} locale={locale} />}
+      <PriceDates result={result} locale={locale} />
       {result.outlook.length > 0 && <Outlook days={result.outlook} locale={locale} onPick={onPickDate} target={result.meta.targetDate} />}
 
       <PartnerSlot slot="results_footer" />
 
       <p className="text-xs text-muted">
-        {result.meta.travelEstimated ? `${m.results.estimated} ` : ''}
         {format(m.results.computedIn, { ms: result.meta.stats.durationMs })} · {result.meta.storesConsidered} succursales ·{' '}
         {result.meta.stats.subsetsEvaluated} combinaisons évaluées.
       </p>
@@ -93,9 +96,9 @@ function ScenarioTab({ s, locale, active, onSelect }: { s: ScenarioDto; locale: 
         <span className="font-semibold">{m.results.scenarios[s.kind]}</span>
         {s.kind === 'optimized_total' && <Pill tone="primary">{m.results.recommended}</Pill>}
       </span>
-      <span className="num mt-1 block text-2xl font-extrabold tracking-tight">{money(s.kind === 'optimized_total' ? s.globalCents : s.purchaseCents)}</span>
+      <span className="num mt-1 block text-2xl font-extrabold tracking-tight">{money(s.globalCents)}</span>
       <span className="block text-sm text-muted">
-        {s.kind === 'optimized_total' ? m.results.global : m.results.products} · {plural(m.results.storeCount, s.storeCount)} · {km(s.travel.distanceKm)}
+        {m.results.global} · {m.results.products} {money(s.purchaseCents)} · {plural(m.results.storeCount, s.storeCount)} · {km(s.travel.distanceKm)}
       </span>
       <span className="mt-1.5 flex flex-wrap gap-1">
         {saving > 0 && <Pill tone="accent">−{money(saving)}</Pill>}
@@ -529,7 +532,18 @@ function Ranking({ result, locale }: { result: CompareResultDto; locale: Locale 
                     : plural(m.results.rankingIncomplete, r.totalLines - r.coveredLines)}
               </p>
             </div>
-            <span className={cx('num font-semibold', !r.isComplete && 'text-muted')}>{money(r.purchaseCents)}</span>
+            <span className="text-right">
+              <span className={cx('num block font-semibold', !r.isComplete && 'text-muted')}>{r.coveredLines > 0 ? money(r.purchaseCents) : '—'}</span>
+              {!r.isComplete && (
+                <span className="block text-xs text-warn">
+                  {format(m.results.solutions.coverage, {
+                    covered: r.coveredLines,
+                    total: r.totalLines,
+                    pct: Math.round((r.coveredLines / Math.max(1, r.totalLines)) * 100),
+                  })}
+                </span>
+              )}
+            </span>
           </li>
         ))}
       </ul>
@@ -542,6 +556,15 @@ function Planning({ result, locale }: { result: CompareResultDto; locale: Locale
   const p = result.planning;
   if (!p) return null;
   const target = shortCalendarDate(p.targetDate);
+  // Articles du scénario recommandé : action publiée valable ce jour-là vs dernier prix connu.
+  const scenario = result.scenarios.find((x) => x.kind === 'optimized_total') ?? result.scenarios[0];
+  const items = scenario ? scenario.stops.flatMap((st) => st.items) : [];
+  const focus = items.length
+    ? {
+        promo: items.filter((it) => it.option.promotion && it.option.status === 'promo_confirmed').length,
+        known: items.filter((it) => it.option.status !== 'promo_confirmed').length,
+      }
+    : null;
   return (
     <Card className="space-y-3">
       <h2 className="font-bold">{format(m.results.planningTitle, { date: target })}</h2>
@@ -554,6 +577,15 @@ function Planning({ result, locale }: { result: CompareResultDto; locale: Locale
           sub={p.differenceCents > 0 ? m.results.planningCheaperLater : p.differenceCents < 0 ? m.results.planningDearerLater : undefined}
         />
       </div>
+      {focus && (
+        <p className="text-sm">
+          {format(m.results.planningSummary, {
+            date: target,
+            promo: plural(m.results.planningSummaryPromo, focus.promo),
+            known: plural(m.results.planningSummaryPromo, focus.known),
+          })}
+        </p>
+      )}
       {p.startingPromotions.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold">{m.results.planningStarting}</h3>
@@ -615,4 +647,120 @@ function Outlook({ days, locale, onPick, target }: { days: OutlookDayDto[]; loca
       </ol>
     </Card>
   );
+}
+
+/**
+ * Tableau « Lidl seul / Aldi seul / combinaison » : achats, trajet aller-retour, total et économies
+ * par rapport au meilleur magasin unique complet. Une solution incomplète n'affiche pas d'économie.
+ */
+function Solutions({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const t = m.results.solutions;
+  const rows = result.solutions;
+  const noRef = rows.every((r) => r.notComparable === 'no_complete_reference');
+  const label = (r: SolutionDto) =>
+    r.kind === 'combination'
+      ? `${t.combination} (${r.stores.map((st) => st.chainName).join(' + ')})`
+      : format(t.chain, { chain: r.stores[0]?.chainName ?? r.chainIds[0] ?? '' });
+  return (
+    <Card className="space-y-3">
+      <div>
+        <h2 className="text-lg font-bold">{t.title}</h2>
+        <p className="text-sm text-muted">{t.help}</p>
+      </div>
+      {noRef && <Notice tone="warn">{t.noCompleteReference}</Notice>}
+      <ul className="space-y-2">
+        {rows.map((r) => (
+          <li
+            key={r.key}
+            data-testid={`solution-${r.key}`}
+            className={cx('rounded-xl border p-3', r.isReference ? 'border-primary' : 'border-border', !r.complete && 'opacity-80')}
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="font-semibold">
+                {label(r)}
+                {r.isReference && (
+                  <>
+                    {' '}
+                    <Pill tone="primary">{t.reference}</Pill>
+                  </>
+                )}
+              </p>
+              <p className="num text-lg font-extrabold">{r.complete ? money(r.globalCents) : '—'}</p>
+            </div>
+            <p className="text-xs text-muted">
+              {r.stores.map((st) => `${st.chainName} · ${st.name}${st.address ? `, ${st.address}` : ''} (${km(st.crowKm)})`).join(' → ')}
+            </p>
+            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-sm sm:grid-cols-4">
+              <div>
+                <dt className="text-muted">{t.purchases}</dt>
+                <dd className="num font-semibold">{money(r.purchaseCents)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t.travel}</dt>
+                <dd className="num font-semibold">
+                  {money(r.travelCostCents)} · {km(r.distanceKm)} · {duration(r.driveMin)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t.gross}</dt>
+                <dd className="num font-semibold">{r.grossSavingsCents == null ? '—' : signed(r.grossSavingsCents)}</dd>
+              </div>
+              <div>
+                <dt className="text-muted">{t.net}</dt>
+                <dd className={cx('num font-bold', (r.netSavingsCents ?? 0) > 0 && 'text-primary-strong', (r.netSavingsCents ?? 0) < 0 && 'text-danger')}>
+                  {r.netSavingsCents == null ? '—' : signed(r.netSavingsCents)}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-1 text-xs text-muted">
+              {format(t.coverage, { covered: r.coveredLines, total: r.totalLines, pct: Math.round(r.coverageRate * 100) })} ·{' '}
+              {format(t.prices, { promo: String(r.promoLines), indicative: String(r.indicativeLines) })}
+            </p>
+            {!r.complete && <p className="text-xs font-medium text-warn">{plural(t.incomplete, r.totalLines - r.coveredLines)}</p>}
+            {r.kind === 'combination' && !r.retained && <p className="text-xs text-muted">{t.notRetained}</p>}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+/** Économie : positive = moins cher que la référence ; négative (« −2.07 CHF ») = plus cher. */
+function signed(cents: number): string {
+  return cents >= 0 ? money(cents) : `−${money(-cents)}`;
+}
+
+/** Méthode d'estimation des trajets, en clair : jamais présentée comme un itinéraire routier. */
+function TravelMethod({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const t = result.meta.travelMethod;
+  if (!t) return null;
+  const ret = t.returnToOrigin ? m.results.travelMethod.returnTrip : m.results.travelMethod.oneWay;
+  const cost = money(Math.round(t.costPerKmChf * 100));
+  const text = t.estimated
+    ? format(m.results.travelMethod.estimated, {
+        factor: String(t.detourFactor ?? '').replace('.', ','),
+        overhead: String(t.overheadMin ?? 0),
+        speed: String(t.speedKmh ?? ''),
+        ret,
+        cost,
+      })
+    : format(m.results.travelMethod.routed, { provider: t.provider, ret, cost });
+  return <p className="rounded-xl bg-surface-2 p-3 text-sm text-muted">{text}</p>;
+}
+
+/** Dates des relevés réellement utilisés, par enseigne. */
+function PriceDates({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const list = (result.meta.priceDates ?? []).map((d) => {
+    const chain = result.singleStoreRanking.find((r) => r.chainId === d.chainId)?.chainName ?? d.chainId;
+    const oldest = shortDate(d.oldest);
+    const newest = shortDate(d.newest);
+    return oldest === newest
+      ? format(m.results.priceDatesSame, { chain, date: newest })
+      : format(m.results.priceDatesItem, { chain, oldest, newest });
+  });
+  if (list.length === 0) return null;
+  return <p className="text-xs text-muted">{format(m.results.priceDates, { list: list.join(' · ') })}</p>;
 }

@@ -35,6 +35,7 @@ import { holidayInfo } from './holidays';
 import { appleMapsLeg, geoUri, googleMapsRoute } from './navigation';
 import { addDays, daysBetween, zurichLocalToInstant, zurichParts, zurichToday } from './time';
 import {
+  ESTIMATE_PARAMS,
   EstimatedMatrixProvider,
   estimatedMatrix,
   type TravelMatrix,
@@ -226,12 +227,50 @@ export interface SingleStoreRankingDto {
   store: StoreDto | null;
   coveredLines: number;
   totalLines: number;
+  coverageRate: number;
   purchaseCents: number;
   travelCostCents: number | null;
   globalCents: number | null;
   distanceKm: number | null;
   reachable: boolean;
   isComplete: boolean;
+}
+
+/**
+ * Solution comparée (tableau « Lidl seul / Aldi seul / combinaison ») : montant des achats, trajet
+ * aller-retour, total et économies par rapport au meilleur magasin unique **complet**. Une solution
+ * incomplète n'est jamais présentée comme moins chère : ses économies ne sont pas calculées.
+ */
+export interface SolutionDto {
+  key: string;
+  kind: 'single_chain' | 'combination';
+  chainIds: string[];
+  stores: StoreDto[];
+  storeCount: number;
+  coveredLines: number;
+  totalLines: number;
+  /** Part des lignes du panier trouvées (0–1). */
+  coverageRate: number;
+  complete: boolean;
+  purchaseCents: number;
+  distanceKm: number;
+  driveMin: number;
+  totalMin: number;
+  /** Coût du trajet (et du temps, si l'utilisateur le valorise). */
+  travelCostCents: number;
+  globalCents: number;
+  /** Lignes au prix d'une action, lignes au dernier prix connu (non garanti à la date choisie). */
+  promoLines: number;
+  indicativeLines: number;
+  /** Référence : meilleur magasin unique couvrant tout le panier (le moins cher, trajet compris). */
+  isReference: boolean;
+  /** Combinaison retenue par le parcours optimisé (sinon : montrée pour information). */
+  retained: boolean;
+  /** Économie sur les achats et économie après déplacement ; null si non comparable. */
+  grossSavingsCents: number | null;
+  netSavingsCents: number | null;
+  /** Pourquoi l'économie n'est pas calculée. */
+  notComparable: null | 'incomplete' | 'no_complete_reference';
 }
 
 export interface PromoEventDto {
@@ -269,6 +308,27 @@ export interface OutlookDayDto {
   promoLines: number;
 }
 
+/** Méthode d'estimation des trajets (affichée telle quelle : jamais présentée comme un itinéraire routier). */
+export interface TravelMethodDto {
+  provider: string;
+  /** Vrai : distances à vol d'oiseau corrigées d'un facteur de détour, pas un calcul d'itinéraire. */
+  estimated: boolean;
+  mode: TravelSettings['mode'];
+  detourFactor: number | null;
+  speedKmh: number | null;
+  overheadMin: number | null;
+  costPerKmChf: number;
+  returnToOrigin: boolean;
+}
+
+/** Dates des relevés utilisés, par enseigne (fraîcheur réelle des prix du résultat). */
+export interface PriceDatesDto {
+  chainId: string;
+  oldest: string;
+  newest: string;
+  lines: number;
+}
+
 export interface CompareResultDto {
   meta: {
     generatedAt: string;
@@ -279,6 +339,8 @@ export interface CompareResultDto {
     dataMode: 'demo' | 'live' | 'mixed';
     travelProvider: string;
     travelEstimated: boolean;
+    travelMethod: TravelMethodDto;
+    priceDates: PriceDatesDto[];
     storesConsidered: number;
     profilesConsidered: number;
     maxStoresApplied: number;
@@ -288,6 +350,8 @@ export interface CompareResultDto {
   totalLines: number;
   scenarios: ScenarioDto[];
   singleStoreRanking: SingleStoreRankingDto[];
+  /** Solutions comparées : chaque enseigne seule (meilleure succursale) et la combinaison optimisée. */
+  solutions: SolutionDto[];
   alternativesByStoreCount: Array<{ storeCount: number; globalCents: number; purchaseCents: number; coveredLines: number } | null>;
   planning: PlanningDto | null;
   outlook: OutlookDayDto[];
@@ -734,6 +798,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
         store: store ? storeDto(store) : null,
         coveredLines: s.coveredLines,
         totalLines: lines.length,
+        coverageRate: lines.length ? s.coveredLines / lines.length : 0,
         purchaseCents: s.purchaseCents,
         travelCostCents: s.route ? s.route.travelCostCents + s.route.inStoreCostCents : null,
         globalCents: s.route ? s.purchaseCents + s.route.travelCostCents + s.route.inStoreCostCents : null,
@@ -748,6 +813,76 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
         b.coveredLines - a.coveredLines ||
         a.purchaseCents - b.purchaseCents,
     );
+
+  // --- Solutions comparées : chaque enseigne seule, puis la combinaison ------------------------
+  const lineStats = (assignment: Array<number | null>) => {
+    let promoLines = 0;
+    let indicativeLines = 0;
+    lines.forEach((_, l) => {
+      const p = assignment[l];
+      if (p == null) return;
+      const o = (outcomes[l] as LineOutcome[])[p]?.option;
+      if (!o) return;
+      if (o.promotion && o.status === 'promo_confirmed') promoLines++;
+      if (o.status === 'indicative' || o.status === 'stale') indicativeLines++;
+    });
+    return { promoLines, indicativeLines };
+  };
+  const solutionFrom = (key: string, kind: SolutionDto['kind'], profilesUsed: number[], assignment: Array<number | null>, coveredLines: number, purchaseCents: number, route: RoutePlan): SolutionDto => ({
+    key,
+    kind,
+    chainIds: [...new Set(profilesUsed.map((p) => (profiles[p] as PriceProfile).chainId))],
+    stores: route.stops.map((st) => storeDto(kept[st.storeIndex] as CandidateStore)),
+    storeCount: route.stops.length,
+    coveredLines,
+    totalLines: lines.length,
+    coverageRate: lines.length ? coveredLines / lines.length : 0,
+    complete: coveredLines === lines.length,
+    purchaseCents,
+    distanceKm: route.distanceKm,
+    driveMin: route.driveMin,
+    totalMin: route.driveMin + route.inStoreMin,
+    travelCostCents: route.travelCostCents + route.inStoreCostCents,
+    globalCents: purchaseCents + route.travelCostCents + route.inStoreCostCents,
+    ...lineStats(assignment),
+    isReference: false,
+    retained: true,
+    grossSavingsCents: null,
+    netSavingsCents: null,
+    notComparable: null,
+  });
+  const solutions: SolutionDto[] = [];
+  for (const [chainId, sgl] of bestPerChain) {
+    if (!sgl.route || sgl.coveredLines === 0) continue;
+    solutions.push(solutionFrom(`chain:${chainId}`, 'single_chain', [sgl.profileIndex], sgl.assignment, sgl.coveredLines, sgl.purchaseCents, sgl.route));
+  }
+  // Combinaison : celle du parcours optimisé ; s'il se limite à un magasin, la meilleure combinaison
+  // de plusieurs magasins est tout de même montrée (non retenue : gain inférieur au seuil ou nul).
+  const combo =
+    result.optimized && result.optimized.route.stops.length > 1
+      ? result.optimized
+      : (result.optimizedByStoreCount
+          .filter((p): p is Plan => Boolean(p) && (p as Plan).route.stops.length > 1)
+          .sort((a, b) => b.coveredLines - a.coveredLines || a.globalCents - b.globalCents)[0] ?? null);
+  if (combo) {
+    const sol = solutionFrom('combination', 'combination', combo.profiles, combo.assignment, combo.coveredLines, combo.purchaseCents, combo.route);
+    sol.retained = combo === result.optimized;
+    solutions.push(sol);
+  }
+  const completeSingles = solutions.filter((x) => x.kind === 'single_chain' && x.complete).sort((a, b) => a.globalCents - b.globalCents);
+  const refSolution = completeSingles[0] ?? null;
+  for (const sol of solutions) {
+    if (!refSolution) {
+      sol.notComparable = 'no_complete_reference';
+    } else if (!sol.complete) {
+      sol.notComparable = 'incomplete';
+    } else {
+      sol.isReference = sol === refSolution;
+      sol.grossSavingsCents = refSolution.purchaseCents - sol.purchaseCents;
+      sol.netSavingsCents = refSolution.globalCents - sol.globalCents;
+    }
+  }
+  solutions.sort((a, b) => Number(b.complete) - Number(a.complete) || b.coveredLines - a.coveredLines || a.globalCents - b.globalCents);
 
   // --- Planification : aujourd'hui vs date choisie ---------------------------------------
   let planning: PlanningDto | null = null;
@@ -809,6 +944,37 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
 
   const waitSignal = computeWaitSignal(outlook, targetDate);
 
+  // Fraîcheur réelle des prix utilisés : dates des relevés par enseigne. Si le relevé le plus récent
+  // d'une enseigne a plus de 48 h, la collecte quotidienne a probablement échoué : avertissement.
+  const dates = new Map<string, PriceDatesDto>();
+  for (const sc of scenarios) {
+    for (const st of sc.stops) {
+      for (const it of st.items) {
+        const d = dates.get(it.option.chainId);
+        const at = it.option.observedAt;
+        if (!d) dates.set(it.option.chainId, { chainId: it.option.chainId, oldest: at, newest: at, lines: 1 });
+        else {
+          if (at < d.oldest) d.oldest = at;
+          if (at > d.newest) d.newest = at;
+          d.lines++;
+        }
+      }
+    }
+  }
+  const priceDates = [...dates.values()];
+  if (priceDates.some((d) => now.getTime() - Date.parse(d.newest) > 48 * 3600_000)) warnings.add('prices_not_refreshed');
+  const estimate = matrix.estimated ? ESTIMATE_PARAMS[req.travel.mode] : null;
+  const travelMethod: TravelMethodDto = {
+    provider: matrix.provider,
+    estimated: matrix.estimated,
+    mode: req.travel.mode,
+    detourFactor: estimate?.detour ?? null,
+    speedKmh: estimate?.speedKmh ?? null,
+    overheadMin: estimate?.overheadMin ?? null,
+    costPerKmChf: req.travel.costPerKmChf,
+    returnToOrigin: req.travel.returnToOrigin,
+  };
+
   const anyDemo = scenarios.some((s) => s.stops.some((st) => st.items.some((i) => i.option.isDemo)));
   const anyLive = scenarios.some((s) => s.stops.some((st) => st.items.some((i) => !i.option.isDemo)));
   if (anyDemo) warnings.add('demo_data');
@@ -823,6 +989,8 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       dataMode: anyDemo && anyLive ? 'mixed' : anyDemo ? 'demo' : 'live',
       travelProvider: matrix.provider,
       travelEstimated: matrix.estimated,
+      travelMethod,
+      priceDates,
       storesConsidered: kept.length,
       profilesConsidered: result.stats.profilesConsidered,
       maxStoresApplied,
@@ -836,6 +1004,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     totalLines: lines.length,
     scenarios,
     singleStoreRanking,
+    solutions,
     alternativesByStoreCount: result.optimizedByStoreCount.map((p) =>
       p
         ? {

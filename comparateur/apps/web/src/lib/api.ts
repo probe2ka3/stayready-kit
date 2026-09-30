@@ -27,7 +27,15 @@ export interface ProductDto {
 
 export interface StoresResponse {
   radiusKm: number;
-  chains: Array<{ chainId: string; name: string; badge: string; count: number; nearestKm: number }>;
+  chains: Array<{
+    chainId: string;
+    name: string;
+    badge: string;
+    count: number;
+    nearestKm: number;
+    /** Données de prix exploitables pour cette enseigne (≠ présence de magasins). */
+    priceData: { kind: 'official' | 'community' | 'none' | 'demo'; lastObservation: string | null; prices: number };
+  }>;
   absentChains: Array<{ chainId: string; name: string; badge: string }>;
   stores: Array<{
     id: string;
@@ -38,6 +46,7 @@ export interface StoresResponse {
     hoursToday: string | null;
     openNow: 'open' | 'closed' | 'unknown';
     accessNotes: string | null;
+    stock: 'unknown';
   }>;
   truncated: boolean;
 }

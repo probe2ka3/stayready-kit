@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
 import { fetchStores, type StoresResponse } from '@/lib/api';
-import { km } from '@/lib/format';
+import { km, shortDate } from '@/lib/format';
 import { useApp, useHydrated } from '@/lib/store';
 import { IconChevron, IconPin } from './icons';
 import { LocationPicker } from './location-picker';
@@ -15,8 +15,8 @@ const RADII = [5, 10, 20, 30] as const;
 export function StoresView({ locale }: { locale: Locale }) {
   const m = getMessages(locale);
   const hydrated = useHydrated();
-  const { location, radiusKm, excludedChains, excludedStores, basket } = useApp();
-  const { setRadius, toggleChain, toggleStore, setLocation } = useApp();
+  const { location, radiusKm, excludedChains, excludedStores, basket, maxStores } = useApp();
+  const { setRadius, toggleChain, toggleStore, setLocation, setMaxStores } = useApp();
   const [data, setData] = useState<StoresResponse | null>(null);
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [editing, setEditing] = useState(false);
@@ -87,6 +87,20 @@ export function StoresView({ locale }: { locale: Locale }) {
             options={RADII.map((r) => ({ value: r, label: `${r} km` }))}
           />
         </div>
+        <div>
+          <p className="mb-1.5 text-sm font-semibold">{m.compare.maxStores}</p>
+          <Segmented
+            label={m.compare.maxStores}
+            value={maxStores === null ? 0 : maxStores}
+            onChange={(n) => setMaxStores(n === 0 ? null : n)}
+            options={[
+              { value: 1, label: '1' },
+              { value: 2, label: '2' },
+              { value: 3, label: '3' },
+              { value: 0, label: m.compare.unlimited },
+            ]}
+          />
+        </div>
       </Card>
 
       {!location && <Notice>{m.stores.noLocation}</Notice>}
@@ -111,9 +125,19 @@ export function StoresView({ locale }: { locale: Locale }) {
                       <div className="flex items-center gap-3 p-3">
                         <ChainBadge badge={c.badge} name={c.name} />
                         <div className="min-w-0 flex-1">
-                          <p className="font-semibold">{c.name}</p>
+                          <p className="flex flex-wrap items-center gap-1.5 font-semibold">
+                            {c.name}
+                            <Pill tone={c.priceData.kind === 'official' ? 'primary' : c.priceData.kind === 'none' ? 'danger' : 'warn'}>
+                              {m.stores.priceLabel[c.priceData.kind]}
+                            </Pill>
+                          </p>
                           <p className="text-sm text-muted">
                             {plural(m.stores.storesCount, c.count)} · {format(m.stores.nearest, { km: km(c.nearestKm) })}
+                          </p>
+                          <p className="text-xs text-muted">
+                            {format(m.stores.priceText[c.priceData.kind] ?? '', {
+                              date: c.priceData.lastObservation ? shortDate(c.priceData.lastObservation) : '—',
+                            })}
                           </p>
                         </div>
                         <label className="relative inline-flex cursor-pointer items-center">
@@ -150,6 +174,7 @@ export function StoresView({ locale }: { locale: Locale }) {
                                       {m.stores.todayHours} : {s.hoursToday ?? m.stores.hoursUnknown}
                                     </p>
                                     {s.accessNotes && <p className="text-muted">{s.accessNotes}</p>}
+                                    <p className="text-xs text-muted">{m.stores.stockUnknown}</p>
                                   </div>
                                   <div className="text-right text-sm">
                                     <p className="num font-semibold">{km(s.crowKm)}</p>
@@ -177,6 +202,13 @@ export function StoresView({ locale }: { locale: Locale }) {
               <p className="mt-1 text-sm text-muted">{data.absentChains.map((c) => c.name).join(' · ')}</p>
             </section>
           )}
+
+          <section aria-labelledby="availability" className="rounded-2xl bg-surface-2 p-3 text-sm">
+            <h2 id="availability" className="font-semibold">
+              {m.stores.availabilityTitle}
+            </h2>
+            <p className="mt-1 text-muted">{m.stores.availabilityText}</p>
+          </section>
 
           <p className="text-xs text-muted">{m.stores.osm}</p>
 

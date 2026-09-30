@@ -6,6 +6,7 @@ import {
   buildOfferIndex,
   haversineKm,
   normalizeText,
+  reliabilityOf,
   zurichToday,
   type CandidateStore,
   type LatLon,
@@ -189,6 +190,10 @@ export class MemoryAppData implements AppData {
       if (!s) continue;
       s.realPrices++;
       if (!s.lastObservation || o.observedAt > s.lastObservation) s.lastObservation = o.observedAt;
+      if (reliabilityOf(o) === 'official') {
+        s.officialPrices++;
+        if (!s.lastOfficialObservation || o.observedAt > s.lastOfficialObservation) s.lastOfficialObservation = o.observedAt;
+      }
     }
     for (const p of promotions) {
       const s = stats.get(p.chainId);
@@ -209,7 +214,9 @@ export class MemoryAppData implements AppData {
         products: 0,
         demoProducts: 0,
         realPrices: 0,
+        officialPrices: 0,
         lastObservation: null,
+        lastOfficialObservation: null,
         activePromotions: 0,
         upcomingPromotions: 0,
       });

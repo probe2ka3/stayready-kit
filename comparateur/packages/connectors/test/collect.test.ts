@@ -22,6 +22,7 @@ import {
   unitPriceDeviation,
   type OpLocation,
   type OpPrice,
+  offerMechanic,
 } from '../src';
 import { PRODUCTS } from '@cabas/reference';
 
@@ -433,5 +434,47 @@ describe('contrôles de collecte', () => {
       ),
     ).toEqual(['coverage_drop']);
     expect(checkCollection({ connectorId: 'x', products: 100, prices: 95, promotions: 0 }, { connectorId: 'x', products: 100, prices: 100, promotions: 0 })).toEqual([]);
+  });
+});
+
+describe('Lidl : actions conditionnelles (phase 4)', () => {
+  it('classe la mécanique d’après le bandeau et la contenance', () => {
+    expect(offerMechanic('-50% sur le 2e paquet', '200 g')).toEqual({ type: 'nth_percent', buyQty: 2, percent: 50 });
+    expect(offerMechanic('Dès', 'Diverses sortes | 250-500 ml |')).toEqual({ type: 'conditional' });
+    expect(offerMechanic('Jusqu’à -46%', '750-1000 ml |')).toEqual({ type: 'conditional' });
+    expect(offerMechanic('Action', 'env. 400-700 g | 100 g = 2.79 |')).toEqual({ type: 'conditional' });
+    // « 2+1 gratuit » : le prix affiché est celui du lot de 3 vendu comme un article.
+    expect(offerMechanic('2+1 gratuit', 'Bœuf, poulet | 3 x 2 kg | 1 kg = 2.82 |')).toEqual({ type: 'price' });
+    expect(offerMechanic('2+1 gratuit', '2 kg |')).toEqual({ type: 'conditional' });
+    expect(offerMechanic('-20%', '1 l |')).toEqual({ type: 'price' });
+    expect(offerMechanic(null, '6 x 1,5 l |')).toEqual({ type: 'price' });
+  });
+
+  it('« -50% sur le 2e paquet » : jamais un prix unitaire à 0.89 ; prix normal conservé', () => {
+    const now = new Date('2026-09-28T08:00:00Z');
+    const html = [
+      gridItem({
+        erpNumber: '200',
+        fullTitle: 'Saucisses de Vienne',
+        storeStartDate: 1790805600,
+        storeEndDate: 1791410399,
+        price: { price: 0.89, oldPrice: 1.79, discount: { discountText: '-50% sur le 2e paquet', deletedPrice: 1.79, percentageDiscount: 50 } },
+        keyfacts: { description: '<ul><li>200 g</li><li>100 g = 0.45</li><li>Prix unitaire = 1.79</li></ul>' },
+      }),
+      gridItem({
+        erpNumber: '201',
+        fullTitle: 'Lait de coco',
+        storeStartDate: 1790805600,
+        storeEndDate: 1791410399,
+        price: { price: 2.19, oldPrice: 0, discount: { discountText: 'Dès' } },
+        keyfacts: { description: '<ul><li>Diverses sortes</li><li>250-500 ml</li></ul>' },
+      }),
+    ].join('\n');
+    const batch = buildLidlBatch({ assortment: [], offers: [{ url: 'https://www.lidl.ch/c/fr-CH/x/a1', html, fetchedAt: now }] }, { now });
+    const nth = batch.promotions.find((p) => p.retailerProductId === 'lidl:offer-200')!;
+    expect(nth).toMatchObject({ type: 'nth_percent', buyQty: 2, percent: 50, promoPriceCents: null, referencePriceCents: 179 });
+    expect(batch.prices.find((o) => o.retailerProductId === 'lidl:offer-200')?.priceCents).toBe(179);
+    expect(batch.promotions.find((p) => p.retailerProductId === 'lidl:offer-201')?.type).toBe('conditional');
+    expect(batch.report.metrics?.conditionalOffers).toBe(2);
   });
 });

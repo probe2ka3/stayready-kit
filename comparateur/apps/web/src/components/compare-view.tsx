@@ -171,6 +171,7 @@ export function CompareView({ locale }: { locale: Locale }) {
               { value: 'plan', label: m.compare.plan },
             ]}
           />
+          {when.mode === 'plan' && <p className="text-sm text-muted">{m.compare.planHelp}</p>}
           {when.mode === 'plan' && (
             <div className="grid grid-cols-2 gap-3 pt-1">
               <label className="text-sm font-medium">

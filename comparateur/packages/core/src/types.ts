@@ -234,7 +234,13 @@ export type PromotionType =
   | 'percent' // rabais en %
   | 'multibuy' // X pour le prix de Y (ex. 3 pour 2)
   | 'min_qty_price' // prix unitaire dès N pièces
-  | 'min_qty_percent'; // rabais en % dès N pièces
+  | 'min_qty_percent' // rabais en % dès N pièces
+  | 'nth_percent' // rabais en % sur le N-ième paquet (« -50 % sur le 2e paquet »)
+  /**
+   * Prix affiché soumis à une condition que le panier ne peut pas vérifier (prix « dès » selon la
+   * variante, « jusqu'à -46 % », lot non décrit) : affiché à titre d'information, jamais appliqué.
+   */
+  | 'conditional';
 
 export interface Promotion {
   id: string;

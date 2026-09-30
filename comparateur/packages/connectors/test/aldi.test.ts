@@ -173,3 +173,14 @@ describe('Aldi : baisse de prix devenue permanente', () => {
     expect(merged.prices.find((o) => o.id.endsWith(':2026-09-30'))?.priceCents).toBe(169);
   });
 });
+
+describe('Aldi : article vendu au poids (phase 4)', () => {
+  it('signale le montant estimé d’un article au poids variable', () => {
+    const b = buildAldiBatch(
+      input([item({ sku: '40', name: 'Entrecôte de bœuf', sellingSize: 'approximativement 0,25 kg/pièce', weightType: '3', price: { amount: 4490, amountRelevant: 1123, comparisonDisplay: 'CHF 44.90/1 kg' } })]),
+      { now: NOW },
+    );
+    expect(b.retailerProducts[0]?.attributes.labels).toContain('poids-variable');
+    expect(b.prices[0]?.priceCents).toBe(1123);
+  });
+});

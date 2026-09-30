@@ -18,7 +18,10 @@ export interface ChainStatus {
   products: number;
   demoProducts: number;
   realPrices: number;
+  /** Prix publiés par l'enseigne elle-même (site officiel, API publique du site, flux sous accord). */
+  officialPrices: number;
   lastObservation: string | null;
+  lastOfficialObservation: string | null;
   activePromotions: number;
   upcomingPromotions: number;
 }

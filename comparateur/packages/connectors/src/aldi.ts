@@ -1,5 +1,6 @@
 import {
   addDays,
+  VARIABLE_WEIGHT_LABEL,
   zurichToday,
   type PriceObservation,
   type Promotion,
@@ -121,6 +122,8 @@ export interface AldiItemFacts {
   brand: string | null;
   slug: string;
   packText: string;
+  /** Article vendu au poids : montant estimé pour le poids indicatif. */
+  variableWeight: boolean;
   priceCents: number;
   wasPriceCents: number | null;
   savingsText: string | null;
@@ -158,6 +161,8 @@ export function itemFacts(item: AldiApiItem): AldiItemFacts | null {
     // Ligne « SAVEURS SUISSES » : produits suisses d'Aldi.
     swiss: SWISS_NAME.test(item.name) || /^saveurs suisses$/i.test(brand ?? '') || /suisse garantie|swiss|schweiz/i.test(badges),
     categories: cats.map((c) => c.name),
+    // Article vendu au poids (« approximativement 0,2 kg/pièce ») : le montant affiché est une estimation.
+    variableWeight: item.weightType === '3' || /approximativement|env\.|ca\./i.test(item.sellingSize ?? ''),
   };
 }
 
@@ -235,7 +240,7 @@ export function buildAldiBatch(input: AldiPages, ctx: Pick<ConnectorContext, 'no
         name: f.name,
         brand: f.brand,
         quantity: pack.quantity,
-        attributes: { organic: f.organic, swissOrigin: f.swiss, labels: labelsFromName(f.name, pack.ambiguous) },
+        attributes: { organic: f.organic, swissOrigin: f.swiss, labels: [...labelsFromName(f.name, pack.ambiguous), ...(f.variableWeight ? [VARIABLE_WEIGHT_LABEL] : [])] },
         url,
         isDemo: false,
       });

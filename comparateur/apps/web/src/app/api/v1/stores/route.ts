@@ -11,6 +11,8 @@ const MAX_STORES_LISTED = 400;
  * GET /api/v1/stores?lat=..&lon=..&radius=10
  * Enseignes présentes dans le rayon et leurs succursales (les plus proches d'abord).
  * Les enseignes absentes sont listées à part : elles ne peuvent pas être visitées.
+ * Pour chaque enseigne, `priceData` distingue la présence des magasins de la disponibilité de prix
+ * exploitables (officiels, communautaires, aucun) ; le stock en rayon est toujours inconnu.
  */
 export async function GET(req: Request) {
   const limited = limitOr429(req, 'stores');
@@ -22,7 +24,21 @@ export async function GET(req: Request) {
     const data = getAppData();
     const now = new Date();
     const today = zurichToday(now);
-    const [stores, chains] = await Promise.all([data.storesNear({ lat, lon }, radius), data.chains()]);
+    const [stores, chains, status, mode] = await Promise.all([
+      data.storesNear({ lat, lon }, radius),
+      data.chains(),
+      data.chainStatus(now),
+      data.priceMode(now),
+    ]);
+    const statusByChain = new Map(status.map((st) => [st.chainId, st]));
+    // Présence d'un magasin ≠ disponibilité de prix : chaque enseigne indique ses données de prix.
+    const priceData = (chainId: string) => {
+      const st = statusByChain.get(chainId);
+      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0 };
+      if (st && st.officialPrices > 0) return { kind: 'official' as const, lastObservation: st.lastOfficialObservation, prices: st.officialPrices };
+      if (st && st.realPrices > 0) return { kind: 'community' as const, lastObservation: st.lastObservation, prices: st.realPrices };
+      return { kind: 'none' as const, lastObservation: null, prices: 0 };
+    };
     const byChain = new Map<string, { count: number; nearestKm: number }>();
     for (const s of stores) {
       const cur = byChain.get(s.chainId);
@@ -33,7 +49,7 @@ export async function GET(req: Request) {
       radiusKm: radius,
       chains: chains
         .filter((c) => byChain.has(c.id))
-        .map((c) => ({ chainId: c.id, name: c.name, badge: c.badge, ...byChain.get(c.id) })),
+        .map((c) => ({ chainId: c.id, name: c.name, badge: c.badge, ...byChain.get(c.id), priceData: priceData(c.id) })),
       absentChains: chains.filter((c) => !byChain.has(c.id)).map((c) => ({ chainId: c.id, name: c.name, badge: c.badge })),
       stores: stores.slice(0, MAX_STORES_LISTED).map((s) => {
         const oh = parseOpeningHours(s.openingHours);
@@ -46,6 +62,8 @@ export async function GET(req: Request) {
           hoursToday: formatDaySchedule(oh, today),
           openNow: openStatusDuring(oh, now, 15),
           accessNotes: s.accessNotes ?? null,
+          // Aucune source ne publie le stock par succursale : toujours « inconnu ».
+          stock: 'unknown' as const,
         };
       }),
       truncated: stores.length > MAX_STORES_LISTED,

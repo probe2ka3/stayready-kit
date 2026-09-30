@@ -228,7 +228,8 @@ export function usablePrices(data: DataSet, now: Date, policy: FreshnessPolicy):
   }
   for (const p of data.promotions) {
     const rp = products.get(p.retailerProductId);
-    if (!rp || p.promoPriceCents == null) continue;
+    // Seules les actions à prix unitaire inconditionnel donnent un prix utilisable (pas « dès 2 », « 2e paquet », « dès »).
+    if (!rp || p.promoPriceCents == null || p.type !== 'price') continue;
     if (Date.parse(p.publishedAt) > now.getTime() || p.validFrom > today || p.validTo < today) continue;
     if (out.get(rp.id)?.some((u) => u.connectorId === p.source.connectorId)) continue;
     push({

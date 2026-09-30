@@ -1,7 +1,7 @@
 import { roundTo5Rappen } from './money';
 import { confidenceOf, sourceInfo, TIER_RANK, type SourceTier } from './sources';
 import { normalizeText, significantTokens } from './text';
-import { ageInDays, dateInRange } from './time';
+import { ageInDays, dateInRange, zurichToday } from './time';
 import type {
   CanonicalProduct,
   ChainId,
@@ -165,7 +165,9 @@ export type StatusReason =
   | 'crowd_sourced'
   | 'third_party_source' // prix d'un fournisseur de données tiers (repli)
   | 'fallback_source' // aucune source officielle utilisable : source de niveau inférieur
-  | 'source_divergence'; // une autre source indique un prix nettement différent
+  | 'source_divergence' // une autre source indique un prix nettement différent
+  | 'promo_not_confirmed_on_date' // action à fin non publiée, vue en vigueur avant la date choisie
+  | 'variable_weight'; // article vendu au poids : montant estimé pour le poids indicatif
 
 /** Autre observation disponible pour la même enseigne (conservée, jamais fusionnée). */
 export interface SourceAlternative {
@@ -187,6 +189,9 @@ export interface SourceDivergence {
   other: SourceAlternative;
 }
 
+/** Label d'un article vendu au poids (montant estimé pour un poids indicatif). */
+export const VARIABLE_WEIGHT_LABEL = 'poids-variable';
+
 /** Seuil d'écart de prix unitaire entre deux sources au-delà duquel la divergence est signalée. */
 export const DIVERGENCE_THRESHOLD = 0.15;
 
@@ -203,6 +208,15 @@ export interface AppliedPromotion {
   referencePriceCents: number | null;
   /** Description courte : « -20 % », « 3 pour 2 », « dès 2 pièces ». */
   mechanic: string;
+  /** Conditions à remplir (carte, quantité, lot, région), en clair. */
+  conditions: string[];
+  /** Action annoncée : elle ne commence qu'après la date du jour (pas encore en cours aujourd'hui). */
+  announced: boolean;
+  /** Action régionale : zone tarifaire et texte de l'enseigne. */
+  zoneId: string | null;
+  regionNote: string | null;
+  /** Dernière vérification de l'action par la source. */
+  verifiedAt: string;
   source: DataSource;
   isDemo: boolean;
 }
@@ -216,7 +230,12 @@ export interface LineOption {
   quantity: Quantity;
   attributes: ProductAttributes;
   matchKind: MatchKind;
+  /** Nombre de paquets à acheter (montant réellement payé = paquets × prix du paquet, promotions comprises). */
   packs: number;
+  /** Quantité demandée (quantité de la ligne × contenance de la référence). */
+  requestedQuantity: Quantity;
+  /** Quantité réellement achetée (paquets × contenance de l'article). */
+  purchasedQuantity: Quantity;
   /** Prix normal d'un paquet (null si seul le prix promotionnel est connu). */
   packPriceCents: number | null;
   regularTotalCents: number | null;
@@ -375,10 +394,37 @@ export function promotionCost(p: Promotion, packs: number, packPriceCents: numbe
     case 'min_qty_percent':
       if (packPriceCents == null || p.percent == null || !p.minQty || packs < p.minQty) return null;
       return packs * roundTo5Rappen(packPriceCents * (1 - p.percent / 100));
+    case 'nth_percent': {
+      // Un paquet sur `buyQty` bénéficie du rabais ; sans le nombre de paquets requis, prix normal.
+      if (packPriceCents == null || p.percent == null || !p.buyQty || p.buyQty < 2) return null;
+      const groups = Math.floor(packs / p.buyQty);
+      if (groups === 0) return null;
+      const discounted = roundTo5Rappen(packPriceCents * (1 - p.percent / 100));
+      return packs * packPriceCents - groups * (packPriceCents - discounted);
+    }
+    case 'conditional':
     default:
       return null;
   }
 }
+
+/** Conditions d'une promotion à remplir par l'acheteur (carte, quantité minimale, lot). */
+export function promotionConditions(p: Promotion): string[] {
+  const out: string[] = [];
+  if (p.loyaltyProgram) out.push(`carte ou application ${LOYALTY_LABEL[p.loyaltyProgram] ?? p.loyaltyProgram} requise`);
+  if ((p.type === 'min_qty_price' || p.type === 'min_qty_percent') && p.minQty) out.push(`dès ${p.minQty} paquets achetés`);
+  if (p.type === 'multibuy' && p.buyQty) out.push(`par lot de ${p.buyQty} paquets`);
+  if (p.type === 'nth_percent' && p.buyQty) out.push(`rabais sur un paquet sur ${p.buyQty}`);
+  if (p.type === 'conditional') out.push('prix variable selon la variante ou le lot : non appliqué au panier');
+  if (p.zoneId) out.push(p.regionNote ?? 'action régionale');
+  return out;
+}
+
+const LOYALTY_LABEL: Record<string, string> = {
+  'lidl-plus': 'Lidl Plus',
+  cumulus: 'Cumulus',
+  supercard: 'Supercard',
+};
 
 export function describeMechanic(p: Promotion): string {
   switch (p.type) {
@@ -392,6 +438,10 @@ export function describeMechanic(p: Promotion): string {
       return `Prix spécial dès ${p.minQty} pièces`;
     case 'min_qty_percent':
       return `-${formatPercent(p.percent ?? 0)} % dès ${p.minQty} pièces`;
+    case 'nth_percent':
+      return `-${formatPercent(p.percent ?? 0)} % sur le ${p.buyQty}e paquet`;
+    case 'conditional':
+      return p.label ? `Offre conditionnelle (${p.label})` : 'Offre conditionnelle';
     default:
       return 'Promotion';
   }
@@ -401,7 +451,7 @@ function formatPercent(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.', ',');
 }
 
-function toApplied(p: Promotion): AppliedPromotion {
+function toApplied(p: Promotion, today: string): AppliedPromotion {
   return {
     id: p.id,
     type: p.type,
@@ -414,9 +464,26 @@ function toApplied(p: Promotion): AppliedPromotion {
     loyaltyProgram: p.loyaltyProgram ?? null,
     referencePriceCents: p.referencePriceCents ?? null,
     mechanic: describeMechanic(p),
+    conditions: promotionConditions(p),
+    announced: p.validFrom > today,
+    zoneId: p.zoneId,
+    regionNote: p.regionNote ?? null,
+    verifiedAt: p.verifiedAt,
     source: p.source,
     isDemo: p.isDemo,
   };
+}
+
+/**
+ * Une action dont la fin n'est pas publiée (« jusqu'à épuisement », fin présumée) n'est confirmée
+ * que jusqu'au dernier jour où elle a été vue en vigueur, ou jusqu'à son premier jour publié.
+ * Au-delà, elle est probable mais non garantie : le prix est présenté comme indicatif.
+ */
+export function promotionConfirmedOn(p: Pick<Promotion, 'endIsPresumed' | 'validFrom' | 'verifiedAt'>, targetDate: string): boolean {
+  if (!p.endIsPresumed) return true;
+  const seenOn = zurichToday(new Date(p.verifiedAt));
+  const lastConfirmed = p.validFrom > seenOn ? p.validFrom : seenOn;
+  return targetDate <= lastConfirmed;
 }
 
 /**
@@ -527,8 +594,11 @@ export function resolveLine(
     if (isDemo) {
       status = 'demo';
       reasons.push('demo_data');
-    } else if (bestPromo) {
+    } else if (bestPromo && promotionConfirmedOn(bestPromo.promo, ctx.targetDate)) {
       status = 'promo_confirmed';
+    } else if (bestPromo) {
+      // Action vue en vigueur, fin non publiée : probable mais non garantie à la date choisie.
+      status = 'indicative';
     } else if (stale) {
       // Un prix périmé reste « périmé », même pour une date future.
       status = 'stale';
@@ -543,6 +613,8 @@ export function resolveLine(
     if (stale) reasons.push('stale_price');
     else if (usableObs && ageDays > ctx.policy.verifiedMaxAgeDays) reasons.push('aging_price');
     if (bestPromo?.promo.endIsPresumed) reasons.push('promo_end_presumed');
+    if (bestPromo && !promotionConfirmedOn(bestPromo.promo, ctx.targetDate)) reasons.push('promo_not_confirmed_on_date');
+    if ((product.attributes.labels ?? []).includes(VARIABLE_WEIGHT_LABEL)) reasons.push('variable_weight');
     if (bestPromo?.promo.whileStocksLast) reasons.push('while_stocks_last');
     if (bestPromo?.promo.loyaltyProgram) reasons.push('loyalty_required');
     if (match.kind === 'similar' || packs !== line.qty) reasons.push('pack_size_differs');
@@ -566,10 +638,12 @@ export function resolveLine(
       attributes: product.attributes,
       matchKind: match.kind,
       packs,
+      requestedQuantity: { amount: line.qty * canonical.quantity.amount, unit: canonical.quantity.unit },
+      purchasedQuantity: { amount: packs * product.quantity.amount, unit: product.quantity.unit },
       packPriceCents: packPrice,
       regularTotalCents: regularTotal,
       totalCents: total,
-      promotion: bestPromo ? toApplied(bestPromo.promo) : null,
+      promotion: bestPromo ? toApplied(bestPromo.promo, ctx.today) : null,
       status,
       statusReasons: reasons,
       observedAt,

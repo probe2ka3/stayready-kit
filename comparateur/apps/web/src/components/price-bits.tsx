@@ -1,8 +1,8 @@
 'use client';
 
-import type { LineOption, PriceStatus } from '@cabas/core';
+import { formatQuantity, type LineOption, type PriceStatus } from '@cabas/core';
 import { format, getMessages, type Locale } from '@/i18n';
-import { money, shortDate, unitPriceLabel } from '@/lib/format';
+import { money, shortCalendarDate, shortDate, unitPriceLabel } from '@/lib/format';
 import { Pill } from './ui';
 
 const TONE: Record<PriceStatus, 'primary' | 'accent' | 'warn' | 'danger' | 'demo'> = {
@@ -42,6 +42,26 @@ export function OptionLine({
   const m = getMessages(locale);
   const reasons = option.statusReasons.filter((r) => r !== 'demo_data').map((r) => m.status.reasons[r] ?? r);
   const packInfo = option.packs !== qty ? `${option.packs} × ` : qty > 1 ? `${qty} × ` : '';
+  const promo = option.promotion;
+  const promoPhase = promo
+    ? promo.announced
+      ? format(promo.endIsPresumed ? m.status.promoAnnouncedOpenEnd : m.status.promoAnnounced, {
+          from: shortCalendarDate(promo.validFrom),
+          to: shortCalendarDate(promo.validTo),
+        })
+      : promo.endIsPresumed
+        ? m.status.promoCurrentOpenEnd
+        : format(m.status.promoCurrent, { to: shortCalendarDate(promo.validTo) })
+    : null;
+  const size = formatQuantity(option.quantity);
+  // Montant réellement payé : nombre de paquets × prix du paquet ; le prix au kilo sert seulement à comparer.
+  const packLine =
+    option.packPriceCents != null && !promo
+      ? format(m.status.packs, { packs: String(option.packs), size, price: money(option.packPriceCents) })
+      : format(m.status.packsPromo, { packs: String(option.packs), size });
+  const requested = option.requestedQuantity && option.purchasedQuantity
+    ? format(m.status.requested, { requested: formatQuantity(option.requestedQuantity), purchased: formatQuantity(option.purchasedQuantity) })
+    : null;
   return (
     <div className="min-w-0 flex-1">
       <div className="flex items-start justify-between gap-3">
@@ -64,16 +84,25 @@ export function OptionLine({
           {option.brand ? ` · ${option.brand}` : ''} · {unitPriceLabel(option.unitPrice)}
         </p>
       )}
+      {!compact && (
+        <p className="text-xs text-muted">
+          {packLine}
+          {requested && option.packs !== qty ? ` · ${requested}` : ''}
+        </p>
+      )}
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
-        {option.promotion && (
-          <Pill tone="accent" title={option.promotion.label ?? undefined}>
-            {option.promotion.mechanic}
-            {option.promotion.endIsPresumed ? '' : ` · jusqu’au ${shortDate(`${option.promotion.validTo}T12:00:00Z`)}`}
+        {promo && (
+          <Pill tone="accent" title={promo.label ?? undefined}>
+            {promo.mechanic}
           </Pill>
         )}
+        {promoPhase && <span className="text-xs font-medium">{promoPhase}</span>}
         <StatusBadge option={option} locale={locale} />
         {!compact && reasons.length > 0 && <span className="text-xs text-muted">{reasons.join(' · ')}</span>}
       </div>
+      {!compact && promo && (promo.conditions ?? []).length > 0 && (
+        <p className="mt-0.5 text-xs text-muted">{format(m.status.conditions, { list: (promo.conditions ?? []).join(' · ') })}</p>
+      )}
       {!compact && !option.isDemo && <SourceLine option={option} locale={locale} />}
     </div>
   );

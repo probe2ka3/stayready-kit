@@ -375,6 +375,9 @@ export interface ChainDataStatus {
   activePromotions: number;
   upcomingPromotions: number;
   realPrices: number;
+  /** Prix publiés par l'enseigne elle-même (site, API publique, flux sous accord). */
+  officialPrices: number;
+  lastOfficialObservation: string | null;
 }
 
 export async function chainDataStatus(handle: DbHandle, now: Date): Promise<ChainDataStatus[]> {
@@ -389,6 +392,11 @@ export async function chainDataStatus(handle: DbHandle, now: Date): Promise<Chai
          WHERE rp.chain_id = c.id AND o.status = 'valid') AS last_observation,
       (SELECT count(*)::int FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
          WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo) AS real_prices,
+      -- Prix officiels : fiabilité déduite comme reliabilityOf (core) lorsque la colonne est vide.
+      (SELECT count(*)::int FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS official_prices,
+      (SELECT max(o.observed_at) FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS last_official_observation,
       (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active'
          AND p.valid_from <= ${today} AND p.valid_to >= ${today} AND p.published_at <= ${now.toISOString()}) AS active_promotions,
       (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active'
@@ -403,6 +411,8 @@ export async function chainDataStatus(handle: DbHandle, now: Date): Promise<Chai
     activePromotions: Number(r.active_promotions),
     upcomingPromotions: Number(r.upcoming_promotions),
     realPrices: Number(r.real_prices),
+    officialPrices: Number(r.official_prices),
+    lastOfficialObservation: r.last_official_observation ? new Date(r.last_official_observation as string).toISOString() : null,
   }));
 }
 

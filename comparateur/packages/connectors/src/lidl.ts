@@ -272,6 +272,32 @@ export function parseRegions(text: string): { regions: LidlRegion[] | null; note
   return regions.length ? { regions, note, unknown: false } : { regions: null, note, unknown: true };
 }
 
+export type LidlOfferMechanic =
+  | { type: 'price' }
+  | { type: 'nth_percent'; buyQty: number; percent: number }
+  | { type: 'conditional' };
+
+/**
+ * Mécanique d'une action d'après son bandeau et sa description : prix unitaire inconditionnel,
+ * rabais sur le N-ième paquet (« -50% sur le 2e paquet » : le prix affiché est celui du 2e paquet),
+ * ou prix conditionnel jamais appliqué automatiquement au panier (« Dès », « Jusqu'à -46% »,
+ * contenance variable « 250-500 ml », « 2+1 gratuit » lorsque le lot n'est pas l'article vendu).
+ */
+export function offerMechanic(mechanic: string | null, packText: string): LidlOfferMechanic {
+  const t = (mechanic ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const nth = /(\d+(?:[.,]\d+)?)\s*%\s*sur le (\d+)\s*(?:e|ème|eme)\b/.exec(t);
+  if (nth) return { type: 'nth_percent', percent: Number((nth[1] as string).replace(',', '.')), buyQty: Number(nth[2]) };
+  const free = /(\d+)\s*\+\s*(\d+)\s*gratuit/.exec(t);
+  if (free) {
+    // « 2+1 gratuit » : prix du lot de 3 lorsque l'article vendu est ce lot (« 3 x 2 kg »).
+    const lot = Number(free[1]) + Number(free[2]);
+    return new RegExp(`(^|\\|)\\s*${lot}\\s*x\\s`, 'i').test(packText) ? { type: 'price' } : { type: 'conditional' };
+  }
+  if (/^(dès|des|ab|da)\b|jusqu|bis zu|fino a/.test(t)) return { type: 'conditional' };
+  if (/\d\s*-\s*\d+\s*(g|kg|ml|cl|dl|l)\b/i.test(packText)) return { type: 'conditional' };
+  return { type: 'price' };
+}
+
 export function parseOfferPage(html: string, pageUrl: string): { offers: LidlOffer[]; skipped: string[] } {
   const offers: LidlOffer[] = [];
   const skipped: string[] = [];
@@ -466,6 +492,7 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
   }
 
   let offersSeen = 0;
+  let conditionalOffers = 0;
   for (const page of pages.offers) {
     const { offers, skipped } = parseOfferPage(page.html, page.url);
     for (const s of skipped) report.warnings.push({ message: `${page.url} : ${s}` });
@@ -503,18 +530,25 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
         { key: 'std', price: o.priceCents, ref: o.referencePriceCents, loyalty: null },
         { key: 'lp', price: o.lidlPlusPriceCents, ref: o.lidlPlusReferenceCents, loyalty: 'lidl-plus' },
       ];
+      const mech = offerMechanic(o.mechanic, o.packText);
+      if (mech.type !== 'price') conditionalOffers++;
       for (const zoneId of zones) {
         for (const v of variants) {
           if (v.price === null) continue;
           const pid = `${LIDL_CONNECTOR_ID}:${o.erpNumber}:${validFrom}:${zoneId ?? 'ch'}:${v.key}`;
+          // Le prix Lidl Plus est un prix unitaire, sauf contenance variable.
+          const m: LidlOfferMechanic = v.loyalty && mech.type === 'nth_percent' ? { type: 'price' } : mech;
           promotions.set(pid, {
             id: pid,
             retailerProductId: id,
             chainId: 'lidl',
             zoneId,
             storeId: null,
-            type: 'price',
-            promoPriceCents: v.price,
+            type: m.type,
+            // « -50% sur le 2e paquet » : le prix affiché est celui du 2e paquet, pas un prix unitaire.
+            promoPriceCents: m.type === 'nth_percent' ? null : v.price,
+            percent: m.type === 'nth_percent' ? m.percent : null,
+            buyQty: m.type === 'nth_percent' ? m.buyQty : null,
             referencePriceCents: v.ref && v.ref > v.price ? v.ref : null,
             loyaltyProgram: v.loyalty,
             whileStocksLast: true,
@@ -564,6 +598,7 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
     offerPages: pages.offers.length,
     assortmentItems: itemsSeen,
     offers: offersSeen,
+    conditionalOffers,
     packUnreadable,
     unitPriceMismatch,
     reviewedProducts: reviewedCount,

@@ -52,7 +52,7 @@ test('parcours complet : localisation → magasins → panier → comparaison �
   await page.getByRole('link', { name: /Comparer mon panier/ }).click();
   await page.waitForURL('**/fr/comparer');
   // Courses planifiées un mardi à 10 h (résultat indépendant de l'heure d'exécution du test).
-  await page.getByRole('radio', { name: 'Planifier' }).click();
+  await page.getByRole('radio', { name: 'Plus tard' }).click();
   await page.getByLabel('Date').fill(nextTuesday());
   await page.getByLabel('Heure de départ (facultatif)').fill('10:00');
   await page.getByRole('button', { name: 'Comparer', exact: true }).click();
