@@ -669,6 +669,11 @@ function Solutions({ result, locale }: { result: CompareResultDto; locale: Local
         <p className="text-sm text-muted">{t.help}</p>
       </div>
       {noRef && <Notice tone="warn">{t.noCompleteReference}</Notice>}
+      {(result.unavailableEverywhere ?? []).length > 0 && (
+        <p className="text-sm text-warn">
+          {format(t.unavailableEverywhere, { list: result.unavailableEverywhere.map((u) => u.productName).join(', ') })}
+        </p>
+      )}
       <ul className="space-y-2">
         {rows.map((r) => (
           <li
@@ -722,6 +727,9 @@ function Solutions({ result, locale }: { result: CompareResultDto; locale: Local
           </li>
         ))}
       </ul>
+      {!rows.some((r) => r.kind === 'combination') && rows.filter((r) => r.kind === 'single_chain').length > 1 && (
+        <p className="text-sm text-muted">{t.noCombination}</p>
+      )}
     </Card>
   );
 }

@@ -174,6 +174,8 @@ export const fr = {
       notRetained: 'Non retenue : économie inférieure à votre seuil par magasin supplémentaire.',
       incomplete: ['{n} article manquant : total non comparable', '{n} articles manquants : total non comparable'] as const,
       noCompleteReference: 'Aucun magasin ne propose tout le panier : les économies ne sont pas calculées. Comparez les articles trouvés ligne par ligne.',
+      noCombination: 'Aucune combinaison de magasins n’est moins chère qu’un seul magasin pour ce panier.',
+      unavailableEverywhere: 'Introuvables dans toutes les enseignes du périmètre (données disponibles) : {list}.',
       coverage: '{covered}/{total} articles ({pct} %)',
       prices: '{promo} en action · {indicative} au dernier prix connu',
       stores: 'Magasins',

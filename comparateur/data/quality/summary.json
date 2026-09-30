@@ -1,18 +1,18 @@
 {
-  "at": "2026-09-30T16:58:20.711Z",
+  "at": "2026-09-30T19:34:21.444Z",
   "catalogSize": 240,
   "comparable": {
-    "2": 98,
+    "2": 100,
     "3": 4,
     "4": 0,
     "5": 0
   },
   "freshness": {
-    "h24": 3182,
+    "h24": 3179,
     "h48": 0,
     "d7": 1886,
     "older": 76,
-    "total": 5144
+    "total": 5141
   },
   "chains": [
     {
@@ -53,9 +53,9 @@
     },
     {
       "chainId": "aldi",
-      "references": 106,
-      "referencesFirstParty": 106,
-      "share": 0.442,
+      "references": 105,
+      "referencesFirstParty": 105,
+      "share": 0.438,
       "fresh24h": 1726,
       "fresh48h": 0,
       "fresh7d": 80,
@@ -65,15 +65,15 @@
     },
     {
       "chainId": "lidl",
-      "references": 194,
-      "referencesFirstParty": 194,
-      "share": 0.808,
-      "fresh24h": 1456,
+      "references": 200,
+      "referencesFirstParty": 200,
+      "share": 0.833,
+      "fresh24h": 1453,
       "fresh48h": 0,
       "fresh7d": 1805,
       "older": 1,
       "products": 3441,
-      "pricedProducts": 3262
+      "pricedProducts": 3259
     },
     {
       "chainId": "ottos",
@@ -115,15 +115,15 @@
   "byPriority": {
     "P1": {
       "size": 50,
-      "covered2": 30
+      "covered2": 28
     },
     "P2": {
       "size": 121,
-      "covered2": 49
+      "covered2": 51
     },
     "P3": {
       "size": 69,
-      "covered2": 19
+      "covered2": 21
     }
   },
   "records": {
@@ -153,8 +153,8 @@
     {
       "connectorId": "lidl-web",
       "status": "partial",
-      "collectedAt": "2026-09-30T16:26:40.245Z",
-      "message": null
+      "collectedAt": "2026-09-30T16:53:05.577Z",
+      "message": "Retraité depuis l'archive du 2026-09-30"
     },
     {
       "connectorId": "open-prices",

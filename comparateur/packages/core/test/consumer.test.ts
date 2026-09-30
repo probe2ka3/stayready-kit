@@ -61,6 +61,19 @@ describe('correspondances : jamais un article non équivalent', () => {
     expect(out.option?.totalCents).toBe(249);
   });
 
+  it('un yogourt « sans lactose » n’est pas l’équivalent d’un yogourt nature ordinaire (et inversement accepté si exigé)', () => {
+    const yog = canonical('yogourt', 180);
+    const lf = canonical('yogourt-lf', 180, 'g', { attributes: { labels: ['lactose-free'] } });
+    const index = buildOfferIndex({
+      products: [product('x-yog-lf', 'x', 500, 'g', { name: 'Yogourt nature sans lactose 3.5%', attributes: { labels: ['lactose-free'] } })],
+      matches: [match('yogourt', 'x-yog-lf', 'similar'), match('yogourt-lf', 'x-yog-lf', 'similar')],
+      prices: [price('x-yog-lf', 179)],
+      promotions: [],
+    });
+    expect(resolveLine(line('yogourt'), yog, profile('x'), index, ctx()).option).toBeNull();
+    expect(resolveLine(line('yogourt-lf'), lf, profile('x'), index, ctx()).option?.totalCents).toBe(179);
+  });
+
   it('marque imposée et dimension : pas de pâte à tartiner d’une autre marque, pas de litre pour des grammes', () => {
     const index = buildOfferIndex({
       products: [product('x-tartiner', 'x', 400, 'g', { name: 'Pâte à tartiner noisettes', brand: 'Nusspli' }), product('x-ml', 'x', 500, 'ml')],
@@ -340,9 +353,10 @@ describe('solutions comparées : enseigne seule et combinaison', () => {
     expect(oneWay.solutions[0]?.distanceKm).toBeCloseTo(2 * 1.3, 1);
   });
 
-  it('aucun magasin complet : économies non calculées pour toutes les solutions', async () => {
+  it('aucun magasin complet : économies non calculées pour toutes les solutions, articles introuvables listés', async () => {
     const r = await compareBasket(req(), deps([store('c1', 'c', 0.5)]));
     expect(r.solutions.every((s) => s.notComparable === 'no_complete_reference' && s.netSavingsCents === null)).toBe(true);
+    expect(r.unavailableEverywhere.map((u) => u.productName).sort()).toEqual(['cafe', 'the']);
   });
 
   it('collecte en panne depuis plus de 48 h : avertissement et dates des relevés', async () => {

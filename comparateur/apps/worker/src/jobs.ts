@@ -32,6 +32,8 @@ import { CATEGORIES, CHAINS, PRICE_ZONES, PRODUCTS } from '@cabas/reference';
 import { jobCollect, jobExportOdbl, jobImportLive, jobPurgeSource, jobReprocessAldi, jobReprocessLidl, jobRezone } from './collect';
 import { jobBenchmarkFoodAlly } from './benchmark';
 import { jobDataReport } from './data-report';
+import { jobDemoBaskets } from './demo-baskets';
+import { jobMatchAudit } from './match-audit';
 import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
@@ -269,6 +271,8 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   'validation-calibrate': { run: jobValidationCalibrate, help: 'Calibre le jeu de validation des 50 essentiels (data/validation/essentials.json)' },
   'benchmark-foodally': { run: jobBenchmarkFoodAlly, help: 'Comparaison avec FoodAlly sur les 50 essentiels (quota anonyme ; --max N ; --from fichier)' },
   validate: { run: jobValidate, help: 'Contrôle de non-régression de la collecte sur le jeu de validation (--strict)' },
+  'match-audit': { run: jobMatchAudit, help: 'Articles non revus nettement moins chers que les correspondances retenues (data/matching/audit.md)' },
+  'demo-baskets': { run: jobDemoBaskets, help: 'Paniers de démonstration reproductibles sur les prix réels (--now=ISO ; data/demo/resultats.md)' },
   quality: { run: jobQuality, help: 'Expire les promotions terminées et détecte les anomalies' },
   status: { run: jobStatus, help: 'État des connecteurs et des données par enseigne' },
   seed: { run: jobSeed, help: 'Initialise une base complète (migrations + données)' },

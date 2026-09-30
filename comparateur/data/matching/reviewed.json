@@ -1326,17 +1326,17 @@
   },
   {
    "retailerProductId": "aldi:288229",
-   "canonicalSlug": "yogourt-nature-180g",
+   "canonicalSlug": null,
    "reviewer": "équipe données TesPrix (revue manuelle)",
-   "reviewedAt": "2026-09-28",
-   "note": "Pot de 500 g, sans lactose, suisse"
+   "reviewedAt": "2026-09-30",
+   "note": "Pot de 500 g, sans lactose, suisse — refusé le 30.09.2026 : article sans lactose, type de produit différent de la référence ordinaire"
   },
   {
    "retailerProductId": "aldi:544617",
-   "canonicalSlug": "sere-maigre-500g",
+   "canonicalSlug": null,
    "reviewer": "équipe données TesPrix (revue manuelle)",
-   "reviewedAt": "2026-09-28",
-   "note": "250 g, sans lactose, suisse"
+   "reviewedAt": "2026-09-30",
+   "note": "250 g, sans lactose, suisse — refusé le 30.09.2026 : article sans lactose, type de produit différent de la référence ordinaire"
   },
   {
    "retailerProductId": "aldi:290039",
@@ -3017,6 +3017,139 @@
    "canonicalSlug": "patee-chat-400g",
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-09-30"
+  },
+  {
+   "retailerProductId": "lidl:0000002",
+   "canonicalSlug": "eau-plate-6x1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Eau minérale naturelle (plate), bouteille de 1,5 l, marque propre ; nature vérifiée sur la fiche Lidl du 28.09 (id 12695). Ajoutée en phase 4 : seule la Vittel était rapprochée."
+  },
+  {
+   "retailerProductId": "lidl:0021236",
+   "canonicalSlug": "chocolat-noir-100g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Chocolat noir 100 g, marque propre — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0175043",
+   "canonicalSlug": "cafe-grains-1kg",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Café en grains Rosso 1 kg, marque propre — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:1008910",
+   "canonicalSlug": "gel-douche-250ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Gel douche 500 ml, marque propre — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:1003372",
+   "canonicalSlug": "savon-liquide-300ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Savon liquide pour les mains 500 ml — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0028211",
+   "canonicalSlug": "baguette-250g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Baguette française 250 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0072427",
+   "canonicalSlug": "fromage-rape-120g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Fromage râpé 250 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0021483",
+   "canonicalSlug": "glace-vanille-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Glace à la vanille, bac de 2,5 l — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "aldi:486339002",
+   "canonicalSlug": "glace-vanille-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Bac à glace vanille 2,5 l — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:5107921",
+   "canonicalSlug": "lait-sans-lactose-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Lait drink sans lactose 1,5 %, 1 l — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:offer-10059184",
+   "canonicalSlug": "saucisses-vienne-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Saucisses de Vienne Qualité Suisse 200 g (action « -50 % sur le 2e paquet ») — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0224501",
+   "canonicalSlug": "adoucissant-1500ml",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Adoucissant 1 l — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "aldi:297622001",
+   "canonicalSlug": "cacahuetes-200g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Cacahuètes grillées et salées 500 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:5111226",
+   "canonicalSlug": "jus-multifruits-1l",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Jus multivitaminé 1 l — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:1016470",
+   "canonicalSlug": "patee-chat-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Nourriture humide pour chats 415 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0131735",
+   "canonicalSlug": "sacs-congelation-30",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Sacs congélation à curseur, 15 pièces — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "aldi:155741001",
+   "canonicalSlug": "chips-paprika-175g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Chips tuiles paprika 175 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0083275",
+   "canonicalSlug": "pdt-farineuses-2500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Pommes de terre farineuses suisses 2,5 kg — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
+  },
+  {
+   "retailerProductId": "lidl:0029251",
+   "canonicalSlug": "sauce-tomate-400g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-09-30",
+   "note": "Sauce tomate au basilic 700 g — ajouté en phase 4 après contrôle des articles non rapprochés nettement moins chers"
   }
  ]
 }

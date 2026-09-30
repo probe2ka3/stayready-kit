@@ -496,8 +496,18 @@ function hasBrand(product: RetailerProduct, required: string): boolean {
   return ` ${normalizeText(product.name)} `.includes(` ${want} `);
 }
 
+/**
+ * Article « sans lactose » transformé (lait, yogourt, séré…) : autre type de produit, plus cher,
+ * jamais équivalent à la référence ordinaire. Seule une référence « sans lactose » l'accepte.
+ */
+const LACTOSE_FREE_NAME = /sans lactose|laktosefrei|lactose[- ]free|senza lattosio/i;
+function specialDietMismatch(canonical: CanonicalProduct, product: RetailerProduct): boolean {
+  return LACTOSE_FREE_NAME.test(product.name) && !(canonical.attributes.labels ?? []).includes('lactose-free');
+}
+
 /** Exigences de la référence (bio, origine, labels, marque, dimension) satisfaites par l'article. */
 export function meetsRequirements(canonical: CanonicalProduct, product: RetailerProduct): boolean {
+  if (specialDietMismatch(canonical, product)) return false;
   if (canonical.attributes.organic && !product.attributes.organic) return false;
   if (canonical.attributes.swissOrigin && !product.attributes.swissOrigin) return false;
   for (const label of canonical.attributes.labels ?? []) {
@@ -513,6 +523,7 @@ function attributesSatisfy(
   line: BasketLine,
   prefs: ComparePrefs,
 ): boolean {
+  if (specialDietMismatch(canonical, product)) return false;
   const wantOrganic = Boolean(canonical.attributes.organic || line.prefs?.organic || prefs.organicOnly);
   const wantSwiss = Boolean(canonical.attributes.swissOrigin || line.prefs?.swissOrigin || prefs.swissOnly);
   if (wantOrganic && !product.attributes.organic) return false;

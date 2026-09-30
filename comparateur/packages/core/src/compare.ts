@@ -352,6 +352,8 @@ export interface CompareResultDto {
   singleStoreRanking: SingleStoreRankingDto[];
   /** Solutions comparées : chaque enseigne seule (meilleure succursale) et la combinaison optimisée. */
   solutions: SolutionDto[];
+  /** Articles introuvables dans toutes les enseignes du périmètre (données disponibles). */
+  unavailableEverywhere: Array<{ lineId: string; productName: string; qty: number }>;
   alternativesByStoreCount: Array<{ storeCount: number; globalCents: number; purchaseCents: number; coveredLines: number } | null>;
   planning: PlanningDto | null;
   outlook: OutlookDayDto[];
@@ -1005,6 +1007,9 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     scenarios,
     singleStoreRanking,
     solutions,
+    unavailableEverywhere: lines.flatMap((line, l) =>
+      everywhereAvailable[l] ? [] : [{ lineId: line.id, productName: (deps.products.get(line.productId) as CanonicalProduct).name, qty: line.qty }],
+    ),
     alternativesByStoreCount: result.optimizedByStoreCount.map((p) =>
       p
         ? {
