@@ -1,14 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { activePlacements, can, isValidMetric, linesBucket, PLANS, summarizeUsage, visitBucket, type SponsoredPlacement } from '../src';
+import { activePlacements, ALL_FEATURES, assertNoPersonalData, B2B_PLANS, can, isValidMetric, linesBucket, PLANS, summarizeUsage, visitBucket, type SponsoredPlacement } from '../src';
 
-describe('offres gratuite et premium', () => {
-  it('garde l’offre gratuite utile : comparaison, planification, détours, liste', () => {
-    for (const f of ['compare', 'plan_date', 'detours', 'shopping_list'] as const) expect(can('free', f)).toBe(true);
+describe('offre grand public gratuite', () => {
+  it('inclut toutes les fonctions, alertes de base comprises, sans limite de comparaisons', () => {
+    for (const f of ALL_FEATURES) expect(can('free', f)).toBe(true);
+    expect(can('free', 'price_alerts')).toBe(true);
     expect(PLANS.free.limits.comparesPerDay).toBeNull();
-    expect(can('free', 'price_alerts')).toBe(false);
+    expect(Object.keys(PLANS)).toEqual(['free']);
   });
-  it('premium inclut tout le gratuit', () => {
-    for (const f of PLANS.free.features) expect(can('premium', f)).toBe(true);
+});
+
+describe('offres professionnelles', () => {
+  it('ne servent jamais de données personnelles', () => {
+    expect(() => assertNoPersonalData({ retailer: 'lidl', price: 1.2, source_url: 'https://x' })).not.toThrow();
+    expect(() => assertNoPersonalData([{ retailer: 'lidl', basket: [1] }])).toThrow(/basket/);
+    expect(() => assertNoPersonalData({ a: { latitude: 46.9 } })).toThrow(/latitude/);
+    expect(Object.values(B2B_PLANS).every((p) => p.monthlyChfHypothesis > 0)).toBe(true);
   });
 });
 

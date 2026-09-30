@@ -134,8 +134,8 @@ export function TermsFr() {
       <h2>1. Service</h2>
       <p>
         TesPrix compare le coût d’un panier de courses entre enseignes suisses, trajet compris, à partir de prix datés et sourcés. Le service est
-        gratuit dans sa version de base. <Todo>Offre premium : conditions, prix, durée, résiliation et remboursement à définir avant toute
-        facturation (aucun paiement n’est actif).</Todo>
+        gratuit pour les consommateurs, sans abonnement. Il est financé par des offres professionnelles (données de prix agrégées, tableaux de
+        bord, widget) qui ne contiennent aucune donnée personnelle et n’influencent jamais le calcul ni le classement des résultats.
       </p>
       <h2>2. Exactitude des prix</h2>
       <p>

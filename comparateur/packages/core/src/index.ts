@@ -17,6 +17,7 @@ export * from './sources';
 export * from './data-engine';
 export * from './validation';
 export * from './receipts';
+export * from './b2b';
 export * from './detours';
 export * from './entitlements';
 export * from './sponsored';

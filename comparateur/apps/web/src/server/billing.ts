@@ -1,17 +1,19 @@
 import 'server-only';
-import type { PlanId } from '@cabas/core';
+import type { B2BPlanId } from '@cabas/core';
 
 /**
- * Abstraction du paiement (abonnement premium). **Aucun paiement n'est actif** :
+ * Abstraction du paiement des **offres professionnelles** (API de données, tableau de bord, widget,
+ * marque blanche). Le service grand public est gratuit : aucun paiement consommateur n'est prévu.
+ * **Aucun paiement n'est actif** :
  * le fournisseur par défaut refuse toute opération. Un fournisseur réel (Stripe,
  * Datatrans, Payrexx, TWINT via un prestataire…) pourra implémenter cette interface
  * sans toucher au reste de l'application, après décision de l'exploitant
  * (contrat, conditions générales, TVA, politique de confidentialité).
  */
 export interface CheckoutRequest {
-  plan: Exclude<PlanId, 'free'>;
+  plan: B2BPlanId;
   period: 'month' | 'year';
-  /** Identifiant interne du compte (jamais l'adresse électronique en clair dans les métadonnées). */
+  /** Identifiant interne du client professionnel (jamais l'adresse électronique en clair dans les métadonnées). */
   accountRef: string;
   successUrl: string;
   cancelUrl: string;
@@ -27,7 +29,7 @@ export interface BillingProvider {
 }
 
 export type BillingEvent =
-  | { kind: 'subscription_active'; accountRef: string; plan: PlanId; periodEnd: string }
+  | { kind: 'subscription_active'; accountRef: string; plan: B2BPlanId; periodEnd: string }
   | { kind: 'subscription_canceled'; accountRef: string; periodEnd: string };
 
 export class BillingDisabledError extends Error {

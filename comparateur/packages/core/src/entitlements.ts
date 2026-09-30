@@ -1,29 +1,31 @@
 /**
- * Offres (freemium). L'offre gratuite reste pleinement utile : comparaison illimitée,
- * trois scénarios, itinéraire, planification, détours et listes de courses.
- * L'offre premium ajoute la mémoire et le suivi dans le temps (comptes, alertes,
- * historiques, synchronisation). Aucune fonction ne modifie le classement des résultats :
- * premium ou non, le calcul est identique.
+ * Offre grand public (phase 3) : **TesPrix est gratuit pour les consommateurs**, sans abonnement,
+ * sans publicité ciblée et sans revente de données personnelles. Toutes les fonctions sont incluses,
+ * y compris les alertes de base. Le financement repose sur des offres professionnelles (données
+ * agrégées, tableaux de bord, widget ; voir docs/BUSINESS_MODEL_V2.md), qui ne modifient jamais le
+ * calcul ni le classement des résultats.
  *
- * Aucun paiement n'est actif : voir apps/web/src/server/billing.ts (fournisseur désactivé).
+ * Les limites ci-dessous ne sont que des garde-fous techniques (protection contre les abus), pas des
+ * paliers commerciaux.
  */
 
-export type PlanId = 'free' | 'premium';
+export type PlanId = 'free';
 
 export type Feature =
   | 'compare' // comparaison, 3 scénarios, itinéraire
   | 'plan_date' // comparaison à une date future (promotions annoncées)
   | 'detours' // propositions d'arrêts supplémentaires
   | 'shopping_list' // liste de courses (navigateur)
-  | 'saved_baskets' // paniers enregistrés (compte)
-  | 'recurring_baskets' // paniers récurrents (hebdomadaires…)
-  | 'price_alerts' // alerte lorsqu'un article baisse
-  | 'promo_tracking' // suivi des promotions futures sur ses articles
+  | 'saved_baskets' // paniers enregistrés (compte, lorsque les comptes seront ouverts)
+  | 'recurring_baskets' // paniers récurrents
+  | 'price_alerts' // alerte de baisse de prix (alertes de base)
+  | 'promo_tracking' // suivi des promotions annoncées sur ses articles
   | 'price_history' // historique des prix d'un article
-  | 'savings_history' // historique des économies réalisées
+  | 'savings_history' // historique des économies
   | 'notifications' // notifications (courriel, push)
   | 'sync' // synchronisation entre appareils
-  | 'advanced_planning'; // plusieurs dates comparées, meilleur jour de la semaine
+  | 'advanced_planning' // plusieurs dates comparées
+  | 'receipt_scan'; // contribution par ticket de caisse
 
 export interface PlanDefinition {
   id: PlanId;
@@ -39,41 +41,32 @@ export interface PlanDefinition {
   };
 }
 
-const FREE_FEATURES: Feature[] = ['compare', 'plan_date', 'detours', 'shopping_list'];
+export const ALL_FEATURES: Feature[] = [
+  'compare',
+  'plan_date',
+  'detours',
+  'shopping_list',
+  'saved_baskets',
+  'recurring_baskets',
+  'price_alerts',
+  'promo_tracking',
+  'price_history',
+  'savings_history',
+  'notifications',
+  'sync',
+  'advanced_planning',
+  'receipt_scan',
+];
 
 export const PLANS: Record<PlanId, PlanDefinition> = {
   free: {
     id: 'free',
     name: 'Gratuit',
-    features: FREE_FEATURES,
-    limits: { comparesPerDay: null, savedBaskets: 0, priceAlerts: 0, planDays: 14 },
-  },
-  premium: {
-    id: 'premium',
-    name: 'Premium',
-    features: [
-      ...FREE_FEATURES,
-      'saved_baskets',
-      'recurring_baskets',
-      'price_alerts',
-      'promo_tracking',
-      'price_history',
-      'savings_history',
-      'notifications',
-      'sync',
-      'advanced_planning',
-    ],
-    limits: { comparesPerDay: null, savedBaskets: 20, priceAlerts: 50, planDays: 60 },
+    features: ALL_FEATURES,
+    limits: { comparesPerDay: null, savedBaskets: 20, priceAlerts: 30, planDays: 60 },
   },
 };
 
 export function can(plan: PlanId, feature: Feature): boolean {
   return PLANS[plan].features.includes(feature);
 }
-
-/** Tarifs étudiés (hypothèses, voir docs/BUSINESS_PLAN.md) : non facturés tant que le paiement est inactif. */
-export const PRICE_HYPOTHESES = {
-  monthlyChf: [2.9, 3.9, 4.9],
-  /** Annuel ≈ 10 mois payés. */
-  yearlyChf: [29, 39, 49],
-} as const;

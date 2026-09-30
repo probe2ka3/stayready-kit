@@ -14,6 +14,8 @@ const PREVIEW_COOKIE = 'tesprix_preview';
 const OPEN_WHEN_WAITLIST = [
   /^\/fr\/(bientot|mentions-legales|confidentialite|conditions|sources|methode|a-propos)\/?$/,
   /^\/api\/v1\/(health|waitlist)$/,
+  // API professionnelle : authentification propre par clé (fermée si aucune clé n'est configurée).
+  /^\/api\/b2b\/v1\/[a-z-]+$/,
 ];
 
 function digest(value: string): Buffer {
