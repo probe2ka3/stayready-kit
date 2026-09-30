@@ -146,6 +146,11 @@ export interface CanonicalProduct {
   brandRequired?: string | null;
   gtins?: string[];
   keywords?: string[];
+  /**
+   * Priorité dans le catalogue des besoins de base : P1 essentiels (jeu de validation),
+   * P2 achats courants, P3 achats occasionnels.
+   */
+  priority?: 'P1' | 'P2' | 'P3';
 }
 
 /** Article vendu par une enseigne. */

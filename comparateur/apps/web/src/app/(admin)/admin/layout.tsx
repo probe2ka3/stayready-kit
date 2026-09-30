@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 const NAV: Array<[string, string]> = [
   ['/admin', 'Tableau de bord'],
   ['/admin/indicateurs', 'Indicateurs'],
+  ['/admin/qualite', 'Qualité des données'],
   ['/admin/correspondances', 'Correspondances'],
   ['/admin/anomalies', 'Anomalies'],
   ['/admin/imports', 'Imports'],

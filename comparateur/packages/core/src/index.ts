@@ -15,6 +15,7 @@ export * from './matching';
 export * from './quality';
 export * from './sources';
 export * from './data-engine';
+export * from './validation';
 export * from './detours';
 export * from './entitlements';
 export * from './sponsored';

@@ -288,4 +288,84 @@ export const PRODUCTS: ProductSeed[] = [
   p('filtres-cafe-80', 'Filtres à café n° 4 (80)', 'maison', 80, 'pce', 1.9, { kw: 'cafe' }),
   p('croquettes-chat-2kg', 'Croquettes pour chat adulte', 'maison', 2, 'kg', 7.9, { kw: 'animaux, chat' }),
   p('litiere-chat-10l', 'Litière pour chat', 'maison', 10, 'l', 5.9, { kw: 'animaux, chat' }),
+  // --- Extension phase 3 : besoins de base supplémentaires -------------------------------
+  p('courge-butternut-1', 'Courge butternut', 'legumes', 1, 'piece', 2.9, { swissTypical: true, kw: 'courge' }),
+  p('rosti-500g', 'Rösti prêt à cuire', 'pommes-de-terre', 500, 'g', 3.2, { swissTypical: true, kw: 'roesti, rosti' }),
+  p('pates-completes-500g', 'Pâtes complètes', 'pates-riz-cereales', 500, 'g', 1.9, { kw: 'pates, ble complet' }),
+  p('lasagne-500g', 'Feuilles de lasagne', 'pates-riz-cereales', 500, 'g', 2.2, { kw: 'lasagnes, pates' }),
+  p('gnocchi-500g', 'Gnocchi de pommes de terre', 'pates-riz-cereales', 500, 'g', 2.6),
+  p('tortellini-250g', 'Tortellini frais', 'pates-riz-cereales', 250, 'g', 3.9, { kw: 'pates fraiches' }),
+  p('riz-complet-1kg', 'Riz complet', 'pates-riz-cereales', 1, 'kg', 2.9, { kw: 'riz' }),
+  p('boulgour-500g', 'Boulgour', 'pates-riz-cereales', 500, 'g', 2.5, { kw: 'bulgur' }),
+  p('muesli-croustillant-500g', 'Muesli croustillant', 'pates-riz-cereales', 500, 'g', 3.9, { kw: 'muesli, crunchy' }),
+  p('sucre-morceaux-1kg', 'Sucre en morceaux', 'farine-sucre-sel', 1, 'kg', 2.2, { kw: 'sucre' }),
+  p('vinaigre-pomme-500ml', 'Vinaigre de pomme', 'huiles-condiments', 500, 'ml', 1.9, { kw: 'vinaigre' }),
+  p('pesto-190g', 'Pesto alla genovese', 'huiles-condiments', 190, 'g', 3.5, { kw: 'pesto, basilic' }),
+  p('cornichons-190g', 'Cornichons', 'huiles-condiments', 190, 'g', 2.2),
+  p('paprika-poudre-50g', 'Paprika doux en poudre', 'huiles-condiments', 50, 'g', 1.9, { kw: 'epices, paprika' }),
+  p('fromage-frais-200g', 'Fromage frais à tartiner', 'produits-laitiers', 200, 'g', 2.9, { swissTypical: true, kw: 'fromage frais, cottage' }),
+  p('creme-acidulee-180g', 'Demi-crème acidulée', 'produits-laitiers', 180, 'g', 1.9, { swissTypical: true, kw: 'creme acidulee, sauerrahm' }),
+  p('yogourt-grec-500g', 'Yogourt à la grecque nature', 'produits-laitiers', 500, 'g', 2.9, { kw: 'yogourt, yaourt grec' }),
+  p('feta-200g', 'Feta', 'produits-laitiers', 200, 'g', 3.2, { kw: 'fromage de brebis' }),
+  p('fondue-800g', 'Fondue moitié-moitié prête à l’emploi', 'produits-laitiers', 800, 'g', 12.9, { swissTypical: true, kw: 'fondue, fromage' }),
+  p('pain-seigle-500g', 'Pain de seigle', 'pain', 500, 'g', 3.2, { swissTypical: true, kw: 'pain' }),
+  p('tortillas-320g', 'Tortillas de blé', 'pain', 320, 'g', 2.5, { kw: 'wraps' }),
+  p('lardons-150g', 'Lardons', 'viande-poisson', 150, 'g', 3.2, { swissTypical: true, kw: 'lard, speck' }),
+  p('salami-100g', 'Salami en tranches', 'viande-poisson', 100, 'g', 3.5, { kw: 'charcuterie' }),
+  p('jambon-cru-100g', 'Jambon cru en tranches', 'viande-poisson', 100, 'g', 4.5, { kw: 'charcuterie, prosciutto' }),
+  p('saucisses-vienne-200g', 'Saucisses de Vienne', 'viande-poisson', 200, 'g', 3.9, { swissTypical: true, kw: 'wienerli, saucisses' }),
+  p('saumon-frais-250g', 'Filet de saumon frais', 'viande-poisson', 250, 'g', 7.5, { kw: 'poisson, saumon' }),
+  p('compote-pommes-700g', 'Compote de pommes', 'conserves', 700, 'g', 2.2, { kw: 'puree de pommes' }),
+  p('cacahuetes-200g', 'Cacahuètes grillées salées', 'petit-dejeuner', 200, 'g', 2.5, { kw: 'arachides, apero' }),
+  p('noix-melangees-200g', 'Mélange de noix', 'petit-dejeuner', 200, 'g', 4.5, { kw: 'fruits a coque' }),
+  p('amandes-200g', 'Amandes', 'petit-dejeuner', 200, 'g', 3.9, { kw: 'fruits a coque' }),
+  p('raisins-secs-500g', 'Raisins secs', 'petit-dejeuner', 500, 'g', 3.5, { kw: 'fruits secs' }),
+  p('chips-paprika-175g', 'Chips au paprika', 'petit-dejeuner', 175, 'g', 2.9, { kw: 'chips' }),
+  p('the-vert-20', 'Thé vert (20 sachets)', 'petit-dejeuner', 20, 'piece', 2.2, { kw: 'the' }),
+  p('jus-multifruits-1l', 'Jus multivitaminé', 'boissons', 1, 'l', 1.9, { kw: 'jus de fruits, ace' }),
+  p('biere-6x500ml', 'Bière blonde (6 × 50 cl)', 'boissons', 3, 'l', 7.9, { kw: 'biere, lager' }),
+  p('poisson-pane-450g', 'Bâtonnets de poisson panés surgelés', 'surgeles', 450, 'g', 4.5, { kw: 'fischstaebli, poisson' }),
+  p('haricots-verts-surg-750g', 'Haricots verts surgelés', 'surgeles', 750, 'g', 3.2, { kw: 'haricots' }),
+  p('bain-bouche-500ml', 'Bain de bouche', 'hygiene', 500, 'ml', 3.9, { kw: 'dentaire' }),
+  p('patee-chat-400g', 'Nourriture humide pour chat (4 × 100 g)', 'maison', 400, 'g', 2.5, { kw: 'chat, patee' }),
+  p('croquettes-chien-3kg', 'Croquettes pour chien adulte', 'maison', 3, 'kg', 9.9, { kw: 'chien' }),
 ];
+
+/**
+ * Priorités du catalogue des besoins de base (phase 3) :
+ * - P1 : 50 essentiels, suivis dans le jeu de validation (`data/validation/essentials.json`) ;
+ * - P3 : achats occasionnels ou non alimentaires secondaires ;
+ * - P2 : tous les autres achats courants.
+ */
+export const P1_ESSENTIALS = [
+  'bananes-1kg', 'pommes-gala-1kg', 'carottes-1kg', 'oignons-1kg', 'tomates-grappe-500g', 'pdt-fermes-2500g',
+  'spaghetti-500g', 'penne-500g', 'fusilli-500g', 'riz-long-1kg', 'flocons-avoine-500g', 'farine-blanche-1kg',
+  'sucre-cristal-1kg', 'sel-cuisine-1kg', 'huile-tournesol-1l', 'huile-olive-1l', 'huile-colza-1l',
+  'lait-entier-uht-1l', 'lait-demi-uht-1l', 'beurre-choix-200g', 'beurre-cuisine-250g', 'creme-entiere-250ml',
+  'yogourt-nature-180g', 'sere-maigre-500g', 'gruyere-aop-250g', 'emmentaler-aop-250g', 'mozzarella-150g',
+  'oeufs-sol-6', 'pain-mi-blanc-500g', 'pain-toast-500g', 'poulet-poitrine-500g', 'boeuf-hache-500g',
+  'jambon-cuit-150g', 'tomates-concassees-400g', 'thon-huile-240g', 'confiture-fraises-500g', 'miel-fleurs-500g',
+  'chocolat-lait-100g', 'cafe-moulu-500g', 'cafe-grains-1kg', 'the-noir-25', 'eau-plate-6x1500ml', 'jus-orange-1l',
+  'mayonnaise-265g', 'papier-toilette-10', 'essuie-tout-4', 'liquide-vaisselle-750ml', 'lessive-liquide-40',
+  'dentifrice-75ml', 'gel-douche-250ml',
+] as const;
+
+const P3_OCCASIONAL = new Set([
+  'ananas-1', 'avocats-2', 'kiwis-6', 'raisin-blanc-500g', 'mesclun-150g', 'epinards-frais-250g', 'quinoa-500g',
+  'couscous-500g', 'polenta-500g', 'birchermuesli-1kg', 'sucre-canne-1kg', 'sucre-glace-500g', 'amidon-mais-250g',
+  'levure-seche-3', 'poudre-lever-5', 'vinaigre-balsamique-500ml', 'sauce-soja-250ml', 'mascarpone-250g', 'raclette-400g',
+  'oeufs-importes-10', 'tresse-500g', 'croissants-4', 'saumon-fume-100g', 'lait-coco-400ml', 'raviolis-870g',
+  'capsules-cafe-10', 'infusion-menthe-20', 'cacao-poudre-500g', 'sirop-framboise-1l', 'coca-cola-1500ml', 'glace-vanille-1l',
+  'pizza-margherita-350g', 'colin-surg-400g', 'detartrant-1l', 'nettoyant-vitres-500ml', 'lavettes-microfibre-3',
+  'papier-alu-30m', 'film-alimentaire-50m', 'papier-cuisson-10m', 'sacs-congelation-30', 'gants-menage-m',
+  'apres-shampoing-200ml', 'rasoirs-5', 'coton-tiges-200', 'disques-demaquillants-80', 'couches-t4-44', 'lingettes-bebe-64',
+  'creme-mains-100ml', 'serviettes-table-50', 'piles-aa-8', 'piles-aaa-4', 'ampoule-led-e27', 'bougies-chauffe-plat-50',
+  'allumettes-10', 'filtres-cafe-80', 'croquettes-chat-2kg', 'litiere-chat-10l', 'fondue-800g', 'tortellini-250g',
+  'jambon-cru-100g', 'saumon-frais-250g', 'noix-melangees-200g', 'amandes-200g', 'biere-6x500ml', 'bain-bouche-500ml',
+  'patee-chat-400g', 'croquettes-chien-3kg', 'paprika-poudre-50g', 'courge-butternut-1',
+]);
+
+const P1_SET = new Set<string>(P1_ESSENTIALS);
+for (const product of PRODUCTS) {
+  product.priority = P1_SET.has(product.slug) ? 'P1' : P3_OCCASIONAL.has(product.slug) ? 'P3' : 'P2';
+}

@@ -79,7 +79,7 @@ export function OptionLine({
   );
 }
 
-/** Provenance d'un prix réel : source, date, lieu du relevé et licence. */
+/** Provenance d'un prix réel : source, niveau, date, lieu du relevé, licence et autres sources. */
 export function SourceLine({ option, locale }: { option: LineOption; locale: Locale }) {
   const m = getMessages(locale);
   const date = shortDate(option.observedAt);
@@ -88,19 +88,42 @@ export function SourceLine({ option, locale }: { option: LineOption; locale: Loc
       ? format(m.status.sourceCrowd, { date, place: option.observedAtPlace ?? '—' })
       : option.reliability === 'survey'
         ? format(m.status.sourceSurvey, { date })
-        : format(m.status.sourceOfficial, { date });
+        : option.reliability === 'third_party'
+          ? format(m.status.sourceThirdParty, { date, provider: option.sourceProvider })
+          : format(m.status.sourceOfficial, { date });
+  const alternatives = (option.alternatives ?? []).filter((a) => a.connectorId !== option.divergence?.other.connectorId);
   return (
-    <p className="mt-1 text-xs text-muted">
-      {text}
-      {option.reliability === 'crowd' && ` · ${m.status.sourceCrowdLicense}`}
-      {option.sourceUrl && (
-        <>
-          {' · '}
-          <a href={option.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="underline underline-offset-2">
-            {m.status.sourceLink}
-          </a>
-        </>
+    <div className="mt-1 space-y-0.5 text-xs text-muted">
+      <p>
+        {text}
+        {option.reliability === 'crowd' && ` · ${m.status.sourceCrowdLicense}`}
+        {typeof option.confidence === 'number' && ` · ${format(m.status.confidence, { value: String(Math.round(option.confidence * 100)) })}`}
+        {option.sourceUrl && (
+          <>
+            {' · '}
+            <a href={option.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="underline underline-offset-2">
+              {m.status.sourceLink}
+            </a>
+          </>
+        )}
+      </p>
+      {option.divergence && (
+        <p className="text-warn">
+          {format(m.status.divergence, {
+            gap: String(Math.round(option.divergence.relativeGap * 100)),
+            provider: option.divergence.other.provider,
+            price: money(option.divergence.other.totalCents),
+            date: shortDate(option.divergence.other.observedAt),
+          })}
+        </p>
       )}
-    </p>
+      {alternatives.length > 0 && (
+        <p>
+          {format(m.status.alternatives, {
+            list: alternatives.map((a) => `${a.provider} ${money(a.totalCents)} (${shortDate(a.observedAt)})`).join(' · '),
+          })}
+        </p>
+      )}
+    </div>
   );
 }
