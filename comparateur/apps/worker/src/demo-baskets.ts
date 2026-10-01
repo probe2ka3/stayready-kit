@@ -81,6 +81,10 @@ export async function jobDemoBaskets(ctx: JobContext) {
     `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}${basketsFile !== 'baskets.json' ? ` --baskets=${basketsFile}` : ''}${exclude.length ? ` --exclude=${exclude.join(',')}` : ''}\` sur les instantanés versionnés`,
     `(${snapshots.map((s) => `${s.connectorId} du ${s.collectedAt?.slice(0, 10) ?? '?'}`).join(', ')}).`,
     'Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.',
+    '',
+    'Lecture : « vérifié le JJ.MM » = prix lu à la source ce jour-là, sans garantie ensuite ; au-delà de 7 jours il devient « indicatif », au-delà de 30 jours',
+    '(90 pour les relevés communautaires) il est écarté. Actions : dates publiées par l’enseigne ; « fin non publiée » = aucune date de fin connue (jamais',
+    'présumée au-delà du dernier jour où l’action a été vue). Un prix régional ou propre à une succursale est signalé comme tel.',
     exclude.length
       ? `**Sources exclues : ${exclude.join(', ')}** — ce que verrait le public en production sans autorisation (docs/DROITS_DONNEES.md).`
       : `Évaluation interne (fichier hors dépôt) : toutes les sources collectées, y compris ${snapshots.filter((s) => s.private).map((s) => s.connectorId).join(', ') || 'aucune source privée'} (usage privé : jamais publiées sans autorisation écrite, docs/COLLECTE_QUOTIDIENNE.md).`,
@@ -90,6 +94,9 @@ export async function jobDemoBaskets(ctx: JobContext) {
 
   // --aujourdhui : courses le jour même (collecte quotidienne), la date du fichier étant fixe.
   if (ctx.flags.aujourdhui) for (const b of def.baskets) b.when = { ...b.when, date: zurichToday(now) };
+  // --seuil=CHF : économie nette minimale pour recommander un magasin de plus (défaut : celui du panier).
+  const seuil = typeof ctx.flags.seuil === 'string' ? Number(ctx.flags.seuil.replace(',', '.')) : null;
+  if (seuil !== null && Number.isFinite(seuil) && seuil >= 0) for (const b of def.baskets) b.minSavingPerExtraStoreChf = seuil;
   for (const b of def.baskets) {
     const lines: BasketLine[] = b.lines.map((l, i) => ({ id: `l${i + 1}`, productId: l.productId, qty: l.qty }));
     const stores = withCrowDistance(b.origin, allStores.filter((s) => b.chains.includes(s.chainId))).filter((s) => s.crowKm <= b.radiusKm);
@@ -115,14 +122,27 @@ export async function jobDemoBaskets(ctx: JobContext) {
         ? `Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × ${tm.detourFactor}, durée = ${tm.overheadMin} min + distance à ${tm.speedKmh} km/h.`
         : `Trajets routiers (${tm.provider}).`,
       '',
-      '| Solution | Magasins (distance à vol d’oiseau) | Articles | Achats | Trajet | Durée | Coût trajet | Total | Économie achats | Économie nette |',
+      '| Solution | Magasins (distance à vol d’oiseau) | Articles | Achats | Trajet | Durée | Coût du trajet | Total (achats + trajet) | Économie sur les achats | Économie nette (après trajet) |',
       '|---|---|---|---|---|---|---|---|---|---|',
     );
     for (const s of r.solutions) {
-      const label = s.kind === 'combination' ? `Combinaison${s.retained ? '' : ' (non retenue)'}` : `${chainMap.get(s.chainIds[0] ?? '')?.name ?? s.chainIds[0]} seul${s.isReference ? ' (référence)' : ''}`;
+      const label = s.kind === 'combination' ? `Combinaison${s.retained ? ' (recommandée)' : ' (non recommandée)'}` : `${chainMap.get(s.chainIds[0] ?? '')?.name ?? s.chainIds[0]} seul${s.isReference ? ' (référence)' : ''}`;
       const where = s.stores.map((st) => `${st.chainName} ${st.address || st.name} (${kmTxt(st.crowKm)})`).join(' → ');
       out.push(
         `| ${label} | ${where} | ${s.coveredLines}/${s.totalLines} | ${chf(s.purchaseCents)} | ${kmTxt(s.distanceKm)} | ${Math.round(s.driveMin)} min | ${chf(s.travelCostCents)} | ${s.complete ? chf(s.globalCents) : `(${chf(s.globalCents)}, incomplet)`} | ${s.notComparable ? 'non comparable' : chf(s.grossSavingsCents)} | ${s.notComparable ? 'non comparable' : chf(s.netSavingsCents)} |`,
+      );
+    }
+    out.push(
+      '',
+      `Seuil de recommandation : ${chf(Math.round(b.minSavingPerExtraStoreChf * 100))} CHF d’économie nette par magasin supplémentaire (réglable : \`--seuil=\`, ou « Économie minimale pour un magasin de plus » dans l’application). ` +
+        'En dessous, le gain ne compense généralement pas un arrêt de plus (temps, attente, article en rupture) ; la combinaison reste affichée, non recommandée.',
+    );
+    for (const s of r.solutions.filter((x) => x.kind === 'combination' && !x.retained && !x.notComparable)) {
+      const net = s.netSavingsCents;
+      const gross = s.grossSavingsCents;
+      if (net === null || gross === null) continue;
+      out.push(
+        `Combinaison non recommandée : économie nette ${chf(net)} CHF (achats ${chf(gross)} − trajet supplémentaire ${chf(gross - net)}) ${net > 0 ? `< seuil ${chf(Math.round(b.minSavingPerExtraStoreChf * 100))}` : '≤ 0'}.`,
       );
     }
     if (!r.solutions.some((s) => s.kind === 'combination') && r.solutions.filter((s) => s.kind === 'single_chain').length > 1) {
@@ -179,7 +199,13 @@ export async function jobDemoBaskets(ctx: JobContext) {
 }
 
 function cell(o: LineOption): string {
-  const promo = o.promotion ? ` ; action ${o.promotion.announced ? 'annoncée' : 'en cours'} ${day(o.promotion.validFrom)}–${day(o.promotion.validTo)}${o.promotion.endIsPresumed ? ' (fin non publiée)' : ''}` : '';
-  const status = o.status === 'promo_confirmed' ? 'action confirmée' : o.status === 'verified' ? 'vérifié' : 'indicatif';
-  return `${o.productName} ${formatQuantity(o.quantity)} × ${o.packs} = **${chf(o.totalCents)}** (${status}, relevé ${day(o.observedAt)}${promo})`;
+  const promo = o.promotion
+    ? o.promotion.endIsPresumed
+      ? ` ; action ${o.promotion.announced ? 'annoncée' : 'en cours'} depuis le ${day(o.promotion.validFrom)}, fin non publiée`
+      : ` ; action ${o.promotion.announced ? 'annoncée' : 'en cours'} ${day(o.promotion.validFrom)}–${day(o.promotion.validTo)}`
+    : '';
+  const status =
+    o.status === 'promo_confirmed' ? `action lue le ${day(o.observedAt)}` : o.status === 'verified' ? `vérifié le ${day(o.observedAt)}` : `indicatif, relevé le ${day(o.observedAt)}`;
+  const scope = o.statusReasons.includes('store_specific_price') ? ', prix de cette succursale' : o.statusReasons.includes('zone_price') ? ', prix régional' : '';
+  return `${o.productName} ${formatQuantity(o.quantity)} × ${o.packs} = **${chf(o.totalCents)}** (${status}${scope}${promo})`;
 }

@@ -137,10 +137,11 @@ avec la Fédération des coopératives Migros, ou relevés communautaires / tick
 |---|---|
 | `www.coop.ch` (accueil, `robots.txt`, plan du site) | **403** + page de défi DataDome (« Please enable JS and disable any ad blocker ») : arrêt immédiat |
 | `www.coopzeitung.ch` | 200 ; rubrique « Angebote » = catalogues et concours, **aucun prix structuré** |
-| `epaper.coopzeitung.ch` | 200, `robots.txt` permissif ; journal numérique (PDF) avec authentification prévue ; contenus rédactionnels protégés, prix seulement dans les annonces (images) : **non exploité** |
+| `epaper.coopzeitung.ch` / `epaper.cooperation.ch` | 200, `robots.txt` « Allow: / » ; session anonyme ouverte automatiquement (aucun compte) ; le « Magazine des actions » est servi page par page en **PDF avec texte** : **exploité depuis le 01.10.2026** pour les actions de l'édition romande (collecteur `coop-epaper`, usage privé ; voir `docs/COUVERTURE_NOYAU.md` § 4) |
 | `www.cooperation-online.ch` | Redirigé vers une page de maintenance |
 
-**Conclusion** : aucune surface de prix first-party exploitable. Accord avec Coop nécessaire.
+**Conclusion** : prix permanents : aucune surface first-party exploitable (accord avec Coop nécessaire) ;
+actions de la semaine : journal numérique officiel, lu une fois par semaine (usage privé).
 
 ## 7. Denner ✅ (usage privé) 📄
 

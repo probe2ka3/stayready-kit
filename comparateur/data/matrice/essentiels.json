@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-01T00:22:23.687Z",
+ "generatedAt": "2026-10-01T00:42:35.054Z",
  "sources": [
   {
    "connectorId": "aldi-api",
@@ -8,7 +8,7 @@
   },
   {
    "connectorId": "coop-epaper",
-   "collectedAt": "2026-10-01T00:19:32.554Z",
+   "collectedAt": "2026-10-01T00:42:26.832Z",
    "publicUse": "requires_authorization"
   },
   {

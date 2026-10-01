@@ -3618,7 +3618,7 @@
    "canonicalSlug": "boeuf-hache-500g",
    "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
    "reviewedAt": "2026-10-01",
-   "note": "Viande de bœuf hachée Coop, Suisse, duo 2 × 400 g (prix unitaire imprimé 1.46/100 g concordant)"
+   "note": "Viande de bœuf hachée Coop, Suisse, duo 2 × 400 g (prix unitaire imprimé concordant)"
   },
   {
    "retailerProductId": "coop:ep-314d28d94ad3",
@@ -3639,7 +3639,7 @@
    "canonicalSlug": "citrons-500g",
    "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
    "reviewedAt": "2026-10-01",
-   "note": "Citrons, Espagne, filet de 500 g (Super-prix, sans prix « au lieu de »)"
+   "note": "Citrons, Espagne, filet de 500 g (action sans prix « au lieu de »)"
   },
   {
    "retailerProductId": "coop:ep-da8e2c9e2924",

@@ -18,9 +18,11 @@ export function StatusBadge({ option, locale }: { option: LineOption; locale: Lo
   const m = getMessages(locale);
   const reasons = option.statusReasons.map((r) => m.status.reasons[r] ?? r).join(' · ');
   const title = `${m.status[option.status]} — ${format(m.status.checkedOn, { date: shortDate(option.observedAt) })}${reasons ? ` — ${reasons}` : ''}`;
+  // Date de lecture visible : « vérifié » n'est jamais une garantie au-delà de ce jour.
+  const badge = m.status.badge[option.status];
   return (
     <Pill tone={TONE[option.status]} title={title}>
-      {m.status[option.status]}
+      {badge ? format(badge, { date: shortDate(option.observedAt) }) : m.status[option.status]}
     </Pill>
   );
 }

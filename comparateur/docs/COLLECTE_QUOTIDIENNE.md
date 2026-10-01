@@ -2,25 +2,27 @@
 
 Objectif de l'étape : récupérer **automatiquement chaque jour**, à 0 CHF, les prix des 50 aliments de
 base chez Migros, Coop, Denner, Aldi et Lidl, sans que les relevés en magasin soient une condition de
-fonctionnement. Mesures faites sur un cycle réel exécuté le 01.10.2026 à 00:28 (heure de Zurich).
+fonctionnement. Mesures faites sur un cycle réel exécuté le 01.10.2026 à 00:28 (heure de Zurich),
+mises à jour après l'étape « couverture » du même jour (journal Coop, revue Aldi et Denner :
+`docs/COUVERTURE_NOYAU.md`).
 
 ## 1. Résultat en bref
 
 | Enseigne | Collecteur automatique | Source | Besoins du noyau avec prix | Lus le jour même | Publication |
 |---|---|---|---|---|---|
 | **Lidl** | ✅ opérationnel | Site officiel (catégories alimentaires, fiches du noyau, actions) | **47/50** | 47 | Oui, sous réserve (conditions muettes, `robots.txt` ambigu) |
-| **Denner** | ✅ opérationnel (nouveau) | Site officiel : recherche ciblée + actions | **34/50** | 31 | **Non** : « publication ou fins commerciales » interdites sans accord écrit |
-| **Aldi** | ✅ opérationnel | API publique du site (liste paginée) | **22/50** | 22 | **Non** : conditions « fins privées uniquement » |
-| **Coop** | ❌ impossible gratuitement et sans contournement | Open Prices seulement | 1/50 | 0 | Oui (ODbL) |
-| **Migros** | ❌ impossible gratuitement et sans contournement | Open Prices seulement | 0/50 | 0 | — |
+| **Denner** | ✅ opérationnel | Site officiel : recherche ciblée, pages thématiques de l'assortiment, actions | **34/50** | 31 | **Non** : « publication ou fins commerciales » interdites sans accord écrit |
+| **Aldi** | ✅ opérationnel | API publique du site (liste paginée) | **23/50** | 23 | **Non** : conditions « fins privées uniquement » |
+| **Coop** | ⚠️ **actions seulement** (nouveau) | Journal numérique officiel (magazine des actions, édition romande) + Open Prices | **6/50** (actions de la semaine) | 6 | **Non** (en attente : conditions de coop.ch illisibles pour un robot) ; Open Prices : oui |
+| **Migros** | ❌ aucun canal gratuit, officiel et accessible à un robot identifié | Open Prices seulement | 0/50 | 0 | — |
 
 | Besoins comparables dans au moins… | 2 enseignes | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Pilote privé (Lidl, Denner, Aldi, Open Prices) | **41** | **13** | **1** | 0 |
+| Pilote privé (Lidl, Denner, Aldi, Coop, Open Prices) | **41** | **18** | **2** | 0 |
 | Version publique (sources publiables : Lidl, Open Prices) | 1 | 0 | 0 | 0 |
 
-Ce n'est **pas** une comparaison des cinq enseignes : Migros et Coop restent sans source automatique
-autorisée (§ 3). Aucune couverture partielle n'est présentée comme complète : chaque case vide dit
+Ce n'est **pas** une comparaison des cinq enseignes : Migros reste sans source automatique ; Coop
+n'a que ses actions de la semaine, en Suisse romande (§ 3). Aucune couverture partielle n'est présentée comme complète : chaque case vide dit
 « aucune donnée gratuite », « non affiché » ou « prix trop ancien ».
 
 **Cycle réel** : 214 requêtes, 10 min 32 s de collecte, puis 6 étapes de contrôle et d'export (≈ 10 s),
@@ -55,16 +57,16 @@ leurs dates, cache des ressources lentes, reprises limitées, disjoncteur, plafo
 | Enseigne | Canal | Technique | Usage | Publication | Couverture |
 |---|---|---|---|---|---|
 | Lidl | `sortiment.lidl.ch` (catégories, fiches), `www.lidl.ch` (actions) | ✅ 200 | ✅ aucune condition restrictive trouvée | ⚖️ réserve | 47/50 (32/50 sans les fiches `/fr/catalog/…`) |
-| Denner | `www.denner.ch/fr/search?q=…` (5 meilleurs résultats, prix permanents et actions), `/fr/actions/…` | ✅ 200, `robots.txt` permissif | ✅ privé : seuls la publication et l'usage commercial sont interdits sans accord | ❌ | 34/50 ; **absents du site** : sucre, sel, séré, blanc de poulet suisse, tomates en conserve, polenta, beurre de cuisine, pain complet |
+| Denner | `www.denner.ch/fr/search?q=…` (5 meilleurs résultats), `/fr/découvrir/produits-ip-suisse` et `/fr/découvrir/produits-phares/provisions-domestiques` (assortiment permanent), `/fr/actions/…` | ✅ 200, `robots.txt` permissif | ✅ privé : seuls la publication et l'usage commercial sont interdits sans accord | ❌ | 34/50 ; détail des 16 manquants : `docs/COUVERTURE_NOYAU.md` § 3 |
 | Denner | Prospectus Issuu | — | ❌ conditions d'Issuu | ❌ | — |
-| Aldi | `api.aldi-suisse.ch/v3/product-search` (liste paginée) | ✅ 200 | ✅ privé (« fins privées uniquement ») | ❌ | 22/50 (l'API n'expose ni fruits, ni légumes, ni œufs, ni farine ; lait bio sans origine indiquée) |
+| Aldi | `api.aldi-suisse.ch/v3/product-search` (liste paginée), fiches `www.aldi-suisse.ch/fr/produit/…` | ✅ 200 | ✅ privé (« fins privées uniquement ») | ❌ | 23/50 ; détail des manquants : `docs/COUVERTURE_NOYAU.md` § 2 |
 | Migros | `www.migros.ch` (pages, API, plan du site) | ❌ 403 « maintenance » pour un robot identifié (seul `robots.txt` répond) | — | — | 0 |
 | Migros | Fiches produits (copie archivée publique, Wayback Machine) | Coquille d'application sans prix dans le HTML | — | — | 0 |
 | Migros | API produits | Non ouverte (réponse officielle) | ❌ | — | 0 |
 | Migros | Prospectus hebdomadaire (Issuu), `produkte.migros.ch`, sites régionaux | ❌ conditions d'Issuu ; domaines inexistants | — | — | 0 |
 | Coop | `www.coop.ch` (y compris `robots.txt`) | ❌ 403 + défi DataDome | — | — | 0 |
 | Coop | `www.coopzeitung.ch/de/angebote.html` | ✅ 200 | — | — | 0 (aucun prix) |
-| Coop | Journal numérique `epaper.coopzeitung.ch` | ✅ 200, `robots.txt` permissif | Accès aux pages non documenté ; actions seulement, en images | — | 0 (non exploité) |
+| Coop | Journal numérique `epaper.cooperation.ch` (magazine des actions) | ✅ 200, `robots.txt` « Allow: / », session anonyme | Privé (conditions de coop.ch illisibles pour un robot) | ❌ en attente | **6/50 en actions** (01.10, édition romande ; PDF avec texte, prix contrôlés par le prix unitaire imprimé) |
 | Toutes | Open Prices (ODbL) | ✅ | ✅ | ✅ | Coop 1, Migros 0, Denner 0 (récents) |
 | Toutes | opendata.swiss | ✅ | ✅ | ✅ | 0 (indices, pas de prix par enseigne) |
 
@@ -111,48 +113,103 @@ de non-régression ne vérifie alors que les enseignes présentes et le signale,
 | Source | Collecte | Publication | Où sont les données |
 |---|---|---|---|
 | Lidl, Open Prices, relevés | Permise | Permise (Lidl : réserve) | `data/prices/live/` (versionné) |
-| Aldi, Denner | Usage privé | Interdite sans accord écrit | `data/private/live/` (**hors dépôt**, jamais dans un export, un artefact ou une page) |
+| Aldi, Denner, journal Coop | Usage privé | Interdite sans accord écrit (Coop : en attente) | `data/private/live/` (**hors dépôt**, jamais dans un export, un artefact ou une page) |
 
 `data/private/` est exclu de Git ; l'instantané Aldi qui y était versionné depuis la phase 3 en a été
 retiré (il reste dans l'historique Git). Les fichiers versionnés (matrice, contrôle des correspondances,
 panier d'exemple public) ne contiennent **aucun prix** d'Aldi ou de Denner, seulement le statut
-« collecté, non publiable ». Le workflow GitHub échoue si une donnée privée atteint la page publique.
+« collecté, non publiable ». Le workflow GitHub échoue si une donnée privée atteint la page publique, et
+le test `apps/worker/test/privacy.test.ts` échoue si un fichier versionné contient un prix d'article
+Aldi, Denner ou Coop (il a détecté le 01.10.2026 un ancien `data/matching/audit.md` de la phase 4, avec
+47 prix Aldi, régénéré depuis). Historique Git : `docs/NETTOYAGE_HISTORIQUE.md` ; demandes
+d'autorisation : `docs/AUTORISATIONS.md`.
 
 ## 5. Exécution quotidienne à 0 CHF
+
+### 5.0 État réel de l'installation (01.10.2026)
+
+| Élément | État | Preuve |
+|---|---|---|
+| Cycle de collecte exécuté | ✅ dans l'environnement de développement (pas sur votre PC) | 30.09 22:28 → 01.10 01:08 (heure de Zurich) : cycle complet (214 requêtes), reprises Open Prices, Denner + Coop ; journal `data/private/runs/2026-10-01.json` (hors dépôt) |
+| Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 27 contrôles, aussi en intégration continue) |
+| Tâche installée et exécutée sur **votre** ordinateur Windows | ❌ **non vérifiée** : je n'ai pas accès à votre PC | à établir avec la procédure du § 5.2 (sortie de `verifier-tache.ps1`) |
 
 ### 5.1 Options comparées (conditions vérifiées le 01.10.2026)
 
 | Option | Coût | Conditions et limites | Verdict |
 |---|---|---|---|
-| **Ordinateur de l'exploitant, Planificateur de tâches Windows** | 0 CHF | Ordinateur allumé (ou en veille avec réveil) et connecté ; session ouverte, ou mot de passe enregistré pour une exécution sans session | ✅ **retenu** : seule option où les données privées (Aldi, Denner) restent chez l'exploitant |
-| GitHub Actions (dépôt public) | 0 CHF ; sans moyen de paiement, l'usage est bloqué au-delà du quota, jamais facturé | Interdit « toute autre activité sans rapport avec la production, les tests, le déploiement ou la publication du logiciel » ; tâches planifiées seulement sur la branche par défaut, retardées aux heures chargées, désactivées après 60 jours sans activité ; artefacts d'un dépôt public téléchargeables | ⚠️ Construction de la page : oui. Collecte Lidl + Open Prices : option désactivée par défaut (zone grise). Aldi, Denner : **jamais** (données privées sur une infrastructure tierce) |
-| Vercel Hobby | 0 CHF | Usage personnel non commercial ; fonction limitée à **300 s** | ❌ un cycle poli dure ≈ 11 min |
-| Cloudflare Workers (gratuit) | 0 CHF | 10 ms de CPU par requête, erreurs au-delà | ❌ |
+| **Ordinateur de l'exploitant, Planificateur de tâches Windows** | 0 CHF | Ordinateur allumé (ou en veille avec réveil) et connecté ; session ouverte, ou mot de passe enregistré pour une exécution sans session | ✅ **retenu** : le plus simple, aucune limite de durée ni de CPU, données privées (Aldi, Denner, Coop) gardées chez l'exploitant |
+| GitHub Actions (dépôt public) | 0 CHF ; sans moyen de paiement, l'usage est bloqué au-delà du quota, jamais facturé | Interdit « toute autre activité sans rapport avec la production, les tests, le déploiement ou la publication du logiciel » ; tâches planifiées seulement sur la branche par défaut, retardées aux heures chargées, désactivées après 60 jours sans activité ; artefacts d'un dépôt public téléchargeables | ⚠️ Construction de la page : oui. Collecte Lidl + Open Prices : désactivée par défaut (zone grise). Aldi, Denner, Coop : **jamais** (données privées sur une infrastructure tierce) |
+| Vercel Hobby | 0 CHF | Usage personnel non commercial ; fonction limitée à **300 s** | ❌ un cycle poli dure ≈ 12 min |
+| Cloudflare Workers (gratuit) | 0 CHF | voir § 5.1.1 | ❌ sans refonte |
 | Machines virtuelles « gratuites » (Oracle, Google Cloud…) | Carte bancaire ou compte de facturation exigé | Dépassement facturable possible | ❌ (règle : aucun dépassement facturable) |
 
-### 5.2 Installation sur Windows (une fois, ≈ 15 min)
+#### 5.1.1 Cloudflare Workers : réexamen chiffré
 
-Prérequis : Windows 10 ou 11, [Node.js 22](https://nodejs.org) installé, puis dans PowerShell :
+Limites officielles du plan gratuit (<https://developers.cloudflare.com/workers/platform/limits/>, lues le
+01.10.2026) : **10 ms de temps CPU** par invocation (requête HTTP comme déclencheur Cron) ; durée
+murale illimitée en HTTP tant que le client reste connecté, **15 min** pour un déclencheur Cron ;
+**50 sous-requêtes** par invocation ; 100 000 requêtes par jour (erreur 1027 au-delà) ; 5 déclencheurs
+Cron par compte ; 128 Mo de mémoire. **Les attentes réseau (`fetch`) ne comptent pas comme CPU.**
+
+Mesures sur le collecteur réel (réponses archivées des 30.09 et 01.10, temps CPU par page, attentes
+réseau exclues) :
+
+| Étape | Médiane | Maximum | Compatible 10 ms ? |
+|---|---|---|---|
+| Lidl, page HTML (113 Ko) | 0,4 ms | 15 ms | presque |
+| Denner, page HTML (199 Ko) | 3,7 ms | 119 ms | non (pages d'actions) |
+| Aldi, page de l'API (158 Ko, lecture + rapprochement) | 15,3 ms | 44 ms | **non** |
+| Coop, page PDF (≈ 2,5 Mo, pdf.js) | 112 ms | 398 ms | **non** |
+| Contrôles, matrice, paniers (après collecte) | ≈ 2 s chacun | — | **non** |
+
+Attentes : ≈ 245 requêtes par jour espacées de 3 s par hôte (≈ 12 min de durée murale) : compatible
+avec 15 min par Cron, mais il faudrait ≥ 5 invocations (50 sous-requêtes chacune), un stockage
+externe (le code écrit des fichiers : `node:fs`), et découper chaque analyse sous 10 ms de CPU — ce que
+la lecture des PDF Coop et le rapprochement ne permettent pas. Conclusion : **incompatible sans refonte**
+(ni l'objectif, ni raisonnable pour seulement changer d'hébergement). Le PC Windows reste la solution.
+
+**Dépendance au PC** : sans ordinateur allumé et connecté, aucune collecte n'a lieu ce jour-là ; rien
+n'est faussé (les prix gardent leur date, deviennent « indicatifs » après 7 jours et sont écartés après
+30) et la collecte reprend dès le démarrage suivant (rattrapage). Pour un fonctionnement sans PC
+allumé, seule une infrastructure tierce conviendrait, avec les limites ci-dessus.
+
+### 5.2 Installer puis vérifier sur votre ordinateur Windows (une fois, ≈ 15 min)
+
+Prérequis : Windows 10 ou 11, [Node.js 22](https://nodejs.org) installé, Git. Dans PowerShell :
 
 ```powershell
+# 1. Installation (une fois)
 corepack enable
 git clone https://github.com/probe2ka3/stayready-kit.git
 cd stayready-kit\comparateur
 git checkout claude/swiss-grocery-comparison-w7bk8q
 pnpm install
-pnpm quotidien          # premier cycle manuel (≈ 11 min) : vérifie que tout fonctionne
-powershell -ExecutionPolicy Bypass -File .\scripts\windows\installer-tache.ps1
+pnpm quotidien                    # premier cycle manuel (≈ 12 min) : vérifie que tout fonctionne
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\installer-tache.ps1    # option : -Reveil
+
+# 2. Essai immédiat de la tâche, puis vérification
+Start-ScheduledTask -TaskName "TesPrix - collecte quotidienne"
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\verifier-tache.ps1
 ```
 
-La tâche « TesPrix - collecte quotidienne » : chaque jour à **06:00** (heure de l'ordinateur ; fuseau
-Europe/Zurich attendu, sinon avertissement) ; **rattrapage** si l'ordinateur était éteint (« exécuter dès
-que possible ») et à l'ouverture de session (après 5 min) ; seulement avec une connexion réseau ; nouvel
-essai toutes les 30 min, 3 fois au plus, après un échec ; durée maximale 2 h ; jamais deux exécutions
-simultanées. Options : `-Reveil` (sort l'ordinateur de veille), `-SansSession` (exécution sans session
-ouverte, mot de passe demandé une fois), `-Heure 07:30`, `-Desinstaller`.
+`verifier-tache.ps1` (lecture seule) affiche et contrôle : **nom et état** de la tâche ; **prochaine
+exécution** en heure locale et à Zurich (06:00 attendu) ; **dernière exécution et résultat** (0 =
+succès, 2 = pas d'Internet, 3 = Node.js/pnpm introuvable…) ; **rattrapage** (« exécuter dès que possible
+après un démarrage manqué », déclencheur à l'ouverture de session, compteur d'exécutions manquées, et la
+liste des collectes des 14 derniers jours avec leur heure réelle de lancement : « à l'heure » ou
+« rattrapage ») ; **journaux** (`data\private\logs\quotidien-AAAA-MM-JJ.log`, 60 jours) et dernier
+résultat (`data\private\runs\latest.json`). Verdict en fin de sortie ; code de sortie 0 si tout est
+conforme.
 
-Journaux : `data\private\logs\quotidien-AAAA-MM-JJ.log` (60 jours) ; résultat détaillé :
-`data\private\runs\latest.json` ; état lisible : `pnpm dev` puis `/admin/qualite`.
+Vérifier le rattrapage (une fois) : mettre l'ordinateur en veille ou l'éteindre avant 06:00, le
+rallumer après ; dans les 5 minutes suivant l'ouverture de session, la collecte démarre ; le journal du
+jour contient « Lancement à HH:MM, après l'heure prévue 06:00 : rattrapage » et `verifier-tache.ps1`
+liste ce jour comme « rattrapage ou relance ».
+
+Ce qui reste à vérifier **sur votre PC** (impossible ici) : l'enregistrement réel de la tâche par
+Windows, le fuseau (Europe/Zurich), le premier lancement à 06:00, le rattrapage après un arrêt, la
+connexion réseau au démarrage et les droits du compte utilisé.
 
 Linux ou macOS : `crontab -e` puis `0 6 * * * cd /chemin/comparateur && pnpm quotidien >> data/private/logs/cron.log 2>&1`
 (`CRON_TZ=Europe/Zurich` selon le système). Pas de rattrapage automatique avec cron seul.
@@ -161,11 +218,11 @@ Linux ou macOS : `crontab -e` puis `0 6 * * * cd /chemin/comparateur && pnpm quo
 
 | | Durée |
 |---|---|
-| Programme, chaque jour | ≈ 11 min sans surveillance (214 requêtes ; Lidl 5 min, Denner 3, Aldi 2, Open Prices < 1) |
+| Programme, chaque jour | ≈ 12 min sans surveillance (≈ 245 requêtes ; Lidl 5 min, Denner 3, Aldi 2, Coop 1 min le jeudi puis quelques secondes, Open Prices < 1) ; temps CPU inférieur à 1 min |
 | Humain, chaque jour | **0 min** |
-| Humain, chaque semaine | ≈ 5–10 min : lire l'état (`/admin/qualite` ou `latest.json`) |
-| Humain, chaque mois | ≈ 20–30 min : revoir les nouveaux articles non rapprochés (`pnpm job match-audit`, `match-candidates`), assisté par l'IA déjà disponible, sans API payante |
-| Humain, occasionnel | Changement de structure d'un site : correction de l'analyseur (développement assisté par l'IA) ; alerte « structure modifiée » ou « chute de couverture » dans le journal |
+| Humain, chaque semaine | ≈ 5–10 min : lire l'état (`verifier-tache.ps1`, `/admin/qualite`) ; nouvelles actions Coop à rapprocher (`pnpm job match-audit`, données privées) |
+| Humain, chaque mois | ≈ 20–30 min : revoir les nouveaux articles non rapprochés, assisté par l'IA déjà disponible, sans API payante |
+| Humain, occasionnel | Changement de structure d'un site : correction de l'analyseur ; alerte « structure modifiée » ou « chute de couverture » dans le journal |
 
 Conditions : ordinateur allumé à 06:00 ou dans la journée (sinon rattrapage), connexion Internet, Node.js
 et le dépôt installés. Sans exécution, rien n'est faussé : les prix vieillissent et sont écartés après
@@ -195,14 +252,18 @@ donnée pour les 17 lignes.
 
 ## 7. Blocages restant à résoudre
 
-1. **Migros** : aucun canal automatique autorisé. Levée : accord écrit (demande prête, non envoyée,
-   `docs/PLAN_SANS_DEPENSES.md` § 7) ; à défaut, relevés en magasin ou Open Prices (facultatifs).
-2. **Coop** : protection DataDome sur tout le site ; aucun contournement. Même levée.
-3. **Publication d'Aldi et de Denner** : collecte privée seulement ; publication après accord écrit.
-4. **Denner** : 8 besoins absents du site ; résultats limités aux 5 premiers de la recherche (un article
-   moins cher plus loin dans la liste peut manquer) ; les nouveaux articles demandent une revue.
-5. **Lidl** : réserve juridique (`Disallow: /catalog/`) ; sans les fiches, 32/50.
-6. **Aldi** : fruits, légumes, œufs, farine absents de l'API ; lait bio sans origine indiquée.
-7. **Planification** : l'installation Windows n'a pas pu être exécutée ici (serveur Linux) ; les deux
-   scripts PowerShell ont été vérifiés par l'analyseur syntaxique de PowerShell 7.4. Premier essai à faire
-   sur l'ordinateur : `Start-ScheduledTask -TaskName "TesPrix - collecte quotidienne"`.
+1. **Migros** : aucun canal gratuit, officiel et accessible à un robot identifié parmi ceux examinés
+   (`docs/COUVERTURE_NOYAU.md` § 5) ; API produits non ouverte (réponse officielle sur Migipedia).
+   Levée : demande prête, non envoyée (`docs/AUTORISATIONS.md` § 3.4) ; à défaut, relevés ou Open Prices.
+2. **Coop** : prix permanents inaccessibles (DataDome, aucun contournement) ; seules les actions de la
+   semaine (édition romande) sont lues. Levée : § 3.3 des demandes.
+3. **Publication d'Aldi, de Denner et du journal Coop** : collecte privée seulement ; publication après
+   accord écrit. Lidl : aucune restriction identifiée, autorisation non établie (§ 2 des demandes).
+4. **Denner** : 12 besoins absents du site, 2 caractéristiques non publiées, 2 besoins en action
+   seulement ; la recherche ne rend que 5 résultats.
+5. **Aldi** : fruits, légumes et crème absents de l'API ; 6 articles sans contenance publiée ; 5 sans
+   origine publiée (le besoin exige l'origine suisse).
+6. **Planification** : la tâche Windows n'est **pas** installée ni vérifiée sur votre ordinateur (pas
+   d'accès) ; procédure et contrôle : § 5.2 (`verifier-tache.ps1`).
+7. **Historique Git** : anciennes données Aldi encore présentes dans l'historique public de la branche ;
+   procédure prête et essayée à blanc, non exécutée (décision de l'exploitant).

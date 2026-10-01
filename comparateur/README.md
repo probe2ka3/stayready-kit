@@ -110,7 +110,10 @@ comparateur/
 |---|---|
 | [docs/audit/01-enseignes.md](docs/audit/01-enseignes.md) | Audit des 8 enseignes : catalogues, prix, promotions, calendriers vérifiés, accès aux données |
 | [docs/audit/02-juridique.md](docs/audit/02-juridique.md) | Analyse juridique préliminaire (LCD, OIP, LPD, LDA, LPM) sourcée sur Fedlex |
-| [docs/COLLECTE_QUOTIDIENNE.md](docs/COLLECTE_QUOTIDIENNE.md) | **Collecte quotidienne** : concurrents, sources par enseigne, chaîne, planification Windows, exemple, blocages |
+| [docs/COLLECTE_QUOTIDIENNE.md](docs/COLLECTE_QUOTIDIENNE.md) | **Collecte quotidienne** : concurrents, sources par enseigne, chaîne, planification et vérification Windows, Cloudflare chiffré, exemple, blocages |
+| [docs/COUVERTURE_NOYAU.md](docs/COUVERTURE_NOYAU.md) | Couverture des 50 aliments besoin par besoin (Aldi, Denner), actions Coop, canaux Migros et Coop examinés |
+| [docs/AUTORISATIONS.md](docs/AUTORISATIONS.md) | Collecter ≠ publier, point juridique Lidl, demandes d'autorisation prêtes à copier (non envoyées) |
+| [docs/NETTOYAGE_HISTORIQUE.md](docs/NETTOYAGE_HISTORIQUE.md) | Procédure (non exécutée) pour retirer les anciennes données Aldi de l'historique Git |
 | [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) | Plan à 0 CHF : audit, sources gratuites testées, matrice, fonctionnement à 0 CHF, prochaines étapes |
 | [docs/RELEVES.md](docs/RELEVES.md) | Relevés de prix en magasin : Open Prices ou CSV, règles, transcription assistée, 50 besoins |
 | [docs/STATUT.md](docs/STATUT.md) | Ce qui est opérationnel, ce qui attend une autorisation ou une validation |

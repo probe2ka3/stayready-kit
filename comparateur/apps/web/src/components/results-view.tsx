@@ -770,5 +770,10 @@ function PriceDates({ result, locale }: { result: CompareResultDto; locale: Loca
       : format(m.results.priceDatesItem, { chain, oldest, newest });
   });
   if (list.length === 0) return null;
-  return <p className="text-xs text-muted">{format(m.results.priceDates, { list: list.join(' · ') })}</p>;
+  return (
+    <>
+      <p className="text-xs text-muted">{format(m.results.priceDates, { list: list.join(' · ') })}</p>
+      <p className="text-xs text-muted">{m.results.statusLegend}</p>
+    </>
+  );
 }

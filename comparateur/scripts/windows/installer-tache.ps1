@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Installe (ou retire) la tâche planifiée « TesPrix - collecte quotidienne ».
 
@@ -45,7 +45,7 @@ if ($Desinstaller) {
   exit 0
 }
 
-$script = Join-Path $PSScriptRoot 'tesprix-quotidien.ps1'
+$script = [System.IO.Path]::Combine($PSScriptRoot, 'tesprix-quotidien.ps1')
 if (-not (Test-Path $script)) { throw "Script introuvable : $script" }
 
 $tz = (Get-TimeZone).Id
@@ -54,8 +54,8 @@ if ($tz -ne 'W. Europe Standard Time') {
 }
 
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
-  -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$script`"" `
-  -WorkingDirectory (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+  -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$script`" -HeurePrevue $Heure" `
+  -WorkingDirectory ([System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, '..', '..')))
 
 $triggers = @(
   (New-ScheduledTaskTrigger -Daily -At $Heure),
@@ -91,3 +91,4 @@ Write-Host "Tâche « $nom » installée."
 Write-Host "Prochaine exécution : $($info.NextRunTime)"
 Write-Host 'Lancer un essai maintenant : Start-ScheduledTask -TaskName "TesPrix - collecte quotidienne"'
 Write-Host 'Résultat : data\private\runs\latest.json ; journal : data\private\logs\'
+Write-Host 'Vérification complète : powershell -ExecutionPolicy Bypass -File .\scripts\windows\verifier-tache.ps1'

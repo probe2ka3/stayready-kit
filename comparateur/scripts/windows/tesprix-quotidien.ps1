@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Collecte quotidienne des prix TesPrix (lancée par le Planificateur de tâches Windows).
 
@@ -15,14 +15,16 @@
 [CmdletBinding()]
 param(
   # Relance toutes les sources même si la collecte du jour a déjà eu lieu.
-  [switch]$Force
+  [switch]$Force,
+  # Heure prévue par la tâche planifiée : un lancement plus tardif est noté comme rattrapage.
+  [string]$HeurePrevue = '06:00'
 )
 
 $ErrorActionPreference = 'Stop'
-$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$logDir = Join-Path $repo 'data\private\logs'
+$repo = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, '..', '..'))
+$logDir = [System.IO.Path]::Combine($repo, 'data', 'private', 'logs')
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-$log = Join-Path $logDir ("quotidien-{0}.log" -f (Get-Date -Format 'yyyy-MM-dd'))
+$log = [System.IO.Path]::Combine($logDir, ("quotidien-{0}.log" -f (Get-Date -Format 'yyyy-MM-dd')))
 
 function Write-Log([string]$message) {
   $line = "{0} {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $message
@@ -36,6 +38,11 @@ Get-ChildItem -Path $logDir -Filter 'quotidien-*.log' |
   Remove-Item -Force -ErrorAction SilentlyContinue
 
 Write-Log "Début de la collecte quotidienne (dossier : $repo)"
+$prevue = [datetime]::ParseExact($HeurePrevue, 'HH:mm', $null)
+$retard = (Get-Date) - (Get-Date).Date.Add($prevue.TimeOfDay)
+if ($retard.TotalMinutes -gt 15) {
+  Write-Log ("Lancement à {0:HH:mm}, après l'heure prévue {1} : rattrapage (ordinateur éteint ou en veille à l'heure prévue) ou lancement manuel." -f (Get-Date), $HeurePrevue)
+}
 
 # Connexion Internet : sans elle, rien n'est tenté (les anciens prix gardent leur date).
 $online = $false

@@ -1,6 +1,6 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-10-01T00:22:23.687Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-10-01T00:42:35.054Z` sur les instantanés versionnés :
 - `aldi-api` du 30.09.2026 (réutilisation : requires_authorization)
 - `coop-epaper` du 01.10.2026 (réutilisation : requires_authorization)
 - `denner-web` du 01.10.2026 (réutilisation : requires_authorization)

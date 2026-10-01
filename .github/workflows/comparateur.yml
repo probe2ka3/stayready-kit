@@ -48,6 +48,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Types
         run: pnpm typecheck
+      - name: Scripts Windows (Planificateur de tâches simulé)
+        shell: pwsh
+        run: ./scripts/windows/tests/tester-scripts.ps1
       - name: Tests unitaires et d'intégration (PostgreSQL + PostGIS)
         run: pnpm test
       - name: Build de production

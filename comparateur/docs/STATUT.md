@@ -11,13 +11,15 @@ juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.m
 |---|---|---|---|
 | Lidl | ✅ site officiel, ciblée (≈ 109 requêtes) | **47/50** | Oui (⚖️ réserve LCD / `robots.txt`) |
 | Denner | ✅ site officiel, recherche ciblée + actions (≈ 53 requêtes) | **34/50** | **Non** : publication interdite sans accord écrit |
-| Aldi | ✅ API du site (≈ 44 requêtes) | 22/50 | **Non** : usage privé (conditions d'Aldi) |
-| Coop | ❌ DataDome, aucun contournement ; Open Prices | 1/50 | Oui (ODbL) |
+| Aldi | ✅ API du site (≈ 44 requêtes) | 23/50 | **Non** : usage privé (conditions d'Aldi) |
+| Coop | ⚠️ actions seulement : journal numérique officiel, édition romande (28 requêtes le jeudi, 3 ensuite) ; prix permanents : DataDome, aucun contournement | 6/50 (actions) | **Non** (journal : en attente) ; Open Prices : oui |
 | Migros | ❌ 403, API non ouverte ; Open Prices | 0/50 | — |
 
-Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 13 / 1 / 0** en pilote privé, **1 / 0 / 0 / 0** en
-version publique. Commande : `pnpm quotidien` (≈ 11 min, 214 requêtes) ; planification Windows :
-`scripts/windows/installer-tache.ps1`. Détails : `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly
+Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 18 / 2 / 0** en pilote privé (avant l'étape
+« couverture » : 41 / 13 / 1 / 0), **1 / 0 / 0 / 0** en version publique. Commande : `pnpm quotidien`
+(≈ 12 min, ≈ 245 requêtes) ; planification Windows : `scripts/windows/installer-tache.ps1`, contrôle :
+`scripts/windows/verifier-tache.ps1` (tâche **non vérifiée** sur l'ordinateur de l'exploitant).
+Analyse besoin par besoin : `docs/COUVERTURE_NOYAU.md`. Détails : `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly
 (licence), offres B2B, widgets, marque blanche.
 
 ## Chiffres clés des données réelles (instantanés du 30.09.2026)
@@ -67,7 +69,7 @@ version publique. Commande : `pnpm quotidien` (≈ 11 min, 214 requêtes) ; plan
 | **Prix Denner** | Conditions : usage commercial interdit sans autorisation écrite | Autorisation (demande gratuite prête) ; relevés en magasin |
 | Aldi : 415 articles sans contenance | Écartés (jamais devinés) | Accord ou flux Aldi |
 | Repli FoodAlly | Implémenté, désactivé, **hors plan** (licence payante) | — |
-| Sources privées (Aldi, Denner) | Instantanés dans `data/private/` (hors dépôt) ; l'ancien instantané Aldi reste dans l'historique Git | Accord écrit pour publier |
+| Sources privées (Aldi, Denner, journal Coop) | Instantanés dans `data/private/` (hors dépôt) ; test `privacy.test.ts` contre tout prix privé versionné ; anciennes données Aldi dans l'historique Git (procédure prête : `docs/NETTOYAGE_HISTORIQUE.md`) | Accord écrit pour publier (`docs/AUTORISATIONS.md`) |
 | Page publique statique | Générée (`data/public/index.html`), non publiée | Fusion dans `main` + `TESPRIX_PAGES=oui` |
 | Tickets de caisse, API professionnelle, facturation | Fermés | Voir `docs/LANCEMENT.md` |
 

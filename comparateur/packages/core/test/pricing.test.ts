@@ -145,6 +145,22 @@ describe('résolution du prix d’une ligne', () => {
     expect(opted.option?.status).toBe('stale');
   });
 
+  it('action régionale : appliquée dans sa zone seulement, signalée « prix régional »', () => {
+    const index = buildOfferIndex({
+      products: [product('c-flour', 'coop', 1000)],
+      matches: [match(flour.id, 'c-flour')],
+      prices: [],
+      promotions: [promo('c-flour', 'coop', { zoneId: 'coop-romandie', promoPriceCents: 120, validFrom: '2026-09-24', validTo: '2026-09-30', verifiedAt: '2026-09-24T05:00:00Z' })],
+    });
+    const romandie = resolveLine(line(), flour, profile('coop', 'coop-romandie'), index, ctx());
+    expect(romandie.option?.totalCents).toBe(120);
+    expect(romandie.option?.statusReasons).toContain('zone_price');
+    expect(romandie.option?.statusReasons).toContain('regular_price_unknown');
+    // Hors de la zone (ou sans zone connue) : jamais généralisée.
+    expect(resolveLine(line(), flour, profile('coop', 'coop-ailleurs'), index, ctx()).option).toBeNull();
+    expect(resolveLine(line(), flour, profile('coop'), index, ctx()).option).toBeNull();
+  });
+
   it('marque « indicatif » un prix vérifié il y a 8 à 30 jours', () => {
     const index = buildOfferIndex({
       products: [product('o-flour', 'ottos', 1000)],

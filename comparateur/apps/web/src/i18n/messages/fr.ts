@@ -137,6 +137,8 @@ export const fr = {
     valueOfTime: 'Valeur de votre temps de trajet (CHF/h)',
     valueInStore: 'Valoriser aussi le temps passé en magasin',
     minSaving: 'Économie minimale pour un magasin de plus (CHF)',
+    minSavingHelp:
+      'Un magasin de plus n’est recommandé que si l’économie nette (achats moins trajet supplémentaire) atteint ce montant : en dessous, le gain compense rarement un arrêt de plus. Les combinaisons sous le seuil restent affichées, non recommandées.',
     moreSettings: 'Réglages avancés',
     loyalty: 'Cartes et applications dont je dispose',
     allowSimilar: 'Accepter des conditionnements différents (comparés au prix unitaire)',
@@ -198,6 +200,8 @@ export const fr = {
       oneWay: 'Sans retour au point de départ.',
     },
     priceDates: 'Dates des relevés utilisés : {list}.',
+    statusLegend:
+      '« Vérifié le … » : prix lu à la source ce jour-là, sans garantie ensuite. Après 7 jours il devient « indicatif » ; après 30 jours (90 pour les relevés communautaires) il est écarté. Une action sans date de fin publiée est signalée comme telle.',
     priceDatesItem: '{chain} du {oldest} au {newest}',
     priceDatesSame: '{chain} le {date}',
     planningSummary: 'Pour le {date} : {promo} au prix d’une action publiée valable ce jour-là, {known} au dernier prix relevé (non garanti).',
@@ -312,6 +316,7 @@ export const fr = {
     stale: 'Prix périmé',
     demo: 'Démo',
     checkedOn: 'vérifié le {date}',
+    badge: { verified: 'Vérifié le {date}', indicative: 'Indicatif · {date}' } as Record<string, string>,
     reasons: {
       demo_data: 'donnée fictive',
       future_date: 'dernier prix connu, non garanti à la date choisie',

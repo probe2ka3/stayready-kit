@@ -639,8 +639,10 @@ export function resolveLine(
     if (bestPromo?.promo.whileStocksLast) reasons.push('while_stocks_last');
     if (bestPromo?.promo.loyaltyProgram) reasons.push('loyalty_required');
     if (match.kind === 'similar' || packs !== line.qty) reasons.push('pack_size_differs');
-    if (usableObs?.storeId) reasons.push('store_specific_price');
-    else if (usableObs?.zoneId) reasons.push('zone_price');
+    // Portée du prix réellement appliqué : l'action retenue si elle l'emporte, sinon le relevé.
+    const applied = bestPromo ? bestPromo.promo : usableObs;
+    if (applied?.storeId) reasons.push('store_specific_price');
+    else if (applied?.zoneId) reasons.push('zone_price');
     if (regularTotal == null) reasons.push('regular_price_unknown');
     if (usableObs && crowd) reasons.push('crowd_sourced');
     if (usableObs && thirdParty) reasons.push('third_party_source');

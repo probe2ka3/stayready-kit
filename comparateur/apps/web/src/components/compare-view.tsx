@@ -21,6 +21,7 @@ function NumberField({
   step,
   min,
   max,
+  help,
 }: {
   id: string;
   label: string;
@@ -29,25 +30,34 @@ function NumberField({
   step: number;
   min: number;
   max: number;
+  help?: string;
 }) {
   return (
-    <label htmlFor={id} className="flex items-center justify-between gap-4 py-2">
-      <span className="text-[15px] font-medium">{label}</span>
-      <input
-        id={id}
-        type="number"
-        inputMode="decimal"
-        step={step}
-        min={min}
-        max={max}
-        value={Number.isFinite(value) ? value : 0}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          if (Number.isFinite(v)) onChange(Math.min(max, Math.max(min, v)));
-        }}
-        className="num h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right"
-      />
-    </label>
+    <>
+      <label htmlFor={id} className="flex items-center justify-between gap-4 py-2">
+        <span className="text-[15px] font-medium">{label}</span>
+        <input
+          id={id}
+          type="number"
+          inputMode="decimal"
+          step={step}
+          min={min}
+          max={max}
+          value={Number.isFinite(value) ? value : 0}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            if (Number.isFinite(v)) onChange(Math.min(max, Math.max(min, v)));
+          }}
+          className="num h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right"
+          aria-describedby={help ? `${id}-help` : undefined}
+        />
+      </label>
+      {help && (
+        <p id={`${id}-help`} className="-mt-1 pb-2 text-xs text-muted">
+          {help}
+        </p>
+      )}
+    </>
   );
 }
 
@@ -236,7 +246,7 @@ export function CompareView({ locale }: { locale: Locale }) {
             <NumberField id="min-store" label={m.compare.minutesPerStore} value={travel.minutesPerStore} step={5} min={0} max={120} onChange={(v) => state.setTravel({ minutesPerStore: Math.round(v) })} />
             <NumberField id="vot" label={m.compare.valueOfTime} value={travel.valueOfTimeChfPerHour} step={1} min={0} max={300} onChange={(v) => state.setTravel({ valueOfTimeChfPerHour: v })} />
             <Toggle checked={travel.valueInStoreTime} onChange={(v) => state.setTravel({ valueInStoreTime: v })} label={m.compare.valueInStore} />
-            <NumberField id="min-saving" label={m.compare.minSaving} value={minSavingChf} step={0.5} min={0} max={100} onChange={state.setMinSaving} />
+            <NumberField id="min-saving" label={m.compare.minSaving} help={m.compare.minSavingHelp} value={minSavingChf} step={0.5} min={0} max={100} onChange={state.setMinSaving} />
             <fieldset className="py-2">
               <legend className="text-[15px] font-medium">{m.compare.loyalty}</legend>
               <div className="mt-1 flex flex-wrap gap-2">
