@@ -114,6 +114,19 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     termsNote:
       'Précisions d’ordre juridique de Denner : « La reproduction (complète ou partielle), la transmission […], la modification, la mise en réseau et l’utilisation du portail / de l’app dans un but de publication ou à des fins commerciales sont interdites sauf accord préalable écrit. » Prix indicatifs : « Seuls sont valides les prix affichés dans les points de vente. » Collecte privée seulement.',
   },
+  'coop-epaper': {
+    connectorId: 'coop-epaper',
+    provider: 'Coop (journal numérique officiel Coopération, magazine des actions)',
+    tier: 'first_party',
+    collectionMethod: 'public_web_page',
+    license: null,
+    attribution: null,
+    chainIds: ['coop'],
+    publicUse: 'requires_authorization',
+    collection: 'private_use',
+    termsNote:
+      'Journal numérique public (epaper.cooperation.ch, robots.txt « Allow: / », accès sans compte) ; mentions légales de la Coopzeitung sans clause sur la réutilisation ; conditions générales de coop.ch non consultables par un robot (DataDome). Actions seulement, édition régionale. Collecte privée jusqu’à vérification ou accord ; jamais publié.',
+  },
   'open-prices': {
     connectorId: 'open-prices',
     provider: 'Open Prices (Open Food Facts)',
@@ -257,5 +270,9 @@ export const CHAIN_ACCESS: Record<string, { automatic: 'public' | 'private' | 'n
   aldi: { automatic: 'private', sources: ['aldi-api', 'open-prices'], note: 'API publique du site ; conditions : usage privé uniquement.' },
   denner: { automatic: 'private', sources: ['denner-web', 'open-prices'], note: 'Recherche et actions du site ; publication et usage commercial interdits sans accord écrit.' },
   migros: { automatic: 'none', sources: ['open-prices'], note: 'Site : 403 pour un robot identifié ; fiches sans prix dans le HTML ; API produits non ouverte (réponse officielle Migros) ; prospectus sur Issuu (extraction interdite par Issuu).' },
-  coop: { automatic: 'none', sources: ['open-prices'], note: 'Site protégé par DataDome (403 dès robots.txt), aucun contournement ; journal numérique sans accès documenté, actions seulement.' },
+  coop: {
+    automatic: 'private',
+    sources: ['coop-epaper', 'open-prices'],
+    note: 'Actions seulement : magazine des actions du journal numérique officiel (édition romande), usage privé. Prix permanents : aucun canal (coop.ch protégé par DataDome, 403 dès robots.txt, aucun contournement).',
+  },
 };

@@ -368,16 +368,17 @@ describe('solutions comparées : enseigne seule et combinaison', () => {
 });
 
 describe('droits de réutilisation des sources', () => {
-  it('Aldi et Denner (réutilisation publique soumise à accord) sont exclus sans autorisation enregistrée', async () => {
+  it('Aldi, Denner et le journal Coop (réutilisation publique soumise à accord) sont exclus sans autorisation enregistrée', async () => {
     const { restrictedConnectorIds, SOURCE_REGISTRY } = await import('../src');
     expect(SOURCE_REGISTRY['aldi-api']?.publicUse).toBe('requires_authorization');
     expect(SOURCE_REGISTRY['lidl-web']?.publicUse).toBe('no_restriction_found');
     expect(SOURCE_REGISTRY['open-prices']?.publicUse).toBe('open_license');
     expect(SOURCE_REGISTRY.foodally?.publicUse).toBe('licence_required');
     expect(SOURCE_REGISTRY['denner-web']?.publicUse).toBe('requires_authorization');
-    expect(restrictedConnectorIds([])).toEqual(['aldi-api', 'denner-web']);
-    expect(restrictedConnectorIds(['aldi-api'])).toEqual(['denner-web']);
-    expect(restrictedConnectorIds(['aldi-api', 'denner-web'])).toEqual([]);
+    expect(SOURCE_REGISTRY['coop-epaper']?.publicUse).toBe('requires_authorization');
+    expect(restrictedConnectorIds([])).toEqual(['aldi-api', 'denner-web', 'coop-epaper']);
+    expect(restrictedConnectorIds(['aldi-api'])).toEqual(['denner-web', 'coop-epaper']);
+    expect(restrictedConnectorIds(['aldi-api', 'denner-web', 'coop-epaper'])).toEqual([]);
   });
 
   it('une source exclue disparaît entièrement de l’index (articles, prix, actions)', () => {

@@ -84,6 +84,8 @@ export interface FetchResult {
   archivedAs: string | null;
   /** En-têtes utiles (limites de débit annoncées par la source). */
   headers?: Record<string, string>;
+  /** Contenu binaire (`getBinary`, ex. page PDF) ; `body` est alors vide. */
+  bytes?: Uint8Array;
 }
 
 export interface FetcherStats {
@@ -114,6 +116,11 @@ export class PoliteFetcher {
   private readonly robotsCache = new Map<string, Promise<RobotsPolicy>>();
   private readonly nextSlot = new Map<string, number>();
   private readonly consecutiveErrors = new Map<string, number>();
+  /**
+   * Cookies de session renvoyés par chaque hôte (comportement normal d'un client HTTP : session
+   * anonyme d'un journal numérique, par exemple). Jamais d'identifiants ni de cookies fabriqués.
+   */
+  private readonly cookies = new Map<string, Map<string, string>>();
   private readonly opts: Required<Omit<FetcherOptions, 'archiveDir' | 'cacheDir'>> & { archiveDir: string | null; cacheDir: string | null };
 
   constructor(options: FetcherOptions) {
@@ -202,6 +209,48 @@ export class PoliteFetcher {
   }
 
   /**
+   * GET d'un document binaire autorisé (page PDF d'un prospectus) : mêmes règles que `get`. Le
+   * contenu n'est pas archivé (volumineux) ; seul le texte qui en est extrait est conservé.
+   *
+   * `publisherOrigin` : document servi par un hébergeur de fichiers au moyen d'une adresse signée
+   * fournie par le site éditeur (l'hébergeur refuse tout accès non signé, y compris à robots.txt) :
+   * le robots.txt applicable est celui de l'éditeur. Un refus (401/403) du document lui-même arrête
+   * la collecte comme ailleurs.
+   */
+  async getBinary(url: string, accept = 'application/pdf', publisherOrigin?: string): Promise<FetchResult> {
+    const delay = await this.admit(url, publisherOrigin);
+    return this.request(url, accept, this.opts.maxRetries + 1, delay, null, true);
+  }
+
+  /**
+   * Cache clé → valeur (données dérivées d'un document qui ne change pas : texte d'une page de
+   * prospectus déjà lue). Aucun accès réseau ; null si absent, illisible ou plus vieux que `maxAgeMs`.
+   */
+  async cacheRead<T>(key: string, maxAgeMs: number): Promise<T | null> {
+    if (!this.opts.cacheDir) return null;
+    const file = join(this.opts.cacheDir, `kv-${createHash('sha1').update(key).digest('hex').slice(0, 20)}.json`);
+    try {
+      const st = await stat(file);
+      if (this.opts.clock() - st.mtimeMs >= maxAgeMs) return null;
+      const value = JSON.parse(await readFile(file, 'utf8')) as T;
+      this.stats.cacheHits++;
+      return value;
+    } catch {
+      return null;
+    }
+  }
+
+  async cacheWrite(key: string, value: unknown): Promise<void> {
+    if (!this.opts.cacheDir) return;
+    try {
+      await mkdir(this.opts.cacheDir, { recursive: true });
+      await writeFile(join(this.opts.cacheDir, `kv-${createHash('sha1').update(key).digest('hex').slice(0, 20)}.json`), JSON.stringify(value));
+    } catch (e) {
+      this.opts.log.warn('Mise en cache impossible', { key, error: String(e) });
+    }
+  }
+
+  /**
    * POST vers un point d'accès public explicitement prévu pour les machines (ex. serveur MCP
    * autorisé par robots.txt) : mêmes règles que `get` (robots.txt, délai, reprises, arrêt).
    */
@@ -210,7 +259,7 @@ export class PoliteFetcher {
     return this.request(url, accept, this.opts.maxRetries + 1, delay, { method: 'POST', body, contentType });
   }
 
-  private async admit(url: string): Promise<number> {
+  private async admit(url: string, publisherOrigin?: string): Promise<number> {
     const u = new URL(url);
     if (u.host in this.stats.blocked) throw new HttpBlockedError(url, this.stats.blocked[u.host] as BlockReason);
     if (this.stats.tripped.includes(u.host)) throw new HttpFetchError(url, `Hôte abandonné après ${this.opts.maxConsecutiveErrors} erreurs consécutives : ${url}`);
@@ -218,8 +267,8 @@ export class PoliteFetcher {
       this.stats.budgetExhausted = true;
       throw new HttpBudgetError(url, this.opts.maxRequests);
     }
-    const policy = await this.robots(u.origin);
-    if (!isAllowed(policy, `${u.pathname}${u.search}`)) throw new HttpBlockedError(url, 'robots');
+    const policy = await this.robots(publisherOrigin ?? u.origin);
+    if (!isAllowed(policy, publisherOrigin ? '/' : `${u.pathname}${u.search}`)) throw new HttpBlockedError(url, 'robots');
     return Math.max(this.opts.minDelayMs, (policy.crawlDelaySec ?? 0) * 1000);
   }
 
@@ -237,6 +286,7 @@ export class PoliteFetcher {
     attempts: number,
     delayMs = this.opts.minDelayMs,
     send: { method: 'POST'; body: string; contentType: string } | null = null,
+    binary = false,
   ): Promise<FetchResult> {
     const host = new URL(url).host;
     let lastError: unknown = null;
@@ -253,6 +303,7 @@ export class PoliteFetcher {
             accept,
             'accept-language': 'fr-CH,fr;q=0.9,de-CH;q=0.5',
             ...(send ? { 'content-type': send.contentType } : {}),
+            ...(this.cookies.get(host)?.size ? { cookie: [...(this.cookies.get(host) as Map<string, string>)].map(([k, v]) => `${k}=${v}`).join('; ') } : {}),
           },
           body: send?.body,
           redirect: 'follow',
@@ -264,8 +315,10 @@ export class PoliteFetcher {
         await this.opts.sleep(backoffMs(attempt));
         continue;
       }
-      const body = await readLimited(res, this.opts.maxBytes);
-      this.stats.bytes += body.length;
+      this.keepCookies(host, res);
+      const bytes = binary && res.ok ? await readLimitedBytes(res, this.opts.maxBytes) : null;
+      const body = bytes ? '' : await readLimited(res, this.opts.maxBytes);
+      this.stats.bytes += bytes ? bytes.byteLength : body.length;
       if (res.status === 401 || res.status === 403 || res.status === 451) {
         this.stats.blocked[host] = 'forbidden';
         throw new HttpBlockedError(url, 'forbidden', res.status);
@@ -294,19 +347,31 @@ export class PoliteFetcher {
       }
       this.consecutiveErrors.set(host, 0);
       const fetchedAt = new Date(this.opts.clock());
-      const sha256 = createHash('sha256').update(body).digest('hex');
+      const sha256 = createHash('sha256').update(bytes ?? body).digest('hex');
       const contentType = res.headers.get('content-type') ?? '';
-      const archivedAs = await this.archive(url, res.status, contentType, body, fetchedAt, sha256);
+      const archivedAs = bytes ? null : await this.archive(url, res.status, contentType, body, fetchedAt, sha256);
       const headers: Record<string, string> = {};
       res.headers.forEach((v, k) => {
         if (/^x-ratelimit|^retry-after/i.test(k)) headers[k.toLowerCase()] = v;
       });
-      return { url, status: res.status, contentType, body, fetchedAt, sha256, archivedAs, headers };
+      return { url, status: res.status, contentType, body, fetchedAt, sha256, archivedAs, headers, ...(bytes ? { bytes } : {}) };
     }
     this.stats.errors++;
     this.noteError(host);
     if (lastError instanceof HttpFetchError) throw lastError;
     throw new HttpFetchError(url, `Échec après ${attempts} tentatives : ${String(lastError)}`);
+  }
+
+  private keepCookies(host: string, res: Response) {
+    const set = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
+    for (const line of set) {
+      const m = /^\s*([^=;\s]+)=([^;]*)/.exec(line);
+      if (!m) continue;
+      const jar = this.cookies.get(host) ?? new Map<string, string>();
+      if (/;\s*max-age=0\b|;\s*expires=thu, 01 jan 1970/i.test(line)) jar.delete(m[1] as string);
+      else jar.set(m[1] as string, m[2] as string);
+      this.cookies.set(host, jar);
+    }
   }
 
   /** Disjoncteur : au-delà de N erreurs consécutives, l'hôte n'est plus sollicité pendant l'exécution. */
@@ -348,6 +413,14 @@ async function readLimited(res: Response, maxBytes: number): Promise<string> {
   const text = await res.text();
   if (text.length > maxBytes) throw new HttpFetchError(res.url, 'Réponse trop volumineuse', res.status);
   return text;
+}
+
+async function readLimitedBytes(res: Response, maxBytes: number): Promise<Uint8Array> {
+  const len = Number(res.headers.get('content-length') ?? '0');
+  if (len > maxBytes) throw new HttpFetchError(res.url, `Réponse trop volumineuse (${len} octets)`, res.status);
+  const buf = new Uint8Array(await res.arrayBuffer());
+  if (buf.byteLength > maxBytes) throw new HttpFetchError(res.url, 'Réponse trop volumineuse', res.status);
+  return buf;
 }
 
 /** Supprime les archives plus anciennes que `days` jours (dossiers `hôte/AAAA-MM-JJ`). */

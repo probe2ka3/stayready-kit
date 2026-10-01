@@ -61,6 +61,12 @@ export function dennerSearchUrl(query: string): string {
 /** Actions de la semaine et actions annoncées (« dès jeudi »), paginées. */
 export const DENNER_ACTION_PAGES = ['/fr/actions/actions-actuelles', '/fr/actions/actions-dès-jeudi'];
 
+/**
+ * Pages thématiques listant l'assortiment permanent (grille complète, sans pagination) : marques
+ * propres de base et produits IP-SUISSE. Indépendantes de la recherche (5 résultats seulement).
+ */
+export const DENNER_THEME_PAGES = ['/fr/découvrir/produits-ip-suisse', '/fr/découvrir/produits-phares/provisions-domestiques'];
+
 /* ------------------------------------------------------------------ */
 /* État Nuxt (format « devalue » : tableau de valeurs référencées)     */
 /* ------------------------------------------------------------------ */
@@ -117,7 +123,9 @@ export interface DennerGrid {
   totalResults: number;
 }
 
-/** Articles de tous les blocs de recherche de la page (grille, résultats de recherche). */
+type RawGridItem = { sku?: string; price?: string | number; attributeInfo?: Array<{ attributeName: string; vals?: Array<{ value?: string }> }> };
+
+/** Articles de tous les blocs de la page (résultats de recherche, grilles d'actions ou thématiques). */
 export function extractDennerGrid(nuxt: unknown): DennerGrid | null {
   const data = (nuxt as { data?: Record<string, unknown> } | null)?.data;
   if (!data || typeof data !== 'object') return null;
@@ -125,23 +133,34 @@ export function extractDennerGrid(nuxt: unknown): DennerGrid | null {
   let totalPages = 0;
   let totalResults = 0;
   let blocks = 0;
-  for (const value of Object.values(data)) {
+  const add = (it: RawGridItem | undefined) => {
+    if (!it?.sku) return;
+    const attrs: DennerAttrs = {};
+    for (const a of it.attributeInfo ?? []) {
+      const vals = (a.vals ?? []).map((v) => v.value).filter((v): v is string => typeof v === 'string');
+      attrs[a.attributeName] = vals.length > 1 ? vals : vals[0];
+    }
+    items.push({ sku: it.sku, price: it.price ?? null, attrs });
+  };
+  for (const [key, value] of Object.entries(data)) {
+    // Pages thématiques (« produits IP-SUISSE », « provisions domestiques ») : grille publiée
+    // directement, sans pagination, au même format d'article que la recherche.
+    if (key.startsWith('publication-grid-')) {
+      const list = (value as { items?: RawGridItem[] } | null)?.items;
+      if (!Array.isArray(list)) continue;
+      blocks++;
+      for (const it of list) add(it);
+      totalPages = Math.max(totalPages, 1);
+      totalResults = Math.max(totalResults, list.length);
+      continue;
+    }
     const searches = (value as { blocks?: { searches?: unknown[] } } | null)?.blocks?.searches;
     if (!Array.isArray(searches)) continue;
-    for (const b of searches as Array<{ stats?: { totalPages?: number; totalResults?: number }; slots?: Array<{ item?: { sku?: string; price?: string | number; attributeInfo?: Array<{ attributeName: string; vals?: Array<{ value?: string }> }> } }> }>) {
+    for (const b of searches as Array<{ stats?: { totalPages?: number; totalResults?: number }; slots?: Array<{ item?: RawGridItem }> }>) {
       blocks++;
       totalPages = Math.max(totalPages, Number(b.stats?.totalPages ?? 0));
       totalResults = Math.max(totalResults, Number(b.stats?.totalResults ?? 0));
-      for (const slot of b.slots ?? []) {
-        const it = slot.item;
-        if (!it?.sku) continue;
-        const attrs: DennerAttrs = {};
-        for (const a of it.attributeInfo ?? []) {
-          const vals = (a.vals ?? []).map((v) => v.value).filter((v): v is string => typeof v === 'string');
-          attrs[a.attributeName] = vals.length > 1 ? vals : vals[0];
-        }
-        items.push({ sku: it.sku, price: it.price ?? null, attrs });
-      }
+      for (const slot of b.slots ?? []) add(slot.item);
     }
   }
   return blocks ? { items, totalPages, totalResults } : null;
@@ -224,9 +243,13 @@ export function parseDennerItem(item: DennerGrid['items'][number]): DennerParsed
     }
   }
   // Œufs : « 6 x 53+ g », « 12 x 53 g », « …, importés, 12 » = nombre d'œufs (le poids est un calibre).
-  // (« \b » ne reconnaît pas « Œ » : recherche simple de « œuf » / « oeuf ».)
-  if (/œuf|oeuf/i.test(name) && !/p[âa]ques|liqueur|chocolat|sucre|fourr/i.test(name)) {
-    const eggs = /(\d+)\s*[x×]\s*\d+\s*\+?\s*g/i.exec(subline)?.[1] ?? /(?:^|,\s*)(\d+)\s*(?:pi[èe]ces?)?\s*$/.exec(subline)?.[1];
+  // (« \b » ne reconnaît pas « Œ » : recherche de « œuf » / « oeuf » hors « bœuf » / « boeuf ».)
+  if (/(?<!b)(œuf|oeuf)/i.test(name) && !/p[âa]ques|liqueur|chocolat|sucre|fourr/i.test(name)) {
+    // « 6x53 » ou « 10x53 » peut aussi figurer dans la désignation (détail réduit à « 6 g+ »).
+    const eggs =
+      /(\d+)\s*[x×]\s*\d+\s*\+?\s*g/i.exec(subline)?.[1] ??
+      /(\d+)\s*[x×]\s*\d{2}\b/i.exec(`${name} ${subline}`)?.[1] ??
+      /(?:^|,\s*)(\d+)\s*(?:pi[èe]ces?)?\s*$/.exec(subline)?.[1];
     fromSubline = eggs ? { quantity: { amount: Number(eggs), unit: 'piece' }, variableWeight: false, ambiguous: false } : null;
     packSegment = eggs ? `${eggs} x 1` : packSegment;
   }
@@ -236,7 +259,8 @@ export function parseDennerItem(item: DennerGrid['items'][number]): DennerParsed
   if (salesQty > 1 && !multi) return { skip: 'lot ambigu' };
   const quantity: Quantity | null = fromSubline?.quantity ?? (salesQty === 1 ? contentSizeQuantity(one(a.content_size_text)) : null);
   if (!quantity) return { skip: 'contenance inconnue' };
-  const perKg = fromSubline?.variableWeight ?? false;
+  // Poids variable : « le kg », ou pièce « env. 220 g » vendue au prix des 100 g.
+  const perKg = (fromSubline?.variableWeight ?? false) || /\benv\./i.test(subline);
   const text = `${name} ${subline}`;
   const ecoLabels = [a.eco_labels].flat().filter(Boolean).join(' ');
   const organic = /\bbio\b|enerbio/i.test(text) || /bio/i.test(ecoLabels);
@@ -408,6 +432,10 @@ export class DennerWebConnector implements PriceConnector {
     for (const slug of needs) {
       if (ctx.signal?.aborted) break;
       await read(dennerSearchUrl(dennerQuery(slug)), slug);
+    }
+    for (const path of DENNER_THEME_PAGES) {
+      if (ctx.signal?.aborted) break;
+      await read(`${DENNER_ORIGIN}${encodeURI(path)}`);
     }
     for (const path of DENNER_ACTION_PAGES) {
       const first = await read(`${DENNER_ORIGIN}${encodeURI(path)}`);

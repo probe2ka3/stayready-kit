@@ -97,6 +97,19 @@ describe('Denner : articles', () => {
     if ('skip' in gruyere) throw new Error(gruyere.skip);
     expect(gruyere.product.attributes).toMatchObject({ swissOrigin: true, labels: ['aop'] });
     expect(parseDennerItem({ sku: 'l', price: '5.95', attrs: { articleId: '10', name: 'Œufs avec liqueur aux œufs Lindt', nameSubline: '108 g' } })).not.toHaveProperty('skip');
+    // « 6x53 » ou « 10x53 » dans la désignation, détail tronqué.
+    const dix = parseDennerItem({ sku: 'm', price: '5.30', attrs: { articleId: '11', name: "IP-Suisse Oeufs d'élevage en plein", nameSubline: '10x53' } });
+    if ('skip' in dix) throw new Error(dix.skip);
+    expect(dix.product.quantity).toEqual({ amount: 10, unit: 'piece' });
+    const six = parseDennerItem({ sku: 'n', price: '3.50', attrs: { articleId: '12', name: 'œufs élevage en plein air IPS Suisse romande 6x53', nameSubline: '6 g+' } });
+    if ('skip' in six) throw new Error(six.skip);
+    expect(six.product.quantity).toEqual({ amount: 6, unit: 'piece' });
+  });
+
+  it('« bœuf » n’est pas un œuf : prix aux 100 g lu comme tel (espace insécable)', () => {
+    const r = parseDennerItem({ sku: 'o', price: '4.50', attrs: { articleId: '13', name: 'Émincé de bœuf Angus IP-SUISSE', nameSubline: 'env. 220\u00a0g, les 100 g', content_size_text: '0.22 unit.g' } });
+    if ('skip' in r) throw new Error(r.skip);
+    expect(r.product.quantity).toEqual({ amount: 100, unit: 'g' });
   });
 
   it('dates publiées et contenances « unit. »', () => {

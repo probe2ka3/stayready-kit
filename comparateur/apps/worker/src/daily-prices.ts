@@ -22,7 +22,7 @@ import { jobReleves } from './releves';
 import { validationPath } from './validation';
 
 /** Sources de la collecte quotidienne, dans l'ordre d'exécution (les plus légères d'abord). */
-export const DAILY_SOURCES = ['open-prices', 'denner-web', 'aldi-api', 'lidl-web'];
+export const DAILY_SOURCES = ['open-prices', 'coop-epaper', 'denner-web', 'aldi-api', 'lidl-web'];
 
 export interface StepResult {
   step: string;

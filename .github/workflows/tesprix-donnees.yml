@@ -8,7 +8,7 @@ name: TesPrix — données gratuites et page publique
 # - Collecte Lidl + Open Prices depuis les serveurs de GitHub : DÉSACTIVÉE par défaut. Elle ne tourne
 #   (tâche planifiée ou lancement manuel) que si la variable de dépôt TESPRIX_COLLECTE_ACTIONS vaut
 #   « oui », décision de l'exploitant après lecture des conditions de GitHub Actions (§ 5 du plan).
-#   Jamais Aldi ni Denner (conditions : usage privé), jamais d'appel à une API d'IA.
+#   Jamais Aldi, Denner ni le journal Coop (conditions : usage privé), jamais d'appel à une API d'IA.
 # - Publication GitHub Pages : seulement depuis main et si la variable TESPRIX_PAGES vaut « oui »
 #   (Pages activé avec la source « GitHub Actions »). Les tâches planifiées ne s'exécutent que sur la
 #   branche par défaut.
@@ -86,7 +86,7 @@ jobs:
         run: |
           mkdir -p ../_site
           cp data/public/index.html ../_site/index.html
-          if grep -qE 'aldi-api|denner-web' ../_site/index.html; then echo 'Donnée non publiable dans la page publique' && exit 1; fi
+          if grep -qE 'aldi-api|denner-web|coop-epaper' ../_site/index.html; then echo 'Donnée non publiable dans la page publique' && exit 1; fi
           if [ -n "$(ls data/private/live 2>/dev/null)" ]; then echo 'Instantané privé présent sur le serveur : interdit' && exit 1; fi
       - uses: actions/upload-artifact@v4
         with:

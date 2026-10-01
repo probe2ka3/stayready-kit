@@ -75,6 +75,7 @@ export const DEFAULT_CAPS: Record<string, number> = {
   'lidl-web': 160,
   'aldi-api': 60,
   'denner-web': 90,
+  'coop-epaper': 40,
   'open-prices': 60,
   foodally: 100,
 };

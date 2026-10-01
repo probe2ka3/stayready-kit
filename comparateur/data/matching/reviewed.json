@@ -3605,6 +3605,97 @@
    "reviewer": "équipe données TesPrix (revue assistée, collecte quotidienne)",
    "reviewedAt": "2026-10-01",
    "note": "Œufs suisses Denner plein air, 12 x 53+ g"
+  },
+  {
+   "retailerProductId": "aldi:289081",
+   "canonicalSlug": "oeufs-plein-air-6",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "« Œufs régionaux d'élevage en plein air, Suisse orientale », Saveurs Suisses, 4 pièces : origine suisse et plein air publiés ; boîte de 4 (2 boîtes pour 6 œufs)."
+  },
+  {
+   "retailerProductId": "coop:ep-63f87c86e349",
+   "canonicalSlug": "boeuf-hache-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Viande de bœuf hachée Coop, Suisse, duo 2 × 400 g (prix unitaire imprimé 1.46/100 g concordant)"
+  },
+  {
+   "retailerProductId": "coop:ep-314d28d94ad3",
+   "canonicalSlug": "pommes-gala-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Pommes Gala IP-Suisse, Suisse, barquette de 750 g"
+  },
+  {
+   "retailerProductId": "coop:ep-3cee5933d260",
+   "canonicalSlug": "poires-1kg",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Poires Williams IP-Suisse, Suisse, en vrac, le kg (action du jeudi au dimanche)"
+  },
+  {
+   "retailerProductId": "coop:ep-c97cdf508011",
+   "canonicalSlug": "citrons-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Citrons, Espagne, filet de 500 g (Super-prix, sans prix « au lieu de »)"
+  },
+  {
+   "retailerProductId": "coop:ep-da8e2c9e2924",
+   "canonicalSlug": "tomates-grappe-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Tomates grappes, Suisse/Pays-Bas/Turquie, en vrac, le kg (origine non exigée par le besoin)"
+  },
+  {
+   "retailerProductId": "coop:ep-b817a55e60ef",
+   "canonicalSlug": "penne-500g",
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "« Fusillis ou pennes rigates al bronzo bio Naturaplan », trio 3 × 500 g : le prix d'action vaut pour les pennes ; lot de trois"
+  },
+  {
+   "retailerProductId": "coop:ep-cdcf26c4f3e6",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Lait drink 12 × 1 litre : vendu par carton de 12 l seulement, format non équivalent à 1 l"
+  },
+  {
+   "retailerProductId": "coop:ep-78bb9d323285",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Lait entier UHT 12 × 1 litre : carton de 12 l seulement, format non équivalent à 1 l"
+  },
+  {
+   "retailerProductId": "coop:ep-e1fa9b317dac",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Sucre cristallisé 10 × 1 kg : lot de 10 kg seulement, format non équivalent à 1 kg"
+  },
+  {
+   "retailerProductId": "coop:ep-a3291106611c",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Farine blanche 10 × 1 kg : lot de 10 kg seulement, format non équivalent à 1 kg"
+  },
+  {
+   "retailerProductId": "coop:ep-18aadd4a626a",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Blancs de poulet surgelés, Pays-Bas : le besoin exige du poulet suisse frais"
+  },
+  {
+   "retailerProductId": "coop:ep-71d1adfbf804",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
+   "reviewedAt": "2026-10-01",
+   "note": "Gruyère mi-salé AOP, duo d'env. 560 g au prix des 100 g : conditionnement non comparable à 250 g"
   }
  ]
 }

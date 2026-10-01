@@ -1,8 +1,9 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-09-30T23:07:51.221Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-10-01T00:22:23.687Z` sur les instantanés versionnés :
 - `aldi-api` du 30.09.2026 (réutilisation : requires_authorization)
-- `denner-web` du 30.09.2026 (réutilisation : requires_authorization)
+- `coop-epaper` du 01.10.2026 (réutilisation : requires_authorization)
+- `denner-web` du 01.10.2026 (réutilisation : requires_authorization)
 - `lidl-web` du 30.09.2026 (réutilisation : no_restriction_found)
 - `open-prices` du 30.09.2026 (réutilisation : open_license)
 
@@ -15,15 +16,15 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Enseigne | ● officiel | ◆ relevé local | ○ Open Prices | ◐ privé seulement | · trop ancien | — aucune donnée |
 |---|---|---|---|---|---|---|
 | Migros | 0 | 0 | 0 | 0 | 1 | 49 |
-| Coop | 0 | 0 | 1 | 0 | 1 | 48 |
+| Coop | 0 | 0 | 1 | 5 | 1 | 43 |
 | Denner | 0 | 0 | 0 | 34 | 1 | 15 |
-| Aldi Suisse | 0 | 0 | 0 | 22 | 0 | 28 |
+| Aldi Suisse | 0 | 0 | 0 | 23 | 0 | 27 |
 | Lidl Suisse | 47 | 0 | 0 | 0 | 0 | 3 |
 
 | Besoins comparables dans au moins… | 1 enseigne | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
 | Version publique (sources publiables seulement) | 47 | 1 | 0 | 0 | 0 |
-| Pilote privé (avec Aldi et Denner) | 49 | 41 | 13 | 1 | 0 |
+| Pilote privé (avec Aldi et Denner) | 49 | 41 | 18 | 2 | 0 |
 
 ## Détail
 
@@ -31,14 +32,14 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 |---|---|---|---|---|---|---|---|
 | **Fruits** | | | | | | | |
 | Bananes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.19 (1.19/kg) 30.09.2026 | 1 | 2 |
-| Pommes (Gala ou variété courante) (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.99 (1.99/kg) 30.09.2026, action 01.10–07.10 | 1 | 2 |
-| Poires (1 kg) | — | — | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 30.09.2026, action 01.10–07.10 | 1 | 2 |
+| Pommes (Gala ou variété courante) (1 kg) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 1.99 (1.99/kg) 30.09.2026, action 01.10–07.10 | 1 | 3 |
+| Poires (1 kg) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 30.09.2026, action 01.10–07.10 | 1 | 3 |
 | Oranges (filet) (2 kg) | — | — | ◐ collecté, non publiable | — | ● 2.79 (1.40/kg) 30.09.2026 | 1 | 2 |
-| Citrons (500 g) | — | — | ◐ collecté, non publiable | — | ● 1.79 (2.39/kg) 30.09.2026 | 1 | 2 |
+| Citrons (500 g) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 1.79 (2.39/kg) 30.09.2026 | 1 | 3 |
 | **Légumes** | | | | | | | |
 | Carottes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 2.89 (1.93/kg) 30.09.2026 | 1 | 2 |
 | Oignons jaunes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.69 (1.69/kg) 30.09.2026 | 1 | 2 |
-| Tomates en grappe (500 g) | — | — | ◐ collecté, non publiable | — | ● 3.79 (3.79/kg) 30.09.2026 | 1 | 2 |
+| Tomates en grappe (500 g) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 3.79 (3.79/kg) 30.09.2026 | 1 | 3 |
 | Concombre (1 pièce) | — | — | ◐ collecté, non publiable | — | ● 1.49 (1.49/pce) 30.09.2026 | 1 | 2 |
 | Poivrons mélangés (500 g) | — | — | ◐ collecté, non publiable | — | ● 1.65 (3.30/kg) 30.09.2026 | 1 | 2 |
 | Courgettes (500 g) | — | — | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 30.09.2026 | 1 | 2 |
@@ -76,13 +77,13 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Mozzarella (150 g) | · trop ancien (01.09.2025) | · trop ancien (01.09.2025) | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 1.45 (0.97/100g) 30.09.2026 | 1 | 3 |
 | **Œufs** | | | | | | | |
 | Œufs suisses d’élevage au sol (6 pièces) | — | — | — | — | ● 2.69 (0.45/pce) 30.09.2026 | 1 | 1 |
-| Œufs suisses de plein air (6 pièces) | — | — | ◐ collecté, non publiable | — | ● 4.29 (0.54/pce) 30.09.2026 | 1 | 2 |
+| Œufs suisses de plein air (6 pièces) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 4.29 (0.54/pce) 30.09.2026 | 1 | 3 |
 | **Pain et boulangerie** | | | | | | | |
 | Pain mi-blanc (500 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 0.99 (1.98/kg) 30.09.2026 | 1 | 3 |
 | Pain complet (500 g) | — | — | — | ◐ collecté, non publiable | ● 5.38 (7.69/kg) 30.09.2026 | 1 | 2 |
 | **Viande et poisson** | | | | | | | |
 | Poitrine de poulet suisse (500 g) | — | — | — | ◐ collecté, non publiable | ● 13.50 (22.50/kg) 30.09.2026 | 1 | 2 |
-| Viande hachée de bœuf (500 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 7.79 (15.58/kg) 30.09.2026 | 1 | 3 |
+| Viande hachée de bœuf (500 g) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 7.79 (15.58/kg) 30.09.2026 | 1 | 4 |
 | Jambon cuit en tranches (150 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 2.49 (1.66/100g) 30.09.2026 | 1 | 3 |
 | **Conserves** | | | | | | | |
 | Thon à l’huile (3 boîtes) (240 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 2.70 (0.96/100g) 30.09.2026 | 1 | 3 |

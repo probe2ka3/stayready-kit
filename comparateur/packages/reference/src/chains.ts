@@ -166,6 +166,11 @@ export const PRICE_ZONES: PriceZone[] = [
   },
   { id: 'lidl-romandie', chainId: 'lidl', name: 'Lidl Suisse romande', cantons: ['GE', 'VD', 'NE', 'JU', 'FR', 'VS'], languages: ['fr'] },
   { id: 'lidl-ticino', chainId: 'lidl', name: 'Lidl Tessin', cantons: ['TI'], languages: ['it'] },
+  /*
+   * Coop : actions du magazine encarté dans l'édition romande de Coopération (GE, VD, VS, FR, NE,
+   * JU) ; le Jura bernois reçoit une variante (édition « BE f »), non lue : non rattaché à cette zone.
+   */
+  { id: 'coop-romandie', chainId: 'coop', name: 'Coop Suisse romande (édition Coopération)', cantons: ['GE', 'VD', 'VS', 'FR', 'NE', 'JU'] },
 ];
 
 /**

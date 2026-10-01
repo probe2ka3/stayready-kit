@@ -2,6 +2,7 @@ import type { Store } from '@cabas/core';
 import { AldiApiConnector } from './aldi';
 import { chainConnectors } from './chains';
 import { DemoPriceConnector } from './demo';
+import { CoopEpaperConnector } from './coop-epaper';
 import { DennerWebConnector } from './denner';
 import { FoodAllyConnector } from './foodally';
 import { LidlWebConnector } from './lidl';
@@ -28,6 +29,7 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
     new LidlWebConnector(),
     new AldiApiConnector(),
     new DennerWebConnector(),
+    new CoopEpaperConnector(),
     new OpenPricesConnector(deps.stores ?? [], deps.resolveZone),
     new FoodAllyConnector(),
     ...chainConnectors(),
@@ -35,7 +37,7 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
 }
 
 /** Connecteurs qui collectent des prix réels en ligne (tâche `collect`). */
-export const LIVE_CONNECTOR_IDS = ['lidl-web', 'aldi-api', 'denner-web', 'open-prices', 'foodally'];
+export const LIVE_CONNECTOR_IDS = ['lidl-web', 'aldi-api', 'denner-web', 'coop-epaper', 'open-prices', 'foodally'];
 
 export function findConnector(id: string, deps: ConnectorDeps = {}): PriceConnector | undefined {
   return priceConnectors(deps).find((c) => c.id === id);

@@ -169,6 +169,59 @@ describe('client HTTP poli', () => {
       await rm(dir, { recursive: true, force: true });
     }
   });
+
+  it('cookie de session renvoyé au même hôte, jamais à un autre', async () => {
+    const seen: Array<[string, string | null]> = [];
+    const impl = (async (input: string | URL, init?: RequestInit) => {
+      const url = String(input);
+      seen.push([url, new Headers(init?.headers).get('cookie')]);
+      if (url.endsWith('/robots.txt')) return new Response('', { status: 200 });
+      if (url === 'https://j.ch/') return new Response('ok', { status: 200, headers: { 'set-cookie': 'session=abc; Path=/; HttpOnly' } });
+      return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+    }) as typeof fetch;
+    const f = new PoliteFetcher({ ...base, fetchImpl: impl });
+    await f.get('https://j.ch/');
+    await f.post('https://j.ch/api', '{}');
+    await f.get('https://k.ch/x');
+    expect(seen.find(([u]) => u === 'https://j.ch/api')?.[1]).toBe('session=abc');
+    expect(seen.find(([u]) => u === 'https://k.ch/x')?.[1]).toBeNull();
+  });
+
+  it('document binaire signé : robots.txt de l’éditeur, contenu non archivé ; 403 sur le document = arrêt', async () => {
+    const { impl, calls } = fakeFetch({
+      'https://pub.ch/robots.txt': { status: 200, body: 'User-agent: *\nAllow: /' },
+      'https://files.example/doc?sig=1': { status: 200, body: '%PDF-1.7' },
+      'https://files.example/doc?sig=2': { status: 403, body: 'AccessDenied' },
+    });
+    const f = new PoliteFetcher({ ...base, fetchImpl: impl });
+    const r = await f.getBinary('https://files.example/doc?sig=1', 'application/pdf', 'https://pub.ch');
+    expect(new TextDecoder().decode(r.bytes)).toBe('%PDF-1.7');
+    expect(r.body).toBe('');
+    expect(r.archivedAs).toBeNull();
+    expect(calls).not.toContain('https://files.example/robots.txt');
+    await expect(f.getBinary('https://files.example/doc?sig=2', 'application/pdf', 'https://pub.ch')).rejects.toBeInstanceOf(HttpBlockedError);
+    // Éditeur qui interdit tout : rien n'est téléchargé.
+    const { impl: impl2, calls: calls2 } = fakeFetch({ 'https://no.ch/robots.txt': { status: 200, body: 'User-agent: *\nDisallow: /' } });
+    const g = new PoliteFetcher({ ...base, fetchImpl: impl2 });
+    await expect(g.getBinary('https://files.example/doc?sig=1', 'application/pdf', 'https://no.ch')).rejects.toBeInstanceOf(HttpBlockedError);
+    expect(calls2).toEqual(['https://no.ch/robots.txt']);
+  });
+
+  it('cache clé → valeur : relu sans requête tant qu’il est récent', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'tesprix-kv-'));
+    try {
+      let clock = Date.now();
+      const f = new PoliteFetcher({ ...base, clock: () => clock, cacheDir: dir });
+      expect(await f.cacheRead('page:1', 1000)).toBeNull();
+      await f.cacheWrite('page:1', { runs: [1, 2] });
+      expect(await f.cacheRead('page:1', 60_000)).toEqual({ runs: [1, 2] });
+      expect(f.stats.cacheHits).toBe(1);
+      clock += 120_000;
+      expect(await f.cacheRead('page:1', 60_000)).toBeNull();
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('conditionnements', () => {

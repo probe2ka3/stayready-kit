@@ -35,7 +35,7 @@ export interface DataQualityView {
 let cache: { key: string; at: number; view: DataQualityView } | null = null;
 
 function cacheKey(): string {
-  const files = ['lidl-web', 'aldi-api', 'denner-web', 'open-prices', 'releves', 'foodally'].flatMap((id) =>
+  const files = ['lidl-web', 'aldi-api', 'denner-web', 'coop-epaper', 'open-prices', 'releves', 'foodally'].flatMap((id) =>
     [liveSnapshotDir(serverEnv.dataDir), privateSnapshotDir(serverEnv.dataDir)].map((dir) => join(dir, `${id}.json`)),
   );
   return [...files, reviewedMatchesPath(serverEnv.dataDir)]

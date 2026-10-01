@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@cabas/core": "workspace:*",
-    "@cabas/reference": "workspace:*"
+    "@cabas/reference": "workspace:*",
+    "pdfjs-dist": "6.3.289"
   },
   "devDependencies": {
     "typescript": "~5.9.3"
