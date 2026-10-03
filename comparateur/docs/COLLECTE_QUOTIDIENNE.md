@@ -180,10 +180,23 @@ créneaux de rattrapage sans collecte (< 1 min chacun) : **≈ 400 min sur les 2
 mesuré : l'accès d'Aldi, de Denner et du journal Coop depuis les adresses de GitHub (jamais lancés
 depuis le dépôt public).
 
+**Second essai, avec le module d'état partagé** (`etat.mjs` : restauration, enregistrement, suivi par
+source) et les actions en version Node 24 : exécution
+[37142636052](https://github.com/probe2ka3/stayready-kit/actions/runs/37142636052) du 03.10.2026,
+20:01–20:07 (heure de Zurich), commit `d32bd16` :
+
+| Élément | Résultat |
+|---|---|
+| Lidl | ⚠️ **partiel** : 424 prix, 290 actions, 107 requêtes, 347 s ; 1 page en échec (erreur 504 de lidl.ch après une nouvelle tentative) ; besoins du noyau avec prix : 47/50 |
+| Open Prices | ✅ succès : 231 prix (relevé de café non attribué : `docs/COUVERTURE_NOYAU.md` § 0), 8 requêtes, 21 s |
+| Suivi par source (`etat.mjs noter`) | ✅ ligne du jour écrite (« 20:01 github/essai → collecte », statut et date des données par source) ; **le statut partiel apparaît en avertissement** dans le résumé du workflow (« pages manquantes ») : une exécution verte ne masque pas une source incomplète ; une source en échec l'aurait rendue rouge |
+| Contrôle « aucune donnée privée sur le serveur » | ✅ |
+| Avertissement « Node.js 20 is deprecated » | ✅ disparu (présent sur l'exécution précédente, `208b3bc`) |
+| Durée totale du job | **6 min 29 s** (cycle 6 min 14 s) |
+
 État réel : **préparé ✅ ; testé manuellement sur GitHub pour les sources publiables ✅ (dépôt public,
-essai) ; dépôt privé, planification et exécution automatique : ❌ non faits, non observés.** Un nouvel
-essai (même cycle, avec le module d'état partagé `etat.mjs` et son suivi) est lancé à la poussée du
-03.10.2026 au soir : `.github/workflows/tesprix-essai-cycle.yml`.
+deux essais déclenchés par une poussée) ; dépôt privé, planification et exécution automatique : ❌ non
+faits, non observés.**
 
 #### 5.1.1 Cloudflare Workers : réexamen chiffré
 

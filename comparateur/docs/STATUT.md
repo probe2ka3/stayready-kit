@@ -63,7 +63,7 @@ Publication : la provenance d'un prix (fichier de la source et hôte de ses URL)
 | Gratuit | Toutes les fonctions grand public, sans compte ni abonnement |
 | Relevés en magasin | `pnpm job magasins`, `pnpm job releves` (CSV, un magasin, un jour, une preuve) |
 | Matrice et page publique | `pnpm job matrice-essentiels` : 50 × 5, vues publique et privée, page statique sans donnée Aldi |
-| Tests | 261 unitaires, 7 d'intégration PostgreSQL, 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
+| Tests | 263 unitaires, 7 d'intégration PostgreSQL, 34 contrôles PowerShell (tâche Windows), 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 

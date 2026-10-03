@@ -6,7 +6,7 @@
 |---|---|---|
 | Préparé : workflow du dépôt privé (`quotidien.yml`), étapes (`github.sh`), état partagé (`etat.mjs`), mode partagé de la tâche Windows | ✅ | ce dossier ; `scripts/windows/` |
 | Testé localement : dépôt privé simulé (dépôt Git nu), 4 exécutions : premier cycle, créneau suivant « rien à faire », verrou tenu par Windows (« concurrence »), reprise d'une source mise en échec | ✅ | `apps/worker/test/etat-partage.test.ts`, banc PowerShell `scripts/windows/tests/tester-scripts.ps1` (9 contrôles du mode partagé) |
-| Testé manuellement sur les serveurs de GitHub : même cycle, **sources publiables seulement** (Lidl, Open Prices), dans le dépôt public | ✅ 03.10.2026 (exécution 37114095944 ; nouvel essai avec `etat.mjs` à la poussée de cette étape) | `docs/COLLECTE_QUOTIDIENNE.md` § 5.1.2 |
+| Testé manuellement sur les serveurs de GitHub : même cycle, **sources publiables seulement** (Lidl, Open Prices), dans le dépôt public | ✅ 03.10.2026 : exécutions [37114095944](https://github.com/probe2ka3/stayready-kit/actions/runs/37114095944) et, avec `etat.mjs` et le suivi par source, [37142636052](https://github.com/probe2ka3/stayready-kit/actions/runs/37142636052) (Lidl partiel signalé en avertissement, Open Prices succès) | `docs/COLLECTE_QUOTIDIENNE.md` § 5.1.2 |
 | Dépôt privé `probe2ka3/tesprix-collecte` créé | ❌ **impossible d'ici** : l'intégration GitHub de Claude n'a pas le droit de créer un dépôt (« 403 Resource not accessible by integration ») | § 3, étape 2 |
 | Aldi, Denner, journal Coop essayés depuis GitHub | ❌ pas encore (seulement depuis le dépôt privé, jamais depuis le dépôt public) | premier lancement, § 3 |
 | Planification activée, exécution automatique observée | ❌ non | `etat/suivi/SUIVI.md` du dépôt privé |
@@ -53,7 +53,8 @@ autorisation formelle ; (2) **plan et consommation du compte** : non consultable
 dépôt) ; le compte a 4 autres dépôts privés qui partagent le quota ; (3) **moyen de paiement enregistré
 ou non** : à vérifier par vous (§ 3, étape 1) ; (4) retour à l'heure d'hiver (non décrit ; sans effet ici :
 06:17 n'est pas dans l'heure répétée) ; (5) accès d'Aldi, de Denner et du journal Coop depuis les
-adresses de GitHub (premier lancement).
+adresses de GitHub (premier lancement). (6) image des serveurs : `ubuntu-latest` passe à Ubuntu 26 à partir du
+19.10.2026 (avis de GitHub dans les essais du 03.10) ; à surveiller dans le suivi, sans action prévue.
 
 **Consommation estimée** : cycle complet ≈ 12 min (mesuré : 10 min 50 s ici ; Lidl + Open Prices : 5 min 38 s
 sur GitHub) + installation ; créneaux sans collecte < 1 min (pas d'installation) : **≈ 400 min/mois sur
