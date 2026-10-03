@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-03T17:32:53.342Z",
+ "generatedAt": "2026-10-03T21:52:31.929Z",
  "sources": [
   {
    "connectorId": "aldi-api",
@@ -18,7 +18,7 @@
   },
   {
    "connectorId": "lidl-web",
-   "collectedAt": "2026-10-03T09:02:36.489Z",
+   "collectedAt": "2026-10-03T09:13:18.947Z",
    "publicUse": "no_restriction_found"
   },
   {
@@ -183,7 +183,8 @@
       "confirmed": true
      },
      "reasons": [
-      "while_stocks_last"
+      "while_stocks_last",
+      "regular_price_unknown"
      ]
     }
    },
@@ -267,7 +268,8 @@
       "confirmed": true
      },
      "reasons": [
-      "while_stocks_last"
+      "while_stocks_last",
+      "regular_price_unknown"
      ]
     }
    },
@@ -335,26 +337,18 @@
     "lidl": {
      "status": "official_public",
      "connectorId": "lidl-web",
-     "totalCents": 278,
+     "totalCents": 279,
      "unitPrice": {
       "basis": "kg",
-      "cents": 139
+      "cents": 140
      },
      "productName": "Oranges",
-     "packs": 2,
-     "observedAt": "2026-09-30T22:33:12.350Z",
+     "packs": 1,
+     "observedAt": "2026-10-03T09:11:54.651Z",
      "scope": "national",
      "place": null,
-     "promotion": {
-      "validFrom": "2026-10-03",
-      "validTo": "2026-10-03",
-      "confirmed": true
-     },
-     "reasons": [
-      "promo_end_presumed",
-      "while_stocks_last",
-      "pack_size_differs"
-     ]
+     "promotion": null,
+     "reasons": []
     }
    },
    "publicChains": 1,
@@ -2171,7 +2165,8 @@
       "confirmed": true
      },
      "reasons": [
-      "while_stocks_last"
+      "while_stocks_last",
+      "regular_price_unknown"
      ]
     }
    },

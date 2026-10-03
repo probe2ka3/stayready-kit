@@ -1,4 +1,4 @@
-# Parcours d’un utilisateur à Bulle, version publique (03.10.2026)
+# Parcours d’un utilisateur à Bulle, version publique (03.10.2026, rejoué après P12)
 
 Conditions : site lancé en local en **mode public** (`RESTRICTED_SOURCES=exclude` : Aldi, Denner et le
 journal Coop exclus ; `PRICE_DATA=live`), instantanés publiables du 03.10.2026 (Lidl, Open Prices),
@@ -27,6 +27,32 @@ sa source et sa portée (nationale, zone tarifaire, succursale) ; les sources pr
 pas ; trajet estimé annoncé comme tel ; magasins fermés le jour choisi non comparés.
 
 Captures : `docs/captures/bulle-public/` (magasins, article par article, panier par enseigne, couverture).
+
+## Rejeu du 03.10.2026 au soir (P12) : même panier, même date
+
+Mêmes conditions (mode public, NPA 1630, rayon 10 km, mêmes 12 articles, « plus tard » mardi 06.10.2026
+à 10:00), après : règles revues des offres Lidl, lecture corrigée des prix Lidl Plus, affichage des
+conditionnements, distinction « vérifié dans un magasin du rayon » / « relevé ailleurs ».
+
+| Élément | Avant (P11) | Après (P12) |
+|---|---|---|
+| Lidl seul : achats / trajet / total | 20.20 / 0.69 / 20.89 CHF | **inchangé** : 20.20 / 0.69 / 20.89 CHF |
+| Couverture | Lidl 12/12, Coop 1/12, Migros, Denner, Aldi 0/12 | **inchangée** |
+| Articles comparables entre enseignes | 1 sur 12 (penne) | **inchangé** : 1 sur 12 |
+| Paniers complets comparables | 0 (Lidl seul complet) | **inchangé** : 0 |
+| Oranges 2 kg chez Lidl | 2.79 le 06.10, mais **2.78 « aujourd’hui »** (prix Lidl Plus 2 × 1.39 appliqué sans carte, lu comme action du 03.10) et « +0.01 CHF en attendant » | 2.79 (filet de 2 kg, prix pour tous) ; « Avec Lidl Plus : 2.78 CHF pour 2 kg (2 × 1 kg), jusqu’au 7 oct. — non appliqué : carte non déclarée » ; plus d’écart fictif « en attendant » |
+| Chaque article (liste par enseigne) | « À payer : 1 × 750 g à 1.79 CHF » | « À payer : 1 × 750 g à 1.79 CHF · demandé 500 g · acheté 750 g · surplus 250 g » (demandé et acheté affichés sur chaque ligne) |
+| Article par article | « 1 × 500 g · 2.38 CHF / kg » | « 1 × 500 g = 500 g acheté · 2.38 CHF / kg » ; le montant est le coût des paquets entiers, le prix au kilo sert à comparer |
+| Penne Coop | relevé du 04.08 à Coop Maladière, Neuchâtel | idem + « **relevé hors de votre rayon : non vérifié dans un magasin proche** » |
+| Page des magasins | couverture par enseigne | + « Aucun prix vérifié dans un magasin de votre rayon » pour chaque enseigne ; Coop : « 1 relevé fait dans une autre succursale, hors de votre rayon » |
+
+Avec la carte Lidl Plus déclarée (même panier réduit, API) : oranges = **2 sachets de 1 kg**, 2 kg
+achetés, 2.78 CHF (offre du 01 au 07.10, règle `lidl-oranges`) ; le 09.10, l’offre ne s’applique plus
+et rien n’est prolongé (test `packages/connectors/test/offres-hebdo.test.ts`).
+
+**La comparaison entre enseignes à Bulle reste inchangée** : elle ne progressera qu’avec de vrais relevés
+en magasin (fiche Migros Bulle : `docs/releves/FICHE_MIGROS_BULLE.md`). Captures mises à jour :
+`docs/captures/bulle-public/`.
 
 ## Ce que voit réellement l’utilisateur à Bulle
 

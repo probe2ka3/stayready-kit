@@ -1,0 +1,6 @@
+enseigne;magasin;date;besoin;article;variante;marque;code_barres;contenance;unite;au_poids;prix_chf;prix_action_chf;action_du;action_au;carte;conditions;bio;suisse;preuve;releve_par;statut;valide_par
+migros;osm:node/10787882859;;penne-500g;;;;;;;;;;;;;;;;;;a_valider;
+migros;osm:node/10787882859;;tomates-concassees-400g;;;;;;;;;;;;;;;;;;a_valider;
+migros;osm:node/10787882859;;farine-blanche-1kg;;;;;;;;;;;;;;;;;;a_valider;
+migros;osm:node/10787882859;;sucre-cristal-1kg;;;;;;;;;;;;;;;;;;a_valider;
+migros;osm:node/10787882859;;bananes-1kg;;;;;;;;;;;;;;;;;;a_valider;

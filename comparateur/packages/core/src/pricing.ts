@@ -183,6 +183,7 @@ export type StatusReason =
   | 'zone_price'
   | 'regular_price_unknown'
   | 'crowd_sourced'
+  | 'local_survey' // relevé en magasin (étiquette ou ticket) : valable pour ce magasin, indicatif
   | 'third_party_source' // prix d'un fournisseur de données tiers (repli)
   | 'fallback_source' // aucune source officielle utilisable : source de niveau inférieur
   | 'source_divergence' // une autre source indique un prix nettement différent
@@ -249,6 +250,8 @@ export interface LineOption {
   brand: string | null;
   /** Code-barres de l'article (si connu) : seul critère du « même article » entre deux enseignes. */
   gtin: string | null;
+  /** Règle revue ayant relié cette offre au besoin (offre hebdomadaire), sinon null. */
+  matchRule?: string | null;
   quantity: Quantity;
   attributes: ProductAttributes;
   matchKind: MatchKind;
@@ -272,6 +275,11 @@ export interface LineOption {
   reliability: SourceReliability;
   /** Lieu réel du relevé communautaire (succursale), si généralisé. */
   observedAtPlace: string | null;
+  /**
+   * Succursale où le prix a réellement été relevé (relevé en magasin ou communautaire), null pour un
+   * prix publié par l'enseigne : distingue « vérifié dans un magasin du rayon » d'un relevé fait ailleurs.
+   */
+  observedAtStoreId?: string | null;
   license: string | null;
   sourceUrl: string | null;
   /** Niveau de la source retenue (officiel > fournisseur tiers > communautaire > inconnu). */
@@ -592,7 +600,8 @@ export function resolveLine(
 
   for (const match of eligible) {
     const product = index.products.get(match.retailerProductId) as RetailerProduct;
-    const obs = pickObservation(index.pricesByProduct.get(product.id), profile, ctx);
+    // Offre reliée par une règle : ses promotions seulement, dans leurs propres dates.
+    const obs = match.promotionsOnly ? null : pickObservation(index.pricesByProduct.get(product.id), profile, ctx);
     const promos = applicablePromotions(index.promotionsByProduct.get(product.id), profile, ctx);
     const hasStandalonePromo = promos.some((p) => p.type === 'price' || p.type === 'min_qty_price');
     if (!obs && !hasStandalonePromo) continue;
@@ -602,6 +611,9 @@ export function resolveLine(
     const obsReliability = obs ? reliabilityOf(obs) : null;
     const crowd = obsReliability === 'crowd';
     const thirdParty = obsReliability === 'third_party';
+    // Relevé en magasin déclaré comme tel (connecteur des relevés) : une étiquette ou un ticket d'un
+    // jour, dans un magasin, toujours présenté comme local et indicatif, jamais « vérifié ».
+    const survey = obs?.reliability === 'survey';
     if (obs) sawAnyPrice = true;
     if (stale && !ctx.prefs.includeStalePrices) {
       if (!sawStale || Date.parse(obs!.observedAt) > Date.parse(sawStale.observedAt)) {
@@ -642,7 +654,7 @@ export function resolveLine(
       status = 'stale';
     } else if (ctx.targetDate > ctx.today) {
       status = 'indicative';
-    } else if (ageDays > ctx.policy.verifiedMaxAgeDays || crowd || thirdParty) {
+    } else if (ageDays > ctx.policy.verifiedMaxAgeDays || crowd || thirdParty || survey) {
       status = 'indicative';
     } else {
       status = 'verified';
@@ -662,6 +674,7 @@ export function resolveLine(
     else if (applied?.zoneId) reasons.push('zone_price');
     if (regularTotal == null) reasons.push('regular_price_unknown');
     if (usableObs && crowd) reasons.push('crowd_sourced');
+    if (usableObs && survey) reasons.push('local_survey');
     if (usableObs && thirdParty) reasons.push('third_party_source');
 
     const effectivePackPrice = Math.round(total / packs);
@@ -675,6 +688,7 @@ export function resolveLine(
       productName: product.name,
       brand: product.brand ?? null,
       gtin: product.gtin ?? null,
+      matchRule: match.ruleId ?? null,
       quantity: product.quantity,
       attributes: product.attributes,
       matchKind: match.kind,
@@ -693,6 +707,7 @@ export function resolveLine(
       unitPrice: unitPrice(effectivePackPrice, product.quantity),
       reliability: usableObs ? reliabilityOf(usableObs) : reliabilityOf({ source: chosenSource }),
       observedAtPlace: usableObs?.observedAtPlace ?? null,
+      observedAtStoreId: usableObs && usableObs.reliability !== 'official' ? (usableObs.storeId ?? usableObs.observedAtStoreId ?? null) : null,
       license: usableObs?.license ?? info.license,
       sourceUrl: bestPromo && !usableObs ? (bestPromo.promo.sourceUrl ?? null) : (usableObs?.sourceUrl ?? null),
       sourceTier: info.tier,
@@ -727,7 +742,7 @@ function loyaltyOfferFor(
   for (const match of eligible) {
     const product = index.products.get(match.retailerProductId) as RetailerProduct;
     const packs = packsNeeded(line.qty, canonical.quantity.amount, product.quantity.amount);
-    const obs = pickObservation(index.pricesByProduct.get(product.id), profile, ctx);
+    const obs = match.promotionsOnly ? null : pickObservation(index.pricesByProduct.get(product.id), profile, ctx);
     const fresh = obs && ageInDays(obs.observedAt, ctx.asOf) <= staleAfterDays(obs, ctx.policy) ? obs : null;
     for (const p of index.promotionsByProduct.get(product.id) ?? []) {
       if (!p.loyaltyProgram || ctx.prefs.loyaltyPrograms.includes(p.loyaltyProgram)) continue;
@@ -836,6 +851,10 @@ export interface UsableNeeds {
   needs: number;
   /** Dont avec un prix publié par l'enseigne elle-même. */
   official: number;
+  /** Dont avec un relevé (en magasin ou communautaire) fait dans une des succursales `stores`. */
+  observedInStores: number;
+  /** Dont seulement avec un relevé fait ailleurs (hors des succursales `stores`, ou lieu inconnu). */
+  observedElsewhere: number;
   newest: string | null;
   newestOfficial: string | null;
 }
@@ -858,22 +877,29 @@ export function usableNeedsByChain(
     const pr = profileForStore(store, specific);
     profiles.set(pr.key, pr);
   }
+  const storeIds = new Set(stores.map((s) => s.id));
   const out = new Map<string, UsableNeeds>();
   for (const canonical of canonicals) {
-    const counted = new Set<string>();
+    // Par enseigne : meilleure qualité de preuve trouvée parmi ses succursales (officiel > relevé dans
+    // le rayon > relevé ailleurs), pour ne compter chaque besoin qu'une fois.
+    const best = new Map<string, LineOption>();
+    const rank = (o: LineOption) => (o.reliability === 'official' ? 0 : o.observedAtStoreId && storeIds.has(o.observedAtStoreId) ? 1 : 2);
     for (const profile of profiles.values()) {
-      if (counted.has(profile.chainId)) continue;
       const { option } = resolveLine({ id: canonical.id, productId: canonical.id, qty: 1 }, canonical, profile, index, ctx);
       if (!option) continue;
-      counted.add(profile.chainId);
-      const u = out.get(profile.chainId) ?? { needs: 0, official: 0, newest: null, newestOfficial: null };
+      const cur = best.get(profile.chainId);
+      if (!cur || rank(option) < rank(cur)) best.set(profile.chainId, option);
+    }
+    for (const [chainId, option] of best) {
+      const u = out.get(chainId) ?? { needs: 0, official: 0, observedInStores: 0, observedElsewhere: 0, newest: null, newestOfficial: null };
       u.needs++;
       if (!u.newest || option.observedAt > u.newest) u.newest = option.observedAt;
       if (option.reliability === 'official') {
         u.official++;
         if (!u.newestOfficial || option.observedAt > u.newestOfficial) u.newestOfficial = option.observedAt;
-      }
-      out.set(profile.chainId, u);
+      } else if (rank(option) === 1) u.observedInStores++;
+      else u.observedElsewhere++;
+      out.set(chainId, u);
     }
   }
   return out;

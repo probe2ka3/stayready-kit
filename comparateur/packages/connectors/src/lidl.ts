@@ -107,26 +107,18 @@ export function parseProductPage(html: string, pageUrl: string): LidlAssortmentI
   if (!article || !title || start < 0) return null;
   const end = html.indexOf('towishlist-wrapper', start);
   const box = html.slice(start, end > start ? end : start + 6000);
-  const price = /itemprop="price" content="(\d+(?:\.\d+)?)"/.exec(box);
-  if (!price) return null;
+  const priced = readPriceField(box);
+  if (!priced) return null;
   const name = textOf(title);
   if (EXCLUDED_PRODUCT.test(name)) return null;
   const footer = /<span class="pricefield__footer">([\s\S]*?)<\/span>/.exec(box);
-  let lidlPlusPriceCents: number | null = null;
-  const lp = box.indexOf('pricefield__badge--lidl-plus');
-  if (lp >= 0) {
-    const strong = /<strong class="pricefield__price"[^>]*>([\s\S]*?)<\/strong>/.exec(box.slice(lp));
-    lidlPlusPriceCents = strong ? displayedCents(strong[1] as string) : null;
-  }
   // Pastilles (origine suisse…) : liste placée après le bloc de prix.
   const badges = /<ul class="product-badges-list">([\s\S]*?)<\/ul>/.exec(html)?.[1] ?? '';
   return {
     articleNo: article,
     name,
-    priceCents: Math.round(Number(price[1]) * 100),
-    lidlPlusPriceCents,
+    ...priced,
     packText: footer ? textOf(footer[1] as string) : '',
-    isAction: /pricefield--discount/.test(box) || /pricefield__header">\s*Aktion/.test(box),
     swiss: /badges\/(Schweizer_Kreuz|suisse_garantie)/i.test(badges) || SWISS_NAME.test(name),
     url: og ?? pageUrl,
   };
@@ -154,6 +146,8 @@ export interface LidlAssortmentItem {
   lidlPlusPriceCents: number | null;
   packText: string;
   isAction: boolean;
+  /** Bloc au thème Lidl Plus : le prix affiché (et le prix de base « LP … ») est le prix carte. */
+  cardPriceShown?: boolean;
   swiss: boolean;
   url: string;
 }
@@ -165,30 +159,52 @@ function displayedCents(fragment: string): number | null {
   return m ? Number(m[1]) * 100 + Number(m[2]) : null;
 }
 
+/**
+ * Prix d'un bloc `pricefield` (page catégorie ou fiche) :
+ * - bloc ordinaire : prix de vente, éventuellement suivi d'un second prix sous la pastille Lidl Plus ;
+ * - bloc au thème Lidl Plus (`pricefield--theme-lidl-plus`) : le prix affiché est **réservé aux
+ *   membres** ; le prix barré est celui que paie un client sans la carte. Sans prix barré, le prix
+ *   sans carte est inconnu : l'article est écarté plutôt que d'appliquer le prix carte à tous.
+ */
+function readPriceField(block: string): Pick<LidlAssortmentItem, 'priceCents' | 'lidlPlusPriceCents' | 'isAction' | 'cardPriceShown'> | null {
+  const price = /itemprop="price" content="(\d+(?:\.\d+)?)"/.exec(block);
+  if (!price) return null;
+  const shown = Math.round(Number(price[1]) * 100);
+  if (/pricefield--theme-lidl-plus/.test(block)) {
+    const old = /<del class="pricefield__old-price">([\s\S]*?)<\/del>/.exec(block);
+    const withoutCard = old ? displayedCents(old[1] as string) : null;
+    if (withoutCard == null || withoutCard <= shown) return null;
+    return { priceCents: withoutCard, lidlPlusPriceCents: shown, isAction: false, cardPriceShown: true };
+  }
+  let lidlPlusPriceCents: number | null = null;
+  const lp = block.indexOf('pricefield__badge--lidl-plus');
+  if (lp >= 0) {
+    const strong = /<strong class="pricefield__price"[^>]*>([\s\S]*?)<\/strong>/.exec(block.slice(lp));
+    lidlPlusPriceCents = strong ? displayedCents(strong[1] as string) : null;
+  }
+  return {
+    priceCents: shown,
+    lidlPlusPriceCents,
+    isAction: /pricefield--discount/.test(block) || /pricefield__header">\s*Aktion/.test(block),
+  };
+}
+
 export function parseAssortmentPage(html: string): { items: LidlAssortmentItem[]; pageCount: number | null } {
   const items: LidlAssortmentItem[] = [];
   const blocks = html.split(/<li class="item product product-item/).slice(1);
   for (const block of blocks) {
     const href = /href="(https:\/\/sortiment\.lidl\.ch\/fr\/catalog\/product\/view\/id\/\d+\/s\/([a-z0-9-]+)\/[^"]*)"/.exec(block);
     const name = /<strong class="product name product-item-name">([\s\S]*?)<\/strong>/.exec(block);
-    const price = /itemprop="price" content="(\d+(?:\.\d+)?)"/.exec(block);
+    const priced = readPriceField(block);
     const footer = /<span class="pricefield__footer">([\s\S]*?)<\/span>/.exec(block);
-    if (!href || !name || !price) continue;
+    if (!href || !name || !priced) continue;
     const article = /-(\d{4,})$/.exec(href[2] as string);
     if (!article) continue;
-    let lidlPlusPriceCents: number | null = null;
-    const lp = block.indexOf('pricefield__badge--lidl-plus');
-    if (lp >= 0) {
-      const strong = /<strong class="pricefield__price"[^>]*>([\s\S]*?)<\/strong>/.exec(block.slice(lp));
-      lidlPlusPriceCents = strong ? displayedCents(strong[1] as string) : null;
-    }
     items.push({
       articleNo: article[1] as string,
       name: textOf(name[1] as string),
-      priceCents: Math.round(Number(price[1]) * 100),
-      lidlPlusPriceCents,
+      ...priced,
       packText: footer ? textOf(footer[1] as string) : '',
-      isAction: /pricefield--discount/.test(block) || /pricefield__header">\s*Aktion/.test(block),
       swiss: /badges\/(Schweizer_Kreuz|suisse_garantie)/i.test(block) || SWISS_NAME.test(textOf(name[1] as string)),
       url: (href[1] as string).replace(/\/category\/\d+\/?$/, '/'),
     });
@@ -412,7 +428,9 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
       }
       // Contrôle du prix de base publié (hors actions et articles à variantes, où il peut porter
       // sur un autre prix ou une autre contenance) : écart > 35 % → rejet, > 5 % → avertissement.
-      const dev = it.isAction || pack.ambiguous ? null : unitPriceDeviation(it.packText, it.priceCents, pack.quantity);
+      // Bloc Lidl Plus : le prix de base publié (« LP 100g = … ») porte sur le prix carte.
+      const shownCents = it.cardPriceShown && it.lidlPlusPriceCents ? it.lidlPlusPriceCents : it.priceCents;
+      const dev = it.isAction || pack.ambiguous ? null : unitPriceDeviation(it.packText.replace(/\|\s*LP\s+/, '| '), shownCents, pack.quantity);
       if (dev !== null && dev > 0.35) {
         unitPriceMismatch++;
         report.rejected.push({ message: `Prix de base incohérent (${(dev * 100).toFixed(0)} %) : ${it.name} ${it.packText}` });
@@ -536,6 +554,8 @@ export function buildLidlBatch(pages: LidlPages, ctx: Pick<ConnectorContext, 'no
         attributes: { organic: o.organic, swissOrigin: o.swiss, labels: labelsFromName(`${o.name} ${o.packText}`, pack.ambiguous) },
         url: o.url,
         isDemo: false,
+        // Descriptif publié (origine, variante, contenance) : vérification des règles d'offres.
+        details: o.packText || null,
       });
       const fetchedIso = page.fetchedAt.toISOString();
       const publishedAt = o.renderedAt && o.renderedAt < fetchedIso ? o.renderedAt : fetchedIso;

@@ -43,6 +43,10 @@ export interface StoresResponse {
       /** Aliments de base (sur `needsTotal`) avec un prix utilisable aujourd'hui dans une succursale du rayon. */
       needs?: number;
       needsTotal?: number;
+      /** Dont relevés (en magasin ou communautaires) faits dans une succursale du rayon. */
+      observedInStores?: number;
+      /** Dont relevés faits ailleurs (prix supposé identique, non vérifié dans le rayon). */
+      observedElsewhere?: number;
     };
   }>;
   absentChains: Array<{ chainId: string; name: string; badge: string }>;

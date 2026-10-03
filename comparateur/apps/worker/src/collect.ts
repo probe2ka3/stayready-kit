@@ -1,7 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { join } from 'node:path';
-import { checkCollection, type Anomaly, type CollectionStats } from '@cabas/core';
+import { checkCollection, zurichToday, type Anomaly, type CollectionStats } from '@cabas/core';
 import {
   ALDI_API_ORIGIN,
   ALDI_CONNECTOR_ID,
@@ -382,6 +382,16 @@ export async function jobReprocessLidl(ctx: JobContext) {
   const fetchedAt = [...pages.assortment, ...pages.offers, ...(pages.products ?? [])].reduce((a, p) => (p.fetchedAt > a ? p.fetchedAt : a), new Date(0));
   const batch = buildLidlBatch(pages, { now: fetchedAt, catalog: PRODUCTS, reviewedMatches: await readReviewedMatches(ctx.env.dataDir) });
   const prev = (await readLiveSnapshots(ctx.env.dataDir)).find((s) => s.connectorId === 'lidl-web');
+  // L'archive du jour remplace entièrement la collecte du même jour : un relevé ou une action de ce
+  // jour que le retraitement ne produit plus (lecture corrigée) ne survit pas à la fusion.
+  const day = zurichToday(fetchedAt);
+  const prevBatch = prev
+    ? {
+        ...prev.batch,
+        prices: prev.batch.prices.filter((p) => zurichToday(new Date(p.observedAt)) !== day),
+        promotions: prev.batch.promotions.filter((p) => !p.id.endsWith(`:${day}`)),
+      }
+    : null;
   await writeLiveSnapshot(ctx.env.dataDir, {
     connectorId: 'lidl-web',
     label: 'Lidl — site officiel (assortiment et actions)',
@@ -392,7 +402,7 @@ export async function jobReprocessLidl(ctx: JobContext) {
     message: `Retraité depuis l'archive du ${date}`,
     metrics: { ...(batch.report.metrics ?? {}), products: batch.retailerProducts.length, prices: batch.prices.length, promotions: batch.promotions.length, rejected: batch.report.rejected.length, warnings: batch.report.warnings.length },
     // L'archive du jour remplace la collecte du même jour ; les jours précédents sont conservés.
-    batch: mergeLiveBatch(prev?.batch ?? null, batch, fetchedAt),
+    batch: mergeLiveBatch(prevBatch, batch, fetchedAt),
   });
   await writeReport(ctx, 'lidl-web', batch, []);
   ctx.log.info('Lidl retraité depuis l’archive', batch.report.metrics ?? {});

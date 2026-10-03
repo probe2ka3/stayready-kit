@@ -127,11 +127,11 @@ describe('article par article', () => {
 
   it('motifs des prix indicatifs : relevé communautaire, ou seulement des courses prévues après le relevé', async () => {
     const now = await compareBasket(req(), deps());
-    expect(now.meta.chainCoverage.find((c) => c.chainId === 'b')?.indicativeReasons).toEqual({ crowd: 1, aging: 0, promo: 0, futureDate: 0 });
+    expect(now.meta.chainCoverage.find((c) => c.chainId === 'b')?.indicativeReasons).toEqual({ crowd: 1, survey: 0, aging: 0, promo: 0, futureDate: 0 });
     const later = await compareBasket(req({ when: { mode: 'plan', date: '2026-10-01', time: '10:00' } }), deps());
     const a = later.meta.chainCoverage.find((c) => c.chainId === 'a');
     expect(a?.indicativeLines).toBe(4);
-    expect(a?.indicativeReasons).toEqual({ crowd: 0, aging: 0, promo: 0, futureDate: 4 });
+    expect(a?.indicativeReasons).toEqual({ crowd: 0, survey: 0, aging: 0, promo: 0, futureDate: 4 });
   });
 });
 
@@ -159,5 +159,47 @@ describe('aliments de base utilisables par enseigne (page des magasins)', () => 
     expect(inZone.get('l')).toMatchObject({ needs: 1, official: 1 });
     const otherZone = usableNeedsByChain(idx, [{ ...store('m2', 'm', 1), zoneId: 'z2' }], [lait, pain], ctx);
     expect(otherZone.get('m')).toBeUndefined();
+  });
+});
+
+describe('couverture générale ≠ prix vérifié dans un magasin du rayon', () => {
+  it('relevé communautaire fait ailleurs (Neuchâtel) : compté « ailleurs » ; relevé en magasin du rayon : « vérifié ici »', async () => {
+    const { usableNeedsByChain, DEFAULT_FRESHNESS } = await import('../src');
+    const penne = canonical('penne', 500);
+    const farine = canonical('farine', 1000);
+    const idx = buildOfferIndex({
+      products: [product('c-penne', 'c', 500), product('c-farine', 'c', 1000)],
+      matches: [match('penne', 'c-penne'), match('farine', 'c-farine')],
+      prices: [
+        // Open Prices : relevé à Neuchâtel, généralisé au pays (storeId null), lieu réel conservé.
+        price('c-penne', 250, AT, { reliability: 'crowd', source: { connectorId: 'open-prices', kind: 'open_data', ref: 'x' }, observedAtPlace: 'Coop, Neuchâtel', observedAtStoreId: 'osm:node/ne' }),
+        // Relevé en magasin dans la succursale c1 du rayon.
+        price('c-farine', 185, AT, { reliability: 'survey', storeId: 'c1', source: { connectorId: 'releves', kind: 'manual_survey', ref: 'relevé en magasin du 2026-09-28' } }),
+      ],
+      promotions: [],
+    });
+    const ctx = { asOf: NOW, today: '2026-09-28', targetDate: '2026-09-28', policy: DEFAULT_FRESHNESS, prefs: DEFAULT_PREFS };
+    const u = usableNeedsByChain(idx, [store('c1', 'c', 1)], [penne, farine], ctx).get('c');
+    expect(u).toMatchObject({ needs: 2, official: 0, observedInStores: 1, observedElsewhere: 1 });
+
+    const r = await compareBasket(
+      { ...req(), lines: [line('penne'), line('farine')] },
+      { now: NOW, products: new Map([penne, farine].map((p) => [p.id, p])), chains: new Map([['c', chain('c')], ['a', chain('a')]]), index: buildOfferIndex({
+        products: [product('c-penne', 'c', 500), product('c-farine', 'c', 1000), product('a-penne', 'a', 500), product('a-farine', 'a', 1000)],
+        matches: [match('penne', 'c-penne'), match('farine', 'c-farine'), match('penne', 'a-penne'), match('farine', 'a-farine')],
+        prices: [
+          ...idx.pricesByProduct.get('c-penne')!,
+          ...idx.pricesByProduct.get('c-farine')!,
+          price('a-penne', 119, AT, { reliability: 'official', source: { connectorId: 'lidl-web', kind: 'retailer_site', ref: 'z' } }),
+          price('a-farine', 99, AT, { reliability: 'official', source: { connectorId: 'lidl-web', kind: 'retailer_site', ref: 'z' } }),
+        ],
+        promotions: [],
+      }), stores: withCrowDistance(HOME, [store('a1', 'a', 1), store('c1', 'c', 1.2)]) },
+    );
+    const offer = (lineId: string, chainId: string) => r.lineComparisons.find((c) => c.lineId === lineId)?.offers.find((o) => o.chainId === chainId);
+    expect(offer('l-penne', 'c')).toMatchObject({ observedInRadius: false, reliability: 'crowd', observedAtPlace: 'Coop, Neuchâtel' });
+    expect(offer('l-farine', 'c')).toMatchObject({ observedInRadius: true, reliability: 'survey', status: 'indicative' });
+    expect(offer('l-farine', 'a')?.observedInRadius).toBeNull();
+    expect(r.meta.chainCoverage.find((c) => c.chainId === 'c')?.indicativeReasons).toMatchObject({ crowd: 1, survey: 1 });
   });
 });

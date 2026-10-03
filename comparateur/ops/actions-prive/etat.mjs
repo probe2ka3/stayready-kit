@@ -25,7 +25,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 /** Sous-dossiers de data/private conservés d'un jour à l'autre (ni cache HTTP, ni journaux, ni archives). */
-export const DOSSIERS_PRIVES = ['live', 'runs', 'matrice', 'demo', 'matching'];
+export const DOSSIERS_PRIVES = ['live', 'runs', 'matrice', 'demo', 'matching', 'releves'];
 /** Sources à usage privé : jamais dans le dossier des instantanés publiables (contrôlé par un test). */
 export const SOURCES_PRIVEES = ['aldi-api', 'denner-web', 'coop-epaper'];
 export const SOURCES_QUOTIDIENNES = ['open-prices', 'coop-epaper', 'denner-web', 'aldi-api', 'lidl-web'];

@@ -171,6 +171,11 @@ export interface RetailerProduct {
    * correspondance validée sauf décision contraire dans `data/matching/reviewed.json`.
    */
   declaredSlug?: string | null;
+  /**
+   * Descriptif publié avec l'article (ex. « Origine : Espagne | 1 kg | Diverses sortes » d'une action
+   * Lidl) : sert à vérifier la variante, jamais à deviner une contenance.
+   */
+  details?: string | null;
 }
 
 /**
@@ -187,6 +192,13 @@ export interface ProductMatch {
   kind: MatchKind;
   status: MatchStatus;
   confidence: number;
+  /** Règle revue qui a établi la correspondance (offre hebdomadaire), pour la vérifier. */
+  ruleId?: string | null;
+  /**
+   * Seules les promotions de l'article comptent (pas de prix normal) : une offre hebdomadaire reliée
+   * par une règle ne vaut que pendant ses propres dates, jamais au-delà par son prix « au lieu de ».
+   */
+  promotionsOnly?: boolean;
 }
 
 /** Type de prix relevé. */
@@ -230,6 +242,8 @@ export interface PriceObservation {
   sourceUrl?: string | null;
   /** Lieu réel du relevé lorsqu'il est généralisé à une zone ou au niveau national. */
   observedAtPlace?: string | null;
+  /** Succursale (identifiant OSM) où le relevé a réellement été fait, s'il est connu. */
+  observedAtStoreId?: string | null;
   /** Justificatif : ticket, étiquette, page web, réponse d'une API publique de l'enseigne. */
   proof?: 'receipt' | 'price_tag' | 'web_page' | 'public_api' | null;
 }

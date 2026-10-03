@@ -34,6 +34,7 @@ import {
 import { holidayInfo } from './holidays';
 import { appleMapsLeg, geoUri, googleMapsRoute } from './navigation';
 import { addDays, daysBetween, zurichLocalToInstant, zurichParts, zurichToday } from './time';
+import { quantityGap } from './units';
 import {
   ESTIMATE_PARAMS,
   EstimatedMatrixProvider,
@@ -339,12 +340,23 @@ export interface LineComparisonOfferDto {
   packs: number;
   packQuantity: Quantity;
   purchasedQuantity: Quantity;
+  /** Quantité achetée en plus de la quantité demandée (paquets entiers), sinon null. */
+  surplusQuantity: Quantity | null;
+  /** Quantité achetée en moins (paquet un peu plus petit, dans la tolérance de conditionnement). */
+  shortfallQuantity: Quantity | null;
+  /** Montant réellement payé pour couvrir le besoin (paquets entiers, action comprise). */
   totalCents: number;
+  /** Prix au kilo, au litre ou à la pièce : pour comparer les prix, pas le montant payé. */
   unitPrice: LineOption['unitPrice'];
   status: LineOption['status'];
   statusReasons: LineOption['statusReasons'];
   observedAt: string;
   observedAtPlace: string | null;
+  /**
+   * Relevé (en magasin ou communautaire) fait dans une succursale du rayon : true ; fait ailleurs ou
+   * lieu inconnu : false ; prix publié par l'enseigne : null.
+   */
+  observedInRadius: boolean | null;
   reliability: LineOption['reliability'];
   sourceTier: LineOption['sourceTier'];
   promotion: LineOption['promotion'];
@@ -365,6 +377,11 @@ export interface LineComparisonDto {
   sameQuantity: boolean;
   /** Écart entre l'offre la plus chère et la moins chère (null si les quantités achetées diffèrent). */
   spreadCents: number | null;
+  /**
+   * Enseigne au prix unitaire le plus bas (même base : kg, l ou pièce). Elle peut différer de la
+   * moins chère pour couvrir le besoin (`offers[0]`) quand les paquets diffèrent : le surplus se paie.
+   */
+  cheapestPerUnitChainId: string | null;
   offers: LineComparisonOfferDto[];
 }
 
@@ -389,7 +406,7 @@ export interface ChainCoverageDto {
    * prix de plus de 7 jours, action dont la fin n'est pas publiée, ou seulement parce que les courses
    * sont prévues après le jour du relevé.
    */
-  indicativeReasons: { crowd: number; aging: number; promo: number; futureDate: number };
+  indicativeReasons: { crowd: number; survey: number; aging: number; promo: number; futureDate: number };
   /** Succursales du rayon ouvertes le jour choisi (0 : enseigne fermée ce jour-là, non comparée). */
   openStores: number;
   /** Source officielle de l'enseigne non affichée (usage privé) ; renseigné par le serveur. */
@@ -1072,7 +1089,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     const idx = profiles.map((pr, i) => (pr.chainId === chainId ? i : -1)).filter((i) => i >= 0);
     let coveredLines = 0;
     let indicativeLines = 0;
-    const indicativeReasons = { crowd: 0, aging: 0, promo: 0, futureDate: 0 };
+    const indicativeReasons = { crowd: 0, survey: 0, aging: 0, promo: 0, futureDate: 0 };
     for (const row of outcomes) {
       const opts = idx.map((i) => row[i]?.option).filter((o): o is NonNullable<typeof o> => Boolean(o));
       if (opts.length === 0) continue;
@@ -1082,6 +1099,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
         const best = cheapestOption(opts) as LineOption;
         const r = new Set(best.statusReasons);
         if (r.has('crowd_sourced')) indicativeReasons.crowd++;
+        else if (r.has('local_survey')) indicativeReasons.survey++;
         else if (r.has('aging_price')) indicativeReasons.aging++;
         else if (r.has('promo_not_confirmed_on_date') || r.has('promo_end_presumed')) indicativeReasons.promo++;
         else indicativeReasons.futureDate++;
@@ -1093,6 +1111,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   });
   // Article par article : meilleure offre de chaque enseigne du rayon, dès que deux enseignes ont un prix.
   const chainIdsInRadius = [...new Set(deps.stores.map((st) => st.chainId))];
+  const radiusStoreIds = new Set(deps.stores.map((st) => st.id));
   const lineComparisons: LineComparisonDto[] = [];
   lines.forEach((line, l) => {
     const row = outcomes[l] as LineOutcome[];
@@ -1110,12 +1129,15 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
         packs: best.packs,
         packQuantity: best.quantity,
         purchasedQuantity: best.purchasedQuantity,
+        surplusQuantity: quantityGap(best.requestedQuantity, best.purchasedQuantity).surplus,
+        shortfallQuantity: quantityGap(best.requestedQuantity, best.purchasedQuantity).shortfall,
         totalCents: best.totalCents,
         unitPrice: best.unitPrice,
         status: best.status,
         statusReasons: best.statusReasons,
         observedAt: best.observedAt,
         observedAtPlace: best.observedAtPlace,
+        observedInRadius: best.reliability === 'official' ? null : Boolean(best.observedAtStoreId && radiusStoreIds.has(best.observedAtStoreId)),
         reliability: best.reliability,
         sourceTier: best.sourceTier,
         promotion: best.promotion,
@@ -1137,6 +1159,9 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       sameArticle,
       sameQuantity,
       spreadCents: sameQuantity ? (offers[offers.length - 1] as LineComparisonOfferDto).totalCents - first.totalCents : null,
+      cheapestPerUnitChainId: offers.every((o) => o.unitPrice.basis === first.unitPrice.basis)
+        ? ([...offers].sort((a, b) => a.unitPrice.cents - b.unitPrice.cents || a.totalCents - b.totalCents)[0] as LineComparisonOfferDto).chainId
+        : null,
       offers,
     });
   });

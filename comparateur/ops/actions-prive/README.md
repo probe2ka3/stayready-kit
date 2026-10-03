@@ -1,6 +1,12 @@
 # Collecte quotidienne sans PC : GitHub Actions dans un dépôt privé
 
-## État au 03.10.2026, 21:55 (heure de Zurich)
+## État au 03.10.2026, 23:50 (heure de Zurich)
+
+Consultation des exécutions à 23:50 (API GitHub, sans relance) : **5 exécutions, toutes le 03.10, aucune
+planifiée** — 2 `push` (installation : 1 collecte, 1 « rien »), 3 `workflow_dispatch` (1 « rien », 1 collecte
+d'Open Prices seule, 1 « concurrence »). Aucune collecte n'a été relancée pour ce bilan. Premier créneau
+planifié : 04.10 à 06:17 ; aucune journée future n'est considérée comme validée. Facturation (protection
+par budget à 0 $) : **non vérifiable** depuis cette session ; reste à confirmer par l'exploitant.
 
 Trois jalons distincts, dans cet ordre ; seul le troisième permettra de recommander l'arrêt de Windows.
 
@@ -163,6 +169,15 @@ de l'état, le tableau et le compteur, et la couleur de l'exécution (rouge si u
 consommation de minutes du compte ; la plausibilité des prix eux-mêmes au-delà des contrôles automatiques
 (non-régression, rapport de qualité). Claude reconsulte `SUIVI.md` et les exécutions aux dates prévues
 (premier créneau planifié, puis fin des sept jours) si une reprise de session est programmée.
+
+## 4 bis. Relevés en magasin sans PC
+
+`etat.mjs` conserve aussi `data/private/releves/` (dossier `etat/private/releves/` du dépôt privé) : y
+déposer la fiche CSV remplie et, dans `etat/private/releves/preuves/`, les photos d'étiquettes ou de
+tickets (GitHub : « Add file → Upload files »). Le cycle quotidien suivant lit ces fichiers, écrit le
+rapport privé `etat/private/releves/rapport.md` et publie les seules lignes validées (`statut` = `valide`,
+`valide_par`, preuve présente), sans nom de fichier, preuve ni auteur, dans `etat/prices-live/releves.json`.
+Détails : `docs/RELEVES.md` § 3.
 
 ## 5. Fichiers
 

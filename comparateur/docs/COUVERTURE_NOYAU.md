@@ -14,6 +14,7 @@ seulement (Lidl, Open Prices). Les critères de correspondance n'ont pas été a
 | 03.10.2026, attribution d'un lieu Open Prices à Migros (provisoire) | 47 | 34 | 23 | 6 | 1 | 41 / 19 / 2 / 0 | 2 / 0 / 0 / 0 |
 | 03.10.2026 après réexamen du justificatif (attribution retirée) | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
 | **03.10.2026 soir, après recherche des prix publiables inexploités (§ 0 bis)** | **47** | **34** | **23** | **6** | **0** | **41 / 18 / 2 / 0** | **1 / 0 / 0 / 0** |
+| **03.10.2026 nuit, offres Lidl reliées et Lidl Plus corrigé (§ 0 ter)** | **47** | **34** | **23** | **6** | **0** | **41 / 18 / 2 / 0** | **1 / 0 / 0 / 0** |
 
 Collecte du 03.10 : Open Prices 231 prix, journal Coop 77 actions (édition du 01.10, texte en cache),
 Denner 250 prix et 25 actions, Aldi 1 481 prix et 558 actions, Lidl 424 prix et 290 actions
@@ -42,13 +43,47 @@ comparables dans ≥ 2 enseignes : 1, ≥ 3 : 0). Analyse **hors ligne** des ré
   vin). **Actions Lidl** : 262 articles en action, 4 reliés au noyau ; l'action Lidl Plus « Oranges 1 kg »
   (01–07.10) n'est pas reliée au besoin « oranges 2 kg » (article hebdomadaire au nom générique,
   identifiant renouvelé chaque semaine ; une règle automatique par nom assouplirait les
-  correspondances) ; « Citrons » Lidl Plus est vendu **à la pièce** (besoin au poids : incomparable).
+  correspondances ; **reliée depuis par une règle revue multicritère, § 0 ter**) ; « Citrons » Lidl Plus est vendu **à la pièce** (besoin au poids : incomparable).
 
 **Conclusion** : aucune nouvelle donnée publiable exploitable pour **Migros, Denner et Aldi** ; aucun
 prix existant n'a été rendu utilisable par une correction de reconnaissance (aucune erreur trouvée).
 La couverture publique est **inchangée** (tableau ci-dessus) ; le progrès de cette étape porte sur
 l'exactitude de ce qui est affiché (`docs/PARCOURS_BULLE.md`). Prochain gain : relevés en magasin
 (`docs/RELEVES_PRIORITAIRES.md`).
+
+### 0 ter. Offres Lidl reliées, conditionnements et relevés locaux (P12, 03.10.2026 au soir)
+
+Point de départ identique (export publiable du 03.10 : Lidl 47/50, Coop 1/50, Migros, Denner, Aldi 0/50 ;
+un seul besoin comparable entre deux enseignes). Aucune nouvelle collecte : retraitement hors ligne de
+l'archive Lidl du 03.10 (`pnpm job reprocess-lidl --date 2026-10-03`).
+
+| Catégorie (présentée séparément) | Résultat |
+|---|---|
+| **Nouveaux relevés réels** (magasin, ticket ou étiquette) | **0** : aucun ticket ni aucune photo fournis ; le parcours de saisie est prêt (`docs/RELEVES.md` § 3, fiche `docs/releves/FICHE_MIGROS_BULLE.md`) |
+| **Offres existantes nouvellement reliées** | **1** : « Oranges » 1 kg Lidl Plus (offre 10059701, 1.39 au lieu de 1.95, du 01 au 07.10, Suisse) → `oranges-2kg` par **2 × 1 kg**, règle revue `lidl-oranges`, appliquée seulement si Lidl Plus est déclaré. 5 autres offres en cours étaient déjà reliées par identifiant (mozzarella, huile d'olive, poires, pommes, huile de colza) : confirmées par les règles. 6 restent « à vérifier » (citrons à la pièce ×2, confiture « diverses sortes », thon au naturel, thon 156 g, pommes de terre sans type de cuisson) : `docs/OFFRES_LIDL.md` |
+| **Besoins désormais comparables entre enseignes** | **0 nouveau** : toujours 1 (penne, Lidl et Coop). L'offre reliée concerne un besoin que Lidl couvrait déjà (filet de 2 kg) |
+| **Paniers complets comparables** | **0** : à Bulle, seul Lidl couvre le panier de 12 aliments ; Coop 1/12, Migros, Denner, Aldi 0/12 en version publique |
+
+Corrections d'exactitude faites au passage :
+
+- **Prix Lidl Plus lus comme actions pour tous** : sur la fiche catalogue, un bloc de prix au thème
+  Lidl Plus (`pricefield--theme-lidl-plus`) affiche le prix **réservé aux membres**, le prix barré étant
+  celui payé sans carte. Il était lu comme une action ordinaire : 5 articles le 03.10 (dont oranges 1 kg :
+  1.39 au lieu de 1.95), 58 blocs le 28.09 et 28 le 30.09 dans les archives. Conséquence visible : le
+  besoin « oranges 2 kg » était chiffré **2.78** (2 × 1.39 avec une carte non déclarée) ; il l'est
+  désormais **2.79** (filet de 2 kg, prix pour tous), et l'offre Lidl Plus est signalée, non appliquée.
+- **Offres hebdomadaires reliées par identifiant** (14 décisions revues) : elles ne valent désormais que
+  par leurs propres promotions ; leur prix « au lieu de » n'est plus utilisable comme prix normal après
+  la fin de l'action (aucun prix d'offre prolongé d'une semaine à l'autre).
+
+**Couverture générale ≠ prix vérifié dans un magasin du rayon.** À Bulle (rayon 10 km), aucun des prix
+publics n'a été relevé dans un magasin du rayon : Lidl publie ses prix pour toute la région (47/50,
+prix de l'enseigne, pas un relevé en magasin) ; le seul prix Coop (penne) a été relevé le 04.08 à Coop
+Maladière, **Neuchâtel** : il n'est pas un prix vérifié à Bulle, et la page des magasins comme la
+comparaison article par article le disent désormais (« relevé hors de votre rayon : non vérifié dans un
+magasin proche »). « Aucun équivalent trouvé dans les sources examinées » ne signifie pas que
+l'enseigne ne vend pas le produit : Migros, Denner et Aldi vendent ces aliments, mais aucune source
+publiable examinée n'en donne le prix.
 
 ### Open Prices : données réellement disponibles (API lue le 03.10.2026)
 

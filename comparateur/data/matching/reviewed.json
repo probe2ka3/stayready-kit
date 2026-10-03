@@ -1,5 +1,5 @@
 {
- "description": "Correspondances revues manuellement entre articles réels (Lidl, Aldi Suisse, Open Prices) et références du catalogue TesPrix. canonicalSlug null = refus explicite. Seules ces décisions (et les codes-barres identiques) sont utilisées par le comparateur.",
+ "description": "Correspondances revues manuellement entre articles réels (Lidl, Aldi Suisse, Open Prices) et références du catalogue TesPrix. canonicalSlug null = refus explicite. Seules ces décisions (et les codes-barres identiques) sont utilisées par le comparateur. « offerRules » : règles revues pour les offres hebdomadaires (identifiant renouvelé chaque semaine), appliquées seulement si tous les critères publiés sont remplis (packages/connectors/src/matching.ts, OfferRule) ; sinon l'offre reste « à vérifier ».",
  "matches": [
   {
    "retailerProductId": "lidl:0080220",
@@ -3731,6 +3731,595 @@
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-10-03",
    "note": "Mini penne rigate « piccolini » : format de pâtes différent"
+  }
+ ],
+ "offerRules": [
+  {
+   "id": "lidl-oranges",
+   "chainId": "lidl",
+   "canonicalSlug": "oranges-2kg",
+   "designations": [
+    "oranges"
+   ],
+   "packs": [
+    1000,
+    2000
+   ],
+   "exclude": [
+    "sanguin",
+    "blut",
+    "mandarin",
+    "clementin",
+    "a jus"
+   ],
+   "organic": false,
+   "justification": "Oranges de table en sachet ou filet ; le besoin « Oranges (filet) 2 kg » n'exige ni variété ni origine : 2 sachets de 1 kg = 2 kg. Oranges sanguines, petits agrumes et bio exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-poires",
+   "chainId": "lidl",
+   "canonicalSlug": "poires-1kg",
+   "designations": [
+    "poires",
+    "poires suisses"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "nashi",
+    "sirop",
+    "seche",
+    "conserve"
+   ],
+   "organic": false,
+   "justification": "Poires de table vendues au kilo (« Le kg ») ; le besoin n'exige pas de variété. Nashi, conserves et fruits séchés exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-pommes",
+   "chainId": "lidl",
+   "canonicalSlug": "pommes-gala-1kg",
+   "designations": [
+    "pommes gala",
+    "pommes gala suisses",
+    "pommes rouges",
+    "pommes rouges suisses"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "pink lady",
+    "jazz",
+    "kanzi",
+    "envy",
+    "honeycrunch",
+    "smitten",
+    "ambrosia",
+    "granny",
+    "golden",
+    "sauce",
+    "compote",
+    "jus"
+   ],
+   "organic": false,
+   "justification": "« Pommes (Gala ou variété courante) » : Gala ou pommes rouges sans variété de marque (décision revue du 28.09.2026, offre 10059585). Variétés de club et spécialités exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-bananes",
+   "chainId": "lidl",
+   "canonicalSlug": "bananes-1kg",
+   "designations": [
+    "bananes"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "mini ",
+    "mini-",
+    "plantain",
+    "seche"
+   ],
+   "organic": false,
+   "justification": "Bananes au kilo ou en sachet de 1 kg ; mini-bananes, bananes plantain et fruits séchés exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-carottes",
+   "chainId": "lidl",
+   "canonicalSlug": "carottes-1kg",
+   "designations": [
+    "carottes",
+    "carottes suisses"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "rape",
+    "botte",
+    "couleur",
+    "multicolore",
+    "jeunes"
+   ],
+   "organic": false,
+   "justification": "Carottes en sachet de 1 kg ; carottes râpées, en botte et de couleur exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-oignons",
+   "chainId": "lidl",
+   "canonicalSlug": "oignons-1kg",
+   "designations": [
+    "oignons",
+    "oignons jaunes",
+    "oignons suisses",
+    "oignons jaunes suisses"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "rouge",
+    "blanc",
+    "nouveau",
+    "petits",
+    "frit",
+    "echalote"
+   ],
+   "organic": false,
+   "justification": "Oignons jaunes en sachet de 1 kg ; oignons rouges, blancs, nouveaux, petits et frits exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-pdt-fermes",
+   "chainId": "lidl",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "designations": [
+    "pommes de terre fermes a la cuisson",
+    "pommes de terre fermes a la cuisson suisses"
+   ],
+   "packs": [
+    2500
+   ],
+   "organic": false,
+   "justification": "Pommes de terre explicitement « fermes à la cuisson », sac de 2,5 kg ; l'origine suisse exigée par le besoin reste contrôlée sur l'offre.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-pdt-farineuses",
+   "chainId": "lidl",
+   "canonicalSlug": "pdt-farineuses-2500g",
+   "designations": [
+    "pommes de terre farineuses",
+    "pommes de terre farineuses suisses"
+   ],
+   "packs": [
+    2500
+   ],
+   "organic": false,
+   "justification": "Pommes de terre explicitement « farineuses », sac de 2,5 kg ; origine suisse contrôlée sur l'offre.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-farine-blanche",
+   "chainId": "lidl",
+   "canonicalSlug": "farine-blanche-1kg",
+   "designations": [
+    "farine blanche",
+    "fleur de farine"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "bise",
+    "complet",
+    "mi-blanche",
+    "epeautre",
+    "pizza",
+    "tresse"
+   ],
+   "organic": false,
+   "justification": "Farine blanche (fleur de farine) 1 kg ; farines bise, complète, mi-blanche et d'épeautre exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-sucre",
+   "chainId": "lidl",
+   "canonicalSlug": "sucre-cristal-1kg",
+   "designations": [
+    "sucre cristallise",
+    "sucre cristallise fin",
+    "sucre fin"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "canne",
+    "glace",
+    "gelifiant",
+    "vanill",
+    "brun",
+    "morceaux"
+   ],
+   "organic": false,
+   "justification": "Sucre blanc cristallisé 1 kg ; sucre de canne, glace, gélifiant et vanillé exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-spaghetti",
+   "chainId": "lidl",
+   "canonicalSlug": "spaghetti-500g",
+   "designations": [
+    "spaghetti"
+   ],
+   "packs": [
+    500
+   ],
+   "exclude": [
+    "complet",
+    "sans gluten",
+    "lentille",
+    "pois",
+    "riz"
+   ],
+   "organic": false,
+   "justification": "Spaghetti de blé dur 500 g ; complets, sans gluten et à base de légumineuses exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-penne",
+   "chainId": "lidl",
+   "canonicalSlug": "penne-500g",
+   "designations": [
+    "penne",
+    "penne rigate"
+   ],
+   "packs": [
+    500
+   ],
+   "exclude": [
+    "mini ",
+    "mini-",
+    "complet",
+    "sans gluten",
+    "lentille",
+    "pois"
+   ],
+   "organic": false,
+   "justification": "Penne de blé dur 500 g ; mini-penne, complètes, sans gluten et à base de légumineuses exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-riz-long",
+   "chainId": "lidl",
+   "canonicalSlug": "riz-long-1kg",
+   "designations": [
+    "riz long grain",
+    "riz long grain etuve"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "basmati",
+    "jasmin",
+    "complet",
+    "sauvage",
+    "sachets de cuisson"
+   ],
+   "organic": false,
+   "justification": "Riz long grain 1 kg ; basmati, jasmin, complet et sauvage exclus (autres besoins ou qualités).",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-tomates-concassees",
+   "chainId": "lidl",
+   "canonicalSlug": "tomates-concassees-400g",
+   "designations": [
+    "tomates concassees",
+    "pulpe de tomates"
+   ],
+   "packs": [
+    400
+   ],
+   "exclude": [
+    "basilic",
+    "herbes",
+    "ail",
+    "piment",
+    "oignon"
+   ],
+   "organic": false,
+   "justification": "Tomates concassées (pulpe) en boîte de 400 g ; préparations aromatisées exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-huile-colza",
+   "chainId": "lidl",
+   "canonicalSlug": "huile-colza-1l",
+   "designations": [
+    "huile de colza"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "pressee a froid",
+    "spray",
+    "aromatis"
+   ],
+   "organic": false,
+   "justification": "Huile de colza 1 l ; huile pressée à froid, aromatisée ou en spray exclue (autre produit).",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-huile-tournesol",
+   "chainId": "lidl",
+   "canonicalSlug": "huile-tournesol-1l",
+   "designations": [
+    "huile de tournesol"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "pressee a froid",
+    "high oleic",
+    "spray"
+   ],
+   "organic": false,
+   "justification": "Huile de tournesol 1 l ; huile pressée à froid, « high oleic » ou en spray exclue.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-huile-olive",
+   "chainId": "lidl",
+   "canonicalSlug": "huile-olive-1l",
+   "designations": [
+    "huile d'olive vierge extra",
+    "huile d'olive extra vierge"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "spray",
+    "aromatis",
+    "citron",
+    "ail",
+    "basilic"
+   ],
+   "organic": false,
+   "justification": "Huile d'olive vierge extra 1 l (décision revue du 28.09.2026, offre 10059579) ; huiles aromatisées et sprays exclus.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-lait-entier",
+   "chainId": "lidl",
+   "canonicalSlug": "lait-entier-uht-1l",
+   "designations": [
+    "lait entier uht"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "sans lactose",
+    "lactose"
+   ],
+   "organic": false,
+   "justification": "Lait entier UHT 1 l ; l'origine suisse exigée par le besoin reste contrôlée sur l'offre ; sans lactose exclu.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-lait-demi",
+   "chainId": "lidl",
+   "canonicalSlug": "lait-demi-uht-1l",
+   "designations": [
+    "lait demi-ecreme uht"
+   ],
+   "packs": [
+    1000
+   ],
+   "exclude": [
+    "sans lactose",
+    "lactose"
+   ],
+   "organic": false,
+   "justification": "Lait demi-écrémé UHT 1 l ; origine suisse contrôlée sur l'offre ; sans lactose exclu.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-beurre-cuisine",
+   "chainId": "lidl",
+   "canonicalSlug": "beurre-cuisine-250g",
+   "designations": [
+    "beurre de cuisine",
+    "beurre de cuisine suisse"
+   ],
+   "packs": [
+    250
+   ],
+   "organic": false,
+   "justification": "Beurre de cuisine 250 g ; origine suisse contrôlée sur l'offre.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-mozzarella",
+   "chainId": "lidl",
+   "canonicalSlug": "mozzarella-150g",
+   "designations": [
+    "mozzarella"
+   ],
+   "packs": [
+    150,
+    450
+   ],
+   "exclude": [
+    "bufala",
+    "mini ",
+    "mini-",
+    "light",
+    "allegee",
+    "rapee",
+    "lactose"
+   ],
+   "organic": false,
+   "justification": "Mozzarella de lait de vache 150 g, ou lot de 3 × 150 g de la même mozzarella (décision revue du 28.09.2026, offre 10059639) ; bufala, mini, allégée, râpée et sans lactose exclues.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-citrons",
+   "chainId": "lidl",
+   "canonicalSlug": "citrons-500g",
+   "designations": [
+    "citrons"
+   ],
+   "packs": [
+    500,
+    1000
+   ],
+   "organic": false,
+   "justification": "Citrons en filet de 500 g ou 1 kg ; un prix à la pièce n'est jamais converti en grammes (poids non publié).",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-pdt-type-inconnu",
+   "chainId": "lidl",
+   "canonicalSlug": "pdt-fermes-2500g",
+   "designations": [
+    "pommes de terre",
+    "pommes de terre suisses",
+    "pommes de terre bio suisses"
+   ],
+   "packs": [],
+   "alwaysReview": "type de cuisson (fermes ou farineuses) non publié : aucun des deux besoins ne peut être choisi",
+   "justification": "Désignation sans type de cuisson : impossible de choisir entre « fermes » et « farineuses ».",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-confiture-fraises",
+   "chainId": "lidl",
+   "canonicalSlug": "confiture-fraises-500g",
+   "designations": [
+    "confiture de fraises",
+    "confiture extra de fraises",
+    "confiture",
+    "confiture bio"
+   ],
+   "packs": [
+    450,
+    500
+   ],
+   "require": [
+    "fraise"
+   ],
+   "organic": false,
+   "justification": "Confiture de fraises 450 à 500 g ; une confiture dont la sorte n'est pas précisée reste à vérifier.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-thon-huile",
+   "chainId": "lidl",
+   "canonicalSlug": "thon-huile-240g",
+   "designations": [
+    "thon",
+    "thon a l'huile",
+    "thon msc de bonite a ventre raye",
+    "thon albacore"
+   ],
+   "packs": [
+    240
+   ],
+   "require": [
+    "huile"
+   ],
+   "exclude": [
+    "naturel",
+    "sauce",
+    "tomate"
+   ],
+   "justification": "Thon à l'huile, lot de 3 boîtes (240 g) ; thon au naturel exclu ; un poids égoutté seul n'est pas comparable au besoin.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-oeufs-sol",
+   "chainId": "lidl",
+   "canonicalSlug": "oeufs-sol-6",
+   "designations": [
+    "oeufs suisses d'elevage au sol",
+    "oeufs d'elevage au sol suisses",
+    "oeufs suisses elevage au sol"
+   ],
+   "packs": [
+    6,
+    10,
+    12
+   ],
+   "exclude": [
+    "plein air",
+    "bio",
+    "cuits",
+    "colores"
+   ],
+   "justification": "Œufs suisses d'élevage au sol, boîte de 6, 10 ou 12 (emballages entiers : surplus affiché) ; l'origine suisse est contrôlée sur l'offre.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
+  },
+  {
+   "id": "lidl-oeufs-plein-air",
+   "chainId": "lidl",
+   "canonicalSlug": "oeufs-plein-air-6",
+   "designations": [
+    "oeufs suisses de plein air",
+    "oeufs de plein air suisses",
+    "oeufs suisses plein air"
+   ],
+   "packs": [
+    6,
+    10,
+    12
+   ],
+   "exclude": [
+    "bio",
+    "cuits",
+    "colores"
+   ],
+   "justification": "Œufs suisses de plein air, boîte de 6, 10 ou 12 ; l'origine suisse est contrôlée sur l'offre.",
+   "reviewer": "équipe données (règles d’offres, 03.10.2026)",
+   "reviewedAt": "2026-10-03"
   }
  ]
 }

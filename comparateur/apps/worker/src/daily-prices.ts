@@ -18,7 +18,7 @@ import { jobDataReport } from './data-report';
 import { jobDemoBaskets } from './demo-baskets';
 import type { JobContext } from './jobs';
 import { jobEssentialsMatrix } from './matrix';
-import { jobReleves } from './releves';
+import { jobReleves, privateRelevesDir } from './releves';
 import { validationPath } from './validation';
 
 /** Sources de la collecte quotidienne, dans l'ordre d'exécution (les plus légères d'abord). */
@@ -222,8 +222,9 @@ export async function jobQuotidien(jobCtx: JobContext) {
     // Étapes suivantes : « maintenant » = fin de la collecte (les prix lus pendant le cycle sont
     // postérieurs à son début et seraient sinon considérés comme datés du futur).
     ctx = { ...ctx, now: new Date() };
-    const releves = join(dataDir, 'releves');
-    if (existsSync(releves) && (await readdir(releves)).some((f) => f.endsWith('.csv') && f !== 'modele.csv')) {
+    // Relevés en magasin : fichiers privés (data/private/releves), seules les lignes validées sont publiées.
+    const releves = privateRelevesDir(dataDir);
+    if (existsSync(releves) && (await readdir(releves)).some((f) => f.endsWith('.csv'))) {
       await step(ctx, steps, 'relevés en magasin', () => jobReleves({ ...ctx, flags: { quiet: true } }));
     }
 

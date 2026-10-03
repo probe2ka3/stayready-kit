@@ -141,6 +141,12 @@ export function StoresView({ locale }: { locale: Locale }) {
                               total: String(c.priceData.needsTotal ?? 50),
                             })}
                           </p>
+                          {c.priceData.kind !== 'demo' && (
+                            <p className="text-xs text-muted" data-testid={`verified-here:${c.chainId}`}>
+                              {c.priceData.observedInStores ? plural(m.stores.verifiedHere, c.priceData.observedInStores) : m.stores.verifiedNone}
+                              {c.priceData.observedElsewhere ? ` ${plural(m.stores.observedElsewhere, c.priceData.observedElsewhere)}` : ''}
+                            </p>
+                          )}
                         </div>
                         <label className="relative inline-flex cursor-pointer items-center">
                           <span className="sr-only">

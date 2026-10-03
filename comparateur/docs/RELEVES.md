@@ -38,46 +38,81 @@ Limites mesurées : prix de Migros généralisé à sa zone tarifaire, prix des 
 (politique tarifaire nationale) ; un relevé communautaire reste « indicatif » et n'est plus utilisé
 après 90 jours.
 
-## 3. Voie B (exploitant) : fichier CSV dans le dépôt
+## 3. Voie B (exploitant) : fichier CSV privé, preuve, validation
 
-1. Trouver l'identifiant du magasin :
+Les relevés et leurs preuves sont **privés** : ils ne vont jamais dans le dépôt public. Seules les lignes
+validées sont publiées, sous une forme épurée (enseigne, magasin, date, article, contenance, prix) :
+ni nom de fichier, ni photo, ni auteur, ni validateur.
+
+| Où | Contenu | Versionné ? |
+|---|---|---|
+| `data/private/releves/*.csv` (ou, sans PC, `etat/private/releves/` du dépôt privé `tesprix-collecte`) | relevés (une ligne par article) | non (dossier privé) |
+| `data/private/releves/preuves/` (ou `etat/private/releves/preuves/`) | photos d'étiquettes ou de tickets, PDF | non |
+| `data/private/releves/rapport.md` | rapport de validation : statut et motif de chaque ligne, preuve citée | non |
+| `data/prices/live/releves.json` | lignes validées seulement, épurées (contrôle bloquant avant écriture) | oui (publiable) |
+| `data/releves/modele.csv`, `docs/releves/*.csv` | modèle et fiches **vides** (aucun prix, aucune preuve) | oui |
+
+1. Préparer la fiche du magasin (CSV prérempli + guide reprenant la définition exacte des besoins) :
 
    ```bash
-   pnpm job magasins --npa=1630 --rayon=5
+   pnpm job magasins --npa=1630 --rayon=5                       # identifiant du magasin (colonne plan : OpenStreetMap)
+   pnpm job fiche-releves --enseigne=migros --magasin=osm:node/10787882859 --nom=migros-bulle
    ```
 
-   La colonne `plan` ouvre le magasin sur OpenStreetMap pour le reconnaître.
-2. Copier `data/releves/modele.csv` vers, par exemple, `data/releves/2026-10-bulle-migros.csv`, supprimer
-   les deux lignes « EXEMPLE » et remplir une ligne par article (séparateur `;`, UTF-8).
-3. Importer et contrôler :
+   Exemple prêt : `docs/releves/FICHE_MIGROS_BULLE.md` et `docs/releves/fiche-migros-bulle.csv`.
+2. En magasin : photographier l'étiquette (ou garder le ticket), remplir une ligne par article.
+3. Copier la fiche remplie dans `data/private/releves/` et les photos dans `data/private/releves/preuves/`
+   (colonne `preuve` = nom exact du fichier, ex. `IMG_2031.jpg` ; plusieurs : `IMG_1.jpg, IMG_2.jpg`).
+   Sans PC : déposer les mêmes fichiers dans `etat/private/releves/` et `etat/private/releves/preuves/` du
+   dépôt privé (« Add file → Upload files » sur GitHub) ; le cycle quotidien les reprend.
+4. Validation : une personne compare chaque ligne à sa photo, puis met `statut` = `valide` et ses
+   initiales dans `valide_par` (`refuse` si la photo ne correspond pas).
+5. Contrôler puis publier :
 
    ```bash
-   pnpm job releves            # lignes refusées listées avec leur motif ; --dry-run pour vérifier seulement
-   pnpm job matrice-essentiels # matrice 50 × 5 et page publique statique
-   pnpm dev                    # comparateur complet en local (NPA, magasins, panier, trajet, date)
+   pnpm job releves --dry-run  # rapport privé, rien n'est écrit dans les données publiables
+   pnpm job releves            # instantané publiable des seules lignes validées
+   pnpm job matrice-essentiels # couverture 50 × 5 et page publique statique
    ```
+
+Une ligne est **publiée** seulement si : données complètes et cohérentes (contrôles ci-dessous), `statut`
+= `valide` avec `valide_par`, besoin parmi les 50 du noyau, variante compatible avec le besoin (mots exclus
+et mentions requises des règles revues, `data/matching/reviewed.json` : par ex. pas de penne complètes,
+pas de bananes bio pour `bananes-1kg`), et **chaque fichier de preuve cité présent** dans `preuves/`. Sinon
+elle reste « en attente » ou « refusée » dans le rapport privé, avec le motif, et n'entre jamais dans le
+calcul. Le comparateur présente un relevé publié comme **local et indicatif** : valable pour ce magasin
+seulement, avec sa date et le magasin relevé ; une action ne vaut que dans ses dates (jour du relevé si la
+fin n'est pas affichée) ; une action réservée à une carte n'est appliquée que si l'utilisateur la déclare ;
+une condition non calculable (« avec bon ») est affichée mais jamais appliquée.
 
 | Colonne | Obligatoire | Contenu |
 |---|---|---|
 | `enseigne` | oui | `migros`, `coop`, `denner`, `aldi` ou `lidl` |
-| `magasin` | oui | identifiant donné par `pnpm job magasins`, ex. `osm:node/12265814534` |
+| `magasin` | oui | identifiant donné par `pnpm job magasins`, ex. `osm:node/10787882859` |
 | `date` | oui | jour du relevé, `2026-10-03` ou `03.10.2026` (jamais dans le futur) |
 | `besoin` | oui | identifiant du besoin (tableau § 5) |
 | `article` | oui | désignation telle qu'affichée (garder « AOP », « sans lactose ») |
+| `variante` | non | précision imprimée : rigate, fines, en sachet… |
 | `marque` | non | marque ou ligne propre (M-Budget, Prix Garantie, Denner…) |
+| `code_barres` | non | code EAN imprimé sous les barres (clé de contrôle vérifiée) |
 | `contenance`, `unite` | oui* | `500` + `g` ; `1` + `l` ; `6` + `pce`. *Vente au poids : laisser `contenance` vide |
 | `au_poids` | non | `oui` si le prix est au kilo (`unite` = `kg`) ou à la pièce (`pce`) |
 | `prix_chf` | oui** | prix normal affiché, TVA comprise (au kilo si vendu au poids) |
 | `prix_action_chf` | oui** | prix d'action affiché (**au moins un des deux prix**) |
 | `action_du`, `action_au` | non | dates de l'action **si elles sont affichées** |
 | `carte` | non | action réservée aux porteurs de carte : `cumulus`, `supercard`, `lidl-plus` |
+| `conditions` | non | condition de l'action : « dès 2 » (appliquée dès 2 paquets) ; toute autre condition est affichée, jamais appliquée |
 | `bio`, `suisse` | non | `oui` si l'étiquette l'indique (exigé pour certains besoins, § 5) |
-| `preuve` | oui | « photo IMG_2031 », « ticket 4521 du 03.10 », « noté sur place » |
-| `releve_par` | non | initiales ou pseudonyme |
+| `preuve` | oui | nom du fichier photo ou PDF dans `preuves/` (une note seule laisse la ligne en attente) |
+| `releve_par` | non | initiales ou pseudonyme (privé, jamais publié) |
+| `statut` | non | `a_valider` (par défaut), `valide` ou `refuse` |
+| `valide_par` | si `valide` | initiales de la personne qui a vérifié la photo (privé, jamais publié) |
 
-Contrôles automatiques : magasin connu et de la bonne enseigne, besoin connu, unité compatible,
-exigences du besoin (origine suisse, AOP…), prix plausibles, action inférieure au prix normal, carte
-existante, date non future. Les lignes refusées n'entrent jamais dans les données.
+Contrôles automatiques : magasin connu et de la bonne enseigne, besoin connu, unité compatible (jamais
+de pièces converties en grammes), exigences du besoin (origine suisse, AOP…), prix plausibles, action
+inférieure au prix normal, carte existante, code-barres valide, date non future. Les lignes refusées
+n'entrent jamais dans les données. Les fichiers CSV du dossier versionné `data/releves/` ne sont pas lus
+(seul le modèle y est admis, contrôlé par `apps/worker/test/privacy.test.ts`).
 
 ## 4. Transcrire des photos ou des tickets avec l'IA déjà disponible (sans API payante)
 
@@ -87,9 +122,9 @@ avec la consigne suivante, puis **relire chaque ligne** avant de l'ajouter au fi
 ```text
 Transcris ces photos d'étiquettes (ou ce ticket de caisse) en lignes CSV, séparateur « ; », avec
 exactement ces colonnes :
-enseigne;magasin;date;besoin;article;marque;contenance;unite;au_poids;prix_chf;prix_action_chf;action_du;action_au;carte;bio;suisse;preuve;releve_par
-Règles : enseigne = <migros|coop|denner>, magasin = <identifiant>, date = <AAAA-MM-JJ>, preuve = nom de la
-photo ou « ticket <n°> ». « besoin » : choisis uniquement dans cette liste, sinon laisse la ligne de côté :
+enseigne;magasin;date;besoin;article;variante;marque;code_barres;contenance;unite;au_poids;prix_chf;prix_action_chf;action_du;action_au;carte;conditions;bio;suisse;preuve;releve_par;statut;valide_par
+Règles : enseigne = <migros|coop|denner>, magasin = <identifiant>, date = <AAAA-MM-JJ>, preuve = nom du
+fichier de la photo, statut = a_valider, valide_par vide. « besoin » : choisis uniquement dans cette liste, sinon laisse la ligne de côté :
 <coller la colonne « Besoin » du § 5>. Recopie la désignation et la marque telles qu'écrites. N'invente
 rien : si la contenance, le prix ou une date n'est pas lisible, laisse la case vide. Prix d'action
 seulement s'il est signalé comme action ; dates d'action seulement si elles sont imprimées. Ne recopie
@@ -171,6 +206,7 @@ prix au kilo) ; la marque propre la moins chère de l'enseigne est la bonne cand
 | Ticket de caisse (transcription + contenances) | 5–10 min par ticket |
 | `pnpm job releves` + `matrice-essentiels` + contrôle | 5 min |
 
-Un relevé reste « vérifié » 7 jours, « indicatif » jusqu'à 30 jours, puis il est écarté : pour garder
+Un relevé en magasin est toujours « indicatif » (local, daté) ; au-delà de 7 jours il est signalé comme
+ancien, et au-delà de 30 jours il est écarté : pour garder
 Migros, Coop et Denner comparables autour d'un lieu, compter **un passage par enseigne et par mois**
 (≈ 3 h par mois pour trois magasins), plus souvent pour suivre les actions.

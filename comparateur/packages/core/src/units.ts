@@ -130,6 +130,20 @@ export function packsNeeded(
   return Math.max(1, Math.ceil(needed / packSize - tolerance - 1e-9));
 }
 
+/**
+ * Écart entre la quantité réellement achetée (paquets entiers) et la quantité demandée, dans la
+ * même unité : surplus (paquet plus grand ou paquet supplémentaire) ou léger manque (paquet un peu
+ * plus petit, dans la tolérance de conditionnement). Aucune conversion entre unités.
+ */
+export function quantityGap(requested: Quantity, purchased: Quantity): { surplus: Quantity | null; shortfall: Quantity | null } {
+  if (requested.unit !== purchased.unit) return { surplus: null, shortfall: null };
+  const d = Math.round((purchased.amount - requested.amount) * 1000) / 1000;
+  return {
+    surplus: d > 0 ? { amount: d, unit: purchased.unit } : null,
+    shortfall: d < 0 ? { amount: -d, unit: purchased.unit } : null,
+  };
+}
+
 export function isUnit(value: string): value is Unit {
   return value === 'g' || value === 'ml' || value === 'piece';
 }

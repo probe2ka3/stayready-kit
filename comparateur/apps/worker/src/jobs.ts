@@ -36,8 +36,9 @@ import { jobDemoBaskets } from './demo-baskets';
 import { jobMatchAudit } from './match-audit';
 import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
-import { jobMagasins, jobReleves } from './releves';
+import { jobFicheReleves, jobMagasins, jobReleves } from './releves';
 import { jobEssentialsMatrix } from './matrix';
+import { jobOffresLidl } from './offres-lidl';
 import { jobRelevesPrioritaires } from './releves-prioritaires';
 import { jobLiveRestore } from './publication';
 import { jobQuotidien } from './daily-prices';
@@ -278,8 +279,10 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   validate: { run: jobValidate, help: 'Contrôle de non-régression de la collecte sur le jeu de validation (--strict)' },
   'match-audit': { run: jobMatchAudit, help: 'Articles non revus nettement moins chers que les correspondances retenues (data/matching/audit.md)' },
   quotidien: { run: jobQuotidien, help: 'Chaîne quotidienne : collecte ciblée des 50 aliments (Lidl, Aldi, Denner, Open Prices), contrôles, exports publiables, journal (--force, --sources=a,b)' },
-  releves: { run: jobReleves, help: 'Importe les relevés en magasin (data/releves/*.csv → data/prices/live/releves.json ; --dry-run)' },
+  releves: { run: jobReleves, help: 'Relevés en magasin : data/private/releves/*.csv (privé, preuves dans preuves/) → rapport privé + data/prices/live/releves.json (lignes validées seulement ; --dry-run)' },
   magasins: { run: jobMagasins, help: 'Identifiants des magasins proches d’un NPA pour les relevés (--npa=1630 --rayon=5)' },
+  'offres-lidl': { run: jobOffresLidl, help: 'Offres hebdomadaires Lidl reliées par règle revue ou « à vérifier » (docs/OFFRES_LIDL.md)' },
+  'fiche-releves': { run: jobFicheReleves, help: 'Fiche de collecte d’un magasin (CSV prérempli + guide, définition exacte des besoins ; --enseigne --magasin [--besoins] [--nom])' },
   'releves-prioritaires': { run: jobRelevesPrioritaires, help: 'Relevés en magasin qui feraient le plus progresser la version publique (docs/RELEVES_PRIORITAIRES.md, fiche CSV)' },
   'matrice-essentiels': { run: jobEssentialsMatrix, help: 'Matrice des 50 aliments de base × 5 enseignes (data/matrice/) et page publique statique (data/public/index.html)' },
   'live-restore': { run: jobLiveRestore, help: 'Reprend les instantanés d’un dossier (cache) seulement s’ils sont plus récents (--from=dossier)' },

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { formatQuantity, type CompareResultDto, type LineComparisonDto, type OutlookDayDto, type ScenarioDto, type ScenarioKind, type SolutionDto } from '@cabas/core';
+import { formatQuantity, UNIT_BASIS_LABEL, type CompareResultDto, type LineComparisonDto, type OutlookDayDto, type ScenarioDto, type ScenarioKind, type SolutionDto } from '@cabas/core';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
 import { duration, km, money, shortCalendarDate, shortDate, time, unitPriceLabel } from '@/lib/format';
 import { track } from '@/lib/metrics';
@@ -783,7 +783,7 @@ function ChainCoverage({ result, locale }: { result: CompareResultDto; locale: L
                 {' · '}
                 {plural(t.indicative, c.indicativeLines)}
                 {' ('}
-                {(['crowd', 'aging', 'promo', 'futureDate'] as const)
+                {(['crowd', 'survey', 'aging', 'promo', 'futureDate'] as const)
                   .filter((k) => (c.indicativeReasons?.[k] ?? 0) > 0)
                   .map((k) => format(plural(t.indicativeReason[k], c.indicativeReasons[k]), { date: shortCalendarDate(result.meta.targetDate) }))
                   .join(', ')}
@@ -853,7 +853,9 @@ function LineComparisonRow({ row, locale }: { row: LineComparisonDto; locale: Lo
                 : format(t.crowd, { date })
               : o.reliability === 'official'
                 ? format(t.official, { date })
-                : format(t.other, { date });
+                : o.reliability === 'survey'
+                  ? format(t.survey, { date, place: o.observedAtPlace ?? '—' })
+                  : format(t.other, { date });
           const scope = o.statusReasons.includes('store_specific_price')
             ? t.scopeStore
             : o.statusReasons.includes('zone_price')
@@ -862,7 +864,7 @@ function LineComparisonRow({ row, locale }: { row: LineComparisonDto; locale: Lo
                 ? t.scopeNational
                 : null;
           const reasons = o.statusReasons
-            .filter((r) => !['crowd_sourced', 'zone_price', 'store_specific_price', 'demo_data', 'fallback_source'].includes(r))
+            .filter((r) => !['crowd_sourced', 'local_survey', 'zone_price', 'store_specific_price', 'demo_data', 'fallback_source'].includes(r))
             .map((r) => m.status.reasons[r] ?? r);
           return (
             <li key={o.chainId} className="text-sm" data-chain={o.chainId}>
@@ -874,8 +876,11 @@ function LineComparisonRow({ row, locale }: { row: LineComparisonDto; locale: Lo
                 <p className={cx('num shrink-0 font-semibold', o === cheapest && row.offers.length > 1 && 'text-primary')}>{money(o.totalCents)}</p>
               </div>
               <p className="text-xs text-muted">
-                {format(t.pay, { packs: String(o.packs), qty: formatQuantity(o.packQuantity) })} · {unitPriceLabel(o.unitPrice)} · {m.status[o.status]} · {source}
+                {format(t.pay, { packs: String(o.packs), qty: formatQuantity(o.packQuantity), purchased: formatQuantity(o.purchasedQuantity) })}
+                {o.surplusQuantity ? ` · ${format(t.surplus, { qty: formatQuantity(o.surplusQuantity) })}` : ''}
+                {o.shortfallQuantity ? ` · ${format(t.shortfall, { qty: formatQuantity(o.shortfallQuantity) })}` : ''} · {unitPriceLabel(o.unitPrice)} · {m.status[o.status]} · {source}
                 {scope ? ` · ${scope}` : ''}
+                {o.observedInRadius === false ? ` · ${t.observedElsewhere}` : o.observedInRadius ? ` · ${t.observedHere}` : ''}
                 {reasons.length ? ` · ${reasons.join(' · ')}` : ''}
               </p>
               {o.loyaltyOffer && (
@@ -896,8 +901,18 @@ function LineComparisonRow({ row, locale }: { row: LineComparisonDto; locale: Lo
       <p className="mt-1 text-xs font-medium">
         {row.sameQuantity && row.spreadCents != null
           ? format(t.spread, { amount: money(row.spreadCents) })
-          : format(t.quantityDiffers, { basis: cheapest?.unitPrice.basis ?? 'kg' })}
+          : format(t.quantityDiffers, { basis: UNIT_BASIS_LABEL[cheapest?.unitPrice.basis ?? 'kg'] })}
       </p>
+      {!row.sameQuantity && row.cheapestPerUnitChainId && cheapest && row.cheapestPerUnitChainId !== cheapest.chainId && (
+        <p className="text-xs text-muted" data-testid="per-unit-vs-need">
+          {format(t.perUnitVsNeed, {
+            basis: UNIT_BASIS_LABEL[cheapest.unitPrice.basis],
+            perUnit: row.offers.find((o) => o.chainId === row.cheapestPerUnitChainId)?.chainName ?? row.cheapestPerUnitChainId,
+            requested: formatQuantity(row.requestedQuantity),
+            need: cheapest.chainName,
+          })}
+        </p>
+      )}
     </li>
   );
 }

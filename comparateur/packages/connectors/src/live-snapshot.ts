@@ -167,7 +167,16 @@ export function reviewedMatchesPath(dataDir: string): string {
 export async function readReviewedMatches(dataDir: string): Promise<ReviewedMatch[]> {
   const path = reviewedMatchesPath(dataDir);
   if (!existsSync(path)) return [];
-  return (JSON.parse(await readFile(path, 'utf8')) as ReviewedMatchesFile).matches;
+  const file = JSON.parse(await readFile(path, 'utf8')) as ReviewedMatchesFile;
+  // Règles d'offres hebdomadaires : transmises avec les décisions (même fichier, même chemin d'appel).
+  const rules: ReviewedMatch[] = (file.offerRules ?? []).map((r) => ({
+    retailerProductId: `règle:${r.id}`,
+    canonicalSlug: r.canonicalSlug,
+    reviewer: r.reviewer,
+    reviewedAt: r.reviewedAt,
+    offerRule: r,
+  }));
+  return [...file.matches, ...rules];
 }
 
 /**

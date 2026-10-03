@@ -53,7 +53,7 @@ Les correspondances restent strictes : format, unité, catégorie, exigences (or
 | 2 | `thon-huile-240g` | Thon à l’huile (3 boîtes) | 240 g | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
 | 3 | `sel-cuisine-1kg` | Sel de cuisine iodé | 1 kg | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
 | 4 | `citrons-500g` | Citrons | 500 g | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
-| 5 | `oranges-2kg` | Oranges (filet) | 2 kg | — | Lidl Suisse (prix publié du 30.09.2026) | Migros, Coop, Denner, Aldi Suisse |
+| 5 | `oranges-2kg` | Oranges (filet) | 2 kg | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
 | 6 | `poires-1kg` | Poires | 1 kg | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
 | 7 | `huile-olive-1l` | Huile d’olive extra vierge | 1 l | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |
 | 8 | `huile-tournesol-1l` | Huile de tournesol | 1 l | — | Lidl Suisse (prix publié du 03.10.2026) | Migros, Coop, Denner, Aldi Suisse |

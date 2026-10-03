@@ -1,6 +1,6 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-10-03T17:32:53.342Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-10-03T21:52:31.929Z` sur les instantanés versionnés :
 - `aldi-api` du 03.10.2026 (réutilisation : requires_authorization)
 - `coop-epaper` du 03.10.2026 (réutilisation : requires_authorization)
 - `denner-web` du 03.10.2026 (réutilisation : requires_authorization)
@@ -34,7 +34,7 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Bananes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 1.19 (1.19/kg) 03.10.2026 | 1 | 2 |
 | Pommes (Gala ou variété courante) (1 kg) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 1.99 (1.99/kg) 03.10.2026, action 01.10–07.10 | 1 | 3 |
 | Poires (1 kg) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 2.49 (2.49/kg) 03.10.2026, action 01.10–07.10 | 1 | 3 |
-| Oranges (filet) (2 kg) | — | — | ◐ collecté, non publiable | — | ● 2.78 (1.39/kg) 30.09.2026, action 03.10–03.10 | 1 | 2 |
+| Oranges (filet) (2 kg) | — | — | ◐ collecté, non publiable | — | ● 2.79 (1.40/kg) 03.10.2026 | 1 | 2 |
 | Citrons (500 g) | — | ◐ collecté, non publiable | ◐ collecté, non publiable | — | ● 1.79 (2.39/kg) 03.10.2026 | 1 | 3 |
 | **Légumes** | | | | | | | |
 | Carottes (1 kg) | — | — | ◐ collecté, non publiable | — | ● 2.89 (1.93/kg) 03.10.2026 | 1 | 2 |

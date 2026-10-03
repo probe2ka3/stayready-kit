@@ -112,3 +112,42 @@ describe.skipIf(files.length === 0)('données versionnées : aucune donnée de s
     for (const id of restricted) expect(SOURCE_REGISTRY[id]?.publicUse).toBe('requires_authorization');
   });
 });
+
+describe.skipIf(files.length === 0)('relevés en magasin : aucune donnée privée ni donnée de test versionnée', () => {
+  it('data/releves ne contient que le modèle, dont toutes les lignes sont des exemples', () => {
+    const versioned = files.filter((f) => f.startsWith('data/releves/'));
+    expect(versioned).toEqual(['data/releves/modele.csv']);
+    const rows = readFileSync(join(root, 'data/releves/modele.csv'), 'utf8').split('\n').slice(1).filter((l) => l.trim());
+    for (const r of rows) expect(r).toMatch(/;EXEMPLE/);
+  });
+
+  it('fiches de collecte (docs/releves) : aucun prix, aucune preuve, aucun auteur', () => {
+    let docs: string[] = [];
+    try {
+      docs = execFileSync('git', ['ls-files', '-z', 'docs/releves'], { cwd: root, encoding: 'utf8' }).split('\0').filter((f) => f.endsWith('.csv'));
+    } catch {
+      return;
+    }
+    for (const f of docs) {
+      const [head, ...rows] = readFileSync(join(root, f), 'utf8').split('\n').filter((l) => l.trim());
+      const cols = (head as string).split(';');
+      for (const r of rows) {
+        const v = r.split(';');
+        for (const c of ['prix_chf', 'prix_action_chf', 'preuve', 'releve_par', 'valide_par']) {
+          const i = cols.indexOf(c);
+          if (i >= 0) expect(v[i] ?? '', `${f} ${c}`).toBe('');
+        }
+      }
+    }
+  });
+
+  it('instantané publiable des relevés (s’il existe) : référence épurée, ni fichier, ni preuve, ni auteur', () => {
+    const f = 'data/prices/live/releves.json';
+    if (!files.includes(f)) return;
+    const text = readFileSync(join(root, f), 'utf8');
+    expect(text).not.toMatch(/\.(csv|jpe?g|png|heic|webp|pdf)\b|releve_par|valide_par|EXEMPLE|fictif/i);
+    const snap = JSON.parse(text) as { batch: { prices: Array<{ source: { ref: string }; storeId: string | null }>; promotions: Array<{ source: { ref: string } }> } };
+    for (const o of [...snap.batch.prices, ...snap.batch.promotions]) expect(o.source.ref).toMatch(/^relevé en magasin du \d{4}-\d{2}-\d{2}$/);
+    for (const o of snap.batch.prices) expect(o.storeId).toBeTruthy();
+  });
+});

@@ -59,13 +59,15 @@ export async function GET(req: Request) {
     const priceData = (chainId: string) => {
       const st = statusByChain.get(chainId);
       const officialRestricted = restrictedChains.has(chainId);
-      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0, officialRestricted: false, needs: 0, needsTotal };
+      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0, officialRestricted: false, needs: 0, needsTotal, observedInStores: 0, observedElsewhere: 0 };
       const u = usable.get(chainId);
       const needs = u?.needs ?? 0;
-      if (u && u.official > 0) return { kind: 'official' as const, lastObservation: u.newestOfficial, prices: needs, officialRestricted, needs, needsTotal };
-      if (u && needs > 0) return { kind: 'community' as const, lastObservation: u.newest, prices: needs, officialRestricted, needs, needsTotal };
-      if (officialRestricted) return { kind: 'restricted' as const, lastObservation: null, prices: 0, officialRestricted, needs: 0, needsTotal };
-      return { kind: 'none' as const, lastObservation: st?.lastObservation ?? null, prices: 0, officialRestricted, needs: 0, needsTotal };
+      // Couverture générale (prix publiés, relevés généralisés) ≠ prix vérifiés dans une succursale du rayon.
+      const observed = { observedInStores: u?.observedInStores ?? 0, observedElsewhere: u?.observedElsewhere ?? 0 };
+      if (u && u.official > 0) return { kind: 'official' as const, lastObservation: u.newestOfficial, prices: needs, officialRestricted, needs, needsTotal, ...observed };
+      if (u && needs > 0) return { kind: 'community' as const, lastObservation: u.newest, prices: needs, officialRestricted, needs, needsTotal, ...observed };
+      if (officialRestricted) return { kind: 'restricted' as const, lastObservation: null, prices: 0, officialRestricted, needs: 0, needsTotal, ...observed };
+      return { kind: 'none' as const, lastObservation: st?.lastObservation ?? null, prices: 0, officialRestricted, needs: 0, needsTotal, ...observed };
     };
     const byChain = new Map<string, { count: number; nearestKm: number }>();
     for (const s of stores) {

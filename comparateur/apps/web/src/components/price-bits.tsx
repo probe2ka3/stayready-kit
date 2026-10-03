@@ -1,6 +1,6 @@
 'use client';
 
-import { formatQuantity, type LineOption, type PriceStatus } from '@cabas/core';
+import { formatQuantity, quantityGap, type LineOption, type PriceStatus } from '@cabas/core';
 import { format, getMessages, type Locale } from '@/i18n';
 import { money, shortCalendarDate, shortDate, unitPriceLabel } from '@/lib/format';
 import { Pill } from './ui';
@@ -61,8 +61,16 @@ export function OptionLine({
     option.packPriceCents != null && !promo
       ? format(m.status.packs, { packs: String(option.packs), size, price: money(option.packPriceCents) })
       : format(m.status.packsPromo, { packs: String(option.packs), size });
+  // Quantité demandée, quantité réellement achetée (paquets entiers) et éventuel surplus, toujours affichés.
+  const gap = option.requestedQuantity && option.purchasedQuantity ? quantityGap(option.requestedQuantity, option.purchasedQuantity) : null;
   const requested = option.requestedQuantity && option.purchasedQuantity
-    ? format(m.status.requested, { requested: formatQuantity(option.requestedQuantity), purchased: formatQuantity(option.purchasedQuantity) })
+    ? [
+        format(m.status.requested, { requested: formatQuantity(option.requestedQuantity), purchased: formatQuantity(option.purchasedQuantity) }),
+        gap?.surplus ? format(m.status.surplus, { qty: formatQuantity(gap.surplus) }) : null,
+        gap?.shortfall ? format(m.status.shortfall, { qty: formatQuantity(gap.shortfall) }) : null,
+      ]
+        .filter(Boolean)
+        .join(' · ')
     : null;
   return (
     <div className="min-w-0 flex-1">
@@ -89,7 +97,7 @@ export function OptionLine({
       {!compact && (
         <p className="text-xs text-muted">
           {packLine}
-          {requested && option.packs !== qty ? ` · ${requested}` : ''}
+          {requested ? ` · ${requested}` : ''}
         </p>
       )}
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -128,7 +136,7 @@ export function SourceLine({ option, locale }: { option: LineOption; locale: Loc
     option.reliability === 'crowd'
       ? format(m.status.sourceCrowd, { date, place: option.observedAtPlace ?? '—' })
       : option.reliability === 'survey'
-        ? format(m.status.sourceSurvey, { date })
+        ? format(m.status.sourceSurvey, { date, place: option.observedAtPlace ?? '—' })
         : option.reliability === 'third_party'
           ? format(m.status.sourceThirdParty, { date, provider: option.sourceProvider })
           : format(m.status.sourceOfficial, { date });

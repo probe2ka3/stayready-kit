@@ -11,7 +11,7 @@ import {
   type Store,
 } from '@cabas/core';
 import { PRODUCTS } from '@cabas/reference';
-import { buildOpenPricesBatch, buildRelevesBatch, categorySlug, matchesFor, RELEVE_COLUMNS, type OpLocation, type OpPrice } from '../src';
+import { buildOpenPricesBatch, buildRelevesBatch as buildRaw, categorySlug, incompatibleVariants, matchesFor, privateLeaks, RELEVE_COLUMNS, type OpLocation, type OpPrice, type ReleveOptions } from '../src';
 
 // Données de test fictives (aucun prix réel) : vérifient les règles, pas les montants.
 const now = new Date('2026-09-30T10:00:00Z');
@@ -34,11 +34,16 @@ const row = (o: Partial<Record<(typeof RELEVE_COLUMNS)[number], string>>) =>
         contenance: '500',
         unite: 'g',
         prix_chf: '1.50',
-        preuve: 'photo test',
+        preuve: 'IMG_0001.jpg',
+        releve_par: 'Testeur',
+        statut: 'valide',
+        valide_par: 'Validatrice',
         ...o,
       })[c] ?? '',
   ).join(';');
 const csv = (...rows: string[]) => [header, ...rows].join('\n');
+// Preuve présente dans le dossier privé (fictive) ; les autres options par défaut.
+const buildRelevesBatch = (files: Array<{ name: string; content: string }>, opts: ReleveOptions) => buildRaw(files, { proofFiles: new Set(['IMG_0001.jpg']), ...opts });
 
 describe('relevés en magasin', () => {
   it('un prix vaut pour un magasin et un jour, avec sa preuve et son besoin déclaré', () => {
@@ -46,7 +51,9 @@ describe('relevés en magasin', () => {
     expect(batch.report.rejected).toEqual([]);
     expect(batch.retailerProducts[0]).toMatchObject({ chainId: 'migros', declaredSlug: 'spaghetti-500g', quantity: { amount: 500, unit: 'g' } });
     expect(batch.prices[0]).toMatchObject({ storeId: 'osm:node/1', zoneId: null, priceCents: 150, reliability: 'survey', priceType: 'regular', observedAtPlace: 'Migros, Rue A 1, Bulle' });
-    expect(batch.prices[0]?.source.ref).toContain('bulle.csv:2 — photo test');
+    // Référence publique : jour du relevé seulement (ni fichier, ni preuve, ni auteur).
+    expect(batch.prices[0]?.source.ref).toBe('relevé en magasin du 2026-09-29');
+    expect(batch.lines[0]).toMatchObject({ status: 'publie', file: 'bulle.csv', line: 2, proof: 'IMG_0001.jpg' });
     expect(batch.promotions).toEqual([]);
   });
 
@@ -133,8 +140,9 @@ describe('relevés en magasin', () => {
     const ctx = { asOf: now, today: zurichToday(now), targetDate: zurichToday(now), policy: DEFAULT_FRESHNESS, prefs: DEFAULT_PREFS };
     const line = { id: 'l1', productId: canonical.id, qty: 2 };
     const here = resolveLine(line, canonical, profileForStore(stores[0]!, specific), index, ctx);
-    expect(here.option).toMatchObject({ totalCents: 300, packs: 2, status: 'verified' });
-    expect(here.option?.statusReasons).toContain('store_specific_price');
+    // Relevé local : propre au magasin relevé et toujours indicatif (jamais « vérifié »).
+    expect(here.option).toMatchObject({ totalCents: 300, packs: 2, status: 'indicative', reliability: 'survey', observedAtPlace: 'Migros, Rue A 1, Bulle' });
+    expect(here.option?.statusReasons).toEqual(expect.arrayContaining(['store_specific_price', 'local_survey']));
     expect(resolveLine(line, canonical, profileForStore(stores[1]!, specific), index, ctx).option).toBeNull();
 
     const refused = matchesFor(batch.retailerProducts, PRODUCTS, [
@@ -386,5 +394,79 @@ describe('instantanés : provenance établie par le fichier et l’hôte des URL
         expect((await readLiveSnapshots(dir, { publicOnly: true })).flatMap((s) => s.batch.prices)).toEqual([]);
       },
     );
+  });
+});
+
+describe('relevés en magasin : validation, preuve et export public épuré', () => {
+  const opts = (extra: Partial<ReleveOptions> = {}): ReleveOptions => ({ now, stores, proofFiles: new Set(['IMG_0001.jpg', 'ticket-0930.pdf']), ...extra });
+  const one = (o: Parameters<typeof row>[0], extra: Partial<ReleveOptions> = {}) => buildRaw([{ name: '2026-09-bulle-migros.csv', content: csv(row(o)) }], opts(extra));
+
+  it('relevé incomplet (contenance, prix ou preuve manquants) : invalide, jamais publié, motif dans le rapport privé', () => {
+    for (const [o, field] of [
+      [{ contenance: '' }, 'contenance'],
+      [{ prix_chf: '' }, 'prix_chf'],
+      [{ preuve: '' }, 'preuve'],
+      [{ unite: '' }, 'unite'],
+    ] as const) {
+      const b = one(o);
+      expect(b.prices, field).toEqual([]);
+      expect(b.lines[0], field).toMatchObject({ status: 'invalide' });
+      expect(b.lines[0]?.reasons[0], field).toMatch(new RegExp(`^${field}`));
+    }
+  });
+
+  it('publication seulement si validé, avec validateur et fichier de preuve présent', () => {
+    expect(one({ statut: '' }).lines[0]).toMatchObject({ status: 'en_attente', reasons: [expect.stringMatching(/en attente de validation/)] });
+    expect(one({ statut: 'a_valider' }).prices).toEqual([]);
+    expect(one({ valide_par: '' }).lines[0]?.reasons).toEqual(['valide_par manquant']);
+    expect(one({ statut: 'refuse' }).lines[0]).toMatchObject({ status: 'refuse' });
+    // Preuve citée sans fichier (note, numéro de ticket) ou fichier absent du dossier privé.
+    expect(one({ preuve: 'ticket 4521' }).lines[0]?.reasons[0]).toMatch(/preuve à fournir en fichier/);
+    expect(one({ preuve: 'IMG_9999.jpg' }).lines[0]?.reasons[0]).toMatch(/absent du dossier privé : IMG_9999.jpg/);
+    expect(one({ preuve: 'ticket-0930.pdf' }).lines[0]?.status).toBe('publie');
+    // Aucune liste de preuves fournie : rien n'est vérifiable, rien n'est publié.
+    expect(one({}, { proofFiles: undefined }).prices).toEqual([]);
+  });
+
+  it('correspondance : besoin des 50 seulement, variante exclue par les règles revues refusée', () => {
+    const rules = incompatibleVariants([
+      { id: 'lidl-penne', canonicalSlug: 'penne-500g', exclude: ['mini ', 'complet', 'sans gluten'], organic: false },
+      { id: 'lidl-confiture', canonicalSlug: 'confiture-fraises-500g', require: ['fraise'] },
+    ]);
+    // Besoin du catalogue mais hors des 50 du noyau : relevé conservé dans le rapport privé, non publié.
+    expect(one({ besoin: 'fusilli-500g', article: 'Fusilli' }).lines[0]).toMatchObject({ status: 'refuse', reasons: [expect.stringMatching(/fusilli-500g hors des 50 du noyau/)] });
+    expect(one({ besoin: 'caviar-50g' }).lines[0]?.status).toBe('invalide');
+    const penne = (o: Parameters<typeof row>[0]) => one({ besoin: 'penne-500g', article: 'Penne', ...o }, { incompatible: rules });
+    expect(penne({}).lines[0]?.status).toBe('publie');
+    expect(penne({ variante: 'complètes' }).lines[0]).toMatchObject({ status: 'refuse', reasons: [expect.stringMatching(/« complet », règle revue lidl-penne/)] });
+    expect(penne({ bio: 'oui' }).lines[0]?.reasons[0]).toMatch(/article bio/);
+    const conf = one({ besoin: 'confiture-fraises-500g', article: 'Confiture', variante: 'abricots', contenance: '500' }, { incompatible: rules });
+    expect(conf.lines[0]?.reasons[0]).toMatch(/mention « fraise » absente/);
+  });
+
+  it('code-barres : clé de contrôle vérifiée ; valide → même article identifiable entre enseignes', () => {
+    expect(one({ code_barres: '7610000000018' }).lines[0]).toMatchObject({ status: 'invalide', reasons: [expect.stringMatching(/^code_barres/)] });
+    expect(one({ code_barres: '7610000000011' }).retailerProducts[0]?.gtin).toBe('7610000000011');
+  });
+
+  it('conditions de l’action : « dès 2 » calculée, autre condition affichée mais jamais appliquée', () => {
+    expect(one({ prix_action_chf: '1.20', conditions: 'dès 2 paquets' }).promotions[0]).toMatchObject({ type: 'min_qty_price', minQty: 2 });
+    expect(one({ prix_action_chf: '1.20', conditions: 'avec le bon du journal' }).promotions[0]).toMatchObject({ type: 'conditional' });
+    expect(one({ conditions: 'dès 2' }).lines[0]?.status).toBe('invalide');
+  });
+
+  it('export public : aucune donnée privée (fichier, preuve, auteur, validateur) ; contrôle bloquant', () => {
+    const files = [{ name: '2026-09-bulle-migros.csv', content: csv(row({ preuve: 'IMG_0001.jpg + ticket-0930.pdf' })) }];
+    const b = buildRaw(files, opts());
+    expect(b.prices).toHaveLength(1);
+    const pub = { retailerProducts: b.retailerProducts, prices: b.prices, promotions: b.promotions };
+    const json = JSON.stringify(pub);
+    for (const secret of ['2026-09-bulle-migros.csv', 'IMG_0001', 'ticket-0930', 'Testeur', 'Validatrice']) expect(json).not.toContain(secret);
+    expect(privateLeaks(pub, files)).toEqual([]);
+    // Une fuite (par ex. preuve recopiée dans la désignation) est détectée et bloque la publication.
+    const leaked = { ...pub, retailerProducts: pub.retailerProducts.map((p) => ({ ...p, name: `${p.name} IMG_0001.jpg` })) };
+    expect(privateLeaks(leaked, files)).toEqual(['IMG_0001.jpg']);
+    // Le rapport privé garde la preuve pour la vérification.
+    expect(b.lines[0]).toMatchObject({ status: 'publie', proof: 'IMG_0001.jpg + ticket-0930.pdf' });
   });
 });

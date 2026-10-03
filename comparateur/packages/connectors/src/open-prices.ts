@@ -372,6 +372,7 @@ export function buildOpenPricesBatch(
       license: OPEN_PRICES_LICENSE,
       sourceUrl: `https://prices.openfoodfacts.org/prices/${p.id}`,
       observedAtPlace: place,
+      observedAtStoreId: storeId,
       proof: proofType === 'RECEIPT' ? 'receipt' : proofType === 'PRICE_TAG' ? 'price_tag' : null,
     });
   }
