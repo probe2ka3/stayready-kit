@@ -105,6 +105,16 @@ export function OptionLine({
       {!compact && promo && (promo.conditions ?? []).length > 0 && (
         <p className="mt-0.5 text-xs text-muted">{format(m.status.conditions, { list: (promo.conditions ?? []).join(' · ') })}</p>
       )}
+      {!compact && option.loyaltyOffer && (
+        <p className="mt-0.5 text-xs text-muted" data-testid="loyalty-not-applied">
+          {format(m.status.loyaltyNotApplied, {
+            program: option.loyaltyOffer.program,
+            price: money(option.loyaltyOffer.totalCents),
+            qty: formatQuantity(option.loyaltyOffer.quantity),
+            to: shortCalendarDate(option.loyaltyOffer.validTo),
+          })}
+        </p>
+      )}
       {!compact && !option.isDemo && <SourceLine option={option} locale={locale} />}
     </div>
   );

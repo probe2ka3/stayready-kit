@@ -40,6 +40,9 @@ export interface StoresResponse {
       prices: number;
       /** Source officielle de l'enseigne non affichée (usage privé, autorisation en attente). */
       officialRestricted?: boolean;
+      /** Aliments de base (sur `needsTotal`) avec un prix utilisable aujourd'hui dans une succursale du rayon. */
+      needs?: number;
+      needsTotal?: number;
     };
   }>;
   absentChains: Array<{ chainId: string; name: string; badge: string }>;

@@ -247,6 +247,8 @@ export interface LineOption {
   retailerProductId: string;
   productName: string;
   brand: string | null;
+  /** Code-barres de l'article (si connu) : seul critère du « même article » entre deux enseignes. */
+  gtin: string | null;
   quantity: Quantity;
   attributes: ProductAttributes;
   matchKind: MatchKind;
@@ -280,6 +282,11 @@ export interface LineOption {
   /** Autres sources disponibles pour cette enseigne (au plus 3), jamais fusionnées. */
   alternatives: SourceAlternative[];
   divergence: SourceDivergence | null;
+  /**
+   * Prix plus bas réservé à une carte ou application de fidélité que l'utilisateur n'a pas déclarée :
+   * jamais appliqué, seulement signalé (montant pour la même quantité, fin de validité).
+   */
+  loyaltyOffer?: { program: string; totalCents: number; quantity: Quantity; validTo: string; endIsPresumed: boolean } | null;
 }
 
 export type UnavailableReason =
@@ -667,6 +674,7 @@ export function resolveLine(
       retailerProductId: product.id,
       productName: product.name,
       brand: product.brand ?? null,
+      gtin: product.gtin ?? null,
       quantity: product.quantity,
       attributes: product.attributes,
       matchKind: match.kind,
@@ -697,9 +705,45 @@ export function resolveLine(
   }
 
   const best = chooseAmongSources(candidates);
-  if (best) return { option: best, unavailable: null };
+  if (best) return { option: { ...best, loyaltyOffer: loyaltyOfferFor(line, canonical, eligible, profile, index, ctx, best.totalCents) }, unavailable: null };
   if (sawStale) return { option: null, unavailable: { reason: 'stale_price_excluded', lastKnown: sawStale } };
   return { option: null, unavailable: { reason: sawAnyPrice ? 'stale_price_excluded' : 'no_price' } };
+}
+
+/**
+ * Action réservée à une carte ou application de fidélité non déclarée, plus avantageuse que l'offre
+ * retenue pour la même quantité (tous les articles équivalents de l'enseigne) : signalée, jamais appliquée.
+ */
+function loyaltyOfferFor(
+  line: BasketLine,
+  canonical: CanonicalProduct,
+  eligible: ProductMatch[],
+  profile: PriceProfile,
+  index: OfferIndex,
+  ctx: PricingContext,
+  retainedCents: number,
+): LineOption['loyaltyOffer'] {
+  let out: LineOption['loyaltyOffer'] = null;
+  for (const match of eligible) {
+    const product = index.products.get(match.retailerProductId) as RetailerProduct;
+    const packs = packsNeeded(line.qty, canonical.quantity.amount, product.quantity.amount);
+    const obs = pickObservation(index.pricesByProduct.get(product.id), profile, ctx);
+    const fresh = obs && ageInDays(obs.observedAt, ctx.asOf) <= staleAfterDays(obs, ctx.policy) ? obs : null;
+    for (const p of index.promotionsByProduct.get(product.id) ?? []) {
+      if (!p.loyaltyProgram || ctx.prefs.loyaltyPrograms.includes(p.loyaltyProgram)) continue;
+      if (applicablePromotions([p], profile, { ...ctx, prefs: { ...ctx.prefs, loyaltyPrograms: [p.loyaltyProgram] } }).length === 0) continue;
+      const cost = promotionCost(p, packs, fresh ? fresh.priceCents : null);
+      if (cost == null || cost >= retainedCents || (out && cost >= out.totalCents)) continue;
+      out = {
+        program: LOYALTY_LABEL[p.loyaltyProgram] ?? p.loyaltyProgram,
+        totalCents: cost,
+        quantity: { amount: packs * product.quantity.amount, unit: product.quantity.unit },
+        validTo: p.validTo,
+        endIsPresumed: Boolean(p.endIsPresumed),
+      };
+    }
+  }
+  return out;
 }
 
 /**
@@ -785,4 +829,52 @@ function isBetter(a: LineOption, b: LineOption): boolean {
 /** Rang de fiabilité (0 = meilleur), utilisé pour départager deux offres au même prix. */
 export function statusRank(status: PriceStatus): number {
   return STATUS_RANK[status];
+}
+
+/** Aliments d'une liste ayant un prix utilisable dans au moins une succursale de l'enseigne. */
+export interface UsableNeeds {
+  needs: number;
+  /** Dont avec un prix publié par l'enseigne elle-même. */
+  official: number;
+  newest: string | null;
+  newestOfficial: string | null;
+}
+
+/**
+ * Par enseigne : combien des besoins `canonicals` ont aujourd'hui un prix utilisable dans au moins une
+ * des succursales `stores`, selon les règles de la comparaison (`resolveLine` : correspondance validée,
+ * exigences du besoin, fraîcheur, zone tarifaire de la succursale). Sert à annoncer honnêtement la
+ * couverture d'une enseigne avant toute comparaison (un relevé trop ancien ou d'une autre zone ne compte pas).
+ */
+export function usableNeedsByChain(
+  index: OfferIndex,
+  stores: Store[],
+  canonicals: CanonicalProduct[],
+  ctx: PricingContext,
+): Map<string, UsableNeeds> {
+  const specific = storeSpecificIds(index);
+  const profiles = new Map<string, PriceProfile>();
+  for (const store of stores) {
+    const pr = profileForStore(store, specific);
+    profiles.set(pr.key, pr);
+  }
+  const out = new Map<string, UsableNeeds>();
+  for (const canonical of canonicals) {
+    const counted = new Set<string>();
+    for (const profile of profiles.values()) {
+      if (counted.has(profile.chainId)) continue;
+      const { option } = resolveLine({ id: canonical.id, productId: canonical.id, qty: 1 }, canonical, profile, index, ctx);
+      if (!option) continue;
+      counted.add(profile.chainId);
+      const u = out.get(profile.chainId) ?? { needs: 0, official: 0, newest: null, newestOfficial: null };
+      u.needs++;
+      if (!u.newest || option.observedAt > u.newest) u.newest = option.observedAt;
+      if (option.reliability === 'official') {
+        u.official++;
+        if (!u.newestOfficial || option.observedAt > u.newestOfficial) u.newestOfficial = option.observedAt;
+      }
+      out.set(profile.chainId, u);
+    }
+  }
+  return out;
 }

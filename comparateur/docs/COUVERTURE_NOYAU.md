@@ -12,11 +12,43 @@ seulement (Lidl, Open Prices). Les critères de correspondance n'ont pas été a
 | Historique : collecte du 01.10.2026 | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
 | Nouvelle collecte du 03.10.2026, 11:02–11:13 (avant les changements ci-dessous) | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
 | 03.10.2026, attribution d'un lieu Open Prices à Migros (provisoire) | 47 | 34 | 23 | 6 | 1 | 41 / 19 / 2 / 0 | 2 / 0 / 0 / 0 |
-| **03.10.2026 après réexamen du justificatif (attribution retirée)** | **47** | **34** | **23** | **6** | **0** | **41 / 18 / 2 / 0** | **1 / 0 / 0 / 0** |
+| 03.10.2026 après réexamen du justificatif (attribution retirée) | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
+| **03.10.2026 soir, après recherche des prix publiables inexploités (§ 0 bis)** | **47** | **34** | **23** | **6** | **0** | **41 / 18 / 2 / 0** | **1 / 0 / 0 / 0** |
 
 Collecte du 03.10 : Open Prices 231 prix, journal Coop 77 actions (édition du 01.10, texte en cache),
 Denner 250 prix et 25 actions, Aldi 1 481 prix et 558 actions, Lidl 424 prix et 290 actions
 (« partiel » : 3 pages en échec sur 108 requêtes) ; 218 requêtes, 10 min 50 s.
+
+### 0 bis. Prix publiables inexploités : recherche du 03.10.2026 au soir
+
+Point de départ : export publiable du 03.10 (Lidl 47/50, Coop 1/50, Migros, Denner, Aldi 0/50 ;
+comparables dans ≥ 2 enseignes : 1, ≥ 3 : 0). Analyse **hors ligne** des réponses Open Prices archivées
+(`data/raw/prices.openfoodfacts.org/2026-10-03`, aucune nouvelle collecte) et de l'instantané Lidl.
+
+- **Open Prices, 365 relevés suisses** : relevés de moins de 90 jours (seuls utilisables) : Migros 67,
+  Coop 30, Denner 8, Lidl 1, Aldi 0, lieux sans enseigne 38 (dont 37 au « Métropole Centre » de
+  La Chaux-de-Fonds, attribution incertaine, non utilisée). **Aucun ne correspond à un des 50 besoins
+  au sens strict** en dehors des penne Coop déjà utilisées : chips, boissons, chocolat, sauces,
+  soupes, pâtes d'autres formes (fusilli, maccheroni)…
+- **Relevés écartés faute de contenance** (cinq fiches Open Food Facts lues ; robots.txt d'Open Food
+  Facts exclut ensuite `/api` pour les robots génériques : arrêt, aucune dépendance dans le code) :
+  « Vollmilch UHT » Migros = lait **bio** sans contenance publiée ; « Milch 1.5 % » Migros = lait **sans
+  lactose** ; café Denner 500 g sans indication « moulu » ou « grains » ; les autres hors noyau. Aucun
+  n'est équivalent au besoin : **aucune correspondance créée**.
+- **Lieux en ligne** (migros.ch, coop.ch) : aucun dans Open Prices. Filtre de pays : « Suisse » donne
+  les mêmes 192 lieux que « Schweiz ».
+- **Lidl, 3 besoins sans prix** : vérifiés, aucun article équivalent (farine **bise** ≠ mi-blanche ;
+  lentilles **en conserve** 260 g ≠ lentilles vertes sèches 500 g ; vinaigre **de table** ≠ vinaigre de
+  vin). **Actions Lidl** : 262 articles en action, 4 reliés au noyau ; l'action Lidl Plus « Oranges 1 kg »
+  (01–07.10) n'est pas reliée au besoin « oranges 2 kg » (article hebdomadaire au nom générique,
+  identifiant renouvelé chaque semaine ; une règle automatique par nom assouplirait les
+  correspondances) ; « Citrons » Lidl Plus est vendu **à la pièce** (besoin au poids : incomparable).
+
+**Conclusion** : aucune nouvelle donnée publiable exploitable pour **Migros, Denner et Aldi** ; aucun
+prix existant n'a été rendu utilisable par une correction de reconnaissance (aucune erreur trouvée).
+La couverture publique est **inchangée** (tableau ci-dessus) ; le progrès de cette étape porte sur
+l'exactitude de ce qui est affiché (`docs/PARCOURS_BULLE.md`). Prochain gain : relevés en magasin
+(`docs/RELEVES_PRIORITAIRES.md`).
 
 ### Open Prices : données réellement disponibles (API lue le 03.10.2026)
 

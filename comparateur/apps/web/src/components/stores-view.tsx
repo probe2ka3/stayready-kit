@@ -137,6 +137,8 @@ export function StoresView({ locale }: { locale: Locale }) {
                           <p className="text-xs text-muted">
                             {format(m.stores.priceText[c.priceData.kind === 'community' && c.priceData.officialRestricted ? 'communityRestricted' : c.priceData.kind] ?? '', {
                               date: c.priceData.lastObservation ? shortDate(c.priceData.lastObservation) : '—',
+                              needs: String(c.priceData.needs ?? c.priceData.prices),
+                              total: String(c.priceData.needsTotal ?? 50),
                             })}
                           </p>
                         </div>

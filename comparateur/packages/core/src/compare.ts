@@ -48,6 +48,7 @@ import {
   type Chain,
   type FreshnessPolicy,
   type LatLon,
+  type Quantity,
   type Store,
 } from './types';
 
@@ -152,6 +153,11 @@ export interface SavingsDto {
   /** Articles trouvés par la référence mais pas par le scénario. */
   lostLines: number;
   comparableLines: number;
+  /**
+   * Articles comparables achetés dans un autre conditionnement que dans la référence (ex. 750 g au
+   * lieu de 500 g) : l'économie porte sur le montant payé pour couvrir la quantité demandée.
+   */
+  differentQuantityLines: number;
   purchaseSavingsCents: number;
   travelDeltaCents: number;
   globalSavingsCents: number;
@@ -269,6 +275,8 @@ export interface SolutionDto {
   /** Économie sur les achats et économie après déplacement ; null si non comparable. */
   grossSavingsCents: number | null;
   netSavingsCents: number | null;
+  /** Articles achetés dans un autre conditionnement que dans la référence (null si non comparable). */
+  differentQuantityLines: number | null;
   /** Pourquoi l'économie n'est pas calculée. */
   notComparable: null | 'incomplete' | 'no_complete_reference';
 }
@@ -321,6 +329,45 @@ export interface TravelMethodDto {
   returnToOrigin: boolean;
 }
 
+/** Offre d'une enseigne pour un article du panier (la moins chère de ses succursales du rayon). */
+export interface LineComparisonOfferDto {
+  chainId: string;
+  chainName: string;
+  productName: string;
+  brand: string | null;
+  gtin: string | null;
+  packs: number;
+  packQuantity: Quantity;
+  purchasedQuantity: Quantity;
+  totalCents: number;
+  unitPrice: LineOption['unitPrice'];
+  status: LineOption['status'];
+  statusReasons: LineOption['statusReasons'];
+  observedAt: string;
+  observedAtPlace: string | null;
+  reliability: LineOption['reliability'];
+  sourceTier: LineOption['sourceTier'];
+  promotion: LineOption['promotion'];
+  loyaltyOffer: LineOption['loyaltyOffer'];
+}
+
+/**
+ * Comparaison d'un article entre enseignes (au moins deux enseignes avec un prix utilisable).
+ * `sameArticle` : même code-barres partout (le même produit) ; sinon produits équivalents (même
+ * besoin, marque ou variante différente). L'écart n'est donné que pour des quantités achetées égales.
+ */
+export interface LineComparisonDto {
+  lineId: string;
+  productName: string;
+  qty: number;
+  requestedQuantity: Quantity;
+  sameArticle: boolean;
+  sameQuantity: boolean;
+  /** Écart entre l'offre la plus chère et la moins chère (null si les quantités achetées diffèrent). */
+  spreadCents: number | null;
+  offers: LineComparisonOfferDto[];
+}
+
 /** Dates des relevés utilisés, par enseigne (fraîcheur réelle des prix du résultat). */
 export interface PriceDatesDto {
   chainId: string;
@@ -337,6 +384,12 @@ export interface ChainCoverageDto {
   coveredLines: number;
   /** Dont au statut « indicatif » seulement (relevé communautaire, ou prix de plus de 7 jours). */
   indicativeLines: number;
+  /**
+   * Pourquoi ces prix sont indicatifs (une raison par article, la plus forte) : relevé communautaire,
+   * prix de plus de 7 jours, action dont la fin n'est pas publiée, ou seulement parce que les courses
+   * sont prévues après le jour du relevé.
+   */
+  indicativeReasons: { crowd: number; aging: number; promo: number; futureDate: number };
   /** Succursales du rayon ouvertes le jour choisi (0 : enseigne fermée ce jour-là, non comparée). */
   openStores: number;
   /** Source officielle de l'enseigne non affichée (usage privé) ; renseigné par le serveur. */
@@ -370,6 +423,8 @@ export interface CompareResultDto {
   solutions: SolutionDto[];
   /** Articles introuvables dans toutes les enseignes du périmètre (données disponibles). */
   unavailableEverywhere: Array<{ lineId: string; productName: string; qty: number }>;
+  /** Articles ayant un prix dans au moins deux enseignes du rayon : comparaison directe, article par article. */
+  lineComparisons: LineComparisonDto[];
   alternativesByStoreCount: Array<{ storeCount: number; globalCents: number; purchaseCents: number; coveredLines: number } | null>;
   planning: PlanningDto | null;
   outlook: OutlookDayDto[];
@@ -665,6 +720,13 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     return store ? `${deps.chains.get(store.chainId)?.name ?? store.chainId} (${store.name})` : '';
   })();
 
+  /** Même quantité achetée pour la ligne `l` dans deux profils (paquets × contenance). */
+  const samePurchasedQuantity = (l: number, a: number, b: number): boolean => {
+    const qa = (outcomes[l] as LineOutcome[])[a]?.option?.purchasedQuantity;
+    const qb = (outcomes[l] as LineOutcome[])[b]?.option?.purchasedQuantity;
+    return Boolean(qa && qb && qa.unit === qb.unit && qa.amount === qb.amount);
+  };
+
   const savingsFor = (plan: Plan): SavingsDto | null => {
     const { assignment, route } = plan;
     if (!reference || !reference.route) return null;
@@ -672,6 +734,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     let purchaseSavings = 0;
     let extra = 0;
     let lost = 0;
+    let differentQuantity = 0;
     lines.forEach((_, l) => {
       const a = assignment[l];
       const r = reference.assignment[l];
@@ -679,6 +742,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       if (a == null && r != null) lost++;
       if (a == null || r == null) return;
       comparable++;
+      if (!samePurchasedQuantity(l, a, r)) differentQuantity++;
       purchaseSavings += ((costs[l] as Array<number | null>)[r] as number) - ((costs[l] as Array<number | null>)[a] as number);
     });
     const travelDelta =
@@ -694,6 +758,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       extraCoveredLines: extra,
       lostLines: lost,
       comparableLines: comparable,
+      differentQuantityLines: differentQuantity,
       purchaseSavingsCents: purchaseSavings,
       travelDeltaCents: travelDelta,
       globalSavingsCents: purchaseSavings - travelDelta,
@@ -881,12 +946,15 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     retained: true,
     grossSavingsCents: null,
     netSavingsCents: null,
+    differentQuantityLines: null,
     notComparable: null,
   });
   const solutions: SolutionDto[] = [];
+  const assignmentOf = new Map<string, Array<number | null>>();
   for (const [chainId, sgl] of bestPerChain) {
     if (!sgl.route || sgl.coveredLines === 0) continue;
     solutions.push(solutionFrom(`chain:${chainId}`, 'single_chain', [sgl.profileIndex], sgl.assignment, sgl.coveredLines, sgl.purchaseCents, sgl.route));
+    assignmentOf.set(`chain:${chainId}`, sgl.assignment);
   }
   // Combinaison : celle du parcours optimisé ; s'il se limite à un magasin, la meilleure combinaison
   // de plusieurs magasins est tout de même montrée (non retenue : gain inférieur au seuil ou nul).
@@ -900,6 +968,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     const sol = solutionFrom('combination', 'combination', combo.profiles, combo.assignment, combo.coveredLines, combo.purchaseCents, combo.route);
     sol.retained = combo === result.optimized;
     solutions.push(sol);
+    assignmentOf.set('combination', combo.assignment);
   }
   const completeSingles = solutions.filter((x) => x.kind === 'single_chain' && x.complete).sort((a, b) => a.globalCents - b.globalCents);
   const refSolution = completeSingles[0] ?? null;
@@ -912,6 +981,9 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       sol.isReference = sol === refSolution;
       sol.grossSavingsCents = refSolution.purchaseCents - sol.purchaseCents;
       sol.netSavingsCents = refSolution.globalCents - sol.globalCents;
+      const mine = assignmentOf.get(sol.key) ?? [];
+      const ref = assignmentOf.get(refSolution.key) ?? [];
+      sol.differentQuantityLines = lines.filter((_, l) => mine[l] != null && ref[l] != null && !samePurchasedQuantity(l, mine[l] as number, ref[l] as number)).length;
     }
   }
   solutions.sort((a, b) => Number(b.complete) - Number(a.complete) || b.coveredLines - a.coveredLines || a.globalCents - b.globalCents);
@@ -1000,15 +1072,73 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     const idx = profiles.map((pr, i) => (pr.chainId === chainId ? i : -1)).filter((i) => i >= 0);
     let coveredLines = 0;
     let indicativeLines = 0;
+    const indicativeReasons = { crowd: 0, aging: 0, promo: 0, futureDate: 0 };
     for (const row of outcomes) {
       const opts = idx.map((i) => row[i]?.option).filter((o): o is NonNullable<typeof o> => Boolean(o));
       if (opts.length === 0) continue;
       coveredLines++;
-      if (opts.every((o) => o.status === 'indicative')) indicativeLines++;
+      if (opts.every((o) => o.status === 'indicative')) {
+        indicativeLines++;
+        const best = cheapestOption(opts) as LineOption;
+        const r = new Set(best.statusReasons);
+        if (r.has('crowd_sourced')) indicativeReasons.crowd++;
+        else if (r.has('aging_price')) indicativeReasons.aging++;
+        else if (r.has('promo_not_confirmed_on_date') || r.has('promo_end_presumed')) indicativeReasons.promo++;
+        else indicativeReasons.futureDate++;
+      }
     }
     const stores = deps.stores.filter((st) => st.chainId === chainId);
     const openStores = stores.filter((st) => !closedIds.has(st.id)).length;
-    return { chainId, chainName: deps.chains.get(chainId)?.name ?? chainId, coveredLines, indicativeLines, openStores };
+    return { chainId, chainName: deps.chains.get(chainId)?.name ?? chainId, coveredLines, indicativeLines, indicativeReasons, openStores };
+  });
+  // Article par article : meilleure offre de chaque enseigne du rayon, dès que deux enseignes ont un prix.
+  const chainIdsInRadius = [...new Set(deps.stores.map((st) => st.chainId))];
+  const lineComparisons: LineComparisonDto[] = [];
+  lines.forEach((line, l) => {
+    const row = outcomes[l] as LineOutcome[];
+    const offers: LineComparisonOfferDto[] = [];
+    for (const chainId of chainIdsInRadius) {
+      const opts = profiles.flatMap((pr, i) => (pr.chainId === chainId && row[i]?.option ? [row[i]?.option as LineOption] : []));
+      const best = cheapestOption(opts);
+      if (!best) continue;
+      offers.push({
+        chainId,
+        chainName: deps.chains.get(chainId)?.name ?? chainId,
+        productName: best.productName,
+        brand: best.brand,
+        gtin: best.gtin,
+        packs: best.packs,
+        packQuantity: best.quantity,
+        purchasedQuantity: best.purchasedQuantity,
+        totalCents: best.totalCents,
+        unitPrice: best.unitPrice,
+        status: best.status,
+        statusReasons: best.statusReasons,
+        observedAt: best.observedAt,
+        observedAtPlace: best.observedAtPlace,
+        reliability: best.reliability,
+        sourceTier: best.sourceTier,
+        promotion: best.promotion,
+        loyaltyOffer: best.loyaltyOffer ?? null,
+      });
+    }
+    if (offers.length < 2) return;
+    offers.sort((a, b) => a.totalCents - b.totalCents || a.chainName.localeCompare(b.chainName));
+    const gtins = new Set(offers.map((o) => o.gtin));
+    const sameArticle = gtins.size === 1 && offers[0]?.gtin != null;
+    const first = offers[0] as LineComparisonOfferDto;
+    const sameQuantity = offers.every((o) => o.purchasedQuantity.unit === first.purchasedQuantity.unit && o.purchasedQuantity.amount === first.purchasedQuantity.amount);
+    const canonical = deps.products.get(line.productId) as CanonicalProduct;
+    lineComparisons.push({
+      lineId: line.id,
+      productName: canonical.name,
+      qty: line.qty,
+      requestedQuantity: { amount: line.qty * canonical.quantity.amount, unit: canonical.quantity.unit },
+      sameArticle,
+      sameQuantity,
+      spreadCents: sameQuantity ? (offers[offers.length - 1] as LineComparisonOfferDto).totalCents - first.totalCents : null,
+      offers,
+    });
   });
   chainCoverage.sort((a, b) => b.coveredLines - a.coveredLines || a.chainName.localeCompare(b.chainName));
   if (priceDates.some((d) => now.getTime() - Date.parse(d.newest) > 48 * 3600_000)) warnings.add('prices_not_refreshed');
@@ -1055,6 +1185,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     scenarios,
     singleStoreRanking,
     solutions,
+    lineComparisons,
     unavailableEverywhere: lines.flatMap((line, l) =>
       everywhereAvailable[l] ? [] : [{ lineId: line.id, productName: (deps.products.get(line.productId) as CanonicalProduct).name, qty: line.qty }],
     ),
@@ -1072,6 +1203,15 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     outlook,
     waitSignal,
   };
+}
+
+/** Offre la moins chère (à prix égal, la plus fiable) parmi les succursales d'une enseigne. */
+function cheapestOption(opts: LineOption[]): LineOption | null {
+  let best: LineOption | null = null;
+  for (const o of opts) {
+    if (!best || o.totalCents < best.totalCents || (o.totalCents === best.totalCents && statusRank(o.status) < statusRank(best.status))) best = o;
+  }
+  return best;
 }
 
 /**

@@ -1,5 +1,15 @@
 import { NextResponse } from 'next/server';
-import { formatDaySchedule, openStatusDuring, parseOpeningHours, zurichToday } from '@cabas/core';
+import {
+  DEFAULT_FRESHNESS,
+  DEFAULT_PREFS,
+  formatDaySchedule,
+  openStatusDuring,
+  parseOpeningHours,
+  usableNeedsByChain,
+  zurichToday,
+  type UsableNeeds,
+} from '@cabas/core';
+import { P1_ESSENTIALS, PRODUCTS } from '@cabas/reference';
 import { getAppData } from '@/server/data';
 import { jsonError, limitOr429 } from '@/server/http';
 import { restrictedChainIds } from '@/server/sources';
@@ -32,19 +42,30 @@ export async function GET(req: Request) {
       data.priceMode(now),
     ]);
     const statusByChain = new Map(status.map((st) => [st.chainId, st]));
+    // Aliments de base avec un prix réellement utilisable par la comparaison (mêmes règles : fraîcheur,
+    // zone tarifaire des succursales du rayon, exigences du besoin) : un relevé trop ancien ou d'une
+    // autre zone ne fait pas passer une enseigne pour « couverte ».
+    const essentials = P1_ESSENTIALS.map((slug) => PRODUCTS.find((p) => p.slug === slug)).filter((p): p is NonNullable<typeof p> => Boolean(p));
+    const usable =
+      mode === 'live'
+        ? usableNeedsByChain(await data.offers([], [], now), stores, essentials, { asOf: now, today, targetDate: today, policy: DEFAULT_FRESHNESS, prefs: DEFAULT_PREFS })
+        : new Map<string, UsableNeeds>();
     // Enseignes dont la source officielle est exclue (conditions restrictives, pas d'autorisation).
     // L'exclusion vise la source, pas l'enseigne : les relevés d'une source publiable (Open Prices) pour
     // la même enseigne restent affichés ; les compteurs `status` sont calculés après exclusion.
     const restrictedChains = restrictedChainIds();
     // Présence d'un magasin ≠ disponibilité de prix : chaque enseigne indique ses données de prix.
+    const needsTotal = P1_ESSENTIALS.length;
     const priceData = (chainId: string) => {
       const st = statusByChain.get(chainId);
       const officialRestricted = restrictedChains.has(chainId);
-      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0, officialRestricted: false };
-      if (st && st.officialPrices > 0) return { kind: 'official' as const, lastObservation: st.lastOfficialObservation, prices: st.officialPrices, officialRestricted };
-      if (st && st.realPrices > 0) return { kind: 'community' as const, lastObservation: st.lastObservation, prices: st.realPrices, officialRestricted };
-      if (officialRestricted) return { kind: 'restricted' as const, lastObservation: null, prices: 0, officialRestricted };
-      return { kind: 'none' as const, lastObservation: null, prices: 0, officialRestricted };
+      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0, officialRestricted: false, needs: 0, needsTotal };
+      const u = usable.get(chainId);
+      const needs = u?.needs ?? 0;
+      if (u && u.official > 0) return { kind: 'official' as const, lastObservation: u.newestOfficial, prices: needs, officialRestricted, needs, needsTotal };
+      if (u && needs > 0) return { kind: 'community' as const, lastObservation: u.newest, prices: needs, officialRestricted, needs, needsTotal };
+      if (officialRestricted) return { kind: 'restricted' as const, lastObservation: null, prices: 0, officialRestricted, needs: 0, needsTotal };
+      return { kind: 'none' as const, lastObservation: st?.lastObservation ?? null, prices: 0, officialRestricted, needs: 0, needsTotal };
     };
     const byChain = new Map<string, { count: number; nearestKm: number }>();
     for (const s of stores) {
@@ -81,3 +102,4 @@ export async function GET(req: Request) {
     return jsonError(500, 'server_error', 'Erreur interne');
   }
 }
+

@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { CompareResultDto, OutlookDayDto, ScenarioDto, ScenarioKind, SolutionDto } from '@cabas/core';
+import { formatQuantity, type CompareResultDto, type LineComparisonDto, type OutlookDayDto, type ScenarioDto, type ScenarioKind, type SolutionDto } from '@cabas/core';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
-import { duration, km, money, shortCalendarDate, shortDate, time } from '@/lib/format';
+import { duration, km, money, shortCalendarDate, shortDate, time, unitPriceLabel } from '@/lib/format';
 import { track } from '@/lib/metrics';
 import { useApp } from '@/lib/store';
 import { IconRoute } from './icons';
@@ -63,6 +63,7 @@ export function ResultsView({
       )}
 
       <ChainCoverage result={result} locale={locale} />
+      <LineComparisons result={result} locale={locale} />
       <Alternatives result={result} locale={locale} chosen={result.scenarios.find((x) => x.kind === 'optimized_total')?.storeCount ?? null} />
       <Ranking result={result} locale={locale} />
       {result.planning && <Planning result={result} locale={locale} />}
@@ -461,6 +462,9 @@ function SavingsCard({ savings, locale }: { savings: NonNullable<ScenarioDto['sa
       {savings.lostLines > 0 && (
         <p className="text-sm text-warn">{plural(m.results.lostCovered, savings.lostLines, { ref: savings.referenceLabel })}</p>
       )}
+      {(savings.differentQuantityLines ?? 0) > 0 && (
+        <p className="text-sm text-muted">{plural(m.results.solutions.differentQuantity, savings.differentQuantityLines)}</p>
+      )}
       <details>
         <summary className="text-sm font-medium text-primary">{m.results.formula}</summary>
         <p className="mt-1 text-sm text-muted">{m.results.formulaText}</p>
@@ -534,14 +538,13 @@ function Ranking({ result, locale }: { result: CompareResultDto; locale: Locale 
               </p>
             </div>
             <span className="text-right">
-              <span className={cx('num block font-semibold', !r.isComplete && 'text-muted')}>{r.coveredLines > 0 ? money(r.purchaseCents) : '—'}</span>
+              {/* Panier incomplet : aucun total en regard des paniers complets (jamais présenté comme moins cher). */}
+              <span className="num block font-semibold">{r.isComplete ? money(r.purchaseCents) : '—'}</span>
               {!r.isComplete && (
-                <span className="block text-xs text-warn">
-                  {format(m.results.solutions.coverage, {
-                    covered: r.coveredLines,
-                    total: r.totalLines,
-                    pct: Math.round((r.coveredLines / Math.max(1, r.totalLines)) * 100),
-                  })}
+                <span className="block max-w-[11rem] text-xs text-warn">
+                  {r.coveredLines > 0
+                    ? format(m.results.rankingPartial, { amount: money(r.purchaseCents), covered: r.coveredLines, total: r.totalLines })
+                    : format(m.results.solutions.coverage, { covered: 0, total: r.totalLines, pct: 0 })}
                 </span>
               )}
             </span>
@@ -724,6 +727,7 @@ function Solutions({ result, locale }: { result: CompareResultDto; locale: Local
               {format(t.prices, { promo: String(r.promoLines), indicative: String(r.indicativeLines) })}
             </p>
             {!r.complete && <p className="text-xs font-medium text-warn">{plural(t.incomplete, r.totalLines - r.coveredLines)}</p>}
+            {(r.differentQuantityLines ?? 0) > 0 && <p className="text-xs text-muted">{plural(t.differentQuantity, r.differentQuantityLines ?? 0)}</p>}
             {r.kind === 'combination' && !r.retained && <p className="text-xs text-muted">{t.notRetained}</p>}
           </li>
         ))}
@@ -774,13 +778,127 @@ function ChainCoverage({ result, locale }: { result: CompareResultDto; locale: L
             {c.coveredLines > 0
               ? format(t.line, { chain: c.chainName, covered: c.coveredLines, total: result.totalLines })
               : format(t.none, { chain: c.chainName })}
-            {c.indicativeLines > 0 && <span className="text-muted"> · {plural(t.indicative, c.indicativeLines)}</span>}
+            {c.indicativeLines > 0 && (
+              <span className="text-muted">
+                {' · '}
+                {plural(t.indicative, c.indicativeLines)}
+                {' ('}
+                {(['crowd', 'aging', 'promo', 'futureDate'] as const)
+                  .filter((k) => (c.indicativeReasons?.[k] ?? 0) > 0)
+                  .map((k) => format(plural(t.indicativeReason[k], c.indicativeReasons[k]), { date: shortCalendarDate(result.meta.targetDate) }))
+                  .join(', ')}
+                {')'}
+              </span>
+            )}
             {c.coveredLines > 0 && c.openStores === 0 && <span className="text-warn"> · {t.closed}</span>}
             {c.officialRestricted && <span className="text-muted"> · {t.restricted}</span>}
           </li>
         ))}
       </ul>
     </Card>
+  );
+}
+
+/**
+ * Article par article : chaque article ayant un prix dans au moins deux enseignes du rayon, avec l'offre
+ * la moins chère de chaque enseigne. « Même article » seulement pour un code-barres identique ; sinon
+ * « produits équivalents ». L'écart n'est affiché que pour des quantités achetées identiques.
+ */
+function LineComparisons({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const t = m.results.lineComparisons;
+  const rows = result.lineComparisons ?? [];
+  return (
+    <Card>
+      <h2 className="font-semibold">{t.title}</h2>
+      <p className="mt-1 text-sm text-muted">{t.intro}</p>
+      {rows.length === 0 ? (
+        <p className="mt-2 text-sm" data-testid="line-comparisons-none">
+          {t.none}
+        </p>
+      ) : (
+        <>
+          <p className="mt-2 text-sm font-medium">{format(plural(t.count, rows.length), { total: result.totalLines })}</p>
+          <ul className="mt-2 divide-y divide-border">
+            {rows.map((row) => (
+              <LineComparisonRow key={row.lineId} row={row} locale={locale} />
+            ))}
+          </ul>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function LineComparisonRow({ row, locale }: { row: LineComparisonDto; locale: Locale }) {
+  const m = getMessages(locale);
+  const t = m.results.lineComparisons;
+  const cheapest = row.offers[0];
+  return (
+    <li className="py-2.5" data-testid={`line-comparison:${row.lineId}`}>
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="font-medium">
+          {row.qty > 1 ? `${row.qty} × ` : ''}
+          {row.productName} · {formatQuantity(row.requestedQuantity)}
+        </p>
+        <Pill tone={row.sameArticle ? 'primary' : 'warn'}>{row.sameArticle ? t.sameArticle : t.equivalent}</Pill>
+      </div>
+      <ul className="mt-1 space-y-1.5">
+        {row.offers.map((o) => {
+          const date = shortDate(o.observedAt);
+          const source =
+            o.reliability === 'crowd'
+              ? o.observedAtPlace
+                ? format(t.crowdAt, { date, place: o.observedAtPlace })
+                : format(t.crowd, { date })
+              : o.reliability === 'official'
+                ? format(t.official, { date })
+                : format(t.other, { date });
+          const scope = o.statusReasons.includes('store_specific_price')
+            ? t.scopeStore
+            : o.statusReasons.includes('zone_price')
+              ? t.scopeZone
+              : o.reliability === 'crowd'
+                ? t.scopeNational
+                : null;
+          const reasons = o.statusReasons
+            .filter((r) => !['crowd_sourced', 'zone_price', 'store_specific_price', 'demo_data', 'fallback_source'].includes(r))
+            .map((r) => m.status.reasons[r] ?? r);
+          return (
+            <li key={o.chainId} className="text-sm" data-chain={o.chainId}>
+              <div className="flex items-start justify-between gap-3">
+                <p className="min-w-0">
+                  <span className="font-medium">{o.chainName}</span> · {o.productName}
+                  {o.brand ? ` · ${o.brand}` : ''}
+                </p>
+                <p className={cx('num shrink-0 font-semibold', o === cheapest && row.offers.length > 1 && 'text-primary')}>{money(o.totalCents)}</p>
+              </div>
+              <p className="text-xs text-muted">
+                {format(t.pay, { packs: String(o.packs), qty: formatQuantity(o.packQuantity) })} · {unitPriceLabel(o.unitPrice)} · {m.status[o.status]} · {source}
+                {scope ? ` · ${scope}` : ''}
+                {reasons.length ? ` · ${reasons.join(' · ')}` : ''}
+              </p>
+              {o.loyaltyOffer && (
+                <p className="text-xs text-muted">
+                  {format(t.loyalty, { program: o.loyaltyOffer.program, price: money(o.loyaltyOffer.totalCents), qty: formatQuantity(o.loyaltyOffer.quantity), to: shortCalendarDate(o.loyaltyOffer.validTo) })}
+                </p>
+              )}
+              {o.promotion && (
+                <p className="text-xs text-muted">
+                  {format(t.promo, { mechanic: o.promotion.mechanic })}
+                  {(o.promotion.conditions ?? []).length > 0 ? ` · ${format(t.conditions, { list: (o.promotion.conditions ?? []).join(' · ') })}` : ''}
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-1 text-xs font-medium">
+        {row.sameQuantity && row.spreadCents != null
+          ? format(t.spread, { amount: money(row.spreadCents) })
+          : format(t.quantityDiffers, { basis: cheapest?.unitPrice.basis ?? 'kg' })}
+      </p>
+    </li>
   );
 }
 

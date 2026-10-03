@@ -51,8 +51,9 @@ Publication : la provenance d'un prix (fichier de la source et hôte de ses URL)
 | Fonctionnalité | Détail |
 |---|---|
 | Localisation | NPA ou localité (swisstopo), géolocalisation facultative |
-| **Magasins** | Enseignes et succursales du rayon (5–30 km), sélection par enseigne et par magasin, nombre maximal de magasins ; **données de prix par enseigne** (officiels, partiels, aucun, non affichés) ; **stock toujours « inconnu »** |
-| **Comparaison des solutions** | Chaque enseigne seule et la combinaison : achats, trajet aller-retour, durée, coût, total, économie sur les achats et **après déplacement** par rapport au meilleur magasin unique **complet** ; panier incomplet jamais présenté comme moins cher ; **couverture par enseigne** affichée (« ce que couvre cette comparaison » : articles avec prix, indicatifs, enseigne non affichée ou fermée ce jour-là) ; aucun scénario sans article (dimanche : avertissement au lieu d'un trajet « à 0 article ») |
+| **Magasins** | Enseignes et succursales du rayon (5–30 km), sélection par enseigne et par magasin, nombre maximal de magasins ; **données de prix par enseigne** : nombre des 50 aliments de base ayant un prix **utilisable** dans le rayon (mêmes règles que la comparaison : fraîcheur, zone tarifaire), officiels, partiels, aucun, non affichés ; **stock toujours « inconnu »** |
+| **Article par article** | Pour chaque article ayant un prix dans au moins deux enseignes du rayon : offre la moins chère de chaque enseigne, **« même article » (même code-barres) ou « produits équivalents »**, date, source, lieu du relevé communautaire et portée du prix ; écart seulement pour des quantités achetées identiques (`docs/PARCOURS_BULLE.md`) |
+| **Comparaison des solutions** | Chaque enseigne seule et la combinaison : achats, trajet aller-retour, durée, coût, total, économie sur les achats et **après déplacement** par rapport au meilleur magasin unique **complet** ; panier incomplet jamais présenté comme moins cher ; **couverture par enseigne** affichée (« ce que couvre cette comparaison » : articles avec prix, indicatifs **et pourquoi** — relevé communautaire, prix de plus de 7 jours, action à fin non publiée, ou courses prévues après le relevé —, enseigne non affichée ou fermée ce jour-là) ; panier partiel jamais chiffré en regard des paniers complets ; articles achetés dans un autre conditionnement signalés dans les économies ; action réservée à une carte non déclarée signalée, jamais appliquée ; aucun scénario sans article (dimanche : avertissement au lieu d'un trajet « à 0 article ») |
 | **Montant réellement payé** | Paquets à acheter × prix du paquet, quantité demandée / achetée ; prix au kilo pour comparer seulement |
 | **Conditions des actions** | Carte déclarée (Lidl Plus), quantité minimale, « -X % sur le 2e paquet », prix « dès » jamais appliqué, actions régionales par zone, conditions affichées |
 | **Trajet** | Estimation à vol d'oiseau × 1,3 **annoncée comme telle** ; coût par km modifiable ; OSRM facultatif |
@@ -65,7 +66,7 @@ Publication : la provenance d'un prix (fichier de la source et hôte de ses URL)
 | Gratuit | Toutes les fonctions grand public, sans compte ni abonnement |
 | Relevés en magasin | `pnpm job magasins`, `pnpm job releves` (CSV, un magasin, un jour, une preuve) |
 | Matrice et page publique | `pnpm job matrice-essentiels` : 50 × 5, vues publique et privée, page statique sans donnée Aldi |
-| Tests | 268 unitaires, 7 d'intégration PostgreSQL, 36 contrôles PowerShell (tâche Windows), 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
+| Tests | 273 unitaires, 7 d'intégration PostgreSQL, 36 contrôles PowerShell (tâche Windows), 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) ; parcours public à Bulle vérifié (`docs/PARCOURS_BULLE.md`) |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 

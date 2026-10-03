@@ -65,6 +65,9 @@ test('parcours complet : localisation → magasins → panier → comparaison �
   await expect(page.getByText('Résultat calculé sur des prix fictifs de démonstration.')).toBeVisible();
   // Enseigne seule / combinaison, trajet estimé expliqué (jamais présenté comme un itinéraire routier).
   await expect(page.getByRole('heading', { name: 'Comparaison des solutions' })).toBeVisible();
+  // Article par article : même article (code-barres) ou produits équivalents, jamais confondus.
+  await expect(page.getByRole('heading', { name: 'Article par article' })).toBeVisible();
+  await expect(page.getByText(/Mêmes besoins, mêmes quantités/)).toBeVisible();
   await expect(page.locator('[data-testid^="solution-chain:"]').first()).toBeVisible();
   await expect(page.getByText(/pas un itinéraire routier/)).toBeVisible();
   await expect(page.getByText(/À payer : \d+ ×/).first()).toBeVisible();
