@@ -18,10 +18,12 @@ juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.m
 Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 18 / 2 / 0** en pilote privé, **1 / 0 / 0 / 0** en
 version publique (mêmes valeurs qu'au 01.10 : l'attribution à Migros d'un relevé de café, ajoutée le
 03.10, a été retirée après examen du justificatif). Prochain gain public : relevés en magasin
-(`docs/RELEVES_PRIORITAIRES.md`). Commande : `pnpm quotidien` (≈ 11 min, ≈ 218 requêtes). Planification :
-Windows (`scripts/windows/installer-tache.ps1`, **non vérifiée** sur l'ordinateur de l'exploitant ; mode
-« état partagé » avec GitHub) ; GitHub Actions en dépôt privé **préparé et testé, non activé** (dépôt à
-créer par l'exploitant : `ops/actions-prive/README.md` § 3 ; aucune exécution automatique observée). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
+(`docs/RELEVES_PRIORITAIRES.md`). Commande : `pnpm quotidien` (≈ 12 min, 241 requêtes sur GitHub le 03.10). Planification :
+GitHub Actions dans le dépôt privé `tesprix-collecte` : **premier cycle réel réussi le 03.10.2026**
+(5 sources, dont Aldi, Denner et le journal Coop depuis GitHub), planification active, premier déclenchement
+planifié attendu le 04.10 à 06:17, **0/7** jours complets (`ops/actions-prive/README.md`) ; Windows
+(`scripts/windows/installer-tache.ps1`, **non vérifiée** sur l'ordinateur de l'exploitant) en secours, mode
+« état partagé » à 15:30. Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
 `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
 
 Publication : la provenance d'un prix (fichier de la source et hôte de ses URL) décide, pas son
@@ -63,7 +65,7 @@ Publication : la provenance d'un prix (fichier de la source et hôte de ses URL)
 | Gratuit | Toutes les fonctions grand public, sans compte ni abonnement |
 | Relevés en magasin | `pnpm job magasins`, `pnpm job releves` (CSV, un magasin, un jour, une preuve) |
 | Matrice et page publique | `pnpm job matrice-essentiels` : 50 × 5, vues publique et privée, page statique sans donnée Aldi |
-| Tests | 263 unitaires, 7 d'intégration PostgreSQL, 34 contrôles PowerShell (tâche Windows), 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
+| Tests | 268 unitaires, 7 d'intégration PostgreSQL, 36 contrôles PowerShell (tâche Windows), 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 

@@ -110,7 +110,7 @@ fraîcheur du noyau) → **exports publiables** (matrice, page statique, panier 
 | Changement de structure | Denner : échec explicite si la majorité des pages n'a plus d'état Nuxt ; Lidl et Aldi : alertes « chute de couverture » et « dérive d'analyse » comparées au cycle précédent **du même mode** ; contrôle de non-régression sur 103 couples |
 | Fraîcheur | Une collecte échouée garde l'instantané et **sa date d'origine** (test). Chaque prix garde sa date de lecture : « vérifié » ≤ 7 jours, « indicatif » ≤ 30 jours, écarté au-delà |
 | Actions | Actions expirées exclues ; fin non publiée marquée « présumée » (jamais confirmée au-delà du dernier jour vu) ; actions « dès jeudi » annoncées ; prix « au lieu de » gardé comme référence, jamais comme prix permanent |
-| Une fois par jour, rattrapage | Relancée le même jour (ouverture de session, nouvel essai), la commande ne reprend **que les sources en échec technique** ; verrou contre les exécutions simultanées |
+| Une fois par jour, rattrapage | Relancée le même jour (ouverture de session, nouvel essai), la commande ne reprend **que les sources en échec technique ou incomplètes** ; verrou contre les exécutions simultanées |
 | Journal et administration | `data/private/runs/<date>.json` (90 jours) ; section « Collecte quotidienne » de `/admin/qualite` (état, requêtes, durée, dernière réussite, besoins avec prix, actions à fin inconnue) |
 
 Vérifié sur des cycles réels : plafond volontairement réduit pour Denner → source « partielle », 130 prix
@@ -142,9 +142,9 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 | Élément | État | Preuve |
 |---|---|---|
 | Cycle de collecte exécuté | ✅ dans l'environnement de développement (pas sur votre PC) | 30.09 22:28 → 01.10 01:08 (heure de Zurich) : cycle complet (214 requêtes), reprises Open Prices, Denner + Coop ; journal `data/private/runs/2026-10-01.json` (hors dépôt) |
-| Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` ; mode **état partagé** avec GitHub (`-DepotEtat`, 03.10.2026) | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 34 contrôles dont 9 du mode partagé avec un vrai dépôt Git local, aussi en intégration continue) |
+| Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` ; mode **état partagé** avec GitHub (`-DepotEtat`, 03.10.2026) | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 36 contrôles dont 11 du mode partagé avec un vrai dépôt Git local, aussi en intégration continue ; en mode partagé : 15:30, sans rattrapage à l'ouverture de session) |
 | Tâche installée et exécutée sur **votre** ordinateur Windows | ❌ **non vérifiée** : je n'ai pas accès à votre PC | à établir avec la procédure du § 5.2 (sortie de `verifier-tache.ps1`) |
-| GitHub Actions, dépôt privé (03.10.2026) | **préparé** (`ops/actions-prive/` : workflow, état partagé avec Windows, verrou, suivi par source) ; **testé localement** (dépôt privé simulé : premier cycle, « rien à faire », « concurrence », reprise d'une source en échec) ; **testé manuellement sur GitHub** avec Lidl + Open Prices (§ 5.1.2) ; **dépôt privé non créé** (création refusée à l'intégration de Claude : 403), **planification non activée, aucune exécution automatique observée** | `ops/actions-prive/README.md` § 3 (manipulations de l'exploitant) |
+| GitHub Actions, dépôt privé `probe2ka3/tesprix-collecte` (03.10.2026) | dépôt créé par l'exploitant, workflow installé et **actif** ; **premier cycle réel réussi** (installation, 21:22 : les 5 sources en succès, dont Aldi, Denner et le journal Coop depuis GitHub) ; essais réels : « rien » sans relance, reprise de l'état sauvegardé, verrou (« concurrence ») ; **premier déclenchement planifié pas encore observé** (04.10.2026 06:17) ; **0/7** jours complets | `ops/actions-prive/README.md` (état, exécutions, suivi) ; `etat/suivi/SUIVI.md` du dépôt privé |
 
 ### 5.1 Options comparées (conditions vérifiées le 01.10.2026)
 
@@ -152,7 +152,7 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 |---|---|---|---|
 | **Ordinateur de l'exploitant, Planificateur de tâches Windows** | 0 CHF | Ordinateur allumé (ou en veille avec réveil) et connecté ; session ouverte, ou mot de passe enregistré pour une exécution sans session | ✅ **retenu** : le plus simple, aucune limite de durée ni de CPU, données privées (Aldi, Denner, Coop) gardées chez l'exploitant |
 | GitHub Actions (dépôt public) | 0 CHF ; sans moyen de paiement, l'usage est bloqué au-delà du quota, jamais facturé | Interdit « toute autre activité sans rapport avec la production, les tests, le déploiement ou la publication du logiciel » ; tâches planifiées seulement sur la branche par défaut, retardées aux heures chargées, désactivées après 60 jours sans activité ; artefacts d'un dépôt public téléchargeables | ⚠️ Construction de la page : oui. Collecte Lidl + Open Prices : désactivée par défaut (zone grise). Aldi, Denner, Coop : **jamais** (données privées sur une infrastructure tierce) |
-| **GitHub Actions (dépôt privé séparé)** — étudié le 03.10.2026 | 0 CHF : 2 000 min/mois incluses (GitHub Free), usage **bloqué** au-delà sans moyen de paiement ; ≈ 400 min/mois estimées (§ 5.1.2) | Même clause d'usage que ci-dessus (**zone grise**, aucune autorisation formelle ; risque : arrêt des tâches ou restriction du compte) ; planification sur la branche par défaut, retards ou abandons possibles aux heures chargées, fuseau `Europe/Zurich` désormais accepté ; état gardé par des commits dans le dépôt privé (≈ 0,7 Mo/jour au pire), cache HTTP privé ; Lidl et Open Prices accessibles depuis GitHub (essai du 03.10, § 5.1.2) ; accès d'Aldi, Denner et Coop depuis les adresses de GitHub **non testé** | ⚠️ **Préparé, non activé** : alternative au PC à activer par l'exploitant (`ops/actions-prive/README.md`) ; le PC Windows reste la solution tant que des lancements automatiques n'ont pas été observés une semaine |
+| **GitHub Actions (dépôt privé séparé)** — étudié le 03.10.2026 | 0 CHF : 2 000 min/mois incluses (GitHub Free), usage **bloqué** au-delà sans moyen de paiement ; avec un moyen de paiement, budget Actions à 0 avec « Stop usage when budget limit is reached » ; mesuré : 13 min par cycle, ≈ 465 min/mois estimées | Même clause d'usage que ci-dessus (**zone grise**, aucune autorisation formelle ; risque : arrêt des tâches ou restriction du compte) ; planification sur la branche par défaut, retards ou abandons possibles aux heures chargées, fuseau `Europe/Zurich` désormais accepté ; état gardé par des commits dans le dépôt privé (≈ 0,56 Mo compressé par collecte), cache HTTP privé ; les 5 sources accessibles depuis GitHub (premier cycle réel du 03.10, une exécution) | ⏳ **En service, en observation** : premier cycle réel réussi le 03.10.2026 ; le PC Windows reste la solution de secours jusqu'à 7 jours consécutifs complets sur déclenchement planifié (`ops/actions-prive/README.md`) |
 | Vercel Hobby | 0 CHF | Usage personnel non commercial ; fonction limitée à **300 s** | ❌ un cycle poli dure ≈ 12 min |
 | Cloudflare Workers (gratuit) | 0 CHF | voir § 5.1.1 | ❌ sans refonte |
 | Machines virtuelles « gratuites » (Oracle, Google Cloud…) | Carte bancaire ou compte de facturation exigé | Dépassement facturable possible | ❌ (règle : aucun dépassement facturable) |
@@ -194,9 +194,18 @@ source) et les actions en version Node 24 : exécution
 | Avertissement « Node.js 20 is deprecated » | ✅ disparu (présent sur l'exécution précédente, `208b3bc`) |
 | Durée totale du job | **6 min 29 s** (cycle 6 min 14 s) |
 
-État réel : **préparé ✅ ; testé manuellement sur GitHub pour les sources publiables ✅ (dépôt public,
-deux essais déclenchés par une poussée) ; dépôt privé, planification et exécution automatique : ❌ non
-faits, non observés.**
+**Dépôt privé `tesprix-collecte` (03.10.2026, soir)** : premier cycle réel avec les 5 sources
+(exécution 37147623292, déclencheur `push` à l'installation du workflow) : Open Prices 231 prix, journal
+Coop 77 actions, Denner 250 prix et 25 actions, Aldi 1 481 prix et 558 actions, Lidl 424 prix et 290
+actions, toutes en succès, aucun blocage ; job 12 min 30 s, 241 requêtes ; état sauvegardé dans le dépôt
+privé (commit `4beb671`) ; journal du workflow sans prix. Essais réels ensuite : « rien » sans relance
+(37148554048, 15 s), reprise de l'état sauvegardé (37149241748 : Open Prices seul relu, les 4 autres
+instantanés identiques octet pour octet), verrou (37149327391 : « concurrence » même forcé). Détail :
+`ops/actions-prive/README.md`.
+
+État réel : **testé manuellement ✅ (dépôt public : 2 essais ; dépôt privé : premier cycle et 4 essais) ;
+planification active, premier déclenchement planifié ⏳ attendu le 04.10.2026 à 06:17 ; 7 jours
+consécutifs complets : 0/7.**
 
 #### 5.1.1 Cloudflare Workers : réexamen chiffré
 
@@ -318,10 +327,11 @@ coûtait le même prix chez Denner et chez Lidl ; Migros et Coop : aucune donné
 5. **Aldi** : fruits, légumes et crème absents de l'API ; 6 articles sans contenance publiée ; 5 sans
    origine publiée (le besoin exige l'origine suisse).
 6. **Planification** : la tâche Windows n'est **pas** vérifiée sur votre ordinateur (pas d'accès) ;
-   procédure et contrôle : § 5.2. Collecte sans PC : GitHub Actions dans un dépôt privé, **préparée et
-   testée, non activée** : la création du dépôt `tesprix-collecte` est refusée à l'intégration de Claude ;
-   manipulations restantes : `ops/actions-prive/README.md` § 3. Coexistence : mode « état partagé » de la
-   tâche Windows (un seul journal, une seule collecte par jour).
+   procédure et contrôle : § 5.2. Collecte sans PC : GitHub Actions dans le dépôt privé
+   `tesprix-collecte`, **premier cycle réel réussi le 03.10.2026** (5 sources) ; premier déclenchement
+   planifié attendu le 04.10 à 06:17 ; **0/7** jours complets. Coexistence : mode « état partagé » de la
+   tâche Windows (un seul journal, une seule collecte par jour ; Windows à 15:30, après les créneaux de
+   GitHub) ; commande : `ops/actions-prive/README.md` § 3.
 7. **Historique Git** : anciennes données Aldi **toujours présentes** dans l'historique public de la
    branche (11 versions de fichiers de données, 8 versions de documents avec des montants Aldi ou Denner,
    inventaire du 03.10.2026) ; procédure préparée et essayée à blanc, non exécutée (décision de

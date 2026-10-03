@@ -25,9 +25,9 @@ Migros 0/50. Pilote privé : 41 besoins comparables dans ≥ 2 enseignes, 18 dan
 **version publique : 1** — ce n'est pas une comparaison des cinq enseignes, et l'interface le dit
 (couverture par enseigne). Relevés en magasin qui feraient progresser la version publique :
 [docs/RELEVES_PRIORITAIRES.md](docs/RELEVES_PRIORITAIRES.md). Une commande (`pnpm quotidien`),
-planifiable dans Windows (`scripts/windows/`) ; alternative sans PC préparée et testée, non activée :
-GitHub Actions dans un dépôt privé, avec un journal partagé avec Windows
-([ops/actions-prive/README.md](ops/actions-prive/README.md)).
+exécutée sans PC par GitHub Actions dans un dépôt privé (premier cycle réel réussi le 03.10.2026,
+observation de sept jours en cours), avec un journal partagé avec la tâche Windows de secours
+([ops/actions-prive/README.md](ops/actions-prive/README.md), `scripts/windows/`).
 Cadre budgétaire : [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) ; relevés en magasin facultatifs :
 [docs/RELEVES.md](docs/RELEVES.md).
 
