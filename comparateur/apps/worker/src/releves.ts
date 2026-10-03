@@ -36,7 +36,11 @@ export async function jobReleves(ctx: JobContext) {
     const stray = (await readdir(publicDir)).filter((f) => f.toLowerCase().endsWith('.csv') && f !== 'modele.csv');
     if (stray.length) ctx.log.warn('Fichiers de relevés dans le dossier versionné data/releves : non lus (à déplacer vers data/private/releves)', { fichiers: stray.length });
   }
-  if (!existsSync(dir)) throw new Error(`Dossier privé des relevés introuvable : ${dir} (voir docs/RELEVES.md)`);
+  // Sans dossier privé (CI publique, nouvelle installation) : rien à importer, instantané inchangé.
+  if (!existsSync(dir)) {
+    ctx.log.warn('Aucun dossier privé de relevés : rien à importer, instantané inchangé (voir docs/RELEVES.md)', { dossier: dir });
+    return;
+  }
   const names = (await readdir(dir)).filter((f) => f.toLowerCase().endsWith('.csv')).sort();
   const files = await Promise.all(names.map(async (name) => ({ name, content: await readFile(join(dir, name), 'utf8') })));
   const proofDir = join(dir, 'preuves');

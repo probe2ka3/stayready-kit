@@ -102,10 +102,12 @@ describe('tâche releves (dossier privé → instantané publiable épuré)', ()
     expect(existsSync(join(d, 'prices', 'live', 'releves.json'))).toBe(false);
   });
 
-  it('dossier privé absent : erreur explicite, rien d’écrit', async () => {
+  it('dossier privé absent (CI publique) : rien à importer, aucune erreur, rien d’écrit', async () => {
     const d = dataDir();
     rmSync(join(d, 'private', 'releves'), { recursive: true });
-    await expect(jobReleves(ctx(d))).rejects.toThrow(/Dossier privé des relevés introuvable/);
+    const warnings: string[] = [];
+    await jobReleves({ ...ctx(d), log: { ...silent, warn: (m: string) => warnings.push(m) } });
+    expect(warnings.join(' ')).toMatch(/Aucun dossier privé de relevés/);
     expect(existsSync(join(d, 'prices', 'live', 'releves.json'))).toBe(false);
   });
 });
