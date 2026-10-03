@@ -329,6 +329,20 @@ export interface PriceDatesDto {
   lines: number;
 }
 
+/** Couverture du panier par enseigne présente dans le rayon (y compris sans aucun prix). */
+export interface ChainCoverageDto {
+  chainId: string;
+  chainName: string;
+  /** Articles du panier ayant un prix utilisable dans au moins une succursale de l'enseigne. */
+  coveredLines: number;
+  /** Dont au statut « indicatif » seulement (relevé communautaire, ou prix de plus de 7 jours). */
+  indicativeLines: number;
+  /** Succursales du rayon ouvertes le jour choisi (0 : enseigne fermée ce jour-là, non comparée). */
+  openStores: number;
+  /** Source officielle de l'enseigne non affichée (usage privé) ; renseigné par le serveur. */
+  officialRestricted?: boolean;
+}
+
 export interface CompareResultDto {
   meta: {
     generatedAt: string;
@@ -341,6 +355,8 @@ export interface CompareResultDto {
     travelEstimated: boolean;
     travelMethod: TravelMethodDto;
     priceDates: PriceDatesDto[];
+    /** Couverture par enseigne : la comparaison ne porte que sur les prix disponibles. */
+    chainCoverage: ChainCoverageDto[];
     storesConsidered: number;
     profilesConsidered: number;
     maxStoresApplied: number;
@@ -457,11 +473,15 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   // Élagage : succursales fermées toute la journée exclues, puis les N plus proches par profil.
   const scheduleDate = schedule.kind === 'departure' ? zurichParts(schedule.departure).date : targetDate;
   const kept: CandidateStore[] = [];
+  /** Succursales fermées toute la journée choisie (dimanche, jour férié) : signalées, jamais comparées. */
+  const closedIds = new Set<string>();
   for (const [, list] of storesByProfile) {
     const open = list
       .filter((s) => {
         const sch = scheduleForDate(effectiveHours.get(s.id) as ParsedOpeningHours, scheduleDate);
-        return sch.kind === 'unknown' || sch.intervals.length > 0;
+        const isOpen = sch.kind === 'unknown' || sch.intervals.length > 0;
+        if (!isOpen) closedIds.add(s.id);
+        return isOpen;
       })
       .sort((a, b) => a.crowKm - b.crowKm)
       .slice(0, STORES_PER_PROFILE);
@@ -715,7 +735,8 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
   };
 
   const scenarioFrom = (kind: ScenarioKind, plan: Plan | null): ScenarioDto | null => {
-    if (!plan) return null;
+    // Aucun article trouvé : ce n'est pas une solution (un trajet seul paraîtrait « moins cher »).
+    if (!plan || plan.coveredLines === 0) return null;
     const stops = buildStops(plan.route, plan.assignment);
     const allItems = stops.flatMap((s) => s.items);
     const regular = allItems.reduce((a, it) => a + (it.option.regularTotalCents ?? it.option.totalCents), 0);
@@ -773,7 +794,16 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     scenarioFrom('cheapest_products', result.cheapest),
     scenarioFrom('optimized_total', result.optimized),
   ].filter((s): s is ScenarioDto => s !== null);
-  if (scenarios.length === 0 && deps.stores.length > 0) warnings.add('no_open_store');
+  if (scenarios.length === 0 && deps.stores.length > 0) {
+    // Des prix existent, mais aucune succursale ouverte ce jour-là n'en a (ex. dimanche : enseignes avec
+    // prix fermées toute la journée) ; sinon, magasins fermés à l'heure choisie.
+    const pricedOpen = kept.some((st) => {
+      const i = profileIdx.get(profileForStore(st, specific).key);
+      return i !== undefined && outcomes.some((row) => row[i]?.option);
+    });
+    warnings.add(!pricedOpen && outcomes.some((row) => row.some((o) => o.option)) ? 'no_priced_store_open' : 'no_open_store');
+  }
+  if (closedIds.size > 0) warnings.add('stores_closed_on_date');
 
   // Classement « magasin unique » : meilleur profil par enseigne.
   const bestPerChain = new Map<string, (typeof result.singleStore)[number]>();
@@ -964,6 +994,23 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
     }
   }
   const priceDates = [...dates.values()];
+  // Couverture par enseigne du rayon, même sans aucun prix : jamais de comparaison présentée comme
+  // exhaustive quand une enseigne n'a pas de données.
+  const chainCoverage: ChainCoverageDto[] = [...new Set(deps.stores.map((st) => st.chainId))].map((chainId) => {
+    const idx = profiles.map((pr, i) => (pr.chainId === chainId ? i : -1)).filter((i) => i >= 0);
+    let coveredLines = 0;
+    let indicativeLines = 0;
+    for (const row of outcomes) {
+      const opts = idx.map((i) => row[i]?.option).filter((o): o is NonNullable<typeof o> => Boolean(o));
+      if (opts.length === 0) continue;
+      coveredLines++;
+      if (opts.every((o) => o.status === 'indicative')) indicativeLines++;
+    }
+    const stores = deps.stores.filter((st) => st.chainId === chainId);
+    const openStores = stores.filter((st) => !closedIds.has(st.id)).length;
+    return { chainId, chainName: deps.chains.get(chainId)?.name ?? chainId, coveredLines, indicativeLines, openStores };
+  });
+  chainCoverage.sort((a, b) => b.coveredLines - a.coveredLines || a.chainName.localeCompare(b.chainName));
   if (priceDates.some((d) => now.getTime() - Date.parse(d.newest) > 48 * 3600_000)) warnings.add('prices_not_refreshed');
   const estimate = matrix.estimated ? ESTIMATE_PARAMS[req.travel.mode] : null;
   const travelMethod: TravelMethodDto = {
@@ -993,6 +1040,7 @@ export async function compareBasket(req: CompareRequest, deps: CompareDeps): Pro
       travelEstimated: matrix.estimated,
       travelMethod,
       priceDates,
+      chainCoverage,
       storesConsidered: kept.length,
       profilesConsidered: result.stats.profilesConsidered,
       maxStoresApplied,

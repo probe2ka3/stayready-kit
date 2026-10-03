@@ -75,7 +75,8 @@ export class PostgresAppData implements AppData {
     const rows = await this.handle.sql<Array<{ connector_id: string; finished_at: Date | null; status: string; message: string | null; stats: Record<string, unknown> }>>`
       SELECT DISTINCT ON (connector_id) connector_id, finished_at, status, message, stats
       FROM import_runs WHERE kind = 'collect' ORDER BY connector_id, started_at DESC`;
-    return rows.map((r) => ({
+    const excluded = serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : [];
+    return rows.filter((r) => !excluded.includes(r.connector_id)).map((r) => ({
       connectorId: r.connector_id,
       label: r.connector_id,
       collectedAt: r.finished_at ? new Date(r.finished_at).toISOString() : null,
@@ -89,7 +90,7 @@ export class PostgresAppData implements AppData {
     }));
   }
   chainStatus(now: Date): Promise<ChainStatus[]> {
-    return chainDataStatus(this.handle, now);
+    return chainDataStatus(this.handle, now, serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : []);
   }
   hasRealPrices(): Promise<boolean> {
     return this.realPricesCache.get();

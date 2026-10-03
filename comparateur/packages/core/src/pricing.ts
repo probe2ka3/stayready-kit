@@ -1,5 +1,5 @@
 import { roundTo5Rappen } from './money';
-import { confidenceOf, sourceInfo, TIER_RANK, type SourceTier } from './sources';
+import { confidenceOf, connectorForUrl, sourceInfo, TIER_RANK, type SourceTier } from './sources';
 import { normalizeText, significantTokens } from './text';
 import { ageInDays, dateInRange, zurichToday } from './time';
 import type {
@@ -82,13 +82,23 @@ export function buildOfferIndex(
     input = { ...input, prices: input.prices.filter((o) => keep(o.source)), promotions: input.promotions.filter((p) => keep(p.source)) };
   }
   // Sources dont les conditions restreignent l'usage, sans autorisation : entièrement retirées.
+  // Provenance contrôlée sur l'étiquette ET sur l'hôte des URL : un prix privé réétiqueté reste exclu,
+  // de même qu'un prix rattaché à un article d'une source exclue.
   if (opts.excludeConnectors?.length) {
     const out = new Set(opts.excludeConnectors);
+    const excluded = (label: string, ...urls: Array<string | null | undefined>) =>
+      out.has(label) || urls.some((u) => {
+        const c = connectorForUrl(u);
+        return c !== null && out.has(c);
+      });
+    const products = input.products.filter((p) => !excluded(p.connectorId, p.url));
+    const kept = new Set(products.map((p) => p.id));
+    const dropped = new Set(input.products.filter((p) => !kept.has(p.id)).map((p) => p.id));
     input = {
-      products: input.products.filter((p) => !out.has(p.connectorId)),
+      products,
       matches: input.matches,
-      prices: input.prices.filter((o) => !out.has(o.source.connectorId)),
-      promotions: input.promotions.filter((p) => !out.has(p.source.connectorId)),
+      prices: input.prices.filter((o) => !dropped.has(o.retailerProductId) && !excluded(o.source.connectorId, o.source.ref, o.sourceUrl)),
+      promotions: input.promotions.filter((p) => !dropped.has(p.retailerProductId) && !excluded(p.source.connectorId, p.source.ref, p.sourceUrl)),
     };
   }
   const products = new Map(input.products.map((p) => [p.id, p]));

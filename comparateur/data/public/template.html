@@ -106,10 +106,12 @@ function render() {
       }
       const unit = x.unit ? fmt(x.unit.cents) + ' CHF/' + (x.unit.basis === 'piece' ? 'pce' : x.unit.basis) : '';
       const promo = x.promo ? ' · action du ' + day(x.promo.validFrom).slice(0, 5) + ' au ' + day(x.promo.validTo).slice(0, 5) : '';
-      const local = x.status === 'store_survey' ? ' · ce magasin seulement' : '';
+      const local = x.status === 'store_survey' ? ' · ce magasin seulement' : String(x.scope || '').startsWith('zone') ? ' · prix régional' : '';
+      // Relevé communautaire : toujours « indicatif », avec son lieu (visible, pas seulement au survol).
+      const crowd = x.status === 'community' ? ' · indicatif' + (x.place ? ', relevé : ' + esc(x.place) : '') : '';
       html += '<td class="price' + (min != null && x.total === min ? ' best' : '') + '" data-chain="' + esc(c.name) + '"><b>' + fmt(x.total) + '</b>' +
         (x.packs > 1 ? ' <small>(' + x.packs + ' paquets)</small>' : '') + (x.weight ? ' <small>au poids, estimé</small>' : '') +
-        '<small>' + esc(x.product) + '</small><small>' + unit + ' · ' + day(x.date) + promo + local + '</small>' +
+        '<small>' + esc(x.product) + '</small><small>' + unit + ' · ' + day(x.date) + promo + local + crowd + '</small>' +
         '<span class="tag" title="' + esc(x.place || x.scope || '') + '">' + SRC[x.status] + '</span></td>';
     }
     html += '</tr>';
@@ -117,13 +119,14 @@ function render() {
   body.innerHTML = html || '<tr><td colspan="6" class="miss">Aucun aliment ne correspond.</td></tr>';
 }
 if (DATA) {
-  document.getElementById('lead').textContent = DATA.rows.length + ' aliments de base × ' + DATA.chains.length + ' enseignes. Données du ' + day(DATA.generatedAt) + '. Montant payé pour la quantité indiquée (paquets entiers), prix au kilo, au litre ou à la pièce en dessous.';
+  document.getElementById('lead').textContent = DATA.rows.length + ' aliments de base, ' + DATA.chains.length + ' enseignes. Données du ' + day(DATA.generatedAt) + '. Montant payé pour la quantité indiquée (paquets entiers), prix au kilo, au litre ou à la pièce en dessous.' +
+    (DATA.coverage ? ' Prix affichables par enseigne : ' + DATA.chains.map((c) => esc(c.name) + ' ' + (DATA.coverage[c.id] || 0) + '/' + DATA.rows.length).join(', ') + '. Ce n’est pas une comparaison complète des enseignes : seuls les aliments avec un prix dans au moins deux enseignes se comparent.' : '');
   document.getElementById('head').innerHTML += DATA.chains.map((c) => '<th>' + esc(c.name) + '</th>').join('');
   document.getElementById('stats').innerHTML = ['1', '2', '3', '4', '5'].map((k) => '<div class="stat"><b>' + DATA.comparable[k] + '</b>' + (k === '1' ? 'avec au moins 1 prix' : 'comparables dans ' + k + ' enseignes ou plus') + '</div>').join('');
   const cats = [...new Set(DATA.rows.map((r) => r.category))];
   document.getElementById('cat').innerHTML += cats.map((c) => '<option>' + esc(c) + '</option>').join('');
   document.getElementById('foot').innerHTML = 'Sources : ' + DATA.sources.map((s) => esc(s.connectorId) + ' (' + day(s.collectedAt) + ')').join(', ') +
-    '. Prix communautaires : Open Prices (Open Food Facts), base de données sous licence ODbL 1.0. Les prix Aldi et Denner ne sont pas affichés : leurs conditions réservent ces données à un usage privé ou interdisent leur publication sans accord écrit. Migros et Coop : aucune source officielle accessible ; seuls les relevés communautaires ou en magasin apparaissent.';
+    '. Prix communautaires : Open Prices (Open Food Facts), base de données sous licence ODbL 1.0 ; un relevé communautaire est « indicatif », daté, et vaut pour la région du magasin où il a été fait. Les prix publiés par Aldi, Denner et Coop (journal des actions) ne sont pas affichés : leurs conditions réservent ces données à un usage privé ou interdisent leur publication sans accord écrit. Migros : aucune source officielle accessible. Pour ces quatre enseignes, seuls les relevés communautaires ou en magasin apparaissent.';
   for (const id of ['q', 'cat', 'cmp']) document.getElementById(id).addEventListener('input', render);
   render();
 }

@@ -20,6 +20,24 @@ pour l'évaluation (`RESTRICTED_SOURCES=include|exclude` permet de le vérifier)
 | Licence requise | Fournisseur tiers, usage applicatif payant | FoodAlly (comparaison seulement) |
 | Données propres | Produites par TesPrix ou ses utilisateurs | Tickets de caisse (envoi fermé) |
 
+### 1.1 Provenance et enseigne : deux notions distinctes (03.10.2026)
+
+Le droit de publier dépend de la **source** d'un prix, jamais de l'**enseigne** concernée :
+
+- un relevé **Open Prices** fait chez Coop, Aldi, Denner ou Migros est jugé selon la licence d'Open
+  Prices (ODbL) : il est publiable, daté, « indicatif », avec son lieu ;
+- un prix des collecteurs privés (API Aldi, site Denner, journal Coop) n'est **jamais** publiable,
+  quelle que soit l'étiquette qu'il porte.
+
+La provenance est **établie, pas déclarée** (`recordProvenance`, `packages/core/src/sources.ts`) :
+fichier de la source (un fichier du dossier privé n'est jamais lu comme publiable), étiquettes et
+**hôte des URL** de chaque article, prix et action (`SOURCE_REGISTRY[…].hosts`). La source la plus
+restrictive l'emporte ; dans le fichier d'une source publiable, un enregistrement dont une URL ne
+relève pas de cette source est écarté. Les filtres de production (`buildOfferIndex`) et le test
+`privacy.test.ts` contrôlent aussi les hôtes. Tests : `packages/connectors/test/free-sources.test.ts`
+(« provenance établie… »), `packages/core/test/consumer.test.ts` (« provenance… », « exclusion… »).
+Les statistiques par enseigne (pages Magasins, Sources, Bientôt) sont calculées **après** exclusion.
+
 ## 2. Par source et par méthode de collecte
 
 | Source | Méthode | Accès technique | Conditions lues | Statut TesPrix |

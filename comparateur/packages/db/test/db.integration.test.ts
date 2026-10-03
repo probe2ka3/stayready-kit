@@ -200,5 +200,13 @@ coop;Q-1;price;2.90;2026-09-24;2026-09-24;2026-09-30;manual_survey;Prospectus`;
     expect(coop?.stores).toBe(2);
     expect(coop?.realPrices).toBeGreaterThan(0);
     expect(status.find((s) => s.chainId === 'migros')?.demoProducts).toBeGreaterThan(100);
+    // Source exclue (usage privé) : ni compte ni date pour ses prix et actions ; les autres sources restent.
+    const restricted = await chainDataStatus(h, NOW, ['coop']);
+    const coopRestricted = restricted.find((s) => s.chainId === 'coop');
+    expect(coopRestricted).toMatchObject({ stores: 2, realPrices: 0, officialPrices: 0, lastOfficialObservation: null });
+    expect(restricted.find((s) => s.chainId === 'migros')?.demoProducts).toBe(status.find((s) => s.chainId === 'migros')?.demoProducts);
+    // Actions : il ne reste que celles de la source de démonstration, retirées à leur tour si elle est exclue.
+    const both = (await chainDataStatus(h, NOW, ['coop', 'demo'])).find((s) => s.chainId === 'coop');
+    expect(both).toMatchObject({ products: 0, activePromotions: 0, upcomingPromotions: 0, lastObservation: null });
   });
 });

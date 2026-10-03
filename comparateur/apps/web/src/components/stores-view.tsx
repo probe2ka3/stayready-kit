@@ -135,7 +135,7 @@ export function StoresView({ locale }: { locale: Locale }) {
                             {plural(m.stores.storesCount, c.count)} · {format(m.stores.nearest, { km: km(c.nearestKm) })}
                           </p>
                           <p className="text-xs text-muted">
-                            {format(m.stores.priceText[c.priceData.kind] ?? '', {
+                            {format(m.stores.priceText[c.priceData.kind === 'community' && c.priceData.officialRestricted ? 'communityRestricted' : c.priceData.kind] ?? '', {
                               date: c.priceData.lastObservation ? shortDate(c.priceData.lastObservation) : '—',
                             })}
                           </p>

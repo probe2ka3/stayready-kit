@@ -39,7 +39,7 @@ export function ResultsView({
       {globalWarnings.length > 0 && (
         <div className="space-y-1.5">
           {globalWarnings.map((w) => (
-            <Notice key={w} tone={w === 'no_open_store' || w === 'no_stores_in_radius' ? 'warn' : 'info'}>
+            <Notice key={w} tone={w === 'no_open_store' || w === 'no_priced_store_open' || w === 'no_stores_in_radius' ? 'warn' : 'info'}>
               {m.results.warnings[w]}
             </Notice>
           ))}
@@ -62,6 +62,7 @@ export function ResultsView({
         </>
       )}
 
+      <ChainCoverage result={result} locale={locale} />
       <Alternatives result={result} locale={locale} chosen={result.scenarios.find((x) => x.kind === 'optimized_total')?.storeCount ?? null} />
       <Ranking result={result} locale={locale} />
       {result.planning && <Planning result={result} locale={locale} />}
@@ -756,6 +757,31 @@ function TravelMethod({ result, locale }: { result: CompareResultDto; locale: Lo
       })
     : format(m.results.travelMethod.routed, { provider: t.provider, ret, cost });
   return <p className="rounded-xl bg-surface-2 p-3 text-sm text-muted">{text}</p>;
+}
+
+/** Couverture par enseigne du rayon : ce qui est comparé, ce qui ne l'est pas et pourquoi. */
+function ChainCoverage({ result, locale }: { result: CompareResultDto; locale: Locale }) {
+  const t = getMessages(locale).results.chainCoverage;
+  const rows = result.meta.chainCoverage ?? [];
+  if (rows.length === 0) return null;
+  return (
+    <Card>
+      <h2 className="font-semibold">{t.title}</h2>
+      <p className="mt-1 text-sm text-muted">{t.intro}</p>
+      <ul className="mt-2 space-y-1 text-sm">
+        {rows.map((c) => (
+          <li key={c.chainId} data-chain={c.chainId}>
+            {c.coveredLines > 0
+              ? format(t.line, { chain: c.chainName, covered: c.coveredLines, total: result.totalLines })
+              : format(t.none, { chain: c.chainName })}
+            {c.indicativeLines > 0 && <span className="text-muted"> · {plural(t.indicative, c.indicativeLines)}</span>}
+            {c.coveredLines > 0 && c.openStores === 0 && <span className="text-warn"> · {t.closed}</span>}
+            {c.officialRestricted && <span className="text-muted"> · {t.restricted}</span>}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
 }
 
 /** Dates des relevés réellement utilisés, par enseigne. */

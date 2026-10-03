@@ -6,13 +6,15 @@ import { CoopEpaperConnector } from './coop-epaper';
 import { DennerWebConnector } from './denner';
 import { FoodAllyConnector } from './foodally';
 import { LidlWebConnector } from './lidl';
-import { OpenPricesConnector, type OpContext } from './open-prices';
+import { OpenPricesConnector, type OpContext, type OpLocationReview } from './open-prices';
 import type { PriceConnector } from './types';
 
 export interface ConnectorDeps {
   /** Succursales connues : lieu et zone des relevés communautaires. */
   stores?: Store[];
   resolveZone?: OpContext['resolveZone'];
+  /** Lieux Open Prices sans enseigne identifiable, attribués après revue (`data/matching/op-locations.json`). */
+  opLocations?: OpLocationReview[];
 }
 
 /**
@@ -30,7 +32,7 @@ export function priceConnectors(deps: ConnectorDeps = {}): PriceConnector[] {
     new AldiApiConnector(),
     new DennerWebConnector(),
     new CoopEpaperConnector(),
-    new OpenPricesConnector(deps.stores ?? [], deps.resolveZone),
+    new OpenPricesConnector(deps.stores ?? [], deps.resolveZone, undefined, deps.opLocations ?? []),
     new FoodAllyConnector(),
     ...chainConnectors(),
   ];

@@ -380,26 +380,32 @@ export interface ChainDataStatus {
   lastOfficialObservation: string | null;
 }
 
-export async function chainDataStatus(handle: DbHandle, now: Date): Promise<ChainDataStatus[]> {
+/**
+ * État des données par enseigne. `excludeConnectors` : sources non affichables (usage privé) retirées
+ * des comptes et des dates ; l'exclusion vise la source, pas l'enseigne (les relevés Open Prices d'une
+ * enseigne restent comptés).
+ */
+export async function chainDataStatus(handle: DbHandle, now: Date, excludeConnectors: string[] = []): Promise<ChainDataStatus[]> {
   const today = zurichToday(now);
   const s = handle.sql;
+  const ex = excludeConnectors;
   const rows = await s<Array<Record<string, unknown>>>`
     SELECT c.id AS chain_id,
       (SELECT count(*)::int FROM stores st WHERE st.chain_id = c.id AND st.active) AS stores,
-      (SELECT count(*)::int FROM retailer_products rp WHERE rp.chain_id = c.id AND rp.active) AS products,
-      (SELECT count(*)::int FROM retailer_products rp WHERE rp.chain_id = c.id AND rp.active AND rp.is_demo) AS demo_products,
+      (SELECT count(*)::int FROM retailer_products rp WHERE rp.chain_id = c.id AND rp.active AND NOT (rp.connector_id = ANY(${ex}::text[]))) AS products,
+      (SELECT count(*)::int FROM retailer_products rp WHERE rp.chain_id = c.id AND rp.active AND rp.is_demo AND NOT (rp.connector_id = ANY(${ex}::text[]))) AS demo_products,
       (SELECT max(o.observed_at) FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
-         WHERE rp.chain_id = c.id AND o.status = 'valid') AS last_observation,
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT (o.source_connector = ANY(${ex}::text[])) AND NOT (rp.connector_id = ANY(${ex}::text[]))) AS last_observation,
       (SELECT count(*)::int FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
-         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo) AS real_prices,
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT (o.source_connector = ANY(${ex}::text[])) AND NOT (rp.connector_id = ANY(${ex}::text[])) AND NOT o.is_demo) AS real_prices,
       -- Prix officiels : fiabilité déduite comme reliabilityOf (core) lorsque la colonne est vide.
       (SELECT count(*)::int FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
-         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS official_prices,
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT (o.source_connector = ANY(${ex}::text[])) AND NOT (rp.connector_id = ANY(${ex}::text[])) AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS official_prices,
       (SELECT max(o.observed_at) FROM price_observations o JOIN retailer_products rp ON rp.id = o.retailer_product_id
-         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS last_official_observation,
-      (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active'
+         WHERE rp.chain_id = c.id AND o.status = 'valid' AND NOT (o.source_connector = ANY(${ex}::text[])) AND NOT (rp.connector_id = ANY(${ex}::text[])) AND NOT o.is_demo AND COALESCE(o.reliability, CASE WHEN o.source_kind IN ('open_data', 'receipt') THEN 'crowd' WHEN o.source_kind = 'third_party' THEN 'third_party' WHEN o.source_kind IN ('manual_survey', 'manual_import') THEN 'survey' ELSE 'official' END) = 'official') AS last_official_observation,
+      (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active' AND NOT (p.source_connector = ANY(${ex}::text[]))
          AND p.valid_from <= ${today} AND p.valid_to >= ${today} AND p.published_at <= ${now.toISOString()}) AS active_promotions,
-      (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active'
+      (SELECT count(*)::int FROM promotions p WHERE p.chain_id = c.id AND p.status = 'active' AND NOT (p.source_connector = ANY(${ex}::text[]))
          AND p.valid_from > ${today} AND p.published_at <= ${now.toISOString()}) AS upcoming_promotions
     FROM chains c ORDER BY c.sort`;
   return rows.map((r) => ({

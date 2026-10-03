@@ -1,0 +1,69 @@
+name: TesPrix — essai du cycle quotidien sur GitHub Actions (sources publiables)
+
+# Mesure, sur les serveurs de GitHub, de la durée réelle d'un cycle et de l'accès aux sources, avec
+# le script prévu pour le dépôt privé (comparateur/ops/actions-prive/cycle.sh). Dépôt PUBLIC :
+# journaux et caches sont lisibles par tous, donc seulement Lidl et Open Prices (publiables), état
+# dans un dossier temporaire, aucun artefact, aucun cache, rien de réécrit dans le dépôt.
+# Déclenché uniquement quand le script ou ce fichier change (pas de collecte à chaque poussée).
+
+on:
+  push:
+    paths:
+      - 'comparateur/ops/actions-prive/**'
+      - '.github/workflows/tesprix-essai-cycle.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tesprix-essai-cycle-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  essai:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: comparateur
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: comparateur/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pnpm install --frozen-lockfile
+      - name: Cycle quotidien (Lidl + Open Prices ; jamais Aldi, Denner ni le journal Coop)
+        run: bash ops/actions-prive/cycle.sh "$RUNNER_TEMP/etat" --sources=lidl-web,open-prices
+      - name: 'Contrôle : aucune donnée de source privée sur ce serveur'
+        run: |
+          if [ -n "$(ls data/private/live 2>/dev/null)" ] || ls "$RUNNER_TEMP/etat/private/live" 2>/dev/null | grep -q .; then
+            echo 'Instantané privé présent : interdit dans un dépôt public' && exit 1
+          fi
+      - name: Résumé (durées et volumes, sans prix)
+        if: always()
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          try:
+              run = json.load(open(os.path.join(os.environ['RUNNER_TEMP'], 'etat/private/runs/latest.json')))
+          except (OSError, ValueError):
+              print('Aucun journal d’exécution.'); raise SystemExit
+          print(f"Cycle du {run.get('date')} : {run.get('startedAt')} → {run.get('finishedAt')}\n")
+          print('| Source | Statut | Prix | Actions | Requêtes | Durée (s) | Message |\n|---|---|---|---|---|---|---|')
+          for s in run.get('sources', []):
+              print(f"| {s.get('connector')} | {s.get('status')} | {s.get('prices')} | {s.get('promotions')} | {s.get('requests', '')} | {round((s.get('durationMs') or 0) / 1000)} | {s.get('message') or ''} |")
+          print('\n| Étape | OK | Durée (s) |\n|---|---|---|')
+          for st in run.get('steps', []):
+              print(f"| {st.get('step')} | {'oui' if st.get('ok') else 'NON'} | {round((st.get('durationMs') or 0) / 1000)} |")
+          EOF
+          python3 - <<'EOF'
+          import json, os
+          run = json.load(open(os.path.join(os.environ['RUNNER_TEMP'], 'etat/private/runs/latest.json')))
+          for s in run.get('sources', []):
+              print(s.get('connector'), s.get('status'), s.get('prices'), s.get('promotions'), round((s.get('durationMs') or 0) / 1000), 's', s.get('message') or '')
+          for st in run.get('steps', []):
+              print(st.get('step'), st.get('ok'), round((st.get('durationMs') or 0) / 1000), 's')
+          EOF

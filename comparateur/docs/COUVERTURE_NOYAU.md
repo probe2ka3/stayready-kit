@@ -1,4 +1,64 @@
-# Couverture des 50 aliments de base — analyse besoin par besoin (01.10.2026)
+# Couverture des 50 aliments de base — analyse besoin par besoin (01.10.2026, mise à jour du 03.10.2026)
+
+## 0. Mise à jour du 03.10.2026 : nouvelle collecte et Open Prices
+
+Périmètre de mesure : les 50 besoins du noyau, `pnpm job matrice-essentiels` (mêmes critères que le
+comparateur : correspondance revue, exigences du besoin, fraîcheur, paquets entiers). **Privé** =
+toutes les sources collectées (dont Aldi, Denner, journal Coop) ; **public** = sources publiables
+seulement (Lidl, Open Prices). Les critères de correspondance n'ont pas été assouplis.
+
+| Mesure | Lidl | Denner | Aldi | Coop | Migros | Comparables ≥ 2 / 3 / 4 / 5 (privé) | Comparables ≥ 2 / 3 / 4 / 5 (public) |
+|---|---|---|---|---|---|---|---|
+| Historique : collecte du 01.10.2026 | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
+| Nouvelle collecte du 03.10.2026, 11:02–11:13 (avant les changements ci-dessous) | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
+| 03.10.2026 après attribution revue d'un lieu Open Prices | 47 | 34 | 23 | 6 | **1** | 41 / **19** / 2 / 0 | **2** / 0 / 0 / 0 |
+
+Collecte du 03.10 : Open Prices 231 prix, journal Coop 77 actions (édition du 01.10, texte en cache),
+Denner 250 prix et 25 actions, Aldi 1 481 prix et 558 actions, Lidl 424 prix et 290 actions
+(« partiel » : 3 pages en échec sur 108 requêtes) ; 218 requêtes, 10 min 50 s.
+
+### Open Prices : données réellement disponibles (API lue le 03.10.2026)
+
+192 lieux suisses (nom du pays multilingue « Schweiz/Suisse/… ») ; **aucun magasin en ligne suisse**
+(136 lieux « en ligne » au total, aucun pour une enseigne suisse). 942 relevés au total :
+
+| Enseigne du lieu | ≤ 30 j | 31–90 j | 91–400 j | > 400 j | Dernier relevé |
+|---|---|---|---|---|---|
+| Migros | 43 | 24 | 85 | 316 | 25.09.2026 |
+| Coop | 1 | 29 | 110 | 76 | 08.09.2026 |
+| Denner | 0 | 8 | 8 | 20 | 19.08.2026 |
+| Lidl | 0 | 1 | 11 | 33 | 30.07.2026 |
+| Aldi | 0 | 0 | 4 | 30 | 06.11.2025 |
+| Lieu sans enseigne reconnue | 3 | 42 | 66 | 25 | — |
+
+Écarts du connecteur (fenêtre de 400 jours) : 468 hors fenêtre, 99 sans contenance publiée (Open Food
+Facts ne la donne pas ; ex. « Vollmilch UHT » Migros : `quantity` = « 1pcs »), 7 en euros, 5 doublons
+signalés (`duplicate_of`), 4 sans code-barres valide, 2 remises sans prix normal. **Date** : chaque prix
+garde la date du relevé (`date` d'Open Prices, à midi heure de Zurich), jamais la date d'import (test
+« Date réelle du relevé »). **Doublons** : un relevé signalé en double est écarté ; deux relevés du même
+article gardent chacun leur date, le plus récent sert.
+
+Relevés de moins de 90 jours (limite des relevés communautaires) qui couvrent un besoin : **penne Coop**
+(Neuchâtel, 04.08) seulement ; les relevés Lidl d'Open Prices (séré, huile d'olive) ont plus de 90 jours.
+La grande majorité des relevés récents porte sur des articles hors noyau (boissons, snacks, cosmétiques).
+
+**Identification des magasins** : 42 lieux n'ont pas d'enseigne reconnaissable (centres commerciaux,
+noms génériques). Un seul porte des relevés récents d'une enseigne suivie : « Métropole Centre », La
+Chaux-de-Fonds (37 relevés du 13.07 au 08.09.2026). OpenStreetMap y situe une Migros à 17 m et un Denner
+à 24 m ; les relevés sont surtout des marques propres Migros. Attribution revue
+(`data/matching/op-locations.json`) : **seuls les articles de marque propre Migros** sont attribués à
+cette Migros (zone `migros-nf`), les marques nationales restent non attribuées (12 relevés), la
+succursale OSM doit exister. Résultat : 15 relevés attribués, dont un besoin du noyau, **café moulu
+Boncampo Classico 500 g, 3.50, relevé du 04.08.2026** (indicatif, prix régional). Refusés après revue :
+penne M-Budget (contenance publiée 371 g, invraisemblable et non vérifiable), mozzarella M-Classic
+250 g (type non publié), vinaigre de nettoyage (≠ vinaigre de vin), mini penne « piccolini ». Lait et
+beurre M-Budget : origine ou traitement (UHT) non publiés → non rapprochés. La Maladière (Neuchâtel,
+relevés Coop de novembre 2025) : trop ancien, non attribué.
+
+**Cause de la faible couverture publique** : Open Prices ne contient que 106 relevés de moins de 90 jours
+pour les cinq enseignes en Suisse, presque tous hors noyau ; aucune autre source publiable n'existe
+pour Migros, Coop, Denner et Aldi (voir § 5). Le gain Migros expire avec le relevé (90 jours, vers
+le 02.11.2026) s'il n'est pas renouvelé. Les canaux déjà bloqués n'ont pas été retestés.
 
 Mesures sur les collectes réelles du 30.09 et du 01.10.2026. « Couvert » = au moins un article dont la
 correspondance est revue, qui satisfait les exigences du besoin (origine suisse, AOP, bio…) et qui a un

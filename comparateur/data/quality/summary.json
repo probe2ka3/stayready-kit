@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-01T00:42:35.054Z",
+  "at": "2026-10-03T09:13:19.177Z",
   "catalogSize": 240,
   "comparable": {
     "2": 121,
@@ -8,11 +8,11 @@
     "5": 0
   },
   "freshness": {
-    "h24": 3485,
+    "h24": 2555,
     "h48": 0,
-    "d7": 1860,
-    "older": 76,
-    "total": 5421
+    "d7": 2815,
+    "older": 77,
+    "total": 5447
   },
   "chains": [
     {
@@ -22,9 +22,9 @@
       "share": 0.008,
       "fresh24h": 0,
       "fresh48h": 0,
-      "fresh7d": 1,
-      "older": 46,
-      "products": 109,
+      "fresh7d": 0,
+      "older": 47,
+      "products": 101,
       "pricedProducts": 47
     },
     {
@@ -32,9 +32,9 @@
       "references": 7,
       "referencesFirstParty": 6,
       "share": 0.029,
-      "fresh24h": 77,
+      "fresh24h": 0,
       "fresh48h": 0,
-      "fresh7d": 0,
+      "fresh7d": 77,
       "older": 25,
       "products": 162,
       "pricedProducts": 102
@@ -46,34 +46,34 @@
       "share": 0.142,
       "fresh24h": 265,
       "fresh48h": 0,
-      "fresh7d": 0,
+      "fresh7d": 8,
       "older": 4,
-      "products": 295,
-      "pricedProducts": 269
+      "products": 285,
+      "pricedProducts": 277
     },
     {
       "chainId": "aldi",
       "references": 107,
       "referencesFirstParty": 107,
       "share": 0.446,
-      "fresh24h": 1728,
+      "fresh24h": 1726,
       "fresh48h": 0,
-      "fresh7d": 80,
+      "fresh7d": 89,
       "older": 0,
-      "products": 1917,
-      "pricedProducts": 1808
+      "products": 1926,
+      "pricedProducts": 1815
     },
     {
       "chainId": "lidl",
       "references": 200,
       "referencesFirstParty": 200,
       "share": 0.833,
-      "fresh24h": 1415,
+      "fresh24h": 564,
       "fresh48h": 0,
-      "fresh7d": 1779,
+      "fresh7d": 2641,
       "older": 1,
-      "products": 3441,
-      "pricedProducts": 3195
+      "products": 3281,
+      "pricedProducts": 3206
     },
     {
       "chainId": "ottos",
@@ -127,10 +127,10 @@
     }
   },
   "records": {
-    "total": 11143,
+    "total": 13261,
     "byTier": {
-      "first_party": 10902,
-      "community": 241
+      "first_party": 13030,
+      "community": 231
     }
   },
   "quality": {
@@ -138,40 +138,40 @@
     "abnormal_change": 0,
     "inconsistent_quantity": 0,
     "duplicate": 0,
-    "stale_data": 18,
+    "stale_data": 17,
     "source_divergence": 0,
-    "promo_as_regular": 1,
+    "promo_as_regular": 0,
     "connector_broken": 0
   },
   "connectors": [
     {
       "connectorId": "aldi-api",
-      "status": "partial",
-      "collectedAt": "2026-09-30T22:28:55.304Z",
+      "status": "success",
+      "collectedAt": "2026-10-03T09:02:36.489Z",
       "message": null
     },
     {
       "connectorId": "coop-epaper",
       "status": "success",
-      "collectedAt": "2026-10-01T00:42:26.832Z",
+      "collectedAt": "2026-10-03T09:02:36.489Z",
       "message": null
     },
     {
       "connectorId": "denner-web",
       "status": "success",
-      "collectedAt": "2026-10-01T00:19:32.554Z",
+      "collectedAt": "2026-10-03T09:02:36.489Z",
       "message": null
     },
     {
       "connectorId": "lidl-web",
       "status": "partial",
-      "collectedAt": "2026-09-30T22:28:55.304Z",
+      "collectedAt": "2026-10-03T09:02:36.489Z",
       "message": null
     },
     {
       "connectorId": "open-prices",
       "status": "success",
-      "collectedAt": "2026-09-30T23:07:27.958Z",
+      "collectedAt": "2026-10-03T09:02:36.489Z",
       "message": null
     }
   ]

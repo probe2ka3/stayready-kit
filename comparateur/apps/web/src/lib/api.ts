@@ -34,7 +34,13 @@ export interface StoresResponse {
     count: number;
     nearestKm: number;
     /** Données de prix exploitables pour cette enseigne (≠ présence de magasins). */
-    priceData: { kind: 'official' | 'community' | 'none' | 'demo' | 'restricted'; lastObservation: string | null; prices: number };
+    priceData: {
+      kind: 'official' | 'community' | 'none' | 'demo' | 'restricted';
+      lastObservation: string | null;
+      prices: number;
+      /** Source officielle de l'enseigne non affichée (usage privé, autorisation en attente). */
+      officialRestricted?: boolean;
+    };
   }>;
   absentChains: Array<{ chainId: string; name: string; badge: string }>;
   stores: Array<{

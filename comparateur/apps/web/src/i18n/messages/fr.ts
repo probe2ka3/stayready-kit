@@ -75,6 +75,8 @@ export const fr = {
       none: 'Aucun prix disponible : succursales affichées, mais non comparées.',
       demo: 'Mode démonstration : prix fictifs.',
       restricted: 'Prix non affichés : les conditions de l’enseigne réservent ses données à un usage privé ; autorisation en attente.',
+      communityRestricted:
+        'Relevés communautaires seulement (Open Prices), souvent anciens : les prix publiés par l’enseigne ne sont pas affichés (usage privé, autorisation en attente).',
     } as Record<string, string>,
     availabilityTitle: 'Ce que nous savons de chaque magasin',
     availabilityText:
@@ -200,6 +202,16 @@ export const fr = {
       oneWay: 'Sans retour au point de départ.',
     },
     priceDates: 'Dates des relevés utilisés : {list}.',
+    chainCoverage: {
+      title: 'Ce que couvre cette comparaison',
+      intro:
+        'La comparaison porte seulement sur les prix disponibles pour les enseignes de votre rayon ; elle n’est pas exhaustive. Une enseigne sans prix n’est pas « plus chère » : elle n’est pas comparée.',
+      line: '{chain} : {covered}/{total} articles avec un prix',
+      indicative: ['dont {n} indicatif (relevé communautaire ou ancien)', 'dont {n} indicatifs (relevés communautaires ou anciens)'] as const,
+      none: '{chain} : aucun prix disponible, non comparée',
+      restricted: 'prix publiés par l’enseigne non affichés (usage privé, autorisation en attente)',
+      closed: 'aucune succursale ouverte ce jour-là : non comparée',
+    },
     statusLegend:
       '« Vérifié le … » : prix lu à la source ce jour-là, sans garantie ensuite. Après 7 jours il devient « indicatif » ; après 30 jours (90 pour les relevés communautaires) il est écarté. Une action sans date de fin publiée est signalée comme telle.',
     priceDatesItem: '{chain} du {oldest} au {newest}',
@@ -293,6 +305,9 @@ export const fr = {
     warnings: {
       no_stores_in_radius: 'Aucun magasin dans le rayon choisi.',
       no_open_store: 'Aucun magasin n’est ouvert à l’heure choisie. Essayez de planifier vos courses.',
+      no_priced_store_open:
+        'Aucun magasin ouvert ce jour-là n’a de prix pour ces articles : les enseignes dont nous connaissons les prix sont fermées (dimanche ou jour férié ?). Choisissez un autre jour.',
+      stores_closed_on_date: 'Certaines succursales sont fermées le jour choisi : elles ne sont pas comparées.',
       holiday_certain: 'Jour férié : de nombreux magasins sont fermés.',
       holiday_possible: 'Jour férié dans certains cantons : vérifiez les horaires.',
       stale_prices_excluded: 'Des prix trop anciens ont été écartés.',

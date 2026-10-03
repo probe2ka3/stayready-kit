@@ -186,14 +186,16 @@ export class MemoryAppData implements AppData {
         excludeConnectors: serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : [],
       },
     );
+    // Statistiques par enseigne calculées après exclusion : une source non autorisée n'y laisse ni
+    // compte ni date ; les relevés publiables (Open Prices) d'une même enseigne y restent.
     const stats = this.emptyStats();
     const today = zurichToday(now);
-    for (const p of products) {
+    for (const p of index.products.values()) {
       const s = stats.get(p.chainId);
       if (s) s.products++;
     }
-    for (const o of prices) {
-      const s = stats.get(index.products.get(o.retailerProductId)?.chainId ?? products.find((p) => p.id === o.retailerProductId)?.chainId ?? '');
+    for (const o of [...index.pricesByProduct.values()].flat()) {
+      const s = stats.get(index.products.get(o.retailerProductId)?.chainId ?? '');
       if (!s) continue;
       s.realPrices++;
       if (!s.lastObservation || o.observedAt > s.lastObservation) s.lastObservation = o.observedAt;
@@ -202,7 +204,7 @@ export class MemoryAppData implements AppData {
         if (!s.lastOfficialObservation || o.observedAt > s.lastOfficialObservation) s.lastOfficialObservation = o.observedAt;
       }
     }
-    for (const p of promotions) {
+    for (const p of [...index.promotionsByProduct.values()].flat()) {
       const s = stats.get(p.chainId);
       if (!s) continue;
       if (p.validFrom <= today && p.validTo >= today) s.activePromotions++;
@@ -255,12 +257,14 @@ export class MemoryAppData implements AppData {
 
   async hasRealPrices(now: Date): Promise<boolean> {
     const live = await this.liveData(now);
-    return Boolean(live && live.snapshots.some((s) => s.batch.prices.length > 0 || s.batch.promotions.length > 0));
+    return Boolean(live && (live.index.pricesByProduct.size > 0 || live.index.promotionsByProduct.size > 0));
   }
 
+  /** Collectes affichables : une source exclue (usage privé) n'apparaît pas, même par sa date ou ses comptes. */
   async collections(): Promise<CollectionInfo[]> {
     const live = await this.liveData(new Date());
-    return (live?.snapshots ?? []).map((s) => ({
+    const excluded = serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources) : [];
+    return (live?.snapshots ?? []).filter((s) => !excluded.includes(s.connectorId)).map((s) => ({
       connectorId: s.connectorId,
       label: s.label,
       collectedAt: s.collectedAt,

@@ -8,9 +8,11 @@ import {
   formatQuantity,
   profileForStore,
   resolveLine,
+  restrictedConnectorIds,
   sourceInfo,
   storeSpecificIds,
   withCrowDistance,
+  zurichParts,
   zurichToday,
   type BasketLine,
   type CompareRequest,
@@ -55,11 +57,12 @@ export async function jobDemoBaskets(ctx: JobContext) {
   const products = snapshots.flatMap((s) => s.batch.retailerProducts);
   const { matches } = matchesFor(products, PRODUCTS, await readReviewedMatches(dataDir));
   // --exclude=aldi-api : même calcul qu'en production sans autorisation de la source ;
-  // --public : toutes les sources non publiables exclues (Aldi, Denner…).
+  // --public : toutes les sources non publiables exclues (Aldi, Denner, journal Coop), qu'un instantané
+  // soit présent ou non ; les relevés Open Prices pour ces enseignes restent.
   const exclude = [
     ...(typeof ctx.flags.exclude === 'string' ? ctx.flags.exclude.split(',').filter(Boolean) : []),
-    ...(ctx.flags.public ? snapshots.filter((s) => s.private).map((s) => s.connectorId) : []),
-  ];
+    ...(ctx.flags.public ? restrictedConnectorIds([]) : []),
+  ].filter((id, i, all) => all.indexOf(id) === i);
   const index = buildOfferIndex(
     {
       products,
@@ -78,8 +81,11 @@ export async function jobDemoBaskets(ctx: JobContext) {
   const out: string[] = [
     '# Paniers de démonstration — résultats reproductibles',
     '',
-    `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}${basketsFile !== 'baskets.json' ? ` --baskets=${basketsFile}` : ''}${exclude.length ? ` --exclude=${exclude.join(',')}` : ''}\` sur les instantanés versionnés`,
-    `(${snapshots.map((s) => `${s.connectorId} du ${s.collectedAt?.slice(0, 10) ?? '?'}`).join(', ')}).`,
+    `Calculé avec \`pnpm job demo-baskets --now=${now.toISOString()}${basketsFile !== 'baskets.json' ? ` --baskets=${basketsFile}` : ''}${exclude.length ? ` --exclude=${exclude.join(',')}` : ''}\` sur les instantanés${exclude.length ? ' publiables' : ''}`,
+    `(${snapshots
+      .filter((s) => !exclude.includes(s.connectorId))
+      .map((s) => `${s.connectorId} du ${s.collectedAt?.slice(0, 10) ?? '?'}`)
+      .join(', ')}).`,
     'Prix réels uniquement (aucune donnée de démonstration). Montants en CHF.',
     '',
     'Lecture : « vérifié le JJ.MM » = prix lu à la source ce jour-là, sans garantie ensuite ; au-delà de 7 jours il devient « indicatif », au-delà de 30 jours',
@@ -92,8 +98,17 @@ export async function jobDemoBaskets(ctx: JobContext) {
   ];
   const json: Array<{ id: string; result: CompareResultDto }> = [];
 
-  // --aujourdhui : courses le jour même (collecte quotidienne), la date du fichier étant fixe.
-  if (ctx.flags.aujourdhui) for (const b of def.baskets) b.when = { ...b.when, date: zurichToday(now) };
+  // --aujourdhui : courses le jour même (collecte quotidienne), la date du fichier étant fixe. Une
+  // collecte lancée après l'heure prévue (rattrapage, PC allumé plus tard) part au prochain quart d'heure.
+  if (ctx.flags.aujourdhui) {
+    const { minutesOfDay } = zurichParts(now);
+    const next = Math.min(23 * 60 + 45, Math.ceil((minutesOfDay + 1) / 15) * 15);
+    const nextTime = `${String(Math.floor(next / 60)).padStart(2, '0')}:${String(next % 60).padStart(2, '0')}`;
+    for (const b of def.baskets) {
+      const time = b.when.time && b.when.time < nextTime ? nextTime : b.when.time;
+      b.when = { ...b.when, date: zurichToday(now), ...(time ? { time } : {}) };
+    }
+  }
   // --seuil=CHF : économie nette minimale pour recommander un magasin de plus (défaut : celui du panier).
   const seuil = typeof ctx.flags.seuil === 'string' ? Number(ctx.flags.seuil.replace(',', '.')) : null;
   if (seuil !== null && Number.isFinite(seuil) && seuil >= 0) for (const b of def.baskets) b.minSavingPerExtraStoreChf = seuil;
@@ -117,6 +132,14 @@ export async function jobDemoBaskets(ctx: JobContext) {
       `Départ : ${b.origin.label} · rayon ${b.radiusKm} km · courses le ${day(b.when.date)}.${b.when.date.slice(0, 4)}${b.when.time ? ` à ${b.when.time}` : ''}` +
         ` · ${b.travel.mode === 'car' ? 'voiture' : b.travel.mode}, ${b.travel.costPerKmChf.toFixed(2)} CHF/km, ${b.travel.returnToOrigin ? 'aller-retour' : 'aller simple'}` +
         ` · au plus ${b.maxStores} magasins · ${stores.length} succursales dans le rayon (${r.meta.storesConsidered} retenues).`,
+      '',
+      // Couverture : la comparaison ne porte que sur les prix disponibles, jamais sur « les cinq enseignes ».
+      `Couverture de ce panier (${r.totalLines} article${r.totalLines > 1 ? 's' : ''}) : ${r.meta.chainCoverage
+        .map(
+          (c) =>
+            `${c.chainName} ${c.coveredLines}/${r.totalLines}${c.indicativeLines ? ` (dont ${c.indicativeLines} indicatif${c.indicativeLines > 1 ? 's' : ''})` : ''}${c.coveredLines > 0 && c.openStores === 0 ? ' (aucune succursale ouverte ce jour-là)' : ''}${excludedChains.has(c.chainId) ? ' (prix de l’enseigne non affichés)' : ''}`,
+        )
+        .join(' · ')}. Une enseigne sans prix n’est pas comparée ; ce n’est pas une comparaison exhaustive.`,
       '',
       tm.estimated
         ? `Trajets **estimés** (pas un itinéraire routier) : vol d'oiseau × ${tm.detourFactor}, durée = ${tm.overheadMin} min + distance à ${tm.speedKmh} km/h.`
@@ -168,7 +191,7 @@ export async function jobDemoBaskets(ctx: JobContext) {
       const cells = chainsShown.map((c) => {
         const res = resolveLine(line, canonical, profileForStore(nearest(c), specific), index, pctx);
         if (res.option) return cell(res.option);
-        if (excludedChains.has(c)) return 'non affiché (source sans autorisation de réutilisation)';
+        if (excludedChains.has(c)) return 'non affiché (source de l’enseigne sans autorisation de réutilisation ; aucun relevé public)';
         if (res.unavailable?.lastKnown) return `prix trop ancien (${day(res.unavailable.lastKnown.observedAt)})`;
         return res.unavailable?.reason === 'filtered_by_preferences' ? 'aucun article conforme' : 'aucune donnée gratuite';
       });

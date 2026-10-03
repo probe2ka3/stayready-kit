@@ -185,6 +185,41 @@ describe('Open Prices : prix sans code-barres (vrac)', () => {
   });
 });
 
+describe('Open Prices : lieu sans enseigne attribué après revue (marques propres seulement)', () => {
+  const mall: OpLocation = { id: 7, osm_id: 99, osm_type: 'WAY', osm_name: 'Centre commercial', osm_brand: null, osm_address_city: 'La Chaux-de-Fonds', osm_lat: 47.1, osm_lon: 6.83 };
+  const migrosStore = { id: 'osm:node/1', chainId: 'migros', name: 'Migros', city: 'La Chaux-de-Fonds', canton: 'NE', zoneId: 'migros-nf', lat: 47.1, lon: 6.83 } as unknown as Parameters<typeof buildOpenPricesBatch>[2]['stores'][number];
+  const review = { locationId: 7, chainId: 'migros', storeId: 'osm:node/1', ownBrands: ['M-Budget', 'Boncampo'], evidence: 'test', reviewer: 'test', reviewedAt: '2026-10-03' };
+  const item = (id: number, brands: string, code: string): OpPrice => ({
+    id,
+    type: 'PRODUCT',
+    product_code: code,
+    price: 3.5,
+    currency: 'CHF',
+    date: '2026-09-20',
+    location_id: 7,
+    product: { code, product_name: 'Café moulu', brands, product_quantity: 500, product_quantity_unit: 'g' },
+  });
+  const prices = [item(1, 'Boncampo', '7613312525302'), item(2, 'M Budget, Migros', '7613404619285'), item(3, 'Nutella', '80176800')];
+
+  it('sans revue : lieu hors périmètre ; avec revue : seuls les articles de marque propre, zone de la succursale', () => {
+    expect(buildOpenPricesBatch([mall], prices, { now, stores: [migrosStore], maxAgeDays: 400 }).prices).toEqual([]);
+    const batch = buildOpenPricesBatch([mall], prices, { now, stores: [migrosStore], maxAgeDays: 400, locationReviews: [review] });
+    expect(batch.prices.map((p) => [p.retailerProductId, p.zoneId, p.observedAtPlace])).toEqual([
+      ['migros:gtin-7613312525302', 'migros-nf', 'Migros (Centre commercial), La Chaux-de-Fonds'],
+      ['migros:gtin-7613404619285', 'migros-nf', 'Migros (Centre commercial), La Chaux-de-Fonds'],
+    ]);
+    // Date réelle du relevé, jamais celle de l'import.
+    expect(batch.prices[0]?.observedAt.slice(0, 10)).toBe('2026-09-20');
+    expect(batch.report.metrics).toMatchObject({ attributedPrices: 2, 'skipped: lieu partagé : article sans marque propre de l’enseigne': 1 });
+  });
+
+  it('succursale de l’enseigne introuvable : relevés écartés', () => {
+    const batch = buildOpenPricesBatch([mall], prices, { now, stores: [], maxAgeDays: 400, locationReviews: [review] });
+    expect(batch.prices).toEqual([]);
+    expect(batch.report.metrics).toMatchObject({ 'skipped: lieu attribué : succursale inconnue': 2 });
+  });
+});
+
 describe('instantanés : sources publiables et privées séparées', () => {
   it('une source non publiable est écrite hors du dossier versionné et en efface toute copie', async () => {
     const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises');
@@ -209,5 +244,141 @@ describe('instantanés : sources publiables et privées séparées', () => {
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('instantanés : provenance établie par le fichier et l’hôte des URL, pas par l’étiquette', () => {
+  const product = (id: string, chainId: string, connectorId: string, url: string) => ({
+    id,
+    chainId,
+    connectorId,
+    sku: id,
+    gtin: null,
+    name: id,
+    brand: null,
+    quantity: { amount: 1000, unit: 'ml' as const },
+    attributes: {},
+    url,
+    isDemo: false,
+  });
+  const price = (id: string, retailerProductId: string, connectorId: string, url: string) => ({
+    id,
+    retailerProductId,
+    zoneId: null,
+    storeId: null,
+    priceCents: 155,
+    observedAt: '2026-10-02T08:00:00.000Z',
+    source: { connectorId, kind: 'open_data' as const, ref: null },
+    sourceUrl: url,
+    isDemo: false,
+  });
+  const snap = (connectorId: string, batch: { retailerProducts: unknown[]; prices: unknown[] }) => ({
+    connectorId,
+    label: connectorId,
+    license: null,
+    attribution: null,
+    collectedAt: '2026-10-03T06:00:00.000Z',
+    status: 'success' as const,
+    message: null,
+    metrics: {},
+    batch: { ...batch, promotions: [] },
+  });
+
+  async function withDir(files: Record<string, unknown>, check: (dir: string) => Promise<void>) {
+    const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const { dirname, join } = await import('node:path');
+    const dir = await mkdtemp(join(tmpdir(), 'tesprix-prov-'));
+    try {
+      for (const [path, content] of Object.entries(files)) {
+        await mkdir(dirname(join(dir, path)), { recursive: true });
+        await writeFile(join(dir, path), JSON.stringify(content));
+      }
+      await check(dir);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  }
+
+  it('un relevé Open Prices pour Aldi, Coop ou Migros reste publiable ; un prix Aldi réétiqueté « open-prices » est écarté', async () => {
+    const { readLiveSnapshots } = await import('../src');
+    const { buildOfferIndex, restrictedConnectorIds } = await import('@cabas/core');
+    const op = 'https://prices.openfoodfacts.org/prices/';
+    await withDir(
+      {
+        'prices/live/open-prices.json': snap('open-prices', {
+          retailerProducts: [
+            product('aldi:gtin-7610000000001', 'aldi', 'open-prices', `${op}1`),
+            product('coop:gtin-7610000000002', 'coop', 'open-prices', `${op}2`),
+            product('migros:gtin-7610000000003', 'migros', 'open-prices', `${op}3`),
+            // Article et prix venus de l'API Aldi, étiquetés « open-prices » : l'hôte trahit la source.
+            product('aldi:4711', 'aldi', 'open-prices', 'https://www.aldi-suisse.ch/fr/produit/lait-4711'),
+            product('aldi:gtin-7610000000009', 'aldi', 'open-prices', `${op}9`),
+          ],
+          prices: [
+            price('open-prices:1', 'aldi:gtin-7610000000001', 'open-prices', `${op}1`),
+            price('open-prices:2', 'coop:gtin-7610000000002', 'open-prices', `${op}2`),
+            price('open-prices:3', 'migros:gtin-7610000000003', 'open-prices', `${op}3`),
+            price('open-prices:4', 'aldi:4711', 'open-prices', `${op}4`),
+            price('open-prices:9', 'aldi:gtin-7610000000009', 'open-prices', 'https://api.aldi-suisse.ch/v3/product-search?q=lait'),
+            price('open-prices:10', 'aldi:gtin-7610000000001', 'aldi-api', `${op}10`),
+          ],
+        }),
+      },
+      async (dir) => {
+        const [s] = await readLiveSnapshots(dir, { publicOnly: true });
+        expect(s?.connectorId).toBe('open-prices');
+        expect(s?.batch.prices.map((p) => p.id)).toEqual(['open-prices:1', 'open-prices:2', 'open-prices:3']);
+        expect(s?.batch.retailerProducts.map((p) => p.chainId)).toEqual(['aldi', 'coop', 'migros', 'aldi']);
+        // 1 article (hôte Aldi) + 3 prix (article écarté, URL Aldi, étiquette aldi-api).
+        expect(s?.provenanceRejected).toBe(4);
+        // Même relu sans filtre, l'index public ne garde que les relevés Open Prices.
+        const all = await readLiveSnapshots(dir);
+        const index = buildOfferIndex(
+          { products: all.flatMap((x) => x.batch.retailerProducts), matches: [], prices: all.flatMap((x) => x.batch.prices), promotions: [] },
+          { excludeConnectors: restrictedConnectorIds([]) },
+        );
+        expect([...index.pricesByProduct.keys()].sort()).toEqual(['aldi:gtin-7610000000001', 'coop:gtin-7610000000002', 'migros:gtin-7610000000003']);
+      },
+    );
+  });
+
+  it('un fichier privé ne devient jamais publiable : ni par l’étiquette de ses prix, ni par celle du fichier, ni par son nom', async () => {
+    const { readLiveSnapshots } = await import('../src');
+    const { buildOfferIndex, restrictedConnectorIds } = await import('@cabas/core');
+    const denner = 'https://www.denner.ch/fr/produits/lait-123';
+    const relabelled = snap('denner-web', {
+      retailerProducts: [product('denner:123', 'denner', 'open-prices', denner)],
+      prices: [price('denner:123:p', 'denner:123', 'open-prices', denner)],
+    });
+    await withDir(
+      {
+        'private/live/denner-web.json': relabelled,
+        // Copie du fichier privé renommée et réétiquetée « open-prices » dans le dossier privé, puis dans le public.
+        'private/live/open-prices.json': { ...relabelled, connectorId: 'open-prices' },
+        'prices/live/open-prices.json': { ...relabelled, connectorId: 'open-prices' },
+        // Nom de fichier et étiquette divergents : ignoré.
+        'prices/live/lidl-web.json': { ...relabelled, connectorId: 'denner-web' },
+      },
+      async (dir) => {
+        const all = await readLiveSnapshots(dir);
+        const denner = all.find((s) => s.connectorId === 'denner-web');
+        expect(denner?.private).toBe(true);
+        // Les enregistrements prennent l'étiquette de leur fichier privé.
+        expect(denner?.batch.prices.map((p) => p.source.connectorId)).toEqual(['denner-web']);
+        expect(denner?.batch.retailerProducts.map((p) => p.connectorId)).toEqual(['denner-web']);
+        // Le fichier public réétiqueté ne garde aucun enregistrement (hôte Denner).
+        const op = all.find((s) => s.connectorId === 'open-prices');
+        expect(op?.batch.prices).toEqual([]);
+        expect(op?.provenanceRejected).toBe(2);
+        expect(all.map((s) => s.connectorId)).toEqual(['denner-web', 'open-prices']);
+        const index = buildOfferIndex(
+          { products: all.flatMap((x) => x.batch.retailerProducts), matches: [], prices: all.flatMap((x) => x.batch.prices), promotions: [] },
+          { excludeConnectors: restrictedConnectorIds([]) },
+        );
+        expect(index.pricesByProduct.size).toBe(0);
+        expect((await readLiveSnapshots(dir, { publicOnly: true })).flatMap((s) => s.batch.prices)).toEqual([]);
+      },
+    );
   });
 });

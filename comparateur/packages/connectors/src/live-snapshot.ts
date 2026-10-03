@@ -1,8 +1,9 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { addDays, ageInDays, isPublishableSource, sourceInfo, zurichToday, type CanonicalProduct, type ConnectorHealth, type DataSet } from '@cabas/core';
+import { addDays, ageInDays, isPublishableSource, recordProvenance, sourceInfo, zurichToday, type CanonicalProduct, type ConnectorHealth, type DataSet } from '@cabas/core';
 import { matchesFor, type ReviewedMatch, type ReviewedMatchesFile } from './matching';
+import type { OpLocationReview } from './open-prices';
 import type { ConnectorBatch } from './types';
 
 /**
@@ -22,6 +23,8 @@ export interface LiveSnapshot {
   batch: Pick<ConnectorBatch, 'retailerProducts' | 'prices' | 'promotions'>;
   /** Renseigné à la lecture : instantané d'une source non publiable (`data/private/live/`). */
   private?: boolean;
+  /** Renseigné à la lecture : enregistrements écartés faute de provenance établie (étiquette ou URL divergente). */
+  provenanceRejected?: number;
 }
 
 /** Instantanés des sources publiables, versionnés (`data/prices/live/`). */
@@ -42,24 +45,61 @@ export function snapshotDirFor(dataDir: string, connectorId: string): string {
   return isPublishableSource(connectorId) ? liveSnapshotDir(dataDir) : privateSnapshotDir(dataDir);
 }
 
+/**
+ * Lit les instantanés. La provenance ne repose pas sur la seule étiquette `connectorId` :
+ * - le fichier doit porter le nom de sa source, et un fichier du dossier privé n'est jamais lu comme
+ *   publiable (sinon il est ignoré) ;
+ * - dans le fichier d'une source publiable, chaque article, prix et action doit en relever par ses
+ *   étiquettes et par l'hôte de ses URL (`recordProvenance`) ; tout enregistrement divergent est écarté
+ *   (compté dans `provenanceRejected`), ainsi que les prix et actions d'un article écarté ;
+ * - dans le fichier d'une source non publiable, tous les enregistrements prennent l'étiquette de cette
+ *   source : les filtres de publication les excluent quelle que soit l'étiquette d'origine.
+ */
 export async function readLiveSnapshots(dataDir: string, opts: { publicOnly?: boolean } = {}): Promise<LiveSnapshot[]> {
   // Dossier privé d'abord : un ancien instantané resté dans le dossier public ne masque jamais le plus récent.
-  const dirs = opts.publicOnly ? [liveSnapshotDir(dataDir)] : [privateSnapshotDir(dataDir), liveSnapshotDir(dataDir)];
+  const privateDir = privateSnapshotDir(dataDir);
+  const dirs = opts.publicOnly ? [liveSnapshotDir(dataDir)] : [privateDir, liveSnapshotDir(dataDir)];
   const out: LiveSnapshot[] = [];
   const seen = new Set<string>();
   for (const dir of dirs) {
     if (!existsSync(dir)) continue;
     for (const f of (await readdir(dir)).filter((x) => x.endsWith('.json')).sort()) {
       const snap = JSON.parse(await readFile(join(dir, f), 'utf8')) as LiveSnapshot;
+      if (f !== `${snap.connectorId}.json`) continue;
+      if (dir === privateDir && isPublishableSource(snap.connectorId)) continue;
       if (seen.has(snap.connectorId)) continue;
       seen.add(snap.connectorId);
       // « Privé » dépend du droit de publication de la source, pas du dossier où se trouve le fichier.
       snap.private = !isPublishableSource(snap.connectorId);
       if (opts.publicOnly && snap.private) continue;
       // Garde-fou : aucune donnée de démonstration dans un instantané réel.
-      snap.batch.retailerProducts = snap.batch.retailerProducts.filter((p) => !p.isDemo);
-      snap.batch.prices = snap.batch.prices.filter((p) => !p.isDemo);
-      snap.batch.promotions = snap.batch.promotions.filter((p) => !p.isDemo);
+      const batch = {
+        retailerProducts: snap.batch.retailerProducts.filter((p) => !p.isDemo),
+        prices: snap.batch.prices.filter((p) => !p.isDemo),
+        promotions: snap.batch.promotions.filter((p) => !p.isDemo),
+      };
+      const source = snap.connectorId;
+      if (snap.private) {
+        snap.batch = {
+          retailerProducts: batch.retailerProducts.map((p) => ({ ...p, connectorId: source })),
+          prices: batch.prices.map((o) => ({ ...o, source: { ...o.source, connectorId: source } })),
+          promotions: batch.promotions.map((p) => ({ ...p, source: { ...p.source, connectorId: source } })),
+        };
+        snap.provenanceRejected = 0;
+      } else {
+        const products = batch.retailerProducts.filter((p) => recordProvenance(source, [p.connectorId], [p.url]) === source);
+        const keptIds = new Set(products.map((p) => p.id));
+        const rejectedIds = new Set(batch.retailerProducts.filter((p) => !keptIds.has(p.id)).map((p) => p.id));
+        const prices = batch.prices.filter(
+          (o) => !rejectedIds.has(o.retailerProductId) && recordProvenance(source, [o.source.connectorId], [o.source.ref, o.sourceUrl]) === source,
+        );
+        const promotions = batch.promotions.filter(
+          (p) => !rejectedIds.has(p.retailerProductId) && recordProvenance(source, [p.source.connectorId], [p.source.ref, p.sourceUrl]) === source,
+        );
+        snap.provenanceRejected =
+          batch.retailerProducts.length - products.length + batch.prices.length - prices.length + batch.promotions.length - promotions.length;
+        snap.batch = { retailerProducts: products, prices, promotions };
+      }
       out.push(snap);
     }
   }
@@ -105,12 +145,19 @@ export async function writeLiveSnapshot(dataDir: string, snap: LiveSnapshot): Pr
   await mkdir(dir, { recursive: true });
   const path = join(dir, `${snap.connectorId}.json`);
   const tmp = `${path}.tmp`;
-  const { private: _private, ...data } = snap;
+  const { private: _private, provenanceRejected: _rejected, ...data } = snap;
   await writeFile(tmp, `${JSON.stringify(data)}\n`);
   await rename(tmp, path);
   // Une source non publiable ne laisse jamais de copie dans le dossier versionné.
   if (dir !== liveSnapshotDir(dataDir)) await rm(join(liveSnapshotDir(dataDir), `${snap.connectorId}.json`), { force: true });
   return path;
+}
+
+/** Attributions revues de lieux Open Prices sans enseigne identifiable (voir `OpLocationReview`). */
+export async function readOpLocationReviews(dataDir: string): Promise<OpLocationReview[]> {
+  const path = join(dataDir, 'matching', 'op-locations.json');
+  if (!existsSync(path)) return [];
+  return (JSON.parse(await readFile(path, 'utf8')) as { locations: OpLocationReview[] }).locations;
 }
 
 export function reviewedMatchesPath(dataDir: string): string {

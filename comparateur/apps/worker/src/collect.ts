@@ -22,6 +22,7 @@ import {
   priceConnectors,
   purgeArchive,
   readLiveSnapshots,
+  readOpLocationReviews,
   readReviewedMatches,
   writeLiveSnapshot,
   type AldiApiPage,
@@ -49,7 +50,7 @@ async function connectorDeps(ctx: JobContext) {
     const loc = resolve(lat, lon, zip);
     return zoneForStore(chainId, loc?.canton ?? null, loc?.lang ?? null);
   };
-  return { stores, resolveZone };
+  return { stores, resolveZone, opLocations: await readOpLocationReviews(ctx.env.dataDir) };
 }
 
 function statsOf(connectorId: string, batch: ConnectorBatch): CollectionStats {

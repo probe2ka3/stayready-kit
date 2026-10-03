@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { addDays, zurichToday, type TravelSettings } from '@cabas/core';
+import { addDays, holidayInfo, weekdayOf, zurichToday, type TravelSettings } from '@cabas/core';
 import { format, getMessages, paths, plural, type Locale } from '@/i18n';
 import { shortCalendarDate } from '@/lib/format';
 import { useApp, type ProductInfo } from '@/lib/store';
@@ -22,7 +22,8 @@ export interface ExampleBasket {
 
 /**
  * Paniers d'exemple : remplacent la localité, le panier et les réglages de ce navigateur, puis
- * lancent la comparaison. Une date d'exemple déjà passée est remplacée par demain.
+ * lancent la comparaison. Une date d'exemple déjà passée est remplacée par le prochain jour ouvrable
+ * (ni dimanche ni jour férié : la plupart des magasins sont fermés, la comparaison serait vide).
  */
 export function ExamplesView({ locale, baskets }: { locale: Locale; baskets: ExampleBasket[] }) {
   const m = getMessages(locale);
@@ -34,7 +35,8 @@ export function ExamplesView({ locale, baskets }: { locale: Locale; baskets: Exa
       <p className="text-muted">{m.examples.lead}</p>
       {baskets.length === 0 && <Notice tone="warn">{m.examples.none}</Notice>}
       {baskets.map((b) => {
-        const date = b.when.date > today ? b.when.date : addDays(today, 1);
+        let date = b.when.date > today ? b.when.date : addDays(today, 1);
+        while (weekdayOf(date) === 7 || holidayInfo(date).status !== 'none') date = addDays(date, 1);
         return (
           <Card key={b.id} className="space-y-2">
             <h2 className="text-lg font-bold">{b.title}</h2>

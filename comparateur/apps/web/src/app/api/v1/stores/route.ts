@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { formatDaySchedule, openStatusDuring, parseOpeningHours, restrictedConnectorIds, SOURCE_REGISTRY, zurichToday } from '@cabas/core';
+import { formatDaySchedule, openStatusDuring, parseOpeningHours, zurichToday } from '@cabas/core';
 import { getAppData } from '@/server/data';
-import { serverEnv } from '@/server/env';
 import { jsonError, limitOr429 } from '@/server/http';
+import { restrictedChainIds } from '@/server/sources';
 import { errorInfo, log } from '@/server/log';
 import { issues, storesQuery } from '@/server/validation';
 
@@ -33,17 +33,18 @@ export async function GET(req: Request) {
     ]);
     const statusByChain = new Map(status.map((st) => [st.chainId, st]));
     // Enseignes dont la source officielle est exclue (conditions restrictives, pas d'autorisation).
-    const restrictedChains = new Set(
-      serverEnv.restrictSources ? restrictedConnectorIds(serverEnv.authorizedSources).flatMap((id) => SOURCE_REGISTRY[id]?.chainIds ?? []) : [],
-    );
+    // L'exclusion vise la source, pas l'enseigne : les relevés d'une source publiable (Open Prices) pour
+    // la même enseigne restent affichés ; les compteurs `status` sont calculés après exclusion.
+    const restrictedChains = restrictedChainIds();
     // Présence d'un magasin ≠ disponibilité de prix : chaque enseigne indique ses données de prix.
     const priceData = (chainId: string) => {
       const st = statusByChain.get(chainId);
-      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0 };
-      if (restrictedChains.has(chainId)) return { kind: 'restricted' as const, lastObservation: null, prices: 0 };
-      if (st && st.officialPrices > 0) return { kind: 'official' as const, lastObservation: st.lastOfficialObservation, prices: st.officialPrices };
-      if (st && st.realPrices > 0) return { kind: 'community' as const, lastObservation: st.lastObservation, prices: st.realPrices };
-      return { kind: 'none' as const, lastObservation: null, prices: 0 };
+      const officialRestricted = restrictedChains.has(chainId);
+      if (mode === 'demo') return { kind: 'demo' as const, lastObservation: null, prices: st?.realPrices ?? 0, officialRestricted: false };
+      if (st && st.officialPrices > 0) return { kind: 'official' as const, lastObservation: st.lastOfficialObservation, prices: st.officialPrices, officialRestricted };
+      if (st && st.realPrices > 0) return { kind: 'community' as const, lastObservation: st.lastObservation, prices: st.realPrices, officialRestricted };
+      if (officialRestricted) return { kind: 'restricted' as const, lastObservation: null, prices: 0, officialRestricted };
+      return { kind: 'none' as const, lastObservation: null, prices: 0, officialRestricted };
     };
     const byChain = new Map<string, { count: number; nearestKm: number }>();
     for (const s of stores) {

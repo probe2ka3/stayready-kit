@@ -74,6 +74,11 @@ export interface SourceInfo {
   termsNote: string;
   /** Enseignes couvertes par la source (sources officielles). */
   chainIds?: string[];
+  /**
+   * Domaines d'où proviennent ses données (URL des articles, prix et actions ; sous-domaines compris).
+   * La provenance d'un enregistrement se contrôle sur ces hôtes, pas sur son étiquette `connectorId`.
+   */
+  hosts?: string[];
 }
 
 /** Sources connues. Un connecteur absent est qualifié d'après le type de source. */
@@ -86,6 +91,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     license: null,
     attribution: null,
     chainIds: ['lidl'],
+    hosts: ['lidl.ch'],
     publicUse: 'no_restriction_found',
     termsNote: 'Pages publiques ; robots.txt respecté ; mentions légales sans conditions d’utilisation du site (seules celles de Lidl Plus) ; LCD art. 5 let. c à faire valider.',
   },
@@ -97,6 +103,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     license: null,
     attribution: null,
     chainIds: ['aldi'],
+    hosts: ['aldi-suisse.ch', 'aldi.ch'],
     publicUse: 'requires_authorization',
     collection: 'private_use',
     termsNote: 'Conditions d’utilisation d’Aldi Suisse : services « à des fins privées uniquement », usage des données à des fins commerciales interdit ; autorisation écrite ou avis juridique favorable requis.',
@@ -109,6 +116,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     license: null,
     attribution: null,
     chainIds: ['denner'],
+    hosts: ['denner.ch'],
     publicUse: 'requires_authorization',
     collection: 'private_use',
     termsNote:
@@ -122,6 +130,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     license: null,
     attribution: null,
     chainIds: ['coop'],
+    hosts: ['cooperation.ch', 'coopzeitung.ch', 'cooperazione.ch', 'coop.ch', 'dam-coop-epaper-prd.s3-eu-central-1.amazonaws.com'],
     publicUse: 'requires_authorization',
     collection: 'private_use',
     termsNote:
@@ -134,6 +143,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'community_receipt',
     license: 'ODbL-1.0',
     attribution: 'Open Prices (Open Food Facts), licence ODbL',
+    hosts: ['openfoodfacts.org'],
     publicUse: 'open_license',
     termsNote: 'ODbL 1.0 : attribution et partage à l’identique des bases dérivées (export prévu).',
   },
@@ -144,6 +154,7 @@ export const SOURCE_REGISTRY: Record<string, SourceInfo> = {
     collectionMethod: 'licensed_api',
     license: 'FoodAlly — accès public par requête, attribution obligatoire',
     attribution: 'Source : FoodAlly (foodally.ch)',
+    hosts: ['foodally.ch'],
     benchmarkOnly: true,
     publicUse: 'licence_required',
     termsNote: 'Accès gratuit limité (usage « hobby ») ; collecte en masse interdite sans licence ; attribution avec lien ; usage dans une application : offre Pro ou Business.',
@@ -251,6 +262,41 @@ export function isPublishableSource(connectorId: string): boolean {
   const info = SOURCE_REGISTRY[connectorId];
   if (!info) return false;
   return info.publicUse === 'open_license' || info.publicUse === 'own_data' || info.publicUse === 'no_restriction_found';
+}
+
+/** Source répertoriée dont relève l'hôte d'une URL (`null` : hôte non répertorié, URL absente ou illisible). */
+export function connectorForUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  let host: string;
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+  for (const s of Object.values(SOURCE_REGISTRY)) {
+    if (s.hosts?.some((h) => host === h || host.endsWith(`.${h}`))) return s.connectorId;
+  }
+  return null;
+}
+
+/**
+ * Provenance établie d'un enregistrement (article, prix, action) lu dans le fichier d'une source :
+ * - si une étiquette ou une URL relève d'une source non publiable, c'est elle qui l'emporte (la plus
+ *   restrictive) ;
+ * - pour une source publiable qui déclare ses hôtes, il faut au moins une URL et que chacune relève de
+ *   ces hôtes ; les étiquettes doivent être celles de la source. Sinon la provenance n'est pas établie
+ *   (`null`) : l'enregistrement ne peut pas être publié.
+ * Changer l'étiquette d'un prix ne change donc jamais sa provenance réelle.
+ */
+export function recordProvenance(fileConnector: string, labels: Array<string | null | undefined>, urls: Array<string | null | undefined>): string | null {
+  // Seules les adresses web comptent (une référence interne, ex. un identifiant, n'est pas une URL).
+  const fromUrls = urls.filter((u): u is string => typeof u === 'string' && /^https?:\/\//i.test(u)).map((u) => connectorForUrl(u));
+  const evidence = [fileConnector, ...labels.filter((l): l is string => Boolean(l)), ...fromUrls.filter((c): c is string => c !== null)];
+  const restricted = evidence.find((id) => !isPublishableSource(id));
+  if (restricted) return restricted;
+  if (evidence.some((id) => id !== fileConnector)) return null;
+  if (SOURCE_REGISTRY[fileConnector]?.hosts && (fromUrls.length === 0 || fromUrls.some((c) => c !== fileConnector))) return null;
+  return fileConnector;
 }
 
 /** Droit de collecte d'une source répertoriée ; une source inconnue n'est jamais collectée. */

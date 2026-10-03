@@ -313,6 +313,31 @@ describe('solutions comparées : enseigne seule et combinaison', () => {
     expect(ranking.coverageRate).toBeCloseTo(1 / 3);
   });
 
+  it('couverture par enseigne du rayon, y compris une enseigne sans aucun prix (jamais présentée comme comparée)', async () => {
+    const r = await compareBasket(req(), deps([store('a1', 'a', 1), store('c1', 'c', 0.5), store('d1', 'd', 0.8)]));
+    expect(r.meta.chainCoverage.map((c) => [c.chainId, c.coveredLines, c.indicativeLines])).toEqual([
+      ['a', 3, 0],
+      ['c', 1, 0],
+      ['d', 0, 0],
+    ]);
+    expect(r.solutions.some((s) => s.key === 'chain:d')).toBe(false);
+  });
+
+  it('enseignes avec prix fermées ce jour-là : aucun scénario « vide », avertissement et couverture explicites', async () => {
+    // Dimanche 04.10.2026 : A et B fermées le dimanche ; D (sans aucun prix) ouverte.
+    const sundayOpen = { ...store('d1', 'd', 0.3), openingHours: 'Mo-Su 08:00-20:00' };
+    const r = await compareBasket(
+      req({ when: { mode: 'plan', date: '2026-10-04', time: '10:00' } }),
+      deps([store('a1', 'a', 1), store('b1', 'b', 1.2), sundayOpen], new Date('2026-10-03T08:00:00Z')),
+    );
+    expect(r.scenarios).toEqual([]);
+    expect(r.meta.warnings).toEqual(expect.arrayContaining(['no_priced_store_open', 'stores_closed_on_date']));
+    expect(r.meta.warnings).not.toContain('no_open_store');
+    const a = r.meta.chainCoverage.find((c) => c.chainId === 'a');
+    expect(a).toMatchObject({ coveredLines: 3, openStores: 0 });
+    expect(r.meta.chainCoverage.find((c) => c.chainId === 'd')).toMatchObject({ coveredLines: 0, openStores: 1 });
+  });
+
   it('référence = meilleur magasin unique complet, trajet compris ; économies brute et nette', async () => {
     const r = await compareBasket(req(), deps([store('a1', 'a', 1), store('b1', 'b', 1.2)]));
     const a = r.solutions.find((s) => s.key === 'chain:a')!;
@@ -395,5 +420,53 @@ describe('droits de réutilisation des sources', () => {
     );
     expect(idx.products.size).toBe(0);
     expect(resolveLine(line('pates'), c, profile('aldi'), idx, ctx()).unavailable?.reason).toBe('no_match');
+  });
+
+  it('provenance : l’hôte de l’URL l’emporte sur l’étiquette, la source la plus restrictive gagne', async () => {
+    const { connectorForUrl, recordProvenance } = await import('../src');
+    expect(connectorForUrl('https://api.aldi-suisse.ch/v3/product-search')).toBe('aldi-api');
+    expect(connectorForUrl('https://www.denner.ch/fr/aktionen')).toBe('denner-web');
+    expect(connectorForUrl('https://epaper.cooperation.ch/x.pdf')).toBe('coop-epaper');
+    expect(connectorForUrl('https://sortiment.lidl.ch/fr/lait')).toBe('lidl-web');
+    expect(connectorForUrl('https://prices.openfoodfacts.org/prices/42')).toBe('open-prices');
+    expect(connectorForUrl('https://notdenner.ch/')).toBeNull();
+    expect(connectorForUrl('ref-interne-42')).toBeNull();
+    const op = 'https://prices.openfoodfacts.org/prices/42';
+    // Relevé Open Prices dans un magasin Coop : provenance Open Prices, publiable (ODbL).
+    expect(recordProvenance('open-prices', ['open-prices'], [op])).toBe('open-prices');
+    // Prix privé réétiqueté : l'URL Aldi, l'étiquette ou le fichier privé suffisent à le rattacher à Aldi.
+    expect(recordProvenance('open-prices', ['open-prices'], ['https://api.aldi-suisse.ch/v3/x'])).toBe('aldi-api');
+    expect(recordProvenance('open-prices', ['aldi-api'], [op])).toBe('aldi-api');
+    expect(recordProvenance('aldi-api', ['open-prices'], [op])).toBe('aldi-api');
+    // Source publiable : provenance non établie sans URL, avec un hôte inconnu ou une autre source publiable.
+    expect(recordProvenance('open-prices', ['open-prices'], [null, 'ref-42'])).toBeNull();
+    expect(recordProvenance('open-prices', ['open-prices'], ['https://example.org/prix'])).toBeNull();
+    expect(recordProvenance('open-prices', ['lidl-web'], [op])).toBeNull();
+    // Source sans hôtes déclarés (relevés en magasin) : étiquette seule.
+    expect(recordProvenance('releves', ['releves'], [])).toBe('releves');
+  });
+
+  it('exclusion : un prix réétiqueté ou rattaché à un article d’une source exclue est retiré', () => {
+    const aldiUrl = 'https://www.aldi-suisse.ch/fr/produit/pates-1';
+    const opUrl = 'https://prices.openfoodfacts.org/prices/7';
+    const op = { connectorId: 'open-prices', kind: 'open_data' as const };
+    const idx = buildOfferIndex(
+      {
+        products: [
+          product('aldi:1', 'aldi', 500, 'g', { connectorId: 'open-prices', url: aldiUrl }),
+          product('aldi:gtin-7610000000001', 'aldi', 500, 'g', { connectorId: 'open-prices', url: opUrl }),
+        ],
+        matches: [match('pates', 'aldi:1'), match('pates', 'aldi:gtin-7610000000001')],
+        prices: [
+          price('aldi:1', 119, '2026-09-27T06:00:00Z', { source: op, sourceUrl: opUrl }),
+          price('aldi:gtin-7610000000001', 125, '2026-09-27T06:00:00Z', { source: op, sourceUrl: opUrl }),
+          price('aldi:gtin-7610000000001', 99, '2026-09-28T06:00:00Z', { id: 'x', source: { ...op, ref: 'https://api.aldi-suisse.ch/v3/x' }, sourceUrl: opUrl }),
+        ],
+        promotions: [],
+      },
+      { excludeConnectors: ['aldi-api'] },
+    );
+    expect([...idx.products.keys()]).toEqual(['aldi:gtin-7610000000001']);
+    expect([...idx.pricesByProduct.values()].flat().map((p) => p.priceCents)).toEqual([125]);
   });
 });

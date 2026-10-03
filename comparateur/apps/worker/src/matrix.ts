@@ -337,6 +337,17 @@ export function publicPage(template: string, m: EssentialsMatrix): string {
     ),
   }));
   const publicSources = m.sources.filter((s) => s.publicUse !== 'requires_authorization' && s.publicUse !== 'licence_required');
-  const data = { generatedAt: m.generatedAt, sources: publicSources, chains: MATRIX_CHAINS.map((c) => ({ id: c, name: CHAINS.find((x) => x.id === c)?.name ?? c })), rows, comparable: m.summary.comparablePublic };
+  // Couverture publique par enseigne (prix affichés sur cette page) : jamais « 5 enseignes comparées ».
+  const coverage = Object.fromEntries(
+    MATRIX_CHAINS.map((c) => [c, m.rows.filter((r) => PUBLIC_STATUSES.includes((r.cells[c] as MatrixCell).status)).length]),
+  );
+  const data = {
+    generatedAt: m.generatedAt,
+    sources: publicSources,
+    chains: MATRIX_CHAINS.map((c) => ({ id: c, name: CHAINS.find((x) => x.id === c)?.name ?? c })),
+    rows,
+    comparable: m.summary.comparablePublic,
+    coverage,
+  };
   return template.replace('/*__DATA__*/null', JSON.stringify(data).replace(/</g, '\\u003c'));
 }

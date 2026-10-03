@@ -1,4 +1,4 @@
-# Collecte quotidienne des prix — compte rendu et guide d'exploitation (01.10.2026)
+# Collecte quotidienne des prix — compte rendu et guide d'exploitation (01.10.2026, mis à jour le 03.10.2026)
 
 Objectif de l'étape : récupérer **automatiquement chaque jour**, à 0 CHF, les prix des 50 aliments de
 base chez Migros, Coop, Denner, Aldi et Lidl, sans que les relevés en magasin soient une condition de
@@ -14,12 +14,17 @@ mises à jour après l'étape « couverture » du même jour (journal Coop, revu
 | **Denner** | ✅ opérationnel | Site officiel : recherche ciblée, pages thématiques de l'assortiment, actions | **34/50** | 31 | **Non** : « publication ou fins commerciales » interdites sans accord écrit |
 | **Aldi** | ✅ opérationnel | API publique du site (liste paginée) | **23/50** | 23 | **Non** : conditions « fins privées uniquement » |
 | **Coop** | ⚠️ **actions seulement** (nouveau) | Journal numérique officiel (magazine des actions, édition romande) + Open Prices | **6/50** (actions de la semaine) | 6 | **Non** (en attente : conditions de coop.ch illisibles pour un robot) ; Open Prices : oui |
-| **Migros** | ❌ aucun canal gratuit, officiel et accessible à un robot identifié | Open Prices seulement | 0/50 | 0 | — |
+| **Migros** | ❌ aucun canal gratuit, officiel et accessible à un robot identifié | Open Prices seulement | 0/50 (01.10) → **1/50** (03.10 : café moulu, relevé Open Prices du 04.08) | 0 | Open Prices : oui |
 
 | Besoins comparables dans au moins… | 2 enseignes | 3 | 4 | 5 |
 |---|---|---|---|---|
-| Pilote privé (Lidl, Denner, Aldi, Coop, Open Prices) | **41** | **18** | **2** | 0 |
-| Version publique (sources publiables : Lidl, Open Prices) | 1 | 0 | 0 | 0 |
+| Pilote privé (Lidl, Denner, Aldi, Coop, Open Prices), 01.10 | **41** | **18** | **2** | 0 |
+| Pilote privé, 03.10 | **41** | **19** | **2** | 0 |
+| Version publique (sources publiables : Lidl, Open Prices), 01.10 | 1 | 0 | 0 | 0 |
+| Version publique, 03.10 | **2** | 0 | 0 | 0 |
+
+Détail et cause (Open Prices ne contient que 106 relevés suisses de moins de 90 jours pour les cinq
+enseignes, presque tous hors noyau) : `docs/COUVERTURE_NOYAU.md` § 0.
 
 Ce n'est **pas** une comparaison des cinq enseignes : Migros reste sans source automatique ; Coop
 n'a que ses actions de la semaine, en Suisse romande (§ 3). Aucune couverture partielle n'est présentée comme complète : chaque case vide dit
@@ -29,6 +34,12 @@ n'a que ses actions de la semaine, en Suisse romande (§ 3). Aucune couverture p
 code de sortie 0, aucune intervention humaine. Par source : Lidl 109 requêtes (5 min 22 s), Denner 53
 (2 min 37 s), Aldi 44 (2 min 11 s), Open Prices 8 (22 s). Avant ciblage, Lidl seul demandait ≈ 530
 requêtes par jour.
+
+**Cycle réel du 03.10.2026** (11:02–11:13, environnement de développement) : 218 requêtes, 10 min 50 s,
+code 0 ; Open Prices 22 s, journal Coop 6 s (texte de l'édition en cache), Denner 2 min 43 s, Aldi
+2 min 11 s, Lidl 5 min 19 s (« partiel » : 3 pages en échec). Deux étapes avaient échoué (« L'heure
+choisie est déjà passée ») : un cycle lancé après 10:00 calculait le panier de démonstration pour
+10:00 ; corrigé (départ au quart d'heure suivant). Résultats identiques au 01.10 (§ 1).
 
 ## 2. Méthodes des concurrents (étude du 01.10.2026)
 
@@ -133,6 +144,7 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 | Cycle de collecte exécuté | ✅ dans l'environnement de développement (pas sur votre PC) | 30.09 22:28 → 01.10 01:08 (heure de Zurich) : cycle complet (214 requêtes), reprises Open Prices, Denner + Coop ; journal `data/private/runs/2026-10-01.json` (hors dépôt) |
 | Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 27 contrôles, aussi en intégration continue) |
 | Tâche installée et exécutée sur **votre** ordinateur Windows | ❌ **non vérifiée** : je n'ai pas accès à votre PC | à établir avec la procédure du § 5.2 (sortie de `verifier-tache.ps1`) |
+| GitHub Actions, dépôt privé (03.10.2026) | **code préparé** (`ops/actions-prive/`) ; cycle testé localement (premier lancement, verrou d'un jour, reprise d'une source en échec) ; essai sur les serveurs de GitHub avec Lidl + Open Prices : § 5.1.2 ; **dépôt privé non créé, planification non activée, aucun lancement automatique observé** | `ops/actions-prive/README.md` § 3 (actions de l'exploitant) |
 
 ### 5.1 Options comparées (conditions vérifiées le 01.10.2026)
 
@@ -140,6 +152,7 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 |---|---|---|---|
 | **Ordinateur de l'exploitant, Planificateur de tâches Windows** | 0 CHF | Ordinateur allumé (ou en veille avec réveil) et connecté ; session ouverte, ou mot de passe enregistré pour une exécution sans session | ✅ **retenu** : le plus simple, aucune limite de durée ni de CPU, données privées (Aldi, Denner, Coop) gardées chez l'exploitant |
 | GitHub Actions (dépôt public) | 0 CHF ; sans moyen de paiement, l'usage est bloqué au-delà du quota, jamais facturé | Interdit « toute autre activité sans rapport avec la production, les tests, le déploiement ou la publication du logiciel » ; tâches planifiées seulement sur la branche par défaut, retardées aux heures chargées, désactivées après 60 jours sans activité ; artefacts d'un dépôt public téléchargeables | ⚠️ Construction de la page : oui. Collecte Lidl + Open Prices : désactivée par défaut (zone grise). Aldi, Denner, Coop : **jamais** (données privées sur une infrastructure tierce) |
+| **GitHub Actions (dépôt privé séparé)** — étudié le 03.10.2026 | 0 CHF : 2 000 min/mois incluses (GitHub Free), usage **bloqué** au-delà sans moyen de paiement ; ≈ 450 min/mois estimées | Même clause d'usage que ci-dessus (**zone grise**, aucune autorisation formelle ; risque : arrêt des tâches ou restriction du compte) ; planification sur la branche par défaut, retards ou abandons possibles aux heures chargées, fuseau `Europe/Zurich` désormais accepté ; état gardé par des commits dans le dépôt privé (≈ 0,7 Mo/jour au pire), cache HTTP privé ; accès d'Aldi, Denner et Coop depuis les adresses de GitHub **non testé** | ⚠️ **Préparé, non activé** : alternative au PC à activer par l'exploitant (`ops/actions-prive/README.md`) ; le PC Windows reste la solution tant que des lancements automatiques n'ont pas été observés une semaine |
 | Vercel Hobby | 0 CHF | Usage personnel non commercial ; fonction limitée à **300 s** | ❌ un cycle poli dure ≈ 12 min |
 | Cloudflare Workers (gratuit) | 0 CHF | voir § 5.1.1 | ❌ sans refonte |
 | Machines virtuelles « gratuites » (Oracle, Google Cloud…) | Carte bancaire ou compte de facturation exigé | Dépassement facturable possible | ❌ (règle : aucun dépassement facturable) |
@@ -264,6 +277,9 @@ donnée pour les 17 lignes.
 5. **Aldi** : fruits, légumes et crème absents de l'API ; 6 articles sans contenance publiée ; 5 sans
    origine publiée (le besoin exige l'origine suisse).
 6. **Planification** : la tâche Windows n'est **pas** installée ni vérifiée sur votre ordinateur (pas
-   d'accès) ; procédure et contrôle : § 5.2 (`verifier-tache.ps1`).
-7. **Historique Git** : anciennes données Aldi encore présentes dans l'historique public de la branche ;
-   procédure prête et essayée à blanc, non exécutée (décision de l'exploitant).
+   d'accès) ; procédure et contrôle : § 5.2 (`verifier-tache.ps1`). Alternative sans PC : GitHub
+   Actions dans un dépôt privé, **préparée, non activée** (création du dépôt et ajout du workflow par
+   l'exploitant : `ops/actions-prive/README.md` § 3).
+7. **Historique Git** : anciennes données Aldi **toujours présentes** dans l'historique public de la
+   branche ; procédure prête et essayée à blanc, non exécutée (décision de l'exploitant :
+   `docs/NETTOYAGE_HISTORIQUE.md`). Le problème n'est pas résolu tant que ce nettoyage n'a pas eu lieu.

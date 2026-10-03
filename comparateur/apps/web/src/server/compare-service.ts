@@ -10,6 +10,7 @@ import {
 } from '@cabas/core';
 import { getAppData } from './data';
 import { getMatrixProvider } from './routing';
+import { restrictedChainIds } from './sources';
 import type { CompareInput } from './validation';
 
 /** Traduit une requête validée en appel du moteur de comparaison. */
@@ -47,7 +48,7 @@ export async function runComparison(input: CompareInput, now = new Date()): Prom
     referenceChainId: input.referenceChainId ?? null,
     includeStores: (input.includeStores ?? []).filter((id) => !excluded.has(id)),
   };
-  return compareBasket(req, {
+  const result = await compareBasket(req, {
     now,
     products: new Map(productList.map((p) => [p.id, p])),
     chains: new Map(chainList.map((c) => [c.id, c])),
@@ -55,4 +56,7 @@ export async function runComparison(input: CompareInput, now = new Date()): Prom
     stores,
     matrixProvider: getMatrixProvider(),
   });
+  const restricted = restrictedChainIds();
+  result.meta.chainCoverage = result.meta.chainCoverage.map((c) => ({ ...c, officialRestricted: restricted.has(c.chainId) }));
+  return result;
 }

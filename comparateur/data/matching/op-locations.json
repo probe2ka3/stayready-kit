@@ -1,0 +1,14 @@
+{
+ "description": "Lieux Open Prices sans enseigne identifiable (centre commercial, nom générique), attribués après revue. Seuls les relevés d'articles de marque propre de l'enseigne lui sont attribués : un centre peut abriter plusieurs enseignes. Prix d'une source publiable (Open Prices, ODbL) ; aucune donnée d'une source privée.",
+ "locations": [
+  {
+   "locationId": 6482,
+   "chainId": "migros",
+   "storeId": "osm:node/4926230015",
+   "ownBrands": ["Migros", "M-Budget", "Migros Budget", "M-Classic", "Migros Bio", "Bio Migros", "Boncampo"],
+   "evidence": "Lieu Open Prices 6482 « Métropole Centre » (OSM way 28228382, rue Daniel-JeanRichard 23, 2300 La Chaux-de-Fonds) : la succursale Migros OSM node 4926230015 (niveau -1) est à 17 m de ses coordonnées, un Denner (OSM node 9056954858) à 24 m. Relevés du 13.07 au 08.09.2026 (étiquettes de prix et ticket) : marques M-Budget, M-Classic, Migros, Boncampo (marques propres Migros) et marques nationales (non attribuées).",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03"
+  }
+ ]
+}

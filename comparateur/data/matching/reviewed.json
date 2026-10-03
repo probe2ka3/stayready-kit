@@ -3696,6 +3696,41 @@
    "reviewer": "équipe données TesPrix (revue assistée, couverture du noyau)",
    "reviewedAt": "2026-10-01",
    "note": "Gruyère mi-salé AOP, duo d'env. 560 g au prix des 100 g : conditionnement non comparable à 250 g"
+  },
+  {
+   "retailerProductId": "migros:gtin-7613312525302",
+   "canonicalSlug": "cafe-moulu-500g",
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03",
+   "note": "Boncampo Classico moulu 500 g, marque propre Migros (relevé communautaire, Migros Métropole Centre, La Chaux-de-Fonds)"
+  },
+  {
+   "retailerProductId": "migros:gtin-7613269182023",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03",
+   "note": "Penne M-Budget : contenance publiée (371 g) inhabituelle et non vérifiable, écartée par prudence"
+  },
+  {
+   "retailerProductId": "migros:gtin-7613404862841",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03",
+   "note": "Mozzarella M-Classic 250 g : type non publié (boule ou bloc à pizza), non vérifiable"
+  },
+  {
+   "retailerProductId": "coop:gtin-7610810021916",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03",
+   "note": "Vinaigre de nettoyage : produit ménager, pas du vinaigre de vin"
+  },
+  {
+   "retailerProductId": "coop:gtin-8076809521581",
+   "canonicalSlug": null,
+   "reviewer": "équipe données TesPrix (revue manuelle)",
+   "reviewedAt": "2026-10-03",
+   "note": "Mini penne rigate « piccolini » : format de pâtes différent"
   }
  ]
 }

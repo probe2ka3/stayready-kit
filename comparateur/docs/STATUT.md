@@ -1,26 +1,32 @@
 # Statut des fonctionnalités — TesPrix
 
-Situation au 30 septembre 2026 (**plan sans dépenses** : `docs/PLAN_SANS_DEPENSES.md`, après la phase 4).
+Situation au 3 octobre 2026 (**plan sans dépenses** : `docs/PLAN_SANS_DEPENSES.md`, après la phase 4).
 Trois catégories : **opérationnel**, **dépend d'une source de données ou d'une autorisation**, **point
 juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.md`, droits :
 `docs/DROITS_DONNEES.md`, relevés : `docs/RELEVES.md`.
 
-## Noyau de 50 aliments de base × 5 enseignes (cycle quotidien du 01.10.2026)
+## Noyau de 50 aliments de base × 5 enseignes (collecte réelle du 03.10.2026)
 
-| Enseigne | Collecte automatique quotidienne | Besoins avec prix | Public ? |
+| Enseigne | Collecte automatique quotidienne | Besoins avec prix (privé) | Prix publiables (version publique) |
 |---|---|---|---|
-| Lidl | ✅ site officiel, ciblée (≈ 109 requêtes) | **47/50** | Oui (⚖️ réserve LCD / `robots.txt`) |
-| Denner | ✅ site officiel, recherche ciblée + actions (≈ 53 requêtes) | **34/50** | **Non** : publication interdite sans accord écrit |
-| Aldi | ✅ API du site (≈ 44 requêtes) | 23/50 | **Non** : usage privé (conditions d'Aldi) |
-| Coop | ⚠️ actions seulement : journal numérique officiel, édition romande (28 requêtes le jeudi, 3 ensuite) ; prix permanents : DataDome, aucun contournement | 6/50 (actions) | **Non** (journal : en attente) ; Open Prices : oui |
-| Migros | ❌ 403, API non ouverte ; Open Prices | 0/50 | — |
+| Lidl | ✅ site officiel, ciblée (≈ 108 requêtes) | **47/50** | 47/50 (⚖️ aucune restriction trouvée ≠ autorisation formelle) |
+| Denner | ✅ site officiel, recherche ciblée + actions (≈ 54 requêtes) | **34/50** | 0/50 : publication interdite sans accord écrit |
+| Aldi | ✅ API du site (≈ 43 requêtes) | 23/50 | 0/50 : usage privé (conditions d'Aldi) |
+| Coop | ⚠️ actions seulement : journal numérique officiel, édition romande ; prix permanents : DataDome, aucun contournement | 6/50 (5 actions + 1 relevé Open Prices) | 1/50 (Open Prices : penne, relevé du 04.08) |
+| Migros | ❌ 403, API non ouverte ; Open Prices | 1/50 | 1/50 (Open Prices : café moulu, relevé du 04.08, région Neuchâtel-Fribourg) |
 
-Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 18 / 2 / 0** en pilote privé (avant l'étape
-« couverture » : 41 / 13 / 1 / 0), **1 / 0 / 0 / 0** en version publique. Commande : `pnpm quotidien`
-(≈ 12 min, ≈ 245 requêtes) ; planification Windows : `scripts/windows/installer-tache.ps1`, contrôle :
-`scripts/windows/verifier-tache.ps1` (tâche **non vérifiée** sur l'ordinateur de l'exploitant).
-Analyse besoin par besoin : `docs/COUVERTURE_NOYAU.md`. Détails : `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly
-(licence), offres B2B, widgets, marque blanche.
+Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 19 / 2 / 0** en pilote privé (01.10 : 41 / 18 / 2 / 0),
+**2 / 0 / 0 / 0** en version publique (01.10 : 1 / 0 / 0 / 0) ; gain public : café moulu Migros
+(lieu Open Prices sans enseigne attribué après revue, marques propres seulement) ; il expire avec le
+relevé (90 jours, vers le 02.11) sans nouveau relevé. Commande : `pnpm quotidien` (≈ 11 min, ≈ 218
+requêtes). Planification : Windows (`scripts/windows/installer-tache.ps1`, **non vérifiée** sur
+l'ordinateur de l'exploitant) ; GitHub Actions en dépôt privé **préparé, non activé**
+(`ops/actions-prive/README.md`). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
+`docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
+
+Publication : la provenance d'un prix (fichier de la source et hôte de ses URL) décide, pas son
+étiquette ni l'enseigne ; un relevé Open Prices pour Coop, Aldi, Denner ou Migros reste publiable
+(ODbL), un prix d'une source privée réétiqueté ne l'est jamais (`docs/DROITS_DONNEES.md`).
 
 ## Chiffres clés des données réelles (instantanés du 30.09.2026)
 
@@ -44,7 +50,7 @@ Analyse besoin par besoin : `docs/COUVERTURE_NOYAU.md`. Détails : `docs/COLLECT
 |---|---|
 | Localisation | NPA ou localité (swisstopo), géolocalisation facultative |
 | **Magasins** | Enseignes et succursales du rayon (5–30 km), sélection par enseigne et par magasin, nombre maximal de magasins ; **données de prix par enseigne** (officiels, partiels, aucun, non affichés) ; **stock toujours « inconnu »** |
-| **Comparaison des solutions** | Chaque enseigne seule et la combinaison : achats, trajet aller-retour, durée, coût, total, économie sur les achats et **après déplacement** par rapport au meilleur magasin unique **complet** ; panier incomplet jamais présenté comme moins cher |
+| **Comparaison des solutions** | Chaque enseigne seule et la combinaison : achats, trajet aller-retour, durée, coût, total, économie sur les achats et **après déplacement** par rapport au meilleur magasin unique **complet** ; panier incomplet jamais présenté comme moins cher ; **couverture par enseigne** affichée (« ce que couvre cette comparaison » : articles avec prix, indicatifs, enseigne non affichée ou fermée ce jour-là) ; aucun scénario sans article (dimanche : avertissement au lieu d'un trajet « à 0 article ») |
 | **Montant réellement payé** | Paquets à acheter × prix du paquet, quantité demandée / achetée ; prix au kilo pour comparer seulement |
 | **Conditions des actions** | Carte déclarée (Lidl Plus), quantité minimale, « -X % sur le 2e paquet », prix « dès » jamais appliqué, actions régionales par zone, conditions affichées |
 | **Trajet** | Estimation à vol d'oiseau × 1,3 **annoncée comme telle** ; coût par km modifiable ; OSRM facultatif |
@@ -57,7 +63,7 @@ Analyse besoin par besoin : `docs/COUVERTURE_NOYAU.md`. Détails : `docs/COLLECT
 | Gratuit | Toutes les fonctions grand public, sans compte ni abonnement |
 | Relevés en magasin | `pnpm job magasins`, `pnpm job releves` (CSV, un magasin, un jour, une preuve) |
 | Matrice et page publique | `pnpm job matrice-essentiels` : 50 × 5, vues publique et privée, page statique sans donnée Aldi |
-| Tests | 211 unitaires, 7 d'intégration PostgreSQL, 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels |
+| Tests | 261 unitaires, 7 d'intégration PostgreSQL, 8 parcours publics, 2 d'administration, 6 de démonstration sur prix réels (03.10.2026) |
 
 ## ⏳ Dépend d'une source de données ou d'une autorisation
 

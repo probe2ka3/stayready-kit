@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { restrictedConnectorIds, SOURCE_REGISTRY } from '@cabas/core';
+import { connectorForUrl, restrictedConnectorIds, SOURCE_REGISTRY } from '@cabas/core';
 
 /**
  * Garde-fou de publication : aucune donnée d'une source à usage privé (Aldi, Denner, journal Coop)
@@ -15,6 +15,9 @@ const restricted = restrictedConnectorIds([]);
 const privateIds = /\b(?:aldi|denner):\d+|\bcoop:ep-[0-9a-f]+/;
 const amount = /(?<![\d.])\d{1,4}\.\d{2}(?![\d.])/;
 const EXEMPT = new Set(['data/matching/reviewed.json', 'data/validation/essentials.json']);
+/** URL d'une source restreinte (provenance par l'hôte, quelle que soit l'étiquette portée par la donnée). */
+const restrictedUrl = (u: unknown) => typeof u === 'string' && restricted.includes(connectorForUrl(u) ?? '');
+const urlsIn = (line: string) => line.match(/https?:\/\/[^\s)"'<>|\]]+/g) ?? [];
 
 function tracked(): string[] {
   try {
@@ -43,7 +46,7 @@ describe.skipIf(files.length === 0)('données versionnées : aucune donnée de s
       readFileSync(join(root, f), 'utf8')
         .split('\n')
         .forEach((line, i) => {
-          if (privateIds.test(line) && amount.test(line)) offending.push(`${f}:${i + 1}`);
+          if ((privateIds.test(line) || urlsIn(line).some(restrictedUrl)) && amount.test(line)) offending.push(`${f}:${i + 1}`);
         });
     }
     expect(offending).toEqual([]);
@@ -57,7 +60,9 @@ describe.skipIf(files.length === 0)('données versionnées : aucune donnée de s
       const rec = o as Record<string, unknown>;
       const owner = [rec.connectorId, (rec.source as { connectorId?: unknown } | undefined)?.connectorId].find((x) => typeof x === 'string');
       const privateProduct = typeof rec.retailerProductId === 'string' && privateIds.test(rec.retailerProductId);
-      if ((typeof owner === 'string' && restricted.includes(owner)) || privateProduct) {
+      const source = rec.source as { ref?: unknown } | undefined;
+      const privateUrl = [rec.url, rec.sourceUrl, source?.ref].some(restrictedUrl);
+      if ((typeof owner === 'string' && restricted.includes(owner)) || privateProduct || privateUrl) {
         for (const k of ['priceCents', 'promoPriceCents', 'referencePriceCents', 'totalCents']) {
           if (typeof rec[k] === 'number') offending.push(`${f} ${path}.${k}`);
         }

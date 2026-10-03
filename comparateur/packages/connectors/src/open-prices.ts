@@ -99,6 +99,39 @@ export function chainForLocation(loc: OpLocation): string | null {
   return null;
 }
 
+/**
+ * Lieu Open Prices sans enseigne identifiable (centre commercial, nom générique), attribué après revue :
+ * la succursale OpenStreetMap correspondante est vérifiée sur place (coordonnées), et seuls les relevés
+ * d'articles de **marque propre** de l'enseigne lui sont attribués (un centre peut abriter plusieurs
+ * enseignes : un article de marque nationale y reste non attribué). Décisions dans
+ * `data/matching/op-locations.json`.
+ */
+export interface OpLocationReview {
+  locationId: number;
+  chainId: string;
+  /** Succursale OpenStreetMap de l'enseigne dans ce lieu (`osm:<type>/<id>`) : nom, ville et zone tarifaire. */
+  storeId: string;
+  /** Marques propres de l'enseigne (champ `brands` d'Open Food Facts, sans tenir compte de la casse ni des tirets). */
+  ownBrands: string[];
+  evidence: string;
+  reviewer: string;
+  reviewedAt: string;
+}
+
+const brandKey = (b: string) => b.toLowerCase().replace(/[^a-z0-9]+/g, '');
+
+/** Enseigne d'un relevé : par le lieu, sinon par une attribution revue limitée aux marques propres. */
+function chainForPrice(loc: OpLocation, p: OpPrice, reviews: Map<number, OpLocationReview>): { chainId: string; review?: OpLocationReview } | { skip: string } {
+  const direct = chainForLocation(loc);
+  if (direct) return { chainId: direct };
+  const review = reviews.get(loc.id);
+  if (!review) return { skip: 'lieu hors périmètre' };
+  const own = new Set(review.ownBrands.map(brandKey));
+  const brands = (p.product?.brands ?? '').split(',').map(brandKey).filter(Boolean);
+  if (!brands.some((b) => own.has(b))) return { skip: 'lieu partagé : article sans marque propre de l’enseigne' };
+  return { chainId: review.chainId, review };
+}
+
 function quantityOf(p: OpProduct | null | undefined): Quantity | null {
   if (!p) return null;
   const unit = (p.product_quantity_unit ?? '').toLowerCase();
@@ -165,6 +198,8 @@ export interface OpContext {
   /** Zone tarifaire d'un lieu inconnu de l'instantané (coordonnées + NPA). */
   resolveZone?: (chainId: string, lat: number, lon: number, zip?: string | null) => string | null;
   maxAgeDays: number;
+  /** Attributions revues de lieux sans enseigne identifiable (marques propres seulement). */
+  locationReviews?: OpLocationReview[];
 }
 
 /** Enseignes dont le prix relevé dans une succursale vaut pour la zone (et non le pays). */
@@ -246,14 +281,21 @@ export function buildOpenPricesBatch(
   const skip = (why: string) => {
     skipped[why] = (skipped[why] ?? 0) + 1;
   };
+  const reviews = new Map((ctx.locationReviews ?? []).map((r) => [r.locationId, r]));
+  let attributedPrices = 0;
 
   for (const p of prices) {
     const loc = p.location_id != null ? locById.get(p.location_id) : undefined;
-    const chainId = loc ? chainForLocation(loc) : null;
-    if (!loc || !chainId) {
+    if (!loc) {
       skip('lieu hors périmètre');
       continue;
     }
+    const attribution = chainForPrice(loc, p, reviews);
+    if ('skip' in attribution) {
+      skip(attribution.skip);
+      continue;
+    }
+    const { chainId, review } = attribution;
     if (p.duplicate_of) {
       skip('doublon signalé');
       continue;
@@ -284,8 +326,13 @@ export function buildOpenPricesBatch(
     }
     const { product, priceCents } = found;
     const id = product.id;
-    const storeId = loc.osm_type && loc.osm_id ? `osm:${loc.osm_type.toLowerCase()}/${loc.osm_id}` : null;
+    const storeId = review?.storeId ?? (loc.osm_type && loc.osm_id ? `osm:${loc.osm_type.toLowerCase()}/${loc.osm_id}` : null);
     const store = storeId ? storesById.get(storeId) : undefined;
+    // Attribution revue : la succursale de l'enseigne doit être connue (zone et lieu), sinon le relevé est écarté.
+    if (review && store?.chainId !== review.chainId) {
+      skip('lieu attribué : succursale inconnue');
+      continue;
+    }
     let zoneId: string | null = null;
     if (ZONAL_CHAINS.has(chainId)) {
       zoneId =
@@ -298,7 +345,10 @@ export function buildOpenPricesBatch(
     }
     if (!products.has(id)) products.set(id, product);
     if (isCategory) categoryPrices++;
-    const place = [store?.name ?? loc.osm_name ?? chainId, store?.city ?? loc.osm_address_city].filter(Boolean).join(', ');
+    if (review) attributedPrices++;
+    const place = review
+      ? [`${store?.name ?? chainId} (${loc.osm_name ?? 'lieu Open Prices'})`, store?.city ?? loc.osm_address_city].filter(Boolean).join(', ')
+      : [store?.name ?? loc.osm_name ?? chainId, store?.city ?? loc.osm_address_city].filter(Boolean).join(', ');
     const proofType = (p.proof?.type ?? '').toUpperCase();
     observations.push({
       id: `${OPEN_PRICES_CONNECTOR_ID}:${p.id}`,
@@ -332,6 +382,7 @@ export function buildOpenPricesBatch(
     pricesRead: prices.length,
     reviewedProducts: reviewedCount,
     categoryPrices,
+    attributedPrices,
     ...Object.fromEntries(Object.entries(byChain).map(([k, v]) => [`prices_${k}`, v])),
     ...Object.fromEntries(Object.entries(skipped).map(([k, v]) => [`skipped: ${k}`, v])),
   };
@@ -355,6 +406,7 @@ export class OpenPricesConnector implements PriceConnector {
     private readonly stores: Store[] = [],
     private readonly resolveZone?: OpContext['resolveZone'],
     private readonly api = OPEN_PRICES_API,
+    private readonly locationReviews: OpLocationReview[] = [],
   ) {}
 
   async status(ctx: Pick<ConnectorContext, 'env'>): Promise<ConnectorStatus> {
@@ -378,7 +430,8 @@ export class OpenPricesConnector implements PriceConnector {
       locations.push(...d.items);
       if (page >= (d.pages ?? 1)) break;
     }
-    const inScope = locations.filter((l) => chainForLocation(l));
+    const reviewed = new Set(this.locationReviews.map((r) => r.locationId));
+    const inScope = locations.filter((l) => chainForLocation(l) || reviewed.has(l.id));
     const since = new Date(ctx.now.getTime() - maxAgeDays * 86_400_000).toISOString().slice(0, 10);
     const prices: OpPrice[] = [];
     for (let i = 0; i < inScope.length; i += 40) {
@@ -394,6 +447,7 @@ export class OpenPricesConnector implements PriceConnector {
       stores: this.stores,
       resolveZone: this.resolveZone,
       maxAgeDays,
+      locationReviews: this.locationReviews,
       catalog: ctx.catalog,
       reviewedMatches: ctx.reviewedMatches,
     });

@@ -1,0 +1,136 @@
+# TesPrix — collecte quotidienne sur GitHub Actions, dans un DÉPÔT PRIVÉ séparé.
+# À copier tel quel dans ce dépôt privé : .github/workflows/quotidien.yml (branche par défaut).
+# Mode d'emploi, coûts et limites : comparateur/ops/actions-prive/README.md (dépôt public).
+#
+# - Le code vient du dépôt public (lecture seule) ; l'état (instantanés, journal) est enregistré dans
+#   ce dépôt privé, dossier etat/. Rien n'est écrit dans le dépôt public, aucun artefact n'est créé.
+# - Une collecte par jour de Zurich ; les créneaux suivants ne reprennent que les sources en échec
+#   technique (rattrapage : prix publiés au moment du lancement, jamais ceux des jours manqués).
+# - Aucun secret requis. Sans moyen de paiement enregistré, l'usage est bloqué une fois le quota
+#   gratuit épuisé (aucun dépassement facturable).
+
+name: TesPrix — collecte quotidienne (privé)
+
+on:
+  schedule:
+    # Heure de Zurich (heure d'été et d'hiver gérées par GitHub) ; minutes hors de l'heure pile
+    # (moins de retard aux heures de forte charge). Créneaux 2 et 3 : rattrapage seulement.
+    - cron: '17 6 * * *'
+      timezone: Europe/Zurich
+    - cron: '47 9 * * *'
+      timezone: Europe/Zurich
+    - cron: '17 14 * * *'
+      timezone: Europe/Zurich
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Relancer toutes les sources même si la collecte du jour est faite'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tesprix-quotidien
+  cancel-in-progress: false
+
+jobs:
+  quotidien:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: État de la veille (ce dépôt privé)
+        uses: actions/checkout@v4
+        with:
+          path: depot
+
+      - name: Collecte du jour déjà faite ?
+        id: besoin
+        env:
+          FORCE: ${{ inputs.force || 'false' }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import datetime, json, os, zoneinfo
+          today = datetime.datetime.now(zoneinfo.ZoneInfo('Europe/Zurich')).date().isoformat()
+          try:
+              run = json.load(open('depot/etat/private/runs/latest.json'))
+          except (OSError, ValueError):
+              run = None
+          failed = [s for s in (run or {}).get('sources', []) if s.get('status') == 'failed']
+          done = run is not None and run.get('date') == today and not failed
+          print('collecte=' + ('non' if done and os.environ['FORCE'] != 'true' else 'oui'))
+          EOF
+
+      - name: Code TesPrix (dépôt public, lecture seule)
+        if: steps.besoin.outputs.collecte == 'oui'
+        uses: actions/checkout@v4
+        with:
+          repository: probe2ka3/stayready-kit
+          ref: ${{ vars.TESPRIX_CODE_REF || 'claude/swiss-grocery-comparison-w7bk8q' }}
+          path: code
+          persist-credentials: false
+
+      - if: steps.besoin.outputs.collecte == 'oui'
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: code/comparateur/package.json
+
+      - if: steps.besoin.outputs.collecte == 'oui'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: code/comparateur/pnpm-lock.yaml
+
+      - if: steps.besoin.outputs.collecte == 'oui'
+        working-directory: code/comparateur
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache HTTP (textes du journal Coop de la semaine ; cache d'un dépôt privé)
+        if: steps.besoin.outputs.collecte == 'oui'
+        uses: actions/cache/restore@v4
+        with:
+          path: code/comparateur/data/private/cache/http
+          key: tesprix-http-${{ github.run_id }}
+          restore-keys: tesprix-http-
+
+      - name: Collecte quotidienne (Open Prices, journal Coop, Denner, Aldi, Lidl)
+        if: steps.besoin.outputs.collecte == 'oui'
+        run: bash code/comparateur/ops/actions-prive/cycle.sh "$GITHUB_WORKSPACE/depot/etat" ${{ inputs.force && '--force' || '' }}
+
+      - name: Purge du cache HTTP (fichiers de plus de 10 jours)
+        if: always() && steps.besoin.outputs.collecte == 'oui'
+        run: find code/comparateur/data/private/cache/http -type f -mtime +10 -delete 2>/dev/null || true
+
+      - if: always() && steps.besoin.outputs.collecte == 'oui'
+        uses: actions/cache/save@v4
+        with:
+          path: code/comparateur/data/private/cache/http
+          key: tesprix-http-${{ github.run_id }}
+
+      - name: Enregistrement de l'état (ce dépôt privé)
+        if: always() && steps.besoin.outputs.collecte == 'oui'
+        working-directory: depot
+        run: |
+          git config user.name 'tesprix-collecte'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A etat
+          if git diff --cached --quiet; then echo 'Aucun changement à enregistrer'; exit 0; fi
+          git commit -q -m "Collecte du $(TZ=Europe/Zurich date +%d.%m.%Y) (exécution ${GITHUB_RUN_ID})"
+          git push
+
+      - name: Résumé (durées et volumes, sans prix)
+        if: always() && steps.besoin.outputs.collecte == 'oui'
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          try:
+              run = json.load(open('depot/etat/private/runs/latest.json'))
+          except (OSError, ValueError):
+              print('Aucun journal d’exécution.'); raise SystemExit
+          print(f"Collecte du {run.get('date')} : {run.get('startedAt')} → {run.get('finishedAt')}\n")
+          print('| Source | Statut | Prix | Actions | Durée (s) |\n|---|---|---|---|---|')
+          for s in run.get('sources', []):
+              print(f"| {s.get('connector')} | {s.get('status')} | {s.get('prices')} | {s.get('promotions')} | {round((s.get('durationMs') or 0) / 1000)} |")
+          EOF
