@@ -175,8 +175,9 @@ exit 0
     & git -C $autre add etat/verrou.json; & git -C $autre @id commit -q -m 'Verrou (GitHub)'; & git -C $autre push -q 2>$null
     & $quotidien -DepotEtat $clone -Planifie -Force *> $null
     Verifie 'collecte en cours sur GitHub : rien, même avec -Force' ($LASTEXITCODE -eq 0 -and -not (Test-Path $appelsPnpm))
-    $derniere = (& $executions | Sort-Object | Select-Object -Last 1)
-    Verifie 'concurrence notée dans le suivi' (((& git -C $nu show "main:$derniere") | Out-String) -match '"issue": "concurrence"')
+    # Plusieurs exécutions peuvent dater de la même seconde : on cherche celle qui a noté la concurrence.
+    $concurrence = @(& $executions | Where-Object { ((& git -C $nu show "main:$_") | Out-String) -match '"issue": "concurrence"' })
+    Verifie 'concurrence notée dans le suivi' ($concurrence.Count -eq 1)
 
     & git -C $autre pull -q 2>$null; & node $etatJs liberer ([System.IO.Path]::Combine($autre, 'etat'))
     & git -C $autre add -A etat; & git -C $autre @id commit -q -m 'Verrou libéré'; & git -C $autre push -q 2>$null

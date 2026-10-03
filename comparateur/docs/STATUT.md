@@ -12,17 +12,16 @@ juridique ouvert** (aucun avis payant prévu). Détails : `docs/RAPPORT_PHASE4.m
 | Lidl | ✅ site officiel, ciblée (≈ 108 requêtes) | **47/50** | 47/50 (⚖️ aucune restriction trouvée ≠ autorisation formelle) |
 | Denner | ✅ site officiel, recherche ciblée + actions (≈ 54 requêtes) | **34/50** | 0/50 : publication interdite sans accord écrit |
 | Aldi | ✅ API du site (≈ 43 requêtes) | 23/50 | 0/50 : usage privé (conditions d'Aldi) |
-| Coop | ⚠️ actions seulement : journal numérique officiel, édition romande ; prix permanents : DataDome, aucun contournement | 6/50 (5 actions + 1 relevé Open Prices) | 1/50 (Open Prices : penne, relevé du 04.08) |
-| Migros | ❌ 403, API non ouverte ; Open Prices | 1/50 | 1/50 (Open Prices : café moulu, relevé du 04.08, région Neuchâtel-Fribourg) |
+| Coop | ⚠️ actions seulement : journal numérique officiel, édition romande ; prix permanents : DataDome, aucun contournement | 6/50 (5 actions + 1 relevé Open Prices) | 1/50 (Open Prices : penne, relevé du 04.08, retiré après le 02.11 s'il n'est pas renouvelé) |
+| Migros | ❌ 403, API non ouverte ; Open Prices | 0/50 | 0/50 (relevé de café du 04.08 : lieu d'achat non établi, non utilisé) |
 
-Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 19 / 2 / 0** en pilote privé (01.10 : 41 / 18 / 2 / 0),
-**2 / 0 / 0 / 0** en version publique (01.10 : 1 / 0 / 0 / 0) ; gain public : café moulu Migros
-(lieu Open Prices sans enseigne attribué après revue, marques propres seulement) ; il expire avec le
-relevé (90 jours, vers le 02.11) sans nouveau relevé. Commande : `pnpm quotidien` (≈ 11 min, ≈ 218
-requêtes). Planification : Windows (`scripts/windows/installer-tache.ps1`, **non vérifiée** sur
-l'ordinateur de l'exploitant) ; GitHub Actions en dépôt privé **préparé, non activé**
-(`ops/actions-prive/README.md` ; essai sur les serveurs de GitHub réussi le 03.10 avec Lidl + Open
-Prices, 6 min ; planification et lancement automatique non observés). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
+Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 18 / 2 / 0** en pilote privé, **1 / 0 / 0 / 0** en
+version publique (mêmes valeurs qu'au 01.10 : l'attribution à Migros d'un relevé de café, ajoutée le
+03.10, a été retirée après examen du justificatif). Prochain gain public : relevés en magasin
+(`docs/RELEVES_PRIORITAIRES.md`). Commande : `pnpm quotidien` (≈ 11 min, ≈ 218 requêtes). Planification :
+Windows (`scripts/windows/installer-tache.ps1`, **non vérifiée** sur l'ordinateur de l'exploitant ; mode
+« état partagé » avec GitHub) ; GitHub Actions en dépôt privé **préparé et testé, non activé** (dépôt à
+créer par l'exploitant : `ops/actions-prive/README.md` § 3 ; aucune exécution automatique observée). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
 `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
 
 Publication : la provenance d'un prix (fichier de la source et hôte de ses URL) décide, pas son

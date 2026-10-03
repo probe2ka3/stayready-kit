@@ -99,6 +99,9 @@ aucun numéro de carte ni donnée personnelle.
 Sur un ticket de caisse, la contenance manque souvent : la compléter depuis l'emballage ou la laisser
 vide (la ligne sera refusée plutôt que devinée).
 
+Priorités (besoins et enseignes qui ajouteraient une 2e ou une 3e enseigne à une comparaison publique,
+plan de visite, fiche CSV) : `docs/RELEVES_PRIORITAIRES.md`, régénéré par `pnpm job releves-prioritaires`.
+
 ## 5. Les 50 besoins du noyau (`besoin`)
 
 Généré depuis `P1_ESSENTIALS` (`packages/reference/src/products.ts`).

@@ -21,11 +21,13 @@ trajet compris**, avec un itinéraire et une liste de courses par magasin.
 **État actuel (collecte réelle du 03.10.2026) : collecte quotidienne automatique à 0 CHF** ([docs/COLLECTE_QUOTIDIENNE.md](docs/COLLECTE_QUOTIDIENNE.md))
 sur les 50 aliments de base : Lidl 47/50 (publiable, sous réserve), Denner 34/50 et Aldi 23/50 (usage
 privé, jamais publiés), Coop 6/50 (actions du journal, privé ; 1 relevé Open Prices publiable) et
-Migros 1/50 (relevé Open Prices). Pilote privé : 41 besoins comparables dans ≥ 2 enseignes, 19 dans
-≥ 3, 2 dans ≥ 4 ; **version publique : 2** — ce n'est pas une comparaison des cinq enseignes, et
-l'interface le dit (couverture par enseigne). Une commande (`pnpm quotidien`), planifiable dans Windows à
-06:00 (`scripts/windows/`) ; alternative sans PC préparée, non activée : GitHub Actions dans un dépôt
-privé ([ops/actions-prive/README.md](ops/actions-prive/README.md)).
+Migros 0/50. Pilote privé : 41 besoins comparables dans ≥ 2 enseignes, 18 dans ≥ 3, 2 dans ≥ 4 ;
+**version publique : 1** — ce n'est pas une comparaison des cinq enseignes, et l'interface le dit
+(couverture par enseigne). Relevés en magasin qui feraient progresser la version publique :
+[docs/RELEVES_PRIORITAIRES.md](docs/RELEVES_PRIORITAIRES.md). Une commande (`pnpm quotidien`),
+planifiable dans Windows (`scripts/windows/`) ; alternative sans PC préparée et testée, non activée :
+GitHub Actions dans un dépôt privé, avec un journal partagé avec Windows
+([ops/actions-prive/README.md](ops/actions-prive/README.md)).
 Cadre budgétaire : [docs/PLAN_SANS_DEPENSES.md](docs/PLAN_SANS_DEPENSES.md) ; relevés en magasin facultatifs :
 [docs/RELEVES.md](docs/RELEVES.md).
 

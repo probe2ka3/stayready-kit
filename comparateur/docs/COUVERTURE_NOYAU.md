@@ -11,7 +11,8 @@ seulement (Lidl, Open Prices). Les critères de correspondance n'ont pas été a
 |---|---|---|---|---|---|---|---|
 | Historique : collecte du 01.10.2026 | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
 | Nouvelle collecte du 03.10.2026, 11:02–11:13 (avant les changements ci-dessous) | 47 | 34 | 23 | 6 | 0 | 41 / 18 / 2 / 0 | 1 / 0 / 0 / 0 |
-| 03.10.2026 après attribution revue d'un lieu Open Prices | 47 | 34 | 23 | 6 | **1** | 41 / **19** / 2 / 0 | **2** / 0 / 0 / 0 |
+| 03.10.2026, attribution d'un lieu Open Prices à Migros (provisoire) | 47 | 34 | 23 | 6 | 1 | 41 / 19 / 2 / 0 | 2 / 0 / 0 / 0 |
+| **03.10.2026 après réexamen du justificatif (attribution retirée)** | **47** | **34** | **23** | **6** | **0** | **41 / 18 / 2 / 0** | **1 / 0 / 0 / 0** |
 
 Collecte du 03.10 : Open Prices 231 prix, journal Coop 77 actions (édition du 01.10, texte en cache),
 Denner 250 prix et 25 actions, Aldi 1 481 prix et 558 actions, Lidl 424 prix et 290 actions
@@ -48,8 +49,18 @@ Chaux-de-Fonds (37 relevés du 13.07 au 08.09.2026). OpenStreetMap y situe une M
 à 24 m ; les relevés sont surtout des marques propres Migros. Attribution revue
 (`data/matching/op-locations.json`) : **seuls les articles de marque propre Migros** sont attribués à
 cette Migros (zone `migros-nf`), les marques nationales restent non attribuées (12 relevés), la
-succursale OSM doit exister. Résultat : 15 relevés attribués, dont un besoin du noyau, **café moulu
-Boncampo Classico 500 g, 3.50, relevé du 04.08.2026** (indicatif, prix régional). Refusés après revue :
+succursale OSM doit exister. Résultat provisoire : 15 relevés attribués, dont un besoin du noyau, café
+moulu Boncampo Classico 500 g, 3.50, relevé du 04.08.2026.
+
+**Réexamen (03.10.2026, même jour)** : proximité et marque propre ne prouvent pas le lieu d'achat. Le
+justificatif du relevé (photo, prix 304205) montre une étiquette électronique jaune « PRIX BAS » :
+« 3.50 Migros Boncampo Café moulu Classico 500g (100g=0.70) », code 1071.359.000.00 ; l'enseigne n'y est
+écrite nulle part. Le code ressemble aux numéros d'article Migros, mais aucune source officielle consultée
+ne permet d'attribuer ce modèle d'étiquette à Migros plutôt qu'au Denner du même centre. **Attribution
+incertaine** : décision et preuves conservées (`statut: "incertaine"`), aucun relevé attribué ; une
+attribution ne s'applique plus que si le lieu d'achat est établi. Le collecteur Open Prices relisant
+toute la fenêtre à chaque collecte, son instantané est désormais remplacé (et non fusionné) : le relevé
+retiré a disparu dès la collecte suivante. Refusés après revue (décisions conservées) :
 penne M-Budget (contenance publiée 371 g, invraisemblable et non vérifiable), mozzarella M-Classic
 250 g (type non publié), vinaigre de nettoyage (≠ vinaigre de vin), mini penne « piccolini ». Lait et
 beurre M-Budget : origine ou traitement (UHT) non publiés → non rapprochés. La Maladière (Neuchâtel,
@@ -57,8 +68,10 @@ relevés Coop de novembre 2025) : trop ancien, non attribué.
 
 **Cause de la faible couverture publique** : Open Prices ne contient que 106 relevés de moins de 90 jours
 pour les cinq enseignes en Suisse, presque tous hors noyau ; aucune autre source publiable n'existe
-pour Migros, Coop, Denner et Aldi (voir § 5). Le gain Migros expire avec le relevé (90 jours, vers
-le 02.11.2026) s'il n'est pas renouvelé. Les canaux déjà bloqués n'ont pas été retestés.
+pour Migros, Coop, Denner et Aldi (voir § 5). Le seul relevé public d'une deuxième enseigne (penne Coop,
+04.08) sera retiré automatiquement après 90 jours (02.11.2026) s'il n'est pas renouvelé (test
+« relevé communautaire : … retiré automatiquement au-delà »). Les canaux déjà bloqués n'ont pas été
+retestés ; le progrès public passe par des relevés en magasin : `docs/RELEVES_PRIORITAIRES.md`.
 
 Mesures sur les collectes réelles du 30.09 et du 01.10.2026. « Couvert » = au moins un article dont la
 correspondance est revue, qui satisfait les exigences du besoin (origine suisse, AOP, bio…) et qui a un

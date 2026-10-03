@@ -14,14 +14,14 @@ mises à jour après l'étape « couverture » du même jour (journal Coop, revu
 | **Denner** | ✅ opérationnel | Site officiel : recherche ciblée, pages thématiques de l'assortiment, actions | **34/50** | 31 | **Non** : « publication ou fins commerciales » interdites sans accord écrit |
 | **Aldi** | ✅ opérationnel | API publique du site (liste paginée) | **23/50** | 23 | **Non** : conditions « fins privées uniquement » |
 | **Coop** | ⚠️ **actions seulement** (nouveau) | Journal numérique officiel (magazine des actions, édition romande) + Open Prices | **6/50** (actions de la semaine) | 6 | **Non** (en attente : conditions de coop.ch illisibles pour un robot) ; Open Prices : oui |
-| **Migros** | ❌ aucun canal gratuit, officiel et accessible à un robot identifié | Open Prices seulement | 0/50 (01.10) → **1/50** (03.10 : café moulu, relevé Open Prices du 04.08) | 0 | Open Prices : oui |
+| **Migros** | ❌ aucun canal gratuit, officiel et accessible à un robot identifié | Open Prices seulement | 0/50 (le relevé de café du 04.08 attribué le 03.10 a été retiré le même jour : lieu d'achat non établi, `docs/COUVERTURE_NOYAU.md` § 0) | 0 | Open Prices : oui |
 
 | Besoins comparables dans au moins… | 2 enseignes | 3 | 4 | 5 |
 |---|---|---|---|---|
 | Pilote privé (Lidl, Denner, Aldi, Coop, Open Prices), 01.10 | **41** | **18** | **2** | 0 |
-| Pilote privé, 03.10 | **41** | **19** | **2** | 0 |
+| Pilote privé, 03.10 (après réexamen de l'attribution Migros) | **41** | **18** | **2** | 0 |
 | Version publique (sources publiables : Lidl, Open Prices), 01.10 | 1 | 0 | 0 | 0 |
-| Version publique, 03.10 | **2** | 0 | 0 | 0 |
+| Version publique, 03.10 (après réexamen) | **1** | 0 | 0 | 0 |
 
 Détail et cause (Open Prices ne contient que 106 relevés suisses de moins de 90 jours pour les cinq
 enseignes, presque tous hors noyau) : `docs/COUVERTURE_NOYAU.md` § 0.
@@ -142,9 +142,9 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 | Élément | État | Preuve |
 |---|---|---|
 | Cycle de collecte exécuté | ✅ dans l'environnement de développement (pas sur votre PC) | 30.09 22:28 → 01.10 01:08 (heure de Zurich) : cycle complet (214 requêtes), reprises Open Prices, Denner + Coop ; journal `data/private/runs/2026-10-01.json` (hors dépôt) |
-| Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 27 contrôles, aussi en intégration continue) |
+| Scripts Windows disponibles | ✅ `installer-tache.ps1`, `tesprix-quotidien.ps1`, `verifier-tache.ps1` ; mode **état partagé** avec GitHub (`-DepotEtat`, 03.10.2026) | testés sous PowerShell 7 avec un Planificateur **simulé** (`scripts/windows/tests/tester-scripts.ps1`, 34 contrôles dont 9 du mode partagé avec un vrai dépôt Git local, aussi en intégration continue) |
 | Tâche installée et exécutée sur **votre** ordinateur Windows | ❌ **non vérifiée** : je n'ai pas accès à votre PC | à établir avec la procédure du § 5.2 (sortie de `verifier-tache.ps1`) |
-| GitHub Actions, dépôt privé (03.10.2026) | **code préparé** (`ops/actions-prive/`) ; cycle testé localement (premier lancement, verrou d'un jour, reprise d'une source en échec) ; essai sur les serveurs de GitHub avec Lidl + Open Prices : § 5.1.2 ; **dépôt privé non créé, planification non activée, aucun lancement automatique observé** | `ops/actions-prive/README.md` § 3 (actions de l'exploitant) |
+| GitHub Actions, dépôt privé (03.10.2026) | **préparé** (`ops/actions-prive/` : workflow, état partagé avec Windows, verrou, suivi par source) ; **testé localement** (dépôt privé simulé : premier cycle, « rien à faire », « concurrence », reprise d'une source en échec) ; **testé manuellement sur GitHub** avec Lidl + Open Prices (§ 5.1.2) ; **dépôt privé non créé** (création refusée à l'intégration de Claude : 403), **planification non activée, aucune exécution automatique observée** | `ops/actions-prive/README.md` § 3 (manipulations de l'exploitant) |
 
 ### 5.1 Options comparées (conditions vérifiées le 01.10.2026)
 
@@ -180,8 +180,10 @@ créneaux de rattrapage sans collecte (< 1 min chacun) : **≈ 400 min sur les 2
 mesuré : l'accès d'Aldi, de Denner et du journal Coop depuis les adresses de GitHub (jamais lancés
 depuis le dépôt public).
 
-État réel : **code préparé ✅ ; lancement manuel sur GitHub réussi pour les sources publiables ✅ (dépôt
-public, essai) ; dépôt privé, planification et lancement automatique : ❌ non faits, non observés.**
+État réel : **préparé ✅ ; testé manuellement sur GitHub pour les sources publiables ✅ (dépôt public,
+essai) ; dépôt privé, planification et exécution automatique : ❌ non faits, non observés.** Un nouvel
+essai (même cycle, avec le module d'état partagé `etat.mjs` et son suivi) est lancé à la poussée du
+03.10.2026 au soir : `.github/workflows/tesprix-essai-cycle.yml`.
 
 #### 5.1.1 Cloudflare Workers : réexamen chiffré
 
@@ -302,10 +304,13 @@ coûtait le même prix chez Denner et chez Lidl ; Migros et Coop : aucune donné
    seulement ; la recherche ne rend que 5 résultats.
 5. **Aldi** : fruits, légumes et crème absents de l'API ; 6 articles sans contenance publiée ; 5 sans
    origine publiée (le besoin exige l'origine suisse).
-6. **Planification** : la tâche Windows n'est **pas** installée ni vérifiée sur votre ordinateur (pas
-   d'accès) ; procédure et contrôle : § 5.2 (`verifier-tache.ps1`). Alternative sans PC : GitHub
-   Actions dans un dépôt privé, **préparée, non activée** (création du dépôt et ajout du workflow par
-   l'exploitant : `ops/actions-prive/README.md` § 3).
+6. **Planification** : la tâche Windows n'est **pas** vérifiée sur votre ordinateur (pas d'accès) ;
+   procédure et contrôle : § 5.2. Collecte sans PC : GitHub Actions dans un dépôt privé, **préparée et
+   testée, non activée** : la création du dépôt `tesprix-collecte` est refusée à l'intégration de Claude ;
+   manipulations restantes : `ops/actions-prive/README.md` § 3. Coexistence : mode « état partagé » de la
+   tâche Windows (un seul journal, une seule collecte par jour).
 7. **Historique Git** : anciennes données Aldi **toujours présentes** dans l'historique public de la
-   branche ; procédure prête et essayée à blanc, non exécutée (décision de l'exploitant :
-   `docs/NETTOYAGE_HISTORIQUE.md`). Le problème n'est pas résolu tant que ce nettoyage n'a pas eu lieu.
+   branche (11 versions de fichiers de données, 8 versions de documents avec des montants Aldi ou Denner,
+   inventaire du 03.10.2026) ; procédure préparée et essayée à blanc, non exécutée (décision de
+   l'exploitant : `docs/NETTOYAGE_HISTORIQUE.md`). Le problème n'est pas résolu tant que ce nettoyage n'a
+   pas eu lieu, et il ne rappellera pas les copies déjà récupérées.

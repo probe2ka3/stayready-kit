@@ -38,6 +38,13 @@ relève pas de cette source est écarté. Les filtres de production (`buildOffer
 (« provenance établie… »), `packages/core/test/consumer.test.ts` (« provenance… », « exclusion… »).
 Les statistiques par enseigne (pages Magasins, Sources, Bientôt) sont calculées **après** exclusion.
 
+Lieu d'un relevé communautaire sans enseigne lisible (centre commercial) : attribué à une enseigne
+seulement si le lieu d'achat est **établi** (`data/matching/op-locations.json`, `statut: "etablie"`) ;
+proximité et marque propre ne suffisent pas (réexamen du 03.10.2026, `docs/COUVERTURE_NOYAU.md` § 0).
+
+Documentation publique : aucun montant issu d'Aldi, de Denner ou du journal Coop (retirés le 03.10.2026) ;
+`privacy.test.ts` contrôle aussi les documents (lignes revues : `apps/worker/test/privacy-docs-revues.txt`).
+
 ## 2. Par source et par méthode de collecte
 
 | Source | Méthode | Accès technique | Conditions lues | Statut TesPrix |

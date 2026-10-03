@@ -1,90 +1,114 @@
-# Collecte quotidienne sur GitHub Actions, dans un dépôt privé (préparé, non activé)
+# Collecte quotidienne sans PC : GitHub Actions dans un dépôt privé
 
-État au 03.10.2026 :
+## État au 03.10.2026
 
-| Étape | État |
-|---|---|
-| Code préparé (`quotidien.yml`, `cycle.sh`) | ✅ dans ce dossier |
-| Cycle testé localement sans état préalable, puis relancé (une collecte par jour, reprise des seules sources en échec) | ✅ 03.10.2026, sur une copie des données |
-| Lancement réel sur les serveurs de GitHub | ✅ 03.10.2026, même script, **sources publiables seulement** (Lidl, Open Prices), dans le dépôt public (`.github/workflows/tesprix-essai-cycle.yml`, exécution 37114095944) : Lidl 424 prix + 290 actions en 313 s, Open Prices 246 prix en 25 s, 6 étapes OK, job de 6 min 01 s (`docs/COLLECTE_QUOTIDIENNE.md` § 5.1.2) |
-| Dépôt privé créé, workflow installé, lancement manuel réussi | ❌ à faire par l'exploitant (ci-dessous) |
-| Planification activée, lancement automatique observé | ❌ non observé |
-
-Tant que des lancements automatiques n'ont pas été observés pendant une semaine, **la tâche Windows
-reste la solution en service** (`docs/COLLECTE_QUOTIDIENNE.md` § 5.2).
-
-## 1. Pourquoi un dépôt privé séparé
-
-- Le dépôt `stayready-kit` est **public** : ses journaux, caches et artefacts d'Actions sont lisibles
-  par tous. Ils ne sont jamais un stockage privé : les données d'Aldi, de Denner et du journal Coop
-  (usage privé) n'y passent jamais.
-- Dans un dépôt privé, le code est lu depuis le dépôt public (lecture seule, aucun jeton) ; l'état
-  (instantanés, journal des exécutions, matrice et paniers privés) est enregistré dans le dépôt privé
-  lui-même (`etat/`), par des commits. Ni archive brute, ni artefact.
-- Les conditions des sources restent respectées : collecte pour l'évaluation privée de l'exploitant,
-  jamais publiée.
-
-## 2. Coûts, quotas et conditions (documentation officielle lue le 03.10.2026)
-
-| Point | Constat | Source |
+| Étape | État | Preuve |
 |---|---|---|
-| Minutes incluses | GitHub Free, dépôts privés : **2 000 min/mois** (exécuteur Linux standard) ; dépôts publics : gratuits | [Facturation d'Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions) |
-| Dépassement | « If your account does not have a valid payment method on file, usage is blocked once you use up your quota. » | idem |
-| Stockage | artefacts 500 Mo (non utilisés ici) ; cache **10 Go par dépôt**, entrées non lues depuis 7 jours supprimées | idem ; [Cache des dépendances](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching) |
-| Planification | branche par défaut seulement ; **retards possibles, voire exécutions abandonnées** aux heures chargées (début d'heure) ; fuseau IANA possible (`timezone`), heure d'été gérée | [Événements](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), [Syntaxe](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) |
-| Inactivité | désactivation après 60 jours sans activité : **dépôts publics** seulement (ici, un commit par jour) | idem |
-| Usage admis | exécuteurs hébergés : pas d'activité « unrelated to the production, testing, deployment, or publication of the software project associated with the repository », pas d'usage « as part of a serverless application » ; sanctions possibles jusqu'à la suspension du compte | [Conditions des produits additionnels](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features) |
+| Préparé : workflow du dépôt privé (`quotidien.yml`), étapes (`github.sh`), état partagé (`etat.mjs`), mode partagé de la tâche Windows | ✅ | ce dossier ; `scripts/windows/` |
+| Testé localement : dépôt privé simulé (dépôt Git nu), 4 exécutions : premier cycle, créneau suivant « rien à faire », verrou tenu par Windows (« concurrence »), reprise d'une source mise en échec | ✅ | `apps/worker/test/etat-partage.test.ts`, banc PowerShell `scripts/windows/tests/tester-scripts.ps1` (9 contrôles du mode partagé) |
+| Testé manuellement sur les serveurs de GitHub : même cycle, **sources publiables seulement** (Lidl, Open Prices), dans le dépôt public | ✅ 03.10.2026 (exécution 37114095944 ; nouvel essai avec `etat.mjs` à la poussée de cette étape) | `docs/COLLECTE_QUOTIDIENNE.md` § 5.1.2 |
+| Dépôt privé `probe2ka3/tesprix-collecte` créé | ❌ **impossible d'ici** : l'intégration GitHub de Claude n'a pas le droit de créer un dépôt (« 403 Resource not accessible by integration ») | § 3, étape 2 |
+| Aldi, Denner, journal Coop essayés depuis GitHub | ❌ pas encore (seulement depuis le dépôt privé, jamais depuis le dépôt public) | premier lancement, § 3 |
+| Planification activée, exécution automatique observée | ❌ non | `etat/suivi/SUIVI.md` du dépôt privé |
 
-**Zone grise à assumer** : la collecte alimente le logiciel TesPrix (données de test et
+**La tâche Windows reste la solution en service** jusqu'à 7 jours consécutifs de collectes automatiques
+réussies par GitHub, comptés par `etat/suivi/SUIVI.md` (§ 4). Son fonctionnement sur votre PC n'est
+lui-même pas vérifié (`docs/COLLECTE_QUOTIDIENNE.md` § 5.2).
+
+## 1. Principe
+
+- Le dépôt public `stayready-kit` ne sert jamais de stockage privé : ses journaux, caches et artefacts
+  sont lisibles par tous. Aldi, Denner et le journal Coop (usage privé) n'y passent jamais.
+- Dans le dépôt privé, le code est lu depuis le dépôt public (lecture seule, aucun jeton) ; l'état
+  (instantanés, journal des exécutions, matrice et paniers privés, suivi) est enregistré dans le dépôt
+  privé, dossier `etat/`, par des commits. Ni archive brute, ni artefact ; la sortie détaillée de la
+  collecte reste sur le serveur d'exécution (effacé à la fin) ; le journal du workflow ne montre que des
+  statuts et des volumes par source.
+- **Un seul journal pour GitHub et Windows** : la tâche Windows en mode partagé (`-DepotEtat`) lit et
+  écrit le même dossier `etat/`. Une collecte par jour de Zurich, quel que soit le système ; un verrou
+  (`etat/verrou.json`, poussé avant la collecte) empêche deux collectes simultanées ; l'autre système
+  note « concurrence » et s'arrête. Sans mode partagé, deux systèmes ayant chacun leur journal
+  collecteraient deux fois.
+- Les créneaux suivants (09:47, 14:17) ne reprennent que les sources en **échec technique** ; une source
+  bloquée (403) n'est pas relancée le même jour. Un rattrapage collecte ce qui est publié au moment du
+  lancement : il **ne reconstitue jamais** les prix des jours manqués.
+- **Une source en échec ou bloquée rend l'exécution rouge** (après l'enregistrement de l'état) et figure
+  en « ÉCHEC » dans `SUIVI.md` ; une source partielle produit un avertissement.
+
+## 2. Conditions de GitHub (documentation officielle lue le 03.10.2026)
+
+| Point | Vérifié | Source |
+|---|---|---|
+| Minutes incluses (dépôts privés) | GitHub Free : **2 000 min/mois** ; Pro : 3 000 ; remise à zéro chaque mois ; dépôts publics gratuits | [Facturation d'Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions) |
+| Sans moyen de paiement | « usage is blocked once you use up your quota » : aucun dépassement facturé | idem |
+| Avec moyen de paiement | un budget de compte (« user-level ») pour Actions **arrête toujours l'usage** à la limite ; budget à 0 $ = aucun dépassement | [Budgets](https://docs.github.com/en/billing/how-tos/set-up-budgets) |
+| Cache | 10 Go par dépôt, entrées non lues depuis 7 jours supprimées ; caches d'un dépôt privé non publics | [Cache des dépendances](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching) |
+| Fuseau `Europe/Zurich` | clé `timezone` (IANA) documentée ; heure d'été : un horaire tombant dans l'heure sautée avance à l'heure suivante | [Syntaxe des workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) |
+| Planification | branche par défaut seulement ; retards voire abandons aux heures chargées ; désactivation après 60 jours sans activité pour les dépôts **publics** | [Événements](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows) |
+| Usage admis | pas d'activité « unrelated to the production, testing, deployment, or publication of the software project » ; sanctions jusqu'à la suspension du compte | [Conditions des produits additionnels](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features) |
+
+**Incertain** : (1) **adéquation de l'usage** : la collecte alimente le logiciel TesPrix (données
 d'évaluation), mais GitHub n'autorise pas expressément une collecte planifiée de sites tiers ; aucune
-autorisation formelle. Risque : arrêt des tâches ou restriction du compte. Le PC Windows n'a pas ce
-risque.
+autorisation formelle ; (2) **plan et consommation du compte** : non consultables d'ici (accès limité au
+dépôt) ; le compte a 4 autres dépôts privés qui partagent le quota ; (3) **moyen de paiement enregistré
+ou non** : à vérifier par vous (§ 3, étape 1) ; (4) retour à l'heure d'hiver (non décrit ; sans effet ici :
+06:17 n'est pas dans l'heure répétée) ; (5) accès d'Aldi, de Denner et du journal Coop depuis les
+adresses de GitHub (premier lancement).
 
-**Consommation estimée** : cycle complet mesuré le 03.10.2026 dans l'environnement de développement :
-**10 min 50 s** (Lidl 5 min 19 s, Denner 2 min 43 s, Aldi 2 min 11 s, Open Prices 22 s, Coop 6 s avec
-le cache de la semaine) ; sur les serveurs de GitHub, Lidl + Open Prices : 5 min 38 s de cycle, 6 min
-01 s de job (installation 4 s). Cycle complet estimé ≈ 12 min ; créneaux de rattrapage sans collecte à
-faire : < 1 min (le test de l'état précède l'installation). Soit ≈ 12 × 30 + 2 × 30 ≈ **400 min/mois sur
-2 000**, partagées avec les autres dépôts **privés** du compte (les dépôts publics ne consomment rien).
-Croissance du dépôt privé : état compressé ≈ 0,7 Mo, réécrit chaque jour (≈ 250 Mo/an au pire).
+**Consommation estimée** : cycle complet ≈ 12 min (mesuré : 10 min 50 s ici ; Lidl + Open Prices : 5 min 38 s
+sur GitHub) + installation ; créneaux sans collecte < 1 min (pas d'installation) : **≈ 400 min/mois sur
+2 000**. Dépôt privé : état compressé ≈ 0,7 Mo par jour au pire (≈ 250 Mo par an).
 
-Non testé depuis GitHub : l'accès d'Aldi, de Denner et du journal Coop depuis les adresses des
-serveurs de GitHub (un site peut refuser les adresses de centres de données) ; il sera visible dans le
-résumé du premier lancement manuel.
+## 3. Manipulations restantes (vous seul ; ≈ 10 min)
 
-## 3. Actions restantes (exploitant, ≈ 10 min)
+1. **Zéro dépense** : <https://github.com/settings/billing> → *Payment information* : aucun moyen de
+   paiement. S'il y en a un : *Budgets and alerts* → *New budget* → *Product-level budget*, produit
+   **Actions**, portée **compte entier**, montant **0** → *Create budget*. Ne changez pas d'abonnement.
+2. **Créer le dépôt privé** : <https://github.com/new> → *Owner* `probe2ka3`, *Repository name*
+   **`tesprix-collecte`**, **Private**, cocher **Add a README file** → *Create repository*.
+3. **Installer le workflow**, au choix :
+   - (a) dans le dépôt : *Add file* → *Create new file* → nom **`.github/workflows/quotidien.yml`** →
+     coller le contenu de
+     <https://raw.githubusercontent.com/probe2ka3/stayready-kit/claude/swiss-grocery-comparison-w7bk8q/comparateur/ops/actions-prive/quotidien.yml>
+     → *Commit changes* sur `main`. Ce commit lance aussitôt le premier cycle (déclencheur `push`) ;
+   - (b) ou dites à Claude « le dépôt tesprix-collecte existe » : il l'attache à la session, installe le
+     fichier, lance et contrôle le premier cycle.
+4. **Contrôler le premier cycle** : onglet *Actions* → « TesPrix — collecte quotidienne (privé) » : résumé
+   par source ; fichier `etat/suivi/SUIVI.md`. Si une source refuse les serveurs de GitHub (statut
+   BLOQUÉ) : *Settings* → *Secrets and variables* → *Actions* → *Variables* → **`TESPRIX_SOURCES`** =
+   `open-prices,coop-epaper,denner-web,aldi-api,lidl-web` sans la source refusée (Windows la collecte alors).
+5. **Windows en mode partagé** (pendant les 7 jours d'observation), dans PowerShell :
+   ```powershell
+   git clone https://github.com/probe2ka3/tesprix-collecte.git C:\TesPrix\tesprix-collecte
+   cd <dossier stayready-kit>\comparateur
+   git pull
+   powershell -ExecutionPolicy Bypass -File .\scripts\windows\installer-tache.ps1 -DepotEtat C:\TesPrix\tesprix-collecte
+   ```
+   La tâche passe à 07:30 : elle ne collecte que si GitHub ne l'a pas fait ; elle écrit son suivi dans le
+   même `SUIVI.md`. (Identifiants Git : demandés une fois par Git pour Windows.)
+6. Après **7 jours** consécutifs comptés par `SUIVI.md` : désactiver la tâche Windows
+   (`Disable-ScheduledTask -TaskName "TesPrix - collecte quotidienne"`).
 
-1. **Aucun dépassement facturable** : GitHub → *Settings* → *Billing and licensing* → *Payment
-   information* : aucun moyen de paiement. S'il y en a un : *Budgets and alerts* → budget **0 $** pour
-   Actions avec **« Stop usage when budget limit is reached »** coché.
-2. **Créer un dépôt privé** (ex. `tesprix-collecte`), *Private*, avec un README (branche `main`).
-3. Y ajouter le fichier **`.github/workflows/quotidien.yml`** = copie exacte de
-   [`quotidien.yml`](quotidien.yml), sur `main` (la planification ne lit que la branche par défaut).
-   Variante : ajouter ce dépôt à une session Claude avec accès en écriture, qui le poussera.
-4. **Premier lancement manuel** : onglet *Actions* → « TesPrix — collecte quotidienne (privé) » →
-   *Run workflow*. Contrôler le résumé (statut par source, durées) et le commit « Collecte du … ».
-5. Les jours suivants : vérifier les exécutions planifiées (06:17, rattrapages 09:47 et 14:17, heure
-   de Zurich) et les commits quotidiens. Après **7 jours** d'exécutions automatiques réussies,
-   désactiver la tâche Windows (`Disable-ScheduledTask -TaskName "TesPrix - collecte quotidienne"`),
-   pour ne pas collecter deux fois.
+Option : variable de dépôt `TESPRIX_CODE_REF` pour lire une autre branche du code (ex. `main` après
+fusion). Aucun secret n'est requis. Si la clé `timezone` était refusée (fichier signalé invalide), la
+remplacer par deux créneaux UTC (`17 4 * * *` et `17 5 * * *`) : une seule collecte a lieu par jour.
 
-Option : variable de dépôt `TESPRIX_CODE_REF` (*Settings* → *Secrets and variables* → *Actions* →
-*Variables*) pour lire une autre branche du code (ex. `main` après fusion). Aucun secret n'est requis.
+## 4. Suivi sur 7 jours
 
-Si la clé `timezone` était refusée par GitHub, la remplacer par deux créneaux UTC (`17 4 * * *` et
-`17 5 * * *`) : une seule collecte a lieu par jour de Zurich, le second créneau ne fait rien.
+`etat/suivi/SUIVI.md` (régénéré à chaque exécution, un fichier par exécution dans `etat/suivi/executions/`)
+indique pour chaque jour : chaque déclenchement (heure de Zurich, système, type : `schedule` = planifié
+par GitHub, `workflow_dispatch` = manuel, `push` = installation, `windows-tache` = tâche Windows), son
+issue (collecte, rien à faire, concurrence évitée, échec), et pour chaque source le **statut final**, la
+**date des données conservées** (une source en échec garde des données plus anciennes : leur date le
+montre) et l'**erreur**. En tête : « Jours consécutifs où GitHub a collecté automatiquement, toutes
+sources lues : n/7 ». Ne comptent que les jours où un déclenchement `schedule` de GitHub a fait la
+collecte et où chaque source a fini en succès ou partiel ; un jour manquant remet le compteur à zéro.
 
-## 4. Fonctionnement
+## 5. Fichiers
 
-- `cycle.sh <dossier-etat>` : reprend l'état (sources publiables : seulement si plus récent que celui
-  du code, `live-restore`), lance `pnpm quotidien`, réécrit l'état. Code de sortie de `quotidien`
-  conservé ; l'état est enregistré même après un échec partiel.
-- **Une collecte par jour de Zurich** ; relancé le même jour, seules les sources en échec technique sont
-  reprises ; une source bloquée (403) ne l'est pas. Un rattrapage collecte ce qui est publié au moment
-  du lancement : il **ne reconstitue jamais les prix des jours manqués**.
-- **Doublons** : un seul cycle à la fois (`concurrency`) ; même identifiant de prix → remplacé, jamais
-  ajouté deux fois ; verrou `quotidien.lock` jamais enregistré.
-- **Échecs partiels** : une source en échec garde ses données précédentes avec leur date d'origine
-  (elles vieillissent : « indicatif » après 7 jours, écartées après 30).
-- Archives brutes : dossier temporaire de l'exécuteur, effacé à la fin. Cache HTTP (textes du journal
-  Coop) : cache Actions du dépôt privé, fichiers de plus de 10 jours purgés.
+| Fichier | Rôle |
+|---|---|
+| `quotidien.yml` | workflow à copier dans le dépôt privé |
+| `github.sh` | étapes du workflow : `debut` (besoin, verrou), `collecte`, `fin` (suivi, enregistrement, verdict) |
+| `etat.mjs` | état partagé : besoin, verrou, restaurer, enregistrer, noter, tableau (Node.js seul) |
+| `cycle.sh` | cycle sans dépôt (essai du dépôt public, sources publiables seulement) |
