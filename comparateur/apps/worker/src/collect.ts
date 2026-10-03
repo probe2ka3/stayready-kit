@@ -225,7 +225,13 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[], o
 
       // Instantané : en cas d'échec, l'instantané précédent est conservé tel quel (statut mis à jour).
       const meta = snapshotMeta(connector);
-      const merged = batch ? mergeLiveBatch(prevSnap?.batch ?? null, batch, ctx.now) : (prevSnap?.batch ?? { retailerProducts: [], prices: [], promotions: [] });
+      // Lecture complète réussie : remplacement (aucun ancien relevé n'échappe aux règles actuelles).
+      const replace = Boolean(batch && connector.completeRead && runStatus === 'success');
+      const merged = batch
+        ? replace
+          ? { retailerProducts: batch.retailerProducts, prices: batch.prices, promotions: batch.promotions }
+          : mergeLiveBatch(prevSnap?.batch ?? null, batch, ctx.now)
+        : (prevSnap?.batch ?? { retailerProducts: [], prices: [], promotions: [] });
       const snap: LiveSnapshot = {
         connectorId: connector.id,
         label: connector.label,

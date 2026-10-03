@@ -279,15 +279,15 @@ Panier de 17 aliments, 1630 Bulle, rayon 5 km, 13 succursales des 5 enseignes :
 | Vue | Solution | Achats | Total avec trajet | Manquant |
 |---|---|---|---|---|
 | Pilote privé (`data/private/demo/`) | Lidl seul (référence), 17/17 | 41,85 | 42,45 | — |
-| | Denner + Lidl, 17/17 : **2,10 CHF** moins cher à l'achat, 1,80 après trajet, **non retenue** (sous le seuil de 2 CHF par magasin supplémentaire) | 39,75 | 40,65 | — |
-| | Denner seul | 34,89 | — | 6 articles sur 17 (sucre, riz long grain, spaghetti, beurre de cuisine, œufs d'élevage au sol, tomates concassées) : **non comparable** |
-| | Aldi seul | 19,79 | — | 10 articles sur 17 : **non comparable** |
+| | Denner + Lidl, 17/17 : un peu moins cher à l'achat, gain net **non retenu** (sous le seuil de 2 CHF par magasin supplémentaire) | non publié | non publié | — |
+| | Denner seul | non publié | — | 6 articles sur 17 (sucre, riz long grain, spaghetti, beurre de cuisine, œufs d'élevage au sol, tomates concassées) : **non comparable** |
+| | Aldi seul | non publié | — | 10 articles sur 17 : **non comparable** |
 | Publique (`data/demo/panier-noyau-public.md`) | Lidl seul, 17/17 | 41,85 | 42,45 | Migros, Coop : « aucune donnée gratuite » ; Aldi, Denner : « non affiché (source sans autorisation de réutilisation) » |
 
-Exemples de lignes (pilote privé, 01.10.2026) : carottes 1 kg Denner 1,55 (action du 01.10 au 07.10)
-contre 2,89 chez Lidl (1,5 kg) ; pommes de terre fermes 2,5 kg Denner 2,99 (action, fin non publiée)
-contre 3,75 chez Lidl ; lait entier UHT 1 l : 1,55 chez Denner comme chez Lidl ; Migros et Coop : aucune
-donnée pour les 17 lignes.
+Montants de Denner et d'Aldi : non publiés (sources à usage privé ; ils restent dans le fichier hors
+dépôt `data/private/demo/`). Exemples de constats (pilote privé, 01.10.2026) : les carottes et les pommes
+de terre fermes étaient moins chères chez Denner grâce à des actions de la semaine ; le lait entier UHT
+coûtait le même prix chez Denner et chez Lidl ; Migros et Coop : aucune donnée pour les 17 lignes.
 
 ## 7. Blocages restant à résoudre
 

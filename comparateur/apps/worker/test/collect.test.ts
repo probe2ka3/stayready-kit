@@ -109,4 +109,18 @@ describe('collecte : dégradation progressive', () => {
     // Le prix de la veille reste disponible (il vieillira et sera signalé comme tel), une seule fois.
     expect(snap.batch.prices.map((p) => p.id)).toEqual(['saine:1:2026-09-28']);
   });
+
+  it('source relue en entier : un relevé que les règles n’acceptent plus disparaît à la collecte suivante', async () => {
+    const complet = (run: () => Promise<ConnectorBatch>) => ({ ...connector('complete', run), completeRead: true });
+    await jobCollect(ctx, [complet(async () => batch('complete'))]);
+    // Le lendemain, la même source ne produit plus ce relevé (ex. attribution de lieu retirée).
+    await jobCollect({ ...ctx, now: new Date('2026-09-29T08:00:00Z') }, [complet(async () => ({ ...batch('complete'), retailerProducts: [], prices: [] }))]);
+    const snap = JSON.parse(await readFile(join(dir, 'private', 'live', 'complete.json'), 'utf8')) as LiveSnapshot;
+    expect(snap.batch.prices).toEqual([]);
+    // Une source fusionnée garderait ce prix de moins de 90 jours.
+    await jobCollect(ctx, [connector('fusion', async () => batch('fusion'))]);
+    await jobCollect({ ...ctx, now: new Date('2026-09-29T08:00:00Z') }, [connector('fusion', async () => ({ ...batch('fusion'), retailerProducts: [], prices: [] }))]);
+    const fusion = JSON.parse(await readFile(join(dir, 'private', 'live', 'fusion.json'), 'utf8')) as LiveSnapshot;
+    expect(fusion.batch.prices).toHaveLength(1);
+  });
 });

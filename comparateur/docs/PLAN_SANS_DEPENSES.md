@@ -173,7 +173,7 @@ pnpm job demo-baskets --now=2026-09-30T19:00:00Z --baskets=panier-noyau.json --n
 | Vue | Résultat | Données manquantes |
 |---|---|---|
 | Publique (`data/demo/panier-noyau-public.md`) | Lidl seul : **41,85 CHF** d'achats (17/17), trajet estimé 1,7 km, 0,60 CHF, total 42,45 ; aucune comparaison possible | Migros, Coop, Denner : « aucune donnée gratuite » pour les 17 articles ; Aldi : « non affiché (source sans autorisation de réutilisation) » |
-| Privée (`data/demo/panier-noyau-prive.md`) | Lidl 41,85 (17/17) ; Aldi 7/17 (20,31, **incomplet, non comparable**) ; aucune combinaison moins chère | Aldi : fruits, légumes, pommes de terre, farine, sucre, lait, œufs, yogourt absents de sa source ; Migros, Coop, Denner : aucune donnée |
+| Privée (`data/demo/panier-noyau-prive.md`) | Lidl 41,85 (17/17) ; Aldi 7/17 (montant non publié, **incomplet, non comparable**) ; aucune combinaison moins chère | Aldi : fruits, légumes, pommes de terre, farine, sucre, lait, œufs, yogourt absents de sa source ; Migros, Coop, Denner : aucune donnée |
 
 Ligne à ligne, chaque case donne l'article retenu, le nombre de paquets, le montant, la date du
 relevé et l'action éventuelle (ex. pommes 1,99 CHF, action annoncée du 01.10 au 07.10 ; pommes de terre

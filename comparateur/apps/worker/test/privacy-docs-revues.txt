@@ -1,0 +1,17 @@
+# Lignes de documentation revues : elles nomment Aldi, Denner ou le journal Coop à côté d’un montant qui
+# n’est PAS un prix de ces sources (prix Lidl publics, coût de trajet, tarif d’un service). Revue du 03.10.2026.
+# Format : <fichier> :: <ligne exacte>. Toute nouvelle ligne de ce type fait échouer privacy.test.ts.
+docs/COLLECTE_QUOTIDIENNE.md :: | Publique (`data/demo/panier-noyau-public.md`) | Lidl seul, 17/17 | 41,85 | 42,45 | Migros, Coop : « aucune donnée gratuite » ; Aldi, Denner : « non affiché (source sans autorisation de réutilisation) » |
+docs/PLAN_SANS_DEPENSES.md :: | Publique (`data/demo/panier-noyau-public.md`) | Lidl seul : **41,85 CHF** d'achats (17/17), trajet estimé 1,7 km, 0,60 CHF, total 42,45 ; aucune comparaison possible | Migros, Coop, Denner : « aucune donnée gratuite » pour les 17 articles ; Aldi : « non affiché (source sans autorisation de réutilisation) » |
+docs/PLAN_SANS_DEPENSES.md :: | Privée (`data/demo/panier-noyau-prive.md`) | Lidl 41,85 (17/17) ; Aldi 7/17 (montant non publié, **incomplet, non comparable**) ; aucune combinaison moins chère | Aldi : fruits, légumes, pommes de terre, farine, sucre, lait, œufs, yogourt absents de sa source ; Migros, Coop, Denner : aucune donnée |
+docs/PLAN_SANS_DEPENSES.md :: 2,5 kg 3,75 CHF). Pour des prix Migros, Coop ou Denner à Bulle, il faut un relevé (`docs/RELEVES.md`).
+docs/RAPPORT_PHASE4.md :: - Le panier de Lausanne est confirmé : **Lidl 40.92** ; la combinaison avec Aldi était moins chère après
+docs/RAPPORT_PHASE4.md :: | **Combinaison** Aldi (Rue St-Martin) → Lidl (0,4 km chacun) | 14/14 | non publié | 1,1 km · 11 min | 0.39 | non publié | positive | **positive** |
+docs/RAPPORT_PHASE4.md :: | Aldi seul | 13/14 | non publié | 0,9 km · 7 min | 0.33 | incomplet (non comparable) | — | — |
+docs/RAPPORT_PHASE4.md :: - pain toast 500 g → **2 × 335 g chez Lidl (3.98)**, contre 1 × 500 g chez Aldi (prix non publié) ;
+docs/RAPPORT_PHASE4.md :: - poulet 500 g → **2 × 300 g chez Lidl (13.50)**, contre 1 × 600 g chez Aldi (action, prix non publié).
+docs/RAPPORT_PHASE4.md :: | Aldi seul (Champ-Francey) | 8/12 | non publié | 3,7 km · 12 min | 1.30 | incomplet |
+docs/RAPPORT_PHASE4.md :: | Combinaison Lidl (Rue de Lausanne) → Aldi (Promenade de l'Europe) | 9/10 | non publié | 4,9 km · 17 min | 1.71 | incomplet |
+docs/RAPPORT_PHASE4.md :: | Aldi seul | 6/10 | non publié | 3,6 km · 12 min | 1.27 | incomplet |
+docs/audit/03-sources-prix.md :: | **Pepesto** | API payante (JSON) des catalogues migros.ch, coop.ch, aldi-suisse.ch… mise à jour quotidienne ; 9,60 € par requête « catalogue complet », 3,20 € « promotions », 0,96 € « produits choisis » (tarifs publics au 28.09.2026) | Données collectées sur les sites des enseignes : la licence de Pepesto **ne confère pas de droits de la part des enseignes**, dont les conditions l'interdisent (Migros). Prix en ligne, pas en magasin. | **Non retenu.** Aucun achat sans votre accord ; ne réglerait pas la question juridique. |
+docs/RAPPORT_PHASE4.md :: **Vue publique sans autorisation d'Aldi :** Lidl seul, 40.92. Aucune combinaison possible.

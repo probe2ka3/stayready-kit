@@ -97,9 +97,10 @@ Une référence n'est comptée couverte que si une correspondance **revue** resp
 origine suisse, AOP, marque, dimension) et dispose d'un prix utilisable. Aldi est limité par 415 articles
 sans contenance publiée dans la liste (spaghetti, farine, sel…) : ils sont écartés plutôt que devinés.
 
-Exemple réel (Lausanne, 14 articles, courses planifiées le 01.10.2026) : Lidl seul CHF 40.92, Aldi seul
-CHF 42.99, **combinaison Aldi + Lidl CHF 34.63** (économie de CHF 6.29 sur le meilleur magasin unique),
-toutes les lignes couvertes ; prix affichés « indicatifs » car la date est future.
+Exemple réel (Lausanne, 14 articles, courses planifiées le 01.10.2026) : Lidl seul CHF 40.92 ; la
+**combinaison Aldi + Lidl** était moins chère que le meilleur magasin unique (montants issus d'Aldi, source
+à usage privé : non publiés depuis le 03.10.2026), toutes les lignes couvertes ; prix affichés
+« indicatifs » car la date est future.
 
 **Pour atteindre 4 ou 5 enseignes**, il faut Migros, Coop et Denner. Les trois voies conformes sont
 documentées (`DATA_SURFACES.md` §9) : accord écrit, licence FoodAlly (repli signalé, implémenté et

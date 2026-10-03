@@ -11,6 +11,7 @@ on:
   push:
     paths:
       - 'comparateur/ops/actions-prive/cycle.sh'
+      - 'comparateur/ops/actions-prive/etat.mjs'
 
 permissions:
   contents: read
@@ -27,43 +28,26 @@ jobs:
       run:
         working-directory: comparateur
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: comparateur/package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: pnpm install --frozen-lockfile
       - name: Cycle quotidien (Lidl + Open Prices ; jamais Aldi, Denner ni le journal Coop)
-        run: bash ops/actions-prive/cycle.sh "$RUNNER_TEMP/etat" --sources=lidl-web,open-prices
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > "$RUNNER_TEMP/debut"
+          bash ops/actions-prive/cycle.sh "$RUNNER_TEMP/etat" --sources=lidl-web,open-prices
       - name: 'Contrôle : aucune donnée de source privée sur ce serveur'
         run: |
           if [ -n "$(ls data/private/live 2>/dev/null)" ] || ls "$RUNNER_TEMP/etat/private/live" 2>/dev/null | grep -q .; then
             echo 'Instantané privé présent : interdit dans un dépôt public' && exit 1
           fi
-      - name: Résumé (durées et volumes, sans prix)
+      - name: Suivi par source (même module que le dépôt privé ; une source en échec rend l'essai rouge)
         if: always()
         run: |
-          python3 - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
-          import json, os
-          try:
-              run = json.load(open(os.path.join(os.environ['RUNNER_TEMP'], 'etat/private/runs/latest.json')))
-          except (OSError, ValueError):
-              print('Aucun journal d’exécution.'); raise SystemExit
-          print(f"Cycle du {run.get('date')} : {run.get('startedAt')} → {run.get('finishedAt')}\n")
-          print('| Source | Statut | Prix | Actions | Requêtes | Durée (s) | Message |\n|---|---|---|---|---|---|---|')
-          for s in run.get('sources', []):
-              print(f"| {s.get('connector')} | {s.get('status')} | {s.get('prices')} | {s.get('promotions')} | {s.get('requests', '')} | {round((s.get('durationMs') or 0) / 1000)} | {s.get('message') or ''} |")
-          print('\n| Étape | OK | Durée (s) |\n|---|---|---|')
-          for st in run.get('steps', []):
-              print(f"| {st.get('step')} | {'oui' if st.get('ok') else 'NON'} | {round((st.get('durationMs') or 0) / 1000)} |")
-          EOF
-          python3 - <<'EOF'
-          import json, os
-          run = json.load(open(os.path.join(os.environ['RUNNER_TEMP'], 'etat/private/runs/latest.json')))
-          for s in run.get('sources', []):
-              print(s.get('connector'), s.get('status'), s.get('prices'), s.get('promotions'), round((s.get('durationMs') or 0) / 1000), 's', s.get('message') or '')
-          for st in run.get('steps', []):
-              print(st.get('step'), st.get('ok'), round((st.get('durationMs') or 0) / 1000), 's')
-          EOF
+          node ops/actions-prive/etat.mjs noter "$RUNNER_TEMP/etat" --systeme github --declencheur essai \
+            --debut "$(cat "$RUNNER_TEMP/debut")" --execution "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          sed -n '/^| Jour/,$p' "$RUNNER_TEMP/etat/suivi/SUIVI.md"

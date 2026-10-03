@@ -3702,7 +3702,7 @@
    "canonicalSlug": "cafe-moulu-500g",
    "reviewer": "équipe données TesPrix (revue manuelle)",
    "reviewedAt": "2026-10-03",
-   "note": "Boncampo Classico moulu 500 g, marque propre Migros (relevé communautaire, Migros Métropole Centre, La Chaux-de-Fonds)"
+   "note": "Boncampo Classico moulu 500 g, marque propre Migros (relevé communautaire du 04.08.2026, lieu « Métropole Centre », La Chaux-de-Fonds). Correspondance du produit seulement : l'attribution du lieu à Migros est incertaine (data/matching/op-locations.json), le relevé n'est pas utilisé."
   },
   {
    "retailerProductId": "migros:gtin-7613269182023",

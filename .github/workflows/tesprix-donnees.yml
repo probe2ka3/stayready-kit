@@ -44,11 +44,11 @@ jobs:
     env:
       COLLECTE: ${{ github.event_name != 'push' && vars.TESPRIX_COLLECTE_ACTIONS == 'oui' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           package_json_file: comparateur/package.json
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -56,7 +56,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Instantanés de la collecte précédente (cache Actions)
         if: env.COLLECTE == 'true'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: comparateur/.cache-live
           key: tesprix-live-${{ github.run_id }}
@@ -72,7 +72,7 @@ jobs:
         if: env.COLLECTE == 'true' && always()
         run: mkdir -p .cache-live && cp data/prices/live/*.json .cache-live/
       - if: env.COLLECTE == 'true' && always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: comparateur/.cache-live
           key: tesprix-live-${{ github.run_id }}
@@ -88,7 +88,7 @@ jobs:
           cp data/public/index.html ../_site/index.html
           if grep -qE 'aldi-api|denner-web|coop-epaper' ../_site/index.html; then echo 'Donnée non publiable dans la page publique' && exit 1; fi
           if [ -n "$(ls data/private/live 2>/dev/null)" ]; then echo 'Instantané privé présent sur le serveur : interdit' && exit 1; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: tesprix-page-publique
           path: |
@@ -96,7 +96,7 @@ jobs:
             comparateur/data/matrice/essentiels.md
           retention-days: 7
       - if: github.ref == 'refs/heads/main' && vars.TESPRIX_PAGES == 'oui'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -113,4 +113,4 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

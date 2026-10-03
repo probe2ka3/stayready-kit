@@ -84,6 +84,12 @@ export interface PriceConnector {
   readonly chainIds: string[];
   /** Type de source fournie lorsque le connecteur est prêt. */
   readonly sourceKind: SourceKind;
+  /**
+   * La collecte relit toute la source (fenêtre complète) : après une collecte réussie, l'instantané
+   * est remplacé au lieu d'être fusionné avec le précédent. Une décision retirée (correspondance,
+   * attribution de lieu) disparaît ainsi dès la collecte suivante.
+   */
+  readonly completeRead?: boolean;
   status(ctx: Pick<ConnectorContext, 'importDir' | 'env'>): Promise<ConnectorStatus>;
   run(ctx: ConnectorContext): Promise<ConnectorBatch>;
 }

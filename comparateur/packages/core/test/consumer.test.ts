@@ -446,6 +446,27 @@ describe('droits de réutilisation des sources', () => {
     expect(recordProvenance('releves', ['releves'], [])).toBe('releves');
   });
 
+  it('relevé communautaire : utilisé, daté et local jusqu’à 90 jours, retiré automatiquement au-delà', () => {
+    const c = canonical('cafe', 500);
+    const op = { connectorId: 'open-prices', kind: 'open_data' as const };
+    const idx = buildOfferIndex({
+      products: [product('migros:gtin-1', 'migros', 500, 'g', { connectorId: 'open-prices' })],
+      matches: [match('cafe', 'migros:gtin-1')],
+      prices: [price('migros:gtin-1', 350, '2026-08-04T10:00:00Z', { source: op, reliability: 'crowd', zoneId: 'migros-nf' })],
+      promotions: [],
+    });
+    const zone = { key: 'migros|migros-nf|*', chainId: 'migros', zoneId: 'migros-nf', storeId: null };
+    const at = (iso: string) => ctx({ asOf: new Date(iso), today: iso.slice(0, 10), targetDate: iso.slice(0, 10) });
+    const before = resolveLine(line('cafe'), c, zone, idx, at('2026-11-01T10:00:00Z'));
+    expect(before.option).toMatchObject({ status: 'indicative', observedAt: '2026-08-04T10:00:00Z' });
+    expect(before.option?.statusReasons).toContain('zone_price');
+    // Ailleurs que dans la zone du relevé : jamais utilisé.
+    expect(resolveLine(line('cafe'), c, { ...zone, key: 'migros|migros-zh|*', zoneId: 'migros-zh' }, idx, at('2026-10-03T10:00:00Z')).option).toBeFalsy();
+    const after = resolveLine(line('cafe'), c, zone, idx, at('2026-11-03T10:00:00Z'));
+    expect(after.option).toBeFalsy();
+    expect(after.unavailable?.reason).toBe('stale_price_excluded');
+  });
+
   it('exclusion : un prix réétiqueté ou rattaché à un article d’une source exclue est retiré', () => {
     const aldiUrl = 'https://www.aldi-suisse.ch/fr/produit/pates-1';
     const opUrl = 'https://prices.openfoodfacts.org/prices/7';

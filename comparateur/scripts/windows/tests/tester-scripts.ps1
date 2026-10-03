@@ -68,7 +68,8 @@ try {
   Verifie 'rattrapage après démarrage manqué' ($r.Settings.StartWhenAvailable)
   Verifie 'réseau requis, une seule instance' ($r.Settings.RunOnlyIfNetworkAvailable -and "$($r.Settings.MultipleInstances)" -eq 'IgnoreNew')
   Verifie '3 nouveaux essais, 30 min' ($r.Settings.RestartCount -eq 3 -and $r.Settings.RestartInterval.TotalMinutes -eq 30)
-  Verifie 'script lancé avec -HeurePrevue 06:00' ($r.Action.Arguments -like '*tesprix-quotidien.ps1*-HeurePrevue 06:00')
+  Verifie 'script lancé avec -HeurePrevue 06:00 -Planifie' ($r.Action.Arguments -like '*tesprix-quotidien.ps1*-HeurePrevue 06:00 -Planifie*')
+  Verifie 'sans journal partagé par défaut' ($r.Action.Arguments -notlike '*-DepotEtat*')
   Verifie 'session interactive, droits limités' ($r.Principal.LogonType -eq 'Interactive' -and $r.Principal.RunLevel -eq 'Limited')
 
   Write-Host 'Vérification juste après installation (jamais exécutée)'
@@ -122,6 +123,78 @@ try {
   Verifie 'commande « job quotidien » lancée' ($journal -match 'pnpm -s -C apps.worker job quotidien')
   Verifie 'rattrapage noté dans le journal' ($journal -match 'rattrapage')
   Verifie 'fin de collecte journalisée' ($journal -match 'Fin de la collecte : code 0')
+
+  Write-Host 'Journal partagé avec GitHub Actions (dépôt privé simulé par un dépôt Git local)'
+  $gitCmd = Microsoft.PowerShell.Core\Get-Command git -ErrorAction SilentlyContinue
+  $nodeCmd = Microsoft.PowerShell.Core\Get-Command node -ErrorAction SilentlyContinue
+  if ($gitCmd -and $nodeCmd) {
+    $outils = [System.IO.Path]::Combine($racine, 'ops', 'actions-prive')
+    New-Item -ItemType Directory -Force -Path $outils | Out-Null
+    Copy-Item -Path ([System.IO.Path]::Combine($scripts, '..', '..', 'ops', 'actions-prive', 'etat.mjs')) -Destination $outils
+    $etatJs = [System.IO.Path]::Combine($outils, 'etat.mjs')
+    $nu = [System.IO.Path]::Combine($racine, 'depot.git')
+    $clone = [System.IO.Path]::Combine($racine, 'tesprix-collecte')
+    $autre = [System.IO.Path]::Combine($racine, 'autre')
+    $id = @('-c', 'user.name=test', '-c', 'user.email=test@example.org')
+    & git init -q --bare -b main $nu
+    & git clone -q $nu $clone 2>$null
+    'dépôt privé simulé' | Set-Content -Path ([System.IO.Path]::Combine($clone, 'README.md'))
+    & git -C $clone add README.md; & git -C $clone @id commit -q -m init; & git -C $clone push -q origin main 2>$null
+    $appelsPnpm = [System.IO.Path]::Combine($racine, 'appels-pnpm.txt')
+    $fauxPartage = [System.IO.Path]::Combine($racine, 'faux-pnpm-partage.ps1')
+    @'
+param([Parameter(ValueFromRemainingArguments = $true)]$a)
+$runs = [System.IO.Path]::Combine((Get-Location).Path, 'data', 'private', 'runs')
+New-Item -ItemType Directory -Force -Path $runs | Out-Null
+$z = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'Europe/Zurich')
+$statut = if ($env:FAUX_STATUT) { $env:FAUX_STATUT } else { 'success' }
+$maintenant = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+@{ date = $z.ToString('yyyy-MM-dd'); startedAt = $maintenant; finishedAt = $maintenant; sources = @(@{ connector = 'open-prices'; status = $statut; prices = 1; promotions = 0; message = $null }) } |
+  ConvertTo-Json -Depth 4 | Set-Content -Path ([System.IO.Path]::Combine($runs, 'latest.json')) -Encoding utf8
+Add-Content -Path ([System.IO.Path]::Combine((Get-Location).Path, 'appels-pnpm.txt')) -Value ($a -join ' ')
+exit 0
+'@ | Set-Content -Path $fauxPartage -Encoding utf8
+    function global:Get-Command { param($Name, $ErrorAction) if ($Name -eq 'pnpm') { [pscustomobject]@{ Source = $fauxPartage } } else { Microsoft.PowerShell.Core\Get-Command $Name -ErrorAction SilentlyContinue } }
+    $quotidien = [System.IO.Path]::Combine($copie, 'tesprix-quotidien.ps1')
+    $sujets = { & git -C $nu log --format=%s main }
+    $fichiers = { & git -C $nu ls-tree -r --name-only main }
+    $executions = { @(& $fichiers | Where-Object { $_ -like 'etat/suivi/executions/*' }) }
+
+    & $quotidien -DepotEtat $clone -Planifie *> $null
+    $code = $LASTEXITCODE
+    Verifie 'première exécution : collecte faite, code 0' ($code -eq 0 -and (Test-Path $appelsPnpm))
+    Verifie 'verrou pris puis libéré dans le dépôt partagé' ((& $sujets) -contains 'Verrou de collecte (Windows)' -and (& $fichiers) -notcontains 'etat/verrou.json')
+    Verifie 'état et suivi enregistrés (journal des exécutions, SUIVI.md)' ((& $fichiers) -contains 'etat/private/runs/latest.json' -and (& $fichiers) -contains 'etat/suivi/SUIVI.md' -and (& $executions).Count -eq 1)
+
+    Remove-Item $appelsPnpm
+    & $quotidien -DepotEtat $clone -Planifie *> $null
+    Verifie 'même jour : rien à faire, aucune collecte, code 0' ($LASTEXITCODE -eq 0 -and -not (Test-Path $appelsPnpm) -and (& $executions).Count -eq 2)
+
+    & git clone -q $nu $autre 2>$null
+    & node $etatJs verrou ([System.IO.Path]::Combine($autre, 'etat')) --systeme github
+    & git -C $autre add etat/verrou.json; & git -C $autre @id commit -q -m 'Verrou (GitHub)'; & git -C $autre push -q 2>$null
+    & $quotidien -DepotEtat $clone -Planifie -Force *> $null
+    Verifie 'collecte en cours sur GitHub : rien, même avec -Force' ($LASTEXITCODE -eq 0 -and -not (Test-Path $appelsPnpm))
+    $derniere = (& $executions | Sort-Object | Select-Object -Last 1)
+    Verifie 'concurrence notée dans le suivi' (((& git -C $nu show "main:$derniere") | Out-String) -match '"issue": "concurrence"')
+
+    & git -C $autre pull -q 2>$null; & node $etatJs liberer ([System.IO.Path]::Combine($autre, 'etat'))
+    & git -C $autre add -A etat; & git -C $autre @id commit -q -m 'Verrou libéré'; & git -C $autre push -q 2>$null
+    $env:FAUX_STATUT = 'failed'
+    & $quotidien -DepotEtat $clone -Planifie -Force *> $null
+    $code = $LASTEXITCODE
+    Remove-Item env:FAUX_STATUT
+    Verifie 'source en échec : code 1 (nouvel essai du Planificateur), échec noté' ($code -eq 1 -and (& git -C $nu show 'main:etat/suivi/SUIVI.md' | Out-String) -match 'ÉCHEC')
+    Remove-Item function:global:Get-Command
+
+    Write-Host 'Installation avec journal partagé'
+    & ([System.IO.Path]::Combine($copie, 'installer-tache.ps1')) -DepotEtat $clone | Out-Null
+    $r = $global:Appels['Register']
+    Verifie 'déclencheur à 07:30 (après le créneau GitHub de 06:17)' ($r.Trigger[0].StartBoundary -like '*T07:30:00')
+    Verifie 'script lancé avec -DepotEtat' ($r.Action.Arguments -like "*-Planifie -DepotEtat*tesprix-collecte*")
+  } else {
+    Write-Host '  (git ou node absent : contrôles du journal partagé non exécutés)'
+  }
 
   Write-Host 'Désinstallation'
   & ([System.IO.Path]::Combine($copie, 'installer-tache.ps1')) -Desinstaller | Out-Null

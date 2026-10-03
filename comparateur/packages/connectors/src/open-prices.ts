@@ -108,6 +108,12 @@ export function chainForLocation(loc: OpLocation): string | null {
  */
 export interface OpLocationReview {
   locationId: number;
+  /**
+   * « etablie » : le lieu d'achat est démontré (enseigne lisible sur le justificatif, ou lieu sans
+   * autre enseigne possible). « incertaine » : indices seulement (proximité, marque propre) ; la
+   * décision et ses preuves sont conservées, mais aucun relevé n'est attribué.
+   */
+  statut: 'etablie' | 'incertaine';
   chainId: string;
   /** Succursale OpenStreetMap de l'enseigne dans ce lieu (`osm:<type>/<id>`) : nom, ville et zone tarifaire. */
   storeId: string;
@@ -126,6 +132,7 @@ function chainForPrice(loc: OpLocation, p: OpPrice, reviews: Map<number, OpLocat
   if (direct) return { chainId: direct };
   const review = reviews.get(loc.id);
   if (!review) return { skip: 'lieu hors périmètre' };
+  if (review.statut !== 'etablie') return { skip: 'lieu sans enseigne : attribution incertaine' };
   const own = new Set(review.ownBrands.map(brandKey));
   const brands = (p.product?.brands ?? '').split(',').map(brandKey).filter(Boolean);
   if (!brands.some((b) => own.has(b))) return { skip: 'lieu partagé : article sans marque propre de l’enseigne' };
@@ -401,6 +408,8 @@ export class OpenPricesConnector implements PriceConnector {
   readonly label = 'Open Prices — relevés communautaires (ODbL)';
   readonly chainIds = ['migros', 'coop', 'denner', 'aldi', 'lidl', 'ottos', 'aligro', 'action'];
   readonly sourceKind = 'open_data' as const;
+  /** Toute la fenêtre (`OPEN_PRICES_MAX_AGE_DAYS`) est relue à chaque collecte. */
+  readonly completeRead = true;
 
   constructor(
     private readonly stores: Store[] = [],
@@ -430,7 +439,7 @@ export class OpenPricesConnector implements PriceConnector {
       locations.push(...d.items);
       if (page >= (d.pages ?? 1)) break;
     }
-    const reviewed = new Set(this.locationReviews.map((r) => r.locationId));
+    const reviewed = new Set(this.locationReviews.filter((r) => r.statut === 'etablie').map((r) => r.locationId));
     const inScope = locations.filter((l) => chainForLocation(l) || reviewed.has(l.id));
     const since = new Date(ctx.now.getTime() - maxAgeDays * 86_400_000).toISOString().slice(0, 10);
     const prices: OpPrice[] = [];

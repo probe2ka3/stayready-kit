@@ -13,9 +13,9 @@ avec `--exclude=aldi-api` pour la vue publique (→ `data/demo/resultats-sans-al
   de prix de chaque enseigne) → panier → comparaison **Lidl seul / Aldi seul / combinaison**, montant
   payé par paquets, trajet aller-retour estimé et **annoncé comme estimé**, économie après
   déplacement, courses à une date future.
-- Le panier de Lausanne est confirmé : **Lidl 40.92, combinaison 34.63, gain net 6.29 CHF** après
-  détour. Ce gain repose sur deux articles, dont une action Aldi du 01 au 07.10 dont la fin n'est pas
-  publiée.
+- Le panier de Lausanne est confirmé : **Lidl 40.92** ; la combinaison avec Aldi était moins chère après
+  détour (montants issus d'Aldi, source à usage privé : non publiés depuis le 03.10.2026). Ce gain
+  reposait sur deux articles, dont une action Aldi du 01 au 07.10 dont la fin n'était pas publiée.
 - La validation a révélé des erreurs réelles, toutes corrigées et couvertes par des tests :
   - 12 actions Lidl conditionnelles lues comme de simples prix réduits ;
   - une eau de marque (Vittel, 1.15 CHF) seule rapprochée alors que la marque propre existait
@@ -69,40 +69,34 @@ Hypothèses communes aux trois paniers :
 
 | Solution | Articles | Achats | Trajet | Coût trajet | Total | Économie achats | Économie nette |
 |---|---|---|---|---|---|---|---|
-| **Combinaison** Aldi (Rue St-Martin) → Lidl (0,4 km chacun) | 14/14 | 34.24 | 1,1 km · 11 min | 0.39 | **34.63** | 6.30 | **6.29** |
+| **Combinaison** Aldi (Rue St-Martin) → Lidl (0,4 km chacun) | 14/14 | non publié | 1,1 km · 11 min | 0.39 | non publié | positive | **positive** |
 | Lidl seul (référence) | 14/14 | 40.54 | 1,1 km · 8 min | 0.38 | **40.92** | — | — |
-| Aldi seul | 13/14 | 39.08 | 0,9 km · 7 min | 0.33 | incomplet (non comparable) | — | — |
+| Aldi seul | 13/14 | non publié | 0,9 km · 7 min | 0.33 | incomplet (non comparable) | — | — |
 
 **Vérification des quantités.** Chaque ligne est payée par paquets entiers :
 
 - 2 × spaghetti 500 g → 1 paquet de 1 kg (1.19) ;
 - 2 × mozzarella 150 g → 3 × 125 g (acheté 375 g) ;
 - 4 × yogourt 180 g → 2 pots de 500 g ;
-- pain toast 500 g → **2 × 335 g chez Lidl (3.98)**, contre 1 × 500 g chez Aldi (1.19) ;
-- poulet 500 g → **2 × 300 g chez Lidl (13.50)**, contre 1 × 600 g chez Aldi (9.99, action).
+- pain toast 500 g → **2 × 335 g chez Lidl (3.98)**, contre 1 × 500 g chez Aldi (prix non publié) ;
+- poulet 500 g → **2 × 300 g chez Lidl (13.50)**, contre 1 × 600 g chez Aldi (action, prix non publié).
 
-**Le gain de 6.29 subsiste-t-il après le détour ?** Oui : les deux magasins sont à 100 m l'un de
-l'autre, et le détour coûte 0.01 CHF et 3 minutes.
+**Le gain subsiste-t-il après le détour ?** Oui : les deux magasins sont à 100 m l'un de l'autre, et
+le détour coûte 0.01 CHF et 3 minutes ; il reste positif à 0.70 CHF/km, avec un temps de trajet valorisé
+à 25 CHF/h et à pied (montants non publiés : ils dérivent des prix d'Aldi, source à usage privé).
 
-| Réglage | Économie nette de la combinaison |
-|---|---|
-| 0.35 CHF/km (défaut) | 6.29 |
-| 0.70 CHF/km | 6.27 |
-| Temps de trajet valorisé à 25 CHF/h | 5.00 |
-| À pied | 6.30 |
+**Ce qui compose le gain.** Deux lignes :
 
-**Ce qui compose le gain.** Les 6.30 viennent de deux lignes :
+- **pain toast** : Lidl ne vend que des paquets de 335 g, il faut donc en payer deux ; au seul prix au
+  kilo, l'écart aurait été plus faible, ce qui illustre la différence avec le montant réellement payé ;
+- **poulet**, grâce à une action Aldi annoncée du 01 au 07.10, sans date de fin publiée.
 
-- **pain toast : 2.79**. Lidl ne vend que des paquets de 335 g, il faut donc en payer deux. Au seul
-  prix au kilo, l'écart n'aurait été que de 1.78, ce qui illustre la différence avec le montant réel ;
-- **poulet : 3.51**, grâce à une action Aldi annoncée du 01 au 07.10, sans date de fin publiée.
-
-Les 12 autres articles coûtent le même prix chez Lidl et chez Aldi. Aujourd'hui (30.09) comme
-après le 07.10, la combinaison coûte 38.25 et le gain tombe à 2.79.
+Pour les 12 autres articles, la combinaison n'apporte rien. Après le 07.10, seul l'écart du pain toast
+subsiste.
 
 **Aldi seul** n'est plus comparable : le seul yogourt nature rapproché chez Aldi était « sans
-lactose ». Cette correspondance a été refusée : il n'existe plus d'équivalent, et les 42.99 annoncés en
-phase 3 comparaient un produit différent.
+lactose ». Cette correspondance a été refusée : il n'existe plus d'équivalent, et le total annoncé en
+phase 3 comparait un produit différent.
 
 **Vue publique sans autorisation d'Aldi :** Lidl seul, 40.92. Aucune combinaison possible.
 
@@ -111,7 +105,7 @@ phase 3 comparaient un produit différent.
 | Solution | Articles | Achats | Trajet | Coût trajet | Total |
 |---|---|---|---|---|---|
 | Lidl seul (référence) | 12/12 | 45.36 | 1,7 km · 9 min | 0.60 | **45.96** |
-| Aldi seul (Champ-Francey) | 8/12 | 38.13 | 3,7 km · 12 min | 1.30 | incomplet |
+| Aldi seul (Champ-Francey) | 8/12 | non publié | 3,7 km · 12 min | 1.30 | incomplet |
 
 - **Aucune combinaison n'est moins chère** : aucun article n'est meilleur marché chez Aldi, depuis
   que le café en grains Lidl à 7.99 est rapproché (auparavant, seule une référence à 14.99 l'était).
@@ -122,9 +116,9 @@ phase 3 comparaient un produit différent.
 
 | Solution | Articles | Achats | Trajet | Coût trajet | Total |
 |---|---|---|---|---|---|
-| Combinaison Lidl (Rue de Lausanne) → Aldi (Promenade de l'Europe) | 9/10 | 14.73 | 4,9 km · 17 min | 1.71 | incomplet |
+| Combinaison Lidl (Rue de Lausanne) → Aldi (Promenade de l'Europe) | 9/10 | non publié | 4,9 km · 17 min | 1.71 | incomplet |
 | Lidl seul | 7/10 | 13.92 | 1,5 km · 8 min | 0.54 | incomplet |
-| Aldi seul | 6/10 | 12.70 | 3,6 km · 12 min | 1.27 | incomplet |
+| Aldi seul | 6/10 | non publié | 3,6 km · 12 min | 1.27 | incomplet |
 
 - **Aucune économie n'est calculée**, car aucun magasin n'a tout le panier : le papier toilette 10
   rouleaux est introuvable partout le 02.10. Lidl ne l'affichait qu'en action du jour, valable le 30.09.

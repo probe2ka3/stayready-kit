@@ -38,6 +38,7 @@ import { jobValidate, jobValidationCalibrate } from './validation';
 import { jobMatchCandidates } from './match-review';
 import { jobMagasins, jobReleves } from './releves';
 import { jobEssentialsMatrix } from './matrix';
+import { jobRelevesPrioritaires } from './releves-prioritaires';
 import { jobLiveRestore } from './publication';
 import { jobQuotidien } from './daily-prices';
 import { createLogger, requireDb, snapshotPath, type WorkerEnv } from './context';
@@ -279,6 +280,7 @@ export const JOBS: Record<string, { run: (ctx: JobContext) => Promise<void>; hel
   quotidien: { run: jobQuotidien, help: 'Chaîne quotidienne : collecte ciblée des 50 aliments (Lidl, Aldi, Denner, Open Prices), contrôles, exports publiables, journal (--force, --sources=a,b)' },
   releves: { run: jobReleves, help: 'Importe les relevés en magasin (data/releves/*.csv → data/prices/live/releves.json ; --dry-run)' },
   magasins: { run: jobMagasins, help: 'Identifiants des magasins proches d’un NPA pour les relevés (--npa=1630 --rayon=5)' },
+  'releves-prioritaires': { run: jobRelevesPrioritaires, help: 'Relevés en magasin qui feraient le plus progresser la version publique (docs/RELEVES_PRIORITAIRES.md, fiche CSV)' },
   'matrice-essentiels': { run: jobEssentialsMatrix, help: 'Matrice des 50 aliments de base × 5 enseignes (data/matrice/) et page publique statique (data/public/index.html)' },
   'live-restore': { run: jobLiveRestore, help: 'Reprend les instantanés d’un dossier (cache) seulement s’ils sont plus récents (--from=dossier)' },
   'demo-baskets': { run: jobDemoBaskets, help: 'Paniers de démonstration reproductibles sur les prix réels (--now=ISO ; data/demo/resultats.md)' },

@@ -12,6 +12,9 @@
     - durée maximale 2 heures ; jamais deux exécutions en même temps.
   La collecte elle-même ne s'exécute qu'une fois par jour : les déclencheurs supplémentaires ne
   provoquent pas de double collecte.
+  Avec -DepotEtat (clone du dépôt privé tesprix-collecte), la tâche partage le journal de GitHub
+  Actions : une seule collecte par jour pour les deux systèmes. Heure par défaut alors 07:30, après
+  le créneau GitHub de 06:17 : la tâche ne collecte que si GitHub ne l'a pas fait.
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File .\scripts\windows\installer-tache.ps1
@@ -29,7 +32,9 @@ param(
   # Exécute aussi quand aucune session n'est ouverte (mot de passe Windows demandé une fois).
   [switch]$SansSession,
   # Retire la tâche.
-  [switch]$Desinstaller
+  [switch]$Desinstaller,
+  # Clone local du dépôt privé tesprix-collecte (journal partagé avec GitHub Actions).
+  [string]$DepotEtat = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -47,6 +52,14 @@ if ($Desinstaller) {
 
 $script = [System.IO.Path]::Combine($PSScriptRoot, 'tesprix-quotidien.ps1')
 if (-not (Test-Path $script)) { throw "Script introuvable : $script" }
+$partage = ''
+if ($DepotEtat) {
+  $DepotEtat = [System.IO.Path]::GetFullPath($DepotEtat)
+  if (-not (Test-Path ([System.IO.Path]::Combine($DepotEtat, '.git')))) { throw "Pas un clone Git : $DepotEtat (git clone https://github.com/probe2ka3/tesprix-collecte.git)" }
+  $partage = " -DepotEtat `"$DepotEtat`""
+  # Après le créneau GitHub de 06:17 (heure de Zurich), sauf heure choisie explicitement.
+  if (-not $PSBoundParameters.ContainsKey('Heure')) { $Heure = '07:30' }
+}
 
 $tz = (Get-TimeZone).Id
 if ($tz -ne 'W. Europe Standard Time') {
@@ -54,7 +67,7 @@ if ($tz -ne 'W. Europe Standard Time') {
 }
 
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
-  -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$script`" -HeurePrevue $Heure" `
+  -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$script`" -HeurePrevue $Heure -Planifie$partage" `
   -WorkingDirectory ([System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, '..', '..')))
 
 $triggers = @(
@@ -87,7 +100,8 @@ if ($SansSession) {
 }
 
 $info = Get-ScheduledTaskInfo -TaskName $nom
-Write-Host "Tâche « $nom » installée."
+Write-Host "Tâche « $nom » installée$(if ($DepotEtat) { " (journal partagé : $DepotEtat)" })."
+
 Write-Host "Prochaine exécution : $($info.NextRunTime)"
 Write-Host 'Lancer un essai maintenant : Start-ScheduledTask -TaskName "TesPrix - collecte quotidienne"'
 Write-Host 'Résultat : data\private\runs\latest.json ; journal : data\private\logs\'

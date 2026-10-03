@@ -76,6 +76,38 @@ describe.skipIf(files.length === 0)('données versionnées : aucune donnée de s
     expect(offending).toEqual([]);
   });
 
+  it('documentation : aucun montant associé à Aldi, Denner ou au journal Coop sans revue', () => {
+    // Les rapports et guides sont publics : un prix issu d'un collecteur privé ne doit pas y figurer.
+    // Toute ligne qui nomme ces sources avec un montant est signalée, sauf si elle a été revue
+    // (montant d'une autre enseigne, coût de trajet, tarif d'un service…) : privacy-docs-revues.txt.
+    const nomme = /\b(Aldi|Denner|coop-epaper|journal Coop)\b/i;
+    const montant = /(?<![\d/])(?<!\d[.,])\d{1,4}[.,]\d{2}(?!\d|[.,]\d|\/|%)/;
+    const neutre = /\d+\/\d+|CHF\/mois|par mois|requêtes|\d+\s*(Mo|Ko|km|min|s)\b|\b\d{1,2}\.\d{2}\.20\d{2}\b|\b(0?[1-9]|[12]\d|3[01])\.(0[1-9]|1[0-2])\b(?!\s*CHF)|\b\d{1,2}:\d{2}\b|\b\d+\.\d+\.\d+/g;
+    const revues = new Set(
+      readFileSync(join(__dirname, 'privacy-docs-revues.txt'), 'utf8')
+        .split('\n')
+        .map((l) => l.trim())
+        .filter((l) => l && !l.startsWith('#')),
+    );
+    let tous: string[] = [];
+    try {
+      tous = execFileSync('git', ['ls-files', '-z', '.'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
+    } catch {
+      return;
+    }
+    const offending: string[] = [];
+    for (const f of tous) {
+      if (f.startsWith('data/') || !/\.(md|html|txt)$/.test(f) || f === 'apps/worker/test/privacy-docs-revues.txt') continue;
+      readFileSync(join(root, f), 'utf8')
+        .split('\n')
+        .forEach((line) => {
+          if (!nomme.test(line) || /EXEMPLE|fictif/.test(line)) return;
+          if (montant.test(line.replace(neutre, ' ')) && !revues.has(`${f} :: ${line.trim()}`)) offending.push(`${f} :: ${line.trim()}`);
+        });
+    }
+    expect(offending).toEqual([]);
+  });
+
   it('chaque source restreinte est déclarée « usage privé » ou soumise à autorisation', () => {
     for (const id of restricted) expect(SOURCE_REGISTRY[id]?.publicUse).toBe('requires_authorization');
   });

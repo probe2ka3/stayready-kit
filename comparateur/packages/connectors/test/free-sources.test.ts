@@ -188,7 +188,7 @@ describe('Open Prices : prix sans code-barres (vrac)', () => {
 describe('Open Prices : lieu sans enseigne attribué après revue (marques propres seulement)', () => {
   const mall: OpLocation = { id: 7, osm_id: 99, osm_type: 'WAY', osm_name: 'Centre commercial', osm_brand: null, osm_address_city: 'La Chaux-de-Fonds', osm_lat: 47.1, osm_lon: 6.83 };
   const migrosStore = { id: 'osm:node/1', chainId: 'migros', name: 'Migros', city: 'La Chaux-de-Fonds', canton: 'NE', zoneId: 'migros-nf', lat: 47.1, lon: 6.83 } as unknown as Parameters<typeof buildOpenPricesBatch>[2]['stores'][number];
-  const review = { locationId: 7, chainId: 'migros', storeId: 'osm:node/1', ownBrands: ['M-Budget', 'Boncampo'], evidence: 'test', reviewer: 'test', reviewedAt: '2026-10-03' };
+  const review = { locationId: 7, statut: 'etablie' as const, chainId: 'migros', storeId: 'osm:node/1', ownBrands: ['M-Budget', 'Boncampo'], evidence: 'test', reviewer: 'test', reviewedAt: '2026-10-03' };
   const item = (id: number, brands: string, code: string): OpPrice => ({
     id,
     type: 'PRODUCT',
@@ -211,6 +211,12 @@ describe('Open Prices : lieu sans enseigne attribué après revue (marques propr
     // Date réelle du relevé, jamais celle de l'import.
     expect(batch.prices[0]?.observedAt.slice(0, 10)).toBe('2026-09-20');
     expect(batch.report.metrics).toMatchObject({ attributedPrices: 2, 'skipped: lieu partagé : article sans marque propre de l’enseigne': 1 });
+  });
+
+  it('attribution incertaine (indices seulement) : aucun relevé attribué, la décision reste documentée', () => {
+    const batch = buildOpenPricesBatch([mall], prices, { now, stores: [migrosStore], maxAgeDays: 400, locationReviews: [{ ...review, statut: 'incertaine' }] });
+    expect(batch.prices).toEqual([]);
+    expect(batch.report.metrics).toMatchObject({ attributedPrices: 0, 'skipped: lieu sans enseigne : attribution incertaine': 3 });
   });
 
   it('succursale de l’enseigne introuvable : relevés écartés', () => {

@@ -1,6 +1,6 @@
 # Matrice des 50 aliments de base × 5 enseignes
 
-Calculée par `pnpm job matrice-essentiels --now=2026-10-03T09:43:41.175Z` sur les instantanés versionnés :
+Calculée par `pnpm job matrice-essentiels --now=2026-10-03T17:32:53.342Z` sur les instantanés versionnés :
 - `aldi-api` du 03.10.2026 (réutilisation : requires_authorization)
 - `coop-epaper` du 03.10.2026 (réutilisation : requires_authorization)
 - `denner-web` du 03.10.2026 (réutilisation : requires_authorization)
@@ -15,7 +15,7 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 
 | Enseigne | ● officiel | ◆ relevé local | ○ Open Prices | ◐ privé seulement | · trop ancien | — aucune donnée |
 |---|---|---|---|---|---|---|
-| Migros | 0 | 0 | 1 | 0 | 1 | 48 |
+| Migros | 0 | 0 | 0 | 0 | 1 | 49 |
 | Coop | 0 | 0 | 1 | 5 | 1 | 43 |
 | Denner | 0 | 0 | 0 | 34 | 1 | 15 |
 | Aldi Suisse | 0 | 0 | 0 | 23 | 0 | 27 |
@@ -23,8 +23,8 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 
 | Besoins comparables dans au moins… | 1 enseigne | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| Version publique (sources publiables seulement) | 47 | 2 | 0 | 0 | 0 |
-| Pilote privé (avec Aldi et Denner) | 49 | 41 | 19 | 2 | 0 |
+| Version publique (sources publiables seulement) | 47 | 1 | 0 | 0 | 0 |
+| Pilote privé (avec Aldi et Denner) | 49 | 41 | 18 | 2 | 0 |
 
 ## Détail
 
@@ -91,6 +91,6 @@ Légende : ● officiel · ◆ relevé local · ○ Open Prices · ◐ privé se
 | Pois chiches (400 g) | — | — | ◐ collecté, non publiable | ◐ collecté, non publiable | ● 1.69 (4.23/kg) 03.10.2026 | 1 | 3 |
 | **Petit-déjeuner, café et douceurs** | | | | | | | |
 | Confiture de fraises (500 g) | — | — | — | ◐ collecté, non publiable | ● 1.19 (2.64/kg) 03.10.2026 | 1 | 2 |
-| Café moulu (500 g) | ○ 3.50 (7.00/kg) 04.08.2026 | — | — | ◐ collecté, non publiable | ● 3.49 (6.98/kg) 03.10.2026 | 2 | 3 |
+| Café moulu (500 g) | — | — | — | ◐ collecté, non publiable | ● 3.49 (6.98/kg) 03.10.2026 | 1 | 2 |
 
 Les cellules « relevé local » ne valent que pour le magasin relevé ; « Open Prices » : relevé communautaire d’un magasin, généralisé à la zone (Migros) ou au pays selon la politique tarifaire de l’enseigne ; « privé seulement » : prix Aldi et Denner, dont les conditions réservent l’usage à des fins privées ou interdisent la publication (jamais publiés sans autorisation écrite ; dans le fichier versionné, seul le statut apparaît).
