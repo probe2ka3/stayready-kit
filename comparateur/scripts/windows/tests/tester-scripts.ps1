@@ -191,8 +191,12 @@ exit 0
     Write-Host 'Installation avec journal partagé'
     & ([System.IO.Path]::Combine($copie, 'installer-tache.ps1')) -DepotEtat $clone | Out-Null
     $r = $global:Appels['Register']
-    Verifie 'déclencheur à 07:30 (après le créneau GitHub de 06:17)' ($r.Trigger[0].StartBoundary -like '*T07:30:00')
+    Verifie 'déclencheur à 15:30 (après le dernier créneau GitHub, 14:17)' ($r.Trigger[0].StartBoundary -like '*T15:30:00')
+    Verifie 'pas de rattrapage à l''ouverture de session en mode partagé' (@($r.Trigger).Count -eq 1)
     Verifie 'script lancé avec -DepotEtat' ($r.Action.Arguments -like "*-Planifie -DepotEtat*tesprix-collecte*")
+    $sortie = & ([System.IO.Path]::Combine($copie, 'verifier-tache.ps1')) 6>&1 | Out-String
+    Verifie 'vérification en mode partagé : 15:30 attendu, absence de rattrapage à l''ouverture conforme' (
+      $sortie -match 'OK\s+Journal\s+partagé' -and $sortie -match 'OK\s+Déclencheur quotidien\s+chaque jour à 15:30' -and $sortie -match "OK\s+Déclencheur à l'ouverture de session\s+absent \(voulu")
   } else {
     Write-Host '  (git ou node absent : contrôles du journal partagé non exécutés)'
   }

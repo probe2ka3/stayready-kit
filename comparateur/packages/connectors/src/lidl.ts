@@ -7,7 +7,7 @@ import {
 } from '@cabas/core';
 import { PRODUCTS } from '@cabas/reference';
 import { decodeEntities, textOf } from './html';
-import { HttpBlockedError, requireFetcher } from './http/fetcher';
+import { HttpBlockedError, HttpFetchError, requireFetcher } from './http/fetcher';
 import { matchesFor } from './matching';
 import { parsePackText, unitPriceDeviation } from './pack';
 import {
@@ -646,7 +646,28 @@ export class LidlWebConnector implements PriceConnector {
     const fetcher = requireFetcher(ctx);
     const maxCategories = Number(ctx.env?.LIDL_MAX_CATEGORIES ?? '0') || Number.POSITIVE_INFINITY;
     const pages: LidlPages = { assortment: [], offers: [] };
+    pages.products = [];
     const failures: string[] = [];
+    /** Pages retirées par Lidl (HTTP 404 / 410) : l'article n'existe plus, ce n'est pas une panne de collecte. */
+    const removed: string[] = [];
+    /** Erreurs temporaires (5xx, délai, réseau) : relues une fois en fin de collecte. */
+    const retry: { url: string; kind: 'assortment' | 'products' | 'offers' }[] = [];
+    let recovered = 0;
+
+    const read = async (url: string, kind: 'assortment' | 'products' | 'offers', last: boolean): Promise<string | null> => {
+      try {
+        const r = await fetcher.get(url);
+        (pages[kind] as NonNullable<LidlPages['products']>).push({ url, html: r.body, fetchedAt: r.fetchedAt });
+        return r.body;
+      } catch (e) {
+        if (e instanceof HttpBlockedError && e.reason !== 'robots') throw e;
+        const text = `${url} : ${e instanceof Error ? e.message : String(e)}`;
+        if (e instanceof HttpFetchError && (e.status === 404 || e.status === 410)) removed.push(text);
+        else if (!last && !(e instanceof HttpBlockedError)) retry.push({ url, kind });
+        else failures.push(text);
+        return null;
+      }
+    };
 
     // Plan du site : relu au plus une fois par semaine (cache local), il change rarement et pèse ~2 Mo.
     const sitemap = await fetcher.getCached(`${LIDL_ASSORTMENT_ORIGIN}/sitemaps/fr.xml`, 7 * 86_400_000, 'application/xml');
@@ -656,13 +677,7 @@ export class LidlWebConnector implements PriceConnector {
       .slice(0, maxCategories);
     for (const url of categories) {
       if (ctx.signal?.aborted) break;
-      try {
-        const r = await fetcher.get(url);
-        pages.assortment.push({ url, html: r.body, fetchedAt: r.fetchedAt });
-      } catch (e) {
-        if (e instanceof HttpBlockedError && e.reason !== 'robots') throw e;
-        failures.push(`${url} : ${e instanceof Error ? e.message : String(e)}`);
-      }
+      await read(url, 'assortment', false);
     }
 
     // Fiches produits. Collecte ciblée : fiches déjà reliées au noyau (chaque jour), plus une petite
@@ -674,37 +689,43 @@ export class LidlWebConnector implements PriceConnector {
     const rotation = rotationSlice(all, Number.isFinite(perRun) ? perRun : 0, ctx.now);
     const targetPages = [...new Set((ctx.targets?.productUrls ?? []).map(lidlProductPageUrl).filter((u): u is string => Boolean(u) && listed.has(u)))];
     const productUrls = [...new Set([...targetPages, ...rotation.slice.map((u) => lidlProductPageUrl(u) ?? u)])];
-    pages.products = [];
     for (const url of productUrls) {
       if (ctx.signal?.aborted) break;
-      try {
-        const r = await fetcher.get(url);
-        pages.products.push({ url, html: r.body, fetchedAt: r.fetchedAt });
-      } catch (e) {
-        if (e instanceof HttpBlockedError && e.reason !== 'robots') throw e;
-        failures.push(`${url} : ${e instanceof Error ? e.message : String(e)}`);
-      }
+      await read(url, 'products', false);
     }
 
-    try {
-      const home = await fetcher.get(`${LIDL_WWW_ORIGIN}/fr-CH/`);
-      for (const url of discoverOfferPages(home.body)) {
+    const readOffers = async (home: string) => {
+      for (const url of discoverOfferPages(home)) {
         if (ctx.signal?.aborted) break;
-        try {
-          const r = await fetcher.get(url);
-          pages.offers.push({ url, html: r.body, fetchedAt: r.fetchedAt });
-        } catch (e) {
-          if (e instanceof HttpBlockedError && e.reason !== 'robots') throw e;
-          failures.push(`${url} : ${e instanceof Error ? e.message : String(e)}`);
-        }
+        await read(url, 'offers', false);
       }
+    };
+    let homeFailed: unknown = null;
+    try {
+      await readOffers((await fetcher.get(`${LIDL_WWW_ORIGIN}/fr-CH/`)).body);
     } catch (e) {
       if (e instanceof HttpBlockedError) throw e;
-      failures.push(`Page d'accueil des actions : ${e instanceof Error ? e.message : String(e)}`);
+      homeFailed = e;
     }
 
+    // Seconde passe : une seule nouvelle lecture des pages en erreur temporaire, après les autres (le
+    // serveur a eu le temps de se rétablir) ; ce qui échoue encore rend la collecte partielle.
+    for (const { url, kind } of retry.splice(0)) {
+      if (ctx.signal?.aborted) break;
+      if ((await read(url, kind, true)) !== null) recovered++;
+    }
+    if (homeFailed) {
+      try {
+        await readOffers((await fetcher.get(`${LIDL_WWW_ORIGIN}/fr-CH/`)).body);
+        recovered++;
+      } catch (e) {
+        if (e instanceof HttpBlockedError) throw e;
+        failures.push(`Page d'accueil des actions : ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
     const batch = buildLidlBatch(pages, ctx);
     for (const f of failures) batch.report.warnings.push({ message: f });
+    for (const f of removed) batch.report.warnings.push({ message: `Page retirée par Lidl : ${f}` });
     batch.report.metrics = {
       ...batch.report.metrics,
       categoriesListed: categories.length,
@@ -712,6 +733,9 @@ export class LidlWebConnector implements PriceConnector {
       targetProductPages: targetPages.length,
       productRotation: rotation.chunks ? `${rotation.chunk + 1}/${rotation.chunks}` : 'off',
       pageFailures: failures.length,
+      ...(failures.length ? { pageFailureSample: failures[0] } : {}),
+      pagesRemoved: removed.length,
+      pagesRecovered: recovered,
     };
     ctx.log.info('Lidl : collecte terminée', batch.report.metrics);
     return batch;

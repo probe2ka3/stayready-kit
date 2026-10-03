@@ -4,7 +4,7 @@
 # journal partagé avec Windows, le verrou et l'enregistrement par commit) :
 #   1. reprend l'état de la veille depuis <dossier-etat> (etat.mjs restaurer) ;
 #   2. lance `pnpm quotidien` (une collecte par jour de Zurich ; relancé le même jour, seules les
-#      sources en échec technique sont reprises ; un rattrapage collecte ce qui est publié au moment
+#      sources en échec technique ou incomplètes sont reprises ; un rattrapage collecte ce qui est publié au moment
 #      du lancement, il ne reconstitue jamais les prix des jours manqués) ;
 #   3. réécrit l'état dans <dossier-etat> (etat.mjs enregistrer : sans archives brutes, cache ni verrou).
 #

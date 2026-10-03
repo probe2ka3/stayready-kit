@@ -57,6 +57,11 @@ export interface DailyRun {
   requests: number;
   /** Au moins une source a produit un lot (succès ou partiel). */
   ok: boolean;
+  /**
+   * Sources lues par CETTE exécution (les autres gardent leur résultat de la journée) : le suivi ne
+   * présente jamais un résultat repris d'une exécution antérieure comme une nouvelle lecture.
+   */
+  ran?: string[];
 }
 
 export function runsDir(dataDir: string) {
@@ -96,12 +101,12 @@ async function acquireLock(dir: string, now: Date): Promise<(() => Promise<void>
 
 /**
  * Sources à relancer : toutes, sauf si l'exécution du jour a déjà eu lieu ; dans ce cas seulement
- * celles en échec technique (`failed`) — une source bloquée (403, anti-robot) n'est jamais relancée
- * le même jour, une source réussie non plus.
+ * celles en échec technique (`failed`) ou incomplètes (`partial` : pages manquantes) — une source
+ * bloquée (403, anti-robot) n'est jamais relancée le même jour, une source réussie non plus.
  */
 export function sourcesToRun(previous: DailyRun | null, today: string, all: string[], force: boolean): string[] {
   if (force || !previous || previous.date !== today) return all;
-  return previous.sources.filter((s) => s.status === 'failed' && all.includes(s.connector)).map((s) => s.connector);
+  return previous.sources.filter((s) => (s.status === 'failed' || s.status === 'partial') && all.includes(s.connector)).map((s) => s.connector);
 }
 
 async function step(ctx: JobContext, steps: StepResult[], name: string, fn: () => Promise<void>) {
@@ -257,6 +262,7 @@ export async function jobQuotidien(jobCtx: JobContext) {
       validation,
       requests: sources.reduce((n, s) => n + (s.requests ?? 0), 0),
       ok: sources.some((s) => s.status === 'success' || s.status === 'partial'),
+      ran: toRun,
     };
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, `${today}.json`), `${JSON.stringify(run, null, 1)}\n`);

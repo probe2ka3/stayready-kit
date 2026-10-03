@@ -20,6 +20,7 @@
  * Données privées : l'état ne quitte jamais le dépôt privé ; le suivi ne contient ni prix ni article.
  */
 import { appendFileSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -57,7 +58,10 @@ function copierDossier(src, dst) {
   }
 }
 
-/** Collecte à faire ? Non si celle du jour (Zurich) a eu lieu sans source en échec technique. */
+/**
+ * Collecte à faire ? Non si celle du jour (Zurich) a eu lieu sans source en échec technique ni
+ * incomplète ; sinon seules ces sources sont reprises (une source bloquée ne l'est jamais le même jour).
+ */
 export function besoin(etat, { force = false, maintenant = new Date() } = {}) {
   const verrou = lireJson(join(etat, 'verrou.json'));
   if (verrou && maintenant.getTime() - Date.parse(verrou.debut) < VERROU_MINUTES * 60_000) {
@@ -67,8 +71,8 @@ export function besoin(etat, { force = false, maintenant = new Date() } = {}) {
   const run = lireJson(join(etat, 'private', 'runs', 'latest.json'));
   const aujourdhui = jourZurich(maintenant);
   if (!run || run.date !== aujourdhui) return { collecte: true, raison: `aucune collecte le ${aujourdhui}` };
-  const echecs = (run.sources ?? []).filter((s) => s.status === 'failed').map((s) => s.connector);
-  if (echecs.length) return { collecte: true, raison: `reprise des sources en échec : ${echecs.join(', ')}` };
+  const echecs = (run.sources ?? []).filter((s) => s.status === 'failed' || s.status === 'partial').map((s) => s.connector);
+  if (echecs.length) return { collecte: true, raison: `reprise des sources en échec ou incomplètes : ${echecs.join(', ')}` };
   return { collecte: false, raison: `collecte du ${aujourdhui} déjà faite (${heure(run.startedAt)})` };
 }
 
@@ -126,14 +130,30 @@ export function enregistrer(data, etat) {
   }
 }
 
-/** Date des données conservées par source (instantanés de l'état), sans lire les prix. */
+/**
+ * Empreinte du contenu d'un instantané : prix et actions (article, montant, type, validité, zone),
+ * sans horodatage ni identifiant daté. Deux lectures réussies d'un contenu identique (journal Coop
+ * entre deux éditions, assortiment inchangé) ont la même empreinte : « contenu identique à la veille »
+ * est alors normal, et se distingue d'un échec (données conservées d'un jour antérieur).
+ */
+export function empreinte(snapshot) {
+  const b = snapshot?.batch;
+  if (!b) return null;
+  const prix = (b.prices ?? []).map((p) => [p.retailerProductId, p.priceCents, p.priceType, p.zoneId ?? '', p.storeId ?? ''].join('|'));
+  const actions = (b.promotions ?? []).map((p) =>
+    [p.retailerProductId, p.promoPriceCents, p.referencePriceCents, p.percent, p.buyQty, p.type, p.validFrom, p.validTo, p.zoneId ?? '', p.storeId ?? ''].join('|'),
+  );
+  return createHash('sha256').update([...prix.sort(), '#', ...actions.sort()].join('\n')).digest('hex').slice(0, 16);
+}
+
+/** Date et empreinte des données conservées par source (instantanés de l'état) ; aucun prix n'en sort. */
 function donnees(etat) {
   const out = {};
   for (const dir of [join(etat, 'private', 'live'), join(etat, 'prices-live')]) {
     if (!existsSync(dir)) continue;
     for (const f of readdirSync(dir).filter((x) => x.endsWith('.json'))) {
       const s = lireJson(join(dir, f));
-      if (s?.connectorId) out[s.connectorId] = { collectedAt: s.collectedAt ?? null, status: s.status ?? null };
+      if (s?.connectorId) out[s.connectorId] = { collectedAt: s.collectedAt ?? null, status: s.status ?? null, empreinte: empreinte(s) };
     }
   }
   return out;
@@ -143,8 +163,18 @@ function donnees(etat) {
 export function noter(etat, { systeme, declencheur, debut, execution = null, code = null, issue = null, maintenant = new Date() }) {
   const run = lireJson(join(etat, 'private', 'runs', 'latest.json'));
   const collecte = Boolean(run?.startedAt && Date.parse(run.startedAt) >= Date.parse(debut) - 1000);
+  // `ran` : sources lues par cette exécution ; les autres ne font que reporter leur résultat du jour.
+  const lues = collecte && Array.isArray(run.ran) ? new Set(run.ran) : null;
   const sources = collecte
-    ? (run.sources ?? []).map((s) => ({ connector: s.connector, status: s.status, prices: s.prices ?? null, promotions: s.promotions ?? null, message: s.message ?? null }))
+    ? (run.sources ?? []).map((s) => ({
+        connector: s.connector,
+        status: s.status,
+        lue: lues ? lues.has(s.connector) : true,
+        prices: s.prices ?? null,
+        promotions: s.promotions ?? null,
+        requests: s.requests ?? null,
+        message: s.message ?? null,
+      }))
     : [];
   const enregistrement = {
     jour: jourZurich(debut),
@@ -165,13 +195,17 @@ export function noter(etat, { systeme, declencheur, debut, execution = null, cod
   const suffixe = Math.random().toString(16).slice(2, 8);
   writeFileSync(join(dir, `${debut.replace(/[:.]/g, '-')}-${systeme}-${suffixe}.json`), `${JSON.stringify(enregistrement, null, 1)}\n`);
   tableau(etat, maintenant);
-  const echecs = sources.filter((s) => s.status === 'failed' || s.status === 'blocked');
-  const partiels = sources.filter((s) => s.status === 'partial');
+  const luesIci = sources.filter((s) => s.lue);
+  const echecs = luesIci.filter((s) => s.status === 'failed' || s.status === 'blocked');
+  const partiels = luesIci.filter((s) => s.status === 'partial');
   const codeEchec = enregistrement.code != null && enregistrement.code !== 0;
   return { enregistrement, echecs, partiels, ok: echecs.length === 0 && !codeEchec && enregistrement.issue !== 'echec' };
 }
 
-/** Exécutions enregistrées, dans l'ordre chronologique. */
+/**
+ * Exécutions enregistrées, dans l'ordre chronologique : début (à la seconde), puis fin (à la
+ * milliseconde) pour départager deux exécutions commencées dans la même seconde.
+ */
 export function lireJournal(etat) {
   const dir = join(etat, 'suivi', 'executions');
   if (!existsSync(dir)) return [];
@@ -179,7 +213,7 @@ export function lireJournal(etat) {
     .filter((f) => f.endsWith('.json'))
     .map((f) => lireJson(join(dir, f)))
     .filter(Boolean)
-    .sort((a, b) => a.debut.localeCompare(b.debut));
+    .sort((a, b) => a.debut.localeCompare(b.debut) || String(a.fin ?? '').localeCompare(String(b.fin ?? '')));
 }
 
 export function tableau(etat, maintenant = new Date()) {
@@ -187,43 +221,62 @@ export function tableau(etat, maintenant = new Date()) {
   writeFileSync(join(etat, 'suivi', 'SUIVI.md'), suiviMarkdown(lireJournal(etat), maintenant));
 }
 
+const planifiee = (e) => e.systeme === 'github' && e.declencheur === 'schedule';
+const lue = (s) => s.lue !== false;
+
 /**
- * Bilan d'une journée : déclenchements, statut final de chaque source (dernière collecte du jour qui
- * l'a lue), date des données conservées en fin de journée, erreurs.
+ * Bilan d'une journée : déclenchements, statut final de chaque source (dernière exécution du jour qui
+ * l'a lue), volumes, date des données conservées en fin de journée, erreurs, et verdict « jour
+ * complet » : chaque source lue en SUCCÈS par un déclenchement planifié de GitHub (`schedule`). Un
+ * lancement manuel, une installation (`push`), une collecte Windows ou une exécution « rien à faire »
+ * ne valident pas une journée ; une source partielle non plus.
  */
 export function bilanJour(enregistrements) {
   const statut = {};
   const message = {};
+  const volume = {};
+  const parPlanification = {};
   for (const e of enregistrements) {
-    for (const s of e.sources ?? []) {
+    for (const s of (e.sources ?? []).filter(lue)) {
       statut[s.connector] = s.status;
       message[s.connector] = s.message;
+      volume[s.connector] = { prices: s.prices ?? null, promotions: s.promotions ?? null };
+      if (planifiee(e)) parPlanification[s.connector] = s.status;
     }
   }
   const dernier = enregistrements[enregistrements.length - 1];
   const collecteur = enregistrements.find((e) => e.issue === 'collecte');
-  const sourcesOk = SOURCES_QUOTIDIENNES.every((c) => ['success', 'partial'].includes(statut[c]));
+  const declenchementPlanifie = enregistrements.some(planifiee);
+  const manquantes = SOURCES_QUOTIDIENNES.filter((c) => parPlanification[c] !== 'success');
+  const githubAutomatique = declenchementPlanifie && manquantes.length === 0;
+  let pourquoi = null;
+  if (!githubAutomatique) {
+    if (!declenchementPlanifie) pourquoi = 'aucun déclenchement planifié par GitHub';
+    else if (!enregistrements.some((e) => planifiee(e) && e.issue === 'collecte')) pourquoi = 'déclenchement planifié sans collecte';
+    else pourquoi = manquantes.map((c) => `${c} ${parPlanification[c] ? STATUT[parPlanification[c]] ?? parPlanification[c] : 'non lu par GitHub planifié'}`).join(', ');
+  }
   return {
     statut,
     message,
+    volume,
     donnees: dernier?.donnees ?? {},
     collectePar: collecteur ? `${collecteur.systeme} (${collecteur.declencheur})` : null,
-    // Jour « bon » pour l'arrêt de Windows : collecte faite par GitHub sur déclenchement planifié,
-    // et toutes les sources lues (succès ou partiel) en fin de journée.
-    githubAutomatique: Boolean(enregistrements.some((e) => e.systeme === 'github' && e.declencheur === 'schedule' && e.issue === 'collecte')) && sourcesOk,
-    sourcesOk,
+    declenchementPlanifie,
+    githubAutomatique,
+    pourquoi,
   };
 }
 
-/** Jours consécutifs (jusqu'au dernier jour observé) où GitHub a collecté seul, automatiquement, sans échec. */
+const jourSuivant = (iso) => new Date(Date.parse(`${iso}T12:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+
+/** Jours consécutifs (jusqu'au dernier jour observé) complets selon `bilanJour` ; un jour sans exécution rompt la série. */
 export function joursConsecutifs(journal) {
   const parJour = groupe(journal);
   const jours = [...parJour.keys()].sort();
   let n = 0;
   for (let i = jours.length - 1; i >= 0; i--) {
     if (!bilanJour(parJour.get(jours[i])).githubAutomatique) break;
-    // Jours manquants dans le journal : aucune exécution, la série s'arrête.
-    if (i < jours.length - 1 && Date.parse(jours[i + 1]) - Date.parse(jours[i]) > 86_400_000) break;
+    if (i < jours.length - 1 && jourSuivant(jours[i]) !== jours[i + 1]) break;
     n++;
   }
   return n;
@@ -239,39 +292,86 @@ function groupe(journal) {
 }
 
 const STATUT = { success: 'succès', partial: 'partiel', failed: 'ÉCHEC', blocked: 'BLOQUÉ', disabled: 'désactivé' };
+const dateFr = (iso) => iso.split('-').reverse().join('.');
+
+function volumeTexte(v) {
+  if (!v) return '';
+  const parts = [];
+  if (v.prices) parts.push(`${v.prices} prix`);
+  if (v.promotions) parts.push(`${v.promotions} actions`);
+  return parts.length ? parts.join(', ') : '0 article';
+}
+
+/** Jalons distincts : premier cycle manuel, premier déclenchement planifié, série de jours complets. */
+function jalons(journal) {
+  const manuel = journal.find(
+    (e) => ['push', 'workflow_dispatch'].includes(e.declencheur) && e.issue === 'collecte' && SOURCES_QUOTIDIENNES.every((c) => e.sources?.some((s) => s.connector === c && lue(s) && s.status === 'success')),
+  );
+  const planifie = journal.find(planifiee);
+  const lien = (e) => (e.execution ? ` ([exécution](${e.execution}))` : '');
+  return [
+    `- Premier cycle manuel (installation ou lancement manuel) avec les 5 sources en succès : ${
+      manuel ? `${dateFr(manuel.jour)} à ${heure(manuel.debut)} (${manuel.declencheur})${lien(manuel)}` : 'pas encore'
+    }`,
+    `- Premier déclenchement réel par la planification de GitHub (\`schedule\`) : ${
+      planifie ? `${dateFr(planifie.jour)} à ${heure(planifie.debut)} → ${planifie.issue}${lien(planifie)}` : '**pas encore observé**'
+    }`,
+  ];
+}
 
 export function suiviMarkdown(journal, maintenant = new Date()) {
   const parJour = groupe(journal);
-  const jours = [...parJour.keys()].sort().reverse().slice(0, 21);
+  const observes = [...parJour.keys()].sort();
+  // Jours sans aucune exécution entre le premier et le dernier jour observés : affichés comme tels.
+  const tous = [];
+  for (let d = observes[0]; d && d <= observes[observes.length - 1]; d = jourSuivant(d)) tous.push(d);
+  const jours = tous.reverse().slice(0, 21);
   const n = joursConsecutifs(journal);
   const lignes = [
     '# Suivi de la collecte quotidienne',
     '',
-    `Mis à jour le ${jourZurich(maintenant).split('-').reverse().join('.')} à ${heure(maintenant)} (heure de Zurich). Généré par \`etat.mjs\` ; une ligne par jour, les 21 derniers jours.`,
+    `Mis à jour le ${dateFr(jourZurich(maintenant))} à ${heure(maintenant)} (heure de Zurich), à chaque exécution (GitHub ou tâche Windows en mode partagé), par \`etat.mjs\`. Une date ancienne ici signifie qu’aucune exécution n’a eu lieu depuis.`,
     '',
-    `**Jours consécutifs où GitHub a collecté automatiquement, toutes sources lues : ${n}/7.** ${
+    ...jalons(journal),
+    `- **Jours consécutifs complets (collecte planifiée par GitHub, 5 sources en succès) : ${n}/7.** ${
       n >= 7 ? 'Période d’observation atteinte : l’arrêt de la tâche Windows peut être envisagé.' : 'Garder la tâche Windows.'
     }`,
     '',
-    'Lecture : déclenchements = heure (Zurich), système, type (`schedule` = planifié par GitHub, `workflow_dispatch` = manuel, `push` = installation, `windows-tache` = tâche Windows) et issue (collecte, rien à faire, concurrence évitée, échec). Pour chaque source : statut final du jour et date des données conservées (une source en échec garde des données plus anciennes : leur date le montre).',
+    'Lecture. Déclenchements : heure (Zurich), système, type (`schedule` = planifié par GitHub, `workflow_dispatch` = manuel, `push` = installation, `windows-tache` / `windows-manuel` = Windows) et issue (collecte, rien = déjà faite, concurrence = verrou tenu par l’autre système, echec). Sources : statut final du jour, volume lu, date des données conservées. « contenu identique à la veille » : lecture réussie sans nouvelle offre (normal, par exemple journal Coop entre deux éditions). « anciennes » : aucune lecture réussie ce jour-là, les données d’un jour antérieur sont conservées et ne comptent pas comme une collecte du jour. Une source partielle ou un jour sans déclenchement planifié ne compte pas pour 7/7.',
     '',
-    `| Jour | Déclenchements | Collecte par | ${SOURCES_QUOTIDIENNES.join(' | ')} | Erreurs |`,
+    `| Jour | Déclenchements | Compte pour 7/7 | ${SOURCES_QUOTIDIENNES.join(' | ')} | Erreurs |`,
     `|---|---|---|${SOURCES_QUOTIDIENNES.map(() => '---').join('|')}|---|`,
   ];
+  let veille = null;
+  const empreintesParJour = new Map(observes.map((j) => [j, bilanJour(parJour.get(j)).donnees]));
   for (const jour of jours) {
     const es = parJour.get(jour);
+    if (!es) {
+      lignes.push(`| ${jj(jour)} | aucun déclenchement | ❌ aucun déclenchement | ${SOURCES_QUOTIDIENNES.map(() => '—').join(' | ')} | — |`);
+      continue;
+    }
     const b = bilanJour(es);
+    const precedent = observes.filter((j) => j < jour).pop();
+    veille = precedent ? empreintesParJour.get(precedent) : null;
     const decl = es.map((e) => `${heure(e.debut)} ${e.systeme}/${e.declencheur} → ${e.issue}${e.execution ? ` ([exécution](${e.execution}))` : ''}`).join('<br>');
     const cellules = SOURCES_QUOTIDIENNES.map((c) => {
       const st = b.statut[c] ? STATUT[b.statut[c]] ?? b.statut[c] : '—';
       const d = b.donnees[c]?.collectedAt;
-      return `${st}${d ? ` · données du ${jj(jourZurich(d))}` : ''}`;
+      const dJour = d ? jourZurich(d) : null;
+      const parts = [st];
+      if (b.statut[c] && ['success', 'partial'].includes(b.statut[c])) parts.push(volumeTexte(b.volume[c]));
+      if (dJour && dJour < jour) parts.push(`données conservées du ${jj(dJour)} (anciennes)`);
+      else if (dJour) parts.push(`données du ${jj(dJour)}`);
+      const e = b.donnees[c]?.empreinte;
+      if (dJour === jour && e && veille?.[c]?.empreinte === e) parts.push('contenu identique à la veille');
+      return parts.filter(Boolean).join(' · ');
     });
     const erreurs = Object.entries(b.message)
       .filter(([c, msg]) => msg && ['failed', 'blocked', 'partial'].includes(b.statut[c]))
       .map(([c, msg]) => `${c} : ${String(msg).replace(/\|/g, '/').slice(0, 160)}`)
       .concat(es.filter((e) => e.code != null && e.code !== 0).map((e) => `${e.systeme} : code de sortie ${e.code}`));
-    lignes.push(`| ${jj(jour)} | ${decl} | ${b.collectePar ?? 'aucune'} | ${cellules.join(' | ')} | ${erreurs.join('<br>') || '—'} |`);
+    const compte = b.githubAutomatique ? '✅' : `❌ ${b.pourquoi}`;
+    lignes.push(`| ${jj(jour)} | ${decl} | ${compte} | ${cellules.join(' | ')} | ${erreurs.join('<br>') || '—'} |`);
   }
   return `${lignes.join('\n')}\n`;
 }
@@ -319,12 +419,22 @@ function main(argv) {
       const r = noter(o._[0], { systeme: o.systeme, declencheur: o.declencheur, debut: o.debut, execution: o.execution ?? null, code: o.code ?? null, issue: o.issue ?? null });
       const e = r.enregistrement;
       console.log(`Suivi : ${e.jour}, ${e.systeme}/${e.declencheur} → ${e.issue}${e.code != null ? ` (code ${e.code})` : ''}`);
-      for (const s of e.sources) console.log(`  ${s.connector.padEnd(12)} ${STATUT[s.status] ?? s.status}${s.message ? ` — ${s.message}` : ''}`);
+      for (const s of e.sources) {
+        const detail = s.lue ? `${STATUT[s.status] ?? s.status} (${volumeTexte({ prices: s.prices, promotions: s.promotions })}, ${s.requests ?? '?'} requêtes)` : `non relue (résultat du jour : ${STATUT[s.status] ?? s.status})`;
+        console.log(`  ${s.connector.padEnd(12)} ${detail}${s.lue && s.message ? ` — ${s.message}` : ''}`);
+      }
       for (const s of r.echecs) if (github) console.log(`::error title=Source en échec : ${s.connector}::${STATUT[s.status]}${s.message ? ` — ${s.message}` : ''}`);
-      for (const s of r.partiels) if (github) console.log(`::warning title=Source partielle : ${s.connector}::${s.message ?? 'pages manquantes'}`);
+      for (const s of r.partiels) if (github) console.log(`::warning title=Source incomplète : ${s.connector}::${s.message ?? 'collecte incomplète'} (ne compte pas pour 7/7 ; reprise au créneau suivant)`);
       if (github && e.code != null && e.code !== 0) console.log(`::error title=Collecte quotidienne::code de sortie ${e.code}`);
       if (process.env.GITHUB_STEP_SUMMARY) {
-        const lignes = [`### Collecte du ${e.jour} : ${e.issue}`, '', '| Source | Statut | Prix | Actions |', '|---|---|---|---|', ...e.sources.map((s) => `| ${s.connector} | ${STATUT[s.status] ?? s.status} | ${s.prices ?? ''} | ${s.promotions ?? ''} |`), ''];
+        const lignes = [
+          `### Collecte du ${e.jour} : ${e.issue}`,
+          '',
+          '| Source | Lue par cette exécution | Statut | Prix | Actions | Requêtes |',
+          '|---|---|---|---|---|---|',
+          ...e.sources.map((s) => `| ${s.connector} | ${s.lue ? 'oui' : 'non (résultat du jour)'} | ${STATUT[s.status] ?? s.status} | ${s.prices ?? ''} | ${s.promotions ?? ''} | ${s.lue ? s.requests ?? '' : ''} |`),
+          '',
+        ];
         appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lignes.join('\n')}\n`);
       }
       return r.ok ? 0 : 1;

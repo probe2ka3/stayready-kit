@@ -7,7 +7,7 @@
 #   de la collecte gardée sur l'exécuteur (effacée à la fin) ; journal du workflow : statuts et volumes.
 # - Un seul journal partagé avec la tâche Windows (même dossier etat/, verrou etat/verrou.json) : une
 #   seule collecte par jour de Zurich, quel que soit le système ; les créneaux suivants ne reprennent
-#   que les sources en échec technique. Un rattrapage collecte ce qui est publié au moment du
+#   que les sources en échec technique ou incomplètes. Un rattrapage collecte ce qui est publié au moment du
 #   lancement, jamais les prix des jours manqués.
 # - Une source en échec ou bloquée rend l'exécution rouge (après enregistrement de l'état) ; une
 #   source partielle produit un avertissement. Suivi jour par jour : etat/suivi/SUIVI.md.
@@ -28,9 +28,13 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: 'Relancer toutes les sources même si la collecte du jour est faite'
+        description: 'Relancer les sources même si la collecte du jour est faite'
         type: boolean
         default: false
+      sources:
+        description: 'Sources à lire (vide = toutes), ex. open-prices'
+        type: string
+        default: ''
   # Premier cycle dès l'ajout (ou la modification) de ce fichier.
   push:
     branches: [main]
@@ -54,8 +58,9 @@ jobs:
       EXECUTION: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       DECLENCHEUR: ${{ github.event_name }}
       FORCE: ${{ inputs.force || 'false' }}
-      # Variable de dépôt facultative : limiter les sources (ex. une source qui refuse les serveurs de GitHub).
-      TESPRIX_SOURCES: ${{ vars.TESPRIX_SOURCES }}
+      # Sources : champ du lancement manuel, sinon variable de dépôt facultative (ex. pour retirer une
+      # source qui refuserait les serveurs de GitHub), sinon toutes.
+      TESPRIX_SOURCES: ${{ inputs.sources || vars.TESPRIX_SOURCES }}
     steps:
       - name: État partagé (ce dépôt privé)
         uses: actions/checkout@v7

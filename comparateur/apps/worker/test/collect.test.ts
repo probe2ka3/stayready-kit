@@ -123,4 +123,15 @@ describe('collecte : dégradation progressive', () => {
     const fusion = JSON.parse(await readFile(join(dir, 'private', 'live', 'fusion.json'), 'utf8')) as LiveSnapshot;
     expect(fusion.batch.prices).toHaveLength(1);
   });
+
+  it('collecte partielle : le statut dit combien de pages manquent et laquelle', async () => {
+    const [s] = await jobCollect(ctx, [
+      connector('pages', async () => ({
+        ...batch('pages'),
+        report: { ...emptyReport(), metrics: { pageFailures: 2, pageFailureSample: 'https://exemple.ch/a : HTTP 504' } },
+      })),
+    ]);
+    expect(s?.status).toBe('partial');
+    expect(s?.message).toBe('2 page(s) non lue(s) après nouvelle tentative (ex. https://exemple.ch/a : HTTP 504)');
+  });
 });

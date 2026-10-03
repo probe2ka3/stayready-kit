@@ -37,9 +37,9 @@ describe('collecte quotidienne : une fois par jour, rattrapage ciblé', () => {
     expect(sourcesToRun(run('2026-09-30', all.map((s) => src(s, 'success'))), '2026-10-01', all, false)).toEqual(all);
   });
 
-  it('même jour : seules les sources en échec technique sont reprises, jamais une source bloquée', () => {
+  it('même jour : seules les sources en échec technique ou incomplètes sont reprises, jamais une source bloquée', () => {
     const today = run('2026-10-01', [src('open-prices', 'success'), src('denner-web', 'failed'), src('aldi-api', 'blocked'), src('lidl-web', 'partial')]);
-    expect(sourcesToRun(today, '2026-10-01', all, false)).toEqual(['denner-web']);
+    expect(sourcesToRun(today, '2026-10-01', all, false)).toEqual(['denner-web', 'lidl-web']);
   });
 
   it('même jour sans échec : rien à faire, sauf --force', () => {

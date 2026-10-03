@@ -13,8 +13,10 @@
   La collecte elle-même ne s'exécute qu'une fois par jour : les déclencheurs supplémentaires ne
   provoquent pas de double collecte.
   Avec -DepotEtat (clone du dépôt privé tesprix-collecte), la tâche partage le journal de GitHub
-  Actions : une seule collecte par jour pour les deux systèmes. Heure par défaut alors 07:30, après
-  le créneau GitHub de 06:17 : la tâche ne collecte que si GitHub ne l'a pas fait.
+  Actions : une seule collecte par jour pour les deux systèmes. Heure par défaut alors 15:30, après
+  le dernier créneau GitHub (14:17), et pas de rattrapage à l'ouverture de session : la tâche ne
+  collecte que ce que GitHub n'a pas réussi à collecter dans la journée, sans devancer ses reprises
+  (09:47, 14:17). Si l'ordinateur est éteint à 15:30, elle s'exécute à son prochain démarrage.
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File .\scripts\windows\installer-tache.ps1
@@ -57,8 +59,8 @@ if ($DepotEtat) {
   $DepotEtat = [System.IO.Path]::GetFullPath($DepotEtat)
   if (-not (Test-Path ([System.IO.Path]::Combine($DepotEtat, '.git')))) { throw "Pas un clone Git : $DepotEtat (git clone https://github.com/probe2ka3/tesprix-collecte.git)" }
   $partage = " -DepotEtat `"$DepotEtat`""
-  # Après le créneau GitHub de 06:17 (heure de Zurich), sauf heure choisie explicitement.
-  if (-not $PSBoundParameters.ContainsKey('Heure')) { $Heure = '07:30' }
+  # Après le dernier créneau GitHub (14:17, heure de Zurich), sauf heure choisie explicitement.
+  if (-not $PSBoundParameters.ContainsKey('Heure')) { $Heure = '15:30' }
 }
 
 $tz = (Get-TimeZone).Id
@@ -70,12 +72,14 @@ $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
   -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$script`" -HeurePrevue $Heure -Planifie$partage" `
   -WorkingDirectory ([System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, '..', '..')))
 
-$triggers = @(
-  (New-ScheduledTaskTrigger -Daily -At $Heure),
-  (New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME")
-)
-# Rattrapage à l'ouverture de session : léger délai pour laisser le réseau s'établir.
-$triggers[1].Delay = 'PT5M'
+$triggers = @(New-ScheduledTaskTrigger -Daily -At $Heure)
+if (-not $DepotEtat) {
+  # Rattrapage à l'ouverture de session : léger délai pour laisser le réseau s'établir. En mode
+  # partagé, aucun : la tâche ne doit pas devancer les reprises de GitHub (StartWhenAvailable suffit).
+  $ouverture = New-ScheduledTaskTrigger -AtLogOn -User "$env:USERDOMAIN\$env:USERNAME"
+  $ouverture.Delay = 'PT5M'
+  $triggers += $ouverture
+}
 
 $settings = New-ScheduledTaskSettingsSet `
   -StartWhenAvailable `

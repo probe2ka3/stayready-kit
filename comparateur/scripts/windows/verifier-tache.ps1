@@ -20,8 +20,9 @@
 param(
   # Nombre de jours d'historique affichés.
   [int]$Jours = 14,
-  # Heure prévue de la collecte (celle passée à installer-tache.ps1).
-  [string]$Heure = '06:00'
+  # Heure prévue de la collecte (celle passée à installer-tache.ps1) ; par défaut 06:00, ou 15:30 si la
+  # tâche partage le journal de GitHub (-DepotEtat).
+  [string]$Heure
 )
 
 $ErrorActionPreference = 'Stop'
@@ -63,6 +64,10 @@ if (-not $task) {
   Ligne 'État' "$($task.State)" ("$($task.State)" -in @('Ready', 'Running'))
   $info = Get-ScheduledTaskInfo -TaskName $nom
 
+  # Mode partagé avec GitHub (-DepotEtat) : 15:30, sans rattrapage à l'ouverture de session.
+  $partage = "$(@($task.Actions)[0].Arguments)" -like '*-DepotEtat*'
+  if (-not $Heure) { $Heure = if ($partage) { '15:30' } else { '06:00' } }
+  Ligne 'Journal' $(if ($partage) { 'partagé avec GitHub Actions (-DepotEtat)' } else { 'propre à cet ordinateur' })
   $quotidien = @($task.Triggers | Where-Object { $_.CimClass.CimClassName -eq 'MSFT_TaskDailyTrigger' })
   $session = @($task.Triggers | Where-Object { $_.CimClass.CimClassName -eq 'MSFT_TaskLogonTrigger' })
   if ($quotidien.Count -eq 0) {
@@ -71,7 +76,7 @@ if (-not $task) {
     $debut = [datetime]$quotidien[0].StartBoundary
     Ligne 'Déclencheur quotidien' ("chaque jour à {0:HH:mm} (heure locale)" -f $debut) (('{0:HH:mm}' -f $debut) -eq $Heure)
   }
-  Ligne "Déclencheur à l'ouverture de session" ($(if ($session.Count) { "présent (délai $($session[0].Delay))" } else { 'absent' })) ($session.Count -gt 0)
+  Ligne "Déclencheur à l'ouverture de session" ($(if ($session.Count) { "présent (délai $($session[0].Delay))" } else { "absent$(if ($partage) { ' (voulu en mode partagé)' })" })) (($session.Count -gt 0) -ne $partage)
 
   # 2. Fuseau horaire et prochaine exécution --------------------------------------------------
   $tz = (Get-TimeZone).Id

@@ -160,7 +160,13 @@ export async function jobCollect(ctx: JobContext, override?: PriceConnector[], o
         // « partiel » : pages manquantes (échecs, plafond, hôte abandonné). Des articles écartés pour
         // incohérence de la source relèvent du contrôle de qualité (colonne « rejetés »), pas d'une panne.
         if (fetcher.stats.budgetExhausted || fetcher.stats.tripped.length > 0 || Number(batch.report.metrics?.pageFailures ?? 0) > 0) runStatus = 'partial';
+        const missing = Number(batch.report.metrics?.pageFailures ?? 0);
         if (fetcher.stats.budgetExhausted) message = `Plafond de requêtes atteint (${fetcher.stats.requests})`;
+        else if (fetcher.stats.tripped.length > 0) message = `Hôte abandonné après des erreurs consécutives : ${fetcher.stats.tripped.join(', ')}`;
+        else if (missing > 0) {
+          const sample = batch.report.metrics?.pageFailureSample;
+          message = `${missing} page(s) non lue(s) après nouvelle tentative${typeof sample === 'string' ? ` (ex. ${sample})` : ''}`;
+        }
       } catch (e) {
         message = e instanceof Error ? e.message : String(e);
         runStatus = e instanceof HttpBlockedError ? 'blocked' : 'failed';
