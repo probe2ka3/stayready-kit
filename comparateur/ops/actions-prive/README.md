@@ -6,7 +6,7 @@
 |---|---|
 | Code préparé (`quotidien.yml`, `cycle.sh`) | ✅ dans ce dossier |
 | Cycle testé localement sans état préalable, puis relancé (une collecte par jour, reprise des seules sources en échec) | ✅ 03.10.2026, sur une copie des données |
-| Lancement réel sur les serveurs de GitHub | essai du même script avec les sources publiables seulement (Lidl, Open Prices), dans le dépôt public : workflow `.github/workflows/tesprix-essai-cycle.yml` ; résultat : `docs/COLLECTE_QUOTIDIENNE.md` § 5 |
+| Lancement réel sur les serveurs de GitHub | ✅ 03.10.2026, même script, **sources publiables seulement** (Lidl, Open Prices), dans le dépôt public (`.github/workflows/tesprix-essai-cycle.yml`, exécution 37114095944) : Lidl 424 prix + 290 actions en 313 s, Open Prices 246 prix en 25 s, 6 étapes OK, job de 6 min 01 s (`docs/COLLECTE_QUOTIDIENNE.md` § 5.1.2) |
 | Dépôt privé créé, workflow installé, lancement manuel réussi | ❌ à faire par l'exploitant (ci-dessous) |
 | Planification activée, lancement automatique observé | ❌ non observé |
 
@@ -42,9 +42,10 @@ risque.
 
 **Consommation estimée** : cycle complet mesuré le 03.10.2026 dans l'environnement de développement :
 **10 min 50 s** (Lidl 5 min 19 s, Denner 2 min 43 s, Aldi 2 min 11 s, Open Prices 22 s, Coop 6 s avec
-le cache de la semaine) + installation ≈ 1–2 min. Créneaux de rattrapage sans collecte à faire :
-< 1 min (le test de l'état précède l'installation). Soit ≈ 13 × 30 + 2 × 30 ≈ **450 min/mois sur 2 000**,
-partagées avec les autres dépôts **privés** du compte (les dépôts publics ne consomment rien).
+le cache de la semaine) ; sur les serveurs de GitHub, Lidl + Open Prices : 5 min 38 s de cycle, 6 min
+01 s de job (installation 4 s). Cycle complet estimé ≈ 12 min ; créneaux de rattrapage sans collecte à
+faire : < 1 min (le test de l'état précède l'installation). Soit ≈ 12 × 30 + 2 × 30 ≈ **400 min/mois sur
+2 000**, partagées avec les autres dépôts **privés** du compte (les dépôts publics ne consomment rien).
 Croissance du dépôt privé : état compressé ≈ 0,7 Mo, réécrit chaque jour (≈ 250 Mo/an au pire).
 
 Non testé depuis GitHub : l'accès d'Aldi, de Denner et du journal Coop depuis les adresses des

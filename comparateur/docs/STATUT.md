@@ -21,7 +21,8 @@ Comparables dans 2 / 3 / 4 / 5 enseignes : **41 / 19 / 2 / 0** en pilote privé 
 relevé (90 jours, vers le 02.11) sans nouveau relevé. Commande : `pnpm quotidien` (≈ 11 min, ≈ 218
 requêtes). Planification : Windows (`scripts/windows/installer-tache.ps1`, **non vérifiée** sur
 l'ordinateur de l'exploitant) ; GitHub Actions en dépôt privé **préparé, non activé**
-(`ops/actions-prive/README.md`). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
+(`ops/actions-prive/README.md` ; essai sur les serveurs de GitHub réussi le 03.10 avec Lidl + Open
+Prices, 6 min ; planification et lancement automatique non observés). Analyse : `docs/COUVERTURE_NOYAU.md` ; exploitation :
 `docs/COLLECTE_QUOTIDIENNE.md`. Hors plan : FoodAlly (licence), offres B2B, widgets, marque blanche.
 
 Publication : la provenance d'un prix (fichier de la source et hôte de ses URL) décide, pas son

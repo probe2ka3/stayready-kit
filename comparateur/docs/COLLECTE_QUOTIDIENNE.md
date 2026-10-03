@@ -152,10 +152,36 @@ d'autorisation : `docs/AUTORISATIONS.md`.
 |---|---|---|---|
 | **Ordinateur de l'exploitant, Planificateur de tâches Windows** | 0 CHF | Ordinateur allumé (ou en veille avec réveil) et connecté ; session ouverte, ou mot de passe enregistré pour une exécution sans session | ✅ **retenu** : le plus simple, aucune limite de durée ni de CPU, données privées (Aldi, Denner, Coop) gardées chez l'exploitant |
 | GitHub Actions (dépôt public) | 0 CHF ; sans moyen de paiement, l'usage est bloqué au-delà du quota, jamais facturé | Interdit « toute autre activité sans rapport avec la production, les tests, le déploiement ou la publication du logiciel » ; tâches planifiées seulement sur la branche par défaut, retardées aux heures chargées, désactivées après 60 jours sans activité ; artefacts d'un dépôt public téléchargeables | ⚠️ Construction de la page : oui. Collecte Lidl + Open Prices : désactivée par défaut (zone grise). Aldi, Denner, Coop : **jamais** (données privées sur une infrastructure tierce) |
-| **GitHub Actions (dépôt privé séparé)** — étudié le 03.10.2026 | 0 CHF : 2 000 min/mois incluses (GitHub Free), usage **bloqué** au-delà sans moyen de paiement ; ≈ 450 min/mois estimées | Même clause d'usage que ci-dessus (**zone grise**, aucune autorisation formelle ; risque : arrêt des tâches ou restriction du compte) ; planification sur la branche par défaut, retards ou abandons possibles aux heures chargées, fuseau `Europe/Zurich` désormais accepté ; état gardé par des commits dans le dépôt privé (≈ 0,7 Mo/jour au pire), cache HTTP privé ; accès d'Aldi, Denner et Coop depuis les adresses de GitHub **non testé** | ⚠️ **Préparé, non activé** : alternative au PC à activer par l'exploitant (`ops/actions-prive/README.md`) ; le PC Windows reste la solution tant que des lancements automatiques n'ont pas été observés une semaine |
+| **GitHub Actions (dépôt privé séparé)** — étudié le 03.10.2026 | 0 CHF : 2 000 min/mois incluses (GitHub Free), usage **bloqué** au-delà sans moyen de paiement ; ≈ 400 min/mois estimées (§ 5.1.2) | Même clause d'usage que ci-dessus (**zone grise**, aucune autorisation formelle ; risque : arrêt des tâches ou restriction du compte) ; planification sur la branche par défaut, retards ou abandons possibles aux heures chargées, fuseau `Europe/Zurich` désormais accepté ; état gardé par des commits dans le dépôt privé (≈ 0,7 Mo/jour au pire), cache HTTP privé ; Lidl et Open Prices accessibles depuis GitHub (essai du 03.10, § 5.1.2) ; accès d'Aldi, Denner et Coop depuis les adresses de GitHub **non testé** | ⚠️ **Préparé, non activé** : alternative au PC à activer par l'exploitant (`ops/actions-prive/README.md`) ; le PC Windows reste la solution tant que des lancements automatiques n'ont pas été observés une semaine |
 | Vercel Hobby | 0 CHF | Usage personnel non commercial ; fonction limitée à **300 s** | ❌ un cycle poli dure ≈ 12 min |
 | Cloudflare Workers (gratuit) | 0 CHF | voir § 5.1.1 | ❌ sans refonte |
 | Machines virtuelles « gratuites » (Oracle, Google Cloud…) | Carte bancaire ou compte de facturation exigé | Dépassement facturable possible | ❌ (règle : aucun dépassement facturable) |
+
+#### 5.1.2 GitHub Actions : essai réel sur les serveurs de GitHub (03.10.2026)
+
+Workflow `.github/workflows/tesprix-essai-cycle.yml` (dépôt public, donc **sources publiables
+seulement** : jamais Aldi, Denner ni le journal Coop), même script que pour le dépôt privé
+(`ops/actions-prive/cycle.sh`), état dans un dossier temporaire, aucun artefact ni cache. Exécution
+37114095944 du 03.10.2026, 11:45–11:51 (heure de Zurich), déclenchée par la poussée du commit
+`4e8d24d` :
+
+| Élément | Résultat |
+|---|---|
+| Installation (`pnpm install`) | 4 s |
+| Lidl (site officiel) depuis une adresse de GitHub | ✅ succès : 424 prix, 290 actions, 313 s (aucun blocage) |
+| Open Prices | ✅ succès : 246 prix, 25 s |
+| Contrôles, matrice, page, paniers | ✅ 6 étapes, ≈ 1 s chacune |
+| Contrôle « aucune donnée privée sur le serveur » | ✅ |
+| Durée totale du job | **6 min 01 s** (cycle 5 min 38 s) |
+
+Estimation d'un cycle complet en dépôt privé : + Denner ≈ 2 min 45, Aldi ≈ 2 min 10, journal Coop
+≈ 1 min le jeudi (quelques secondes ensuite, cache) → **≈ 12 min**, soit ≈ 360 min/mois, plus les
+créneaux de rattrapage sans collecte (< 1 min chacun) : **≈ 400 min sur les 2 000 incluses**. Non
+mesuré : l'accès d'Aldi, de Denner et du journal Coop depuis les adresses de GitHub (jamais lancés
+depuis le dépôt public).
+
+État réel : **code préparé ✅ ; lancement manuel sur GitHub réussi pour les sources publiables ✅ (dépôt
+public, essai) ; dépôt privé, planification et lancement automatique : ❌ non faits, non observés.**
 
 #### 5.1.1 Cloudflare Workers : réexamen chiffré
 

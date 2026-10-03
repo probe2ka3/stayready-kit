@@ -4,13 +4,13 @@ name: TesPrix — essai du cycle quotidien sur GitHub Actions (sources publiable
 # le script prévu pour le dépôt privé (comparateur/ops/actions-prive/cycle.sh). Dépôt PUBLIC :
 # journaux et caches sont lisibles par tous, donc seulement Lidl et Open Prices (publiables), état
 # dans un dossier temporaire, aucun artefact, aucun cache, rien de réécrit dans le dépôt.
-# Déclenché uniquement quand le script ou ce fichier change (pas de collecte à chaque poussée).
+# Déclenché uniquement quand le script du cycle change (pas de collecte à chaque poussée ni pour une
+# simple modification de documentation). Premier essai : exécution 37114095944 du 03.10.2026.
 
 on:
   push:
     paths:
-      - 'comparateur/ops/actions-prive/**'
-      - '.github/workflows/tesprix-essai-cycle.yml'
+      - 'comparateur/ops/actions-prive/cycle.sh'
 
 permissions:
   contents: read
